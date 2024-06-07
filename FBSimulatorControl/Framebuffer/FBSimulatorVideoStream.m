@@ -235,16 +235,21 @@ static void MinicapCompressorCallback(void *outputCallbackRefCon, void *sourceFr
 
   CVPixelBufferLockBaseAddress(bufferToWrite, kCVPixelBufferLock_ReadOnly);
   
-  void *baseAddress = CVPixelBufferGetBaseAddress(bufferToWrite);
-  size_t size = CVPixelBufferGetDataSize(bufferToWrite);
-  
-  if ([self.consumer conformsToProtocol:@protocol(FBDataConsumerSync)]) {
-    NSData *data = [NSData dataWithBytesNoCopy:baseAddress length:size freeWhenDone:NO];
-    [self.consumer consumeData:data];
-  } else {
-    NSData *data = [NSData dataWithBytes:baseAddress length:size];
-    [self.consumer consumeData:data];
-  }
+    if ([self.consumer conformsToProtocol:@protocol(RSPixelBufferConsumer)]) {
+        id<RSPixelBufferConsumer> pixelConsumer = (id<RSPixelBufferConsumer>)self.consumer;
+        [pixelConsumer writeEncodedFrame:bufferToWrite frameNumber:frameNumber timeAtFirstFrame:timeAtFirstFrame error:error];
+    } else {
+        void *baseAddress = CVPixelBufferGetBaseAddress(bufferToWrite);
+        size_t size = CVPixelBufferGetDataSize(bufferToWrite);
+        
+        if ([self.consumer conformsToProtocol:@protocol(FBDataConsumerSync)]) {
+            NSData *data = [NSData dataWithBytesNoCopy:baseAddress length:size freeWhenDone:NO];
+            [self.consumer consumeData:data];
+        } else {
+            NSData *data = [NSData dataWithBytes:baseAddress length:size];
+            [self.consumer consumeData:data];
+        }
+    }
 
   CVPixelBufferUnlockBaseAddress(bufferToWrite, kCVPixelBufferLock_ReadOnly);
   CVPixelBufferRelease(toFree);

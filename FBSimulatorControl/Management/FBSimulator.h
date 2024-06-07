@@ -77,6 +77,10 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic, copy, readonly) NSString *coreSimulatorLogsDirectory;
 
+- (BOOL)darwinNotificationSetState:(unsigned long long)arg1 name:(id)arg2 error:(NSError **)arg3;
+- (BOOL)darwinNotificationGetState:(unsigned long long *)arg1 name:(id)arg2 error:(NSError **)arg3;
+- (NSUserDefaults *)simulatorDefaults;
+
 @end
 
 NS_ASSUME_NONNULL_END

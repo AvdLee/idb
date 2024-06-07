@@ -25,3 +25,4 @@
 #import <FBSimulatorControl/FBSimulatorSet+Private.h>
 #import <FBSimulatorControl/FBSimulatorSet.h>
 #import <FBSimulatorControl/FBSimulatorSettingsCommands.h>
+#import <FBSimulatorControl/FBSimulatorVideoStream.h>

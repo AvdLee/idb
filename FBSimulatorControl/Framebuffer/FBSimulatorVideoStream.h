@@ -10,6 +10,7 @@
 #import <FBControlCore/FBControlCore.h>
 
 #import <FBSimulatorControl/FBFramebuffer.h>
+#import <CoreVideo/CVPixelBufferIOSurface.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -19,6 +20,10 @@ NS_ASSUME_NONNULL_BEGIN
 @protocol FBDataConsumerSync;
 @protocol FBDataConsumerAsync;
 @protocol FBControlCoreLogger;
+
+@protocol RSPixelBufferConsumer <NSObject>
+- (BOOL)writeEncodedFrame:(CVPixelBufferRef)pixelBuffer frameNumber:(NSUInteger)frameNumber timeAtFirstFrame:(CFTimeInterval)timeAtFirstFrame error:(NSError **)error;
+@end
 
 /**
  A Video Stream of a Simulator's Framebuffer.

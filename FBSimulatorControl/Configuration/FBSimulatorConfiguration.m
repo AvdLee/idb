@@ -52,9 +52,11 @@
 
 + (instancetype)makeDefaultConfiguration
 {
-  FBDeviceModel model = FBDeviceModeliPhone6;
+  FBDeviceModel model = FBDeviceModeliPhone15;
   FBDeviceType *device = FBiOSTargetConfiguration.nameToDevice[model];
-  FBOSVersion *os = [FBSimulatorConfiguration newestAvailableOSForDevice:device];
+//  FBOSVersion *os = [FBSimulatorConfiguration newestAvailableOSForDevice:device];
+#warning Make this work dynamically
+  FBOSVersion *os = [FBOSVersion genericWithName: @"17.4"];
   NSAssert(
     os,
     @"Could not obtain OS for model '%@'. Supported OS Versions for Model %@. All Available OS Versions %@",

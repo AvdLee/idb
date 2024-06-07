@@ -182,7 +182,7 @@
   };
 
   [self.surface registerCallbackWithUUID:uuid ioSurfacesChangeCallback:ioSurfaceChanged];
-  [self.surface registerCallbackWithUUID:uuid ioSurfaceChangeCallback:ioSurfaceChanged];
+//  [self.surface registerCallbackWithUUID:uuid ioSurfaceChangeCallback:ioSurfaceChanged];
 
   [self.surface registerCallbackWithUUID:uuid damageRectanglesCallback:^(NSArray<NSValue *> *frames) {
     dispatch_async(queue, ^{
@@ -196,7 +196,7 @@
 - (void)unregisterConsumer:(id<FBFramebufferConsumer>)consumer uuid:(NSUUID *)uuid
 {
   [self.surface unregisterIOSurfacesChangeCallbackWithUUID:uuid];
-  [self.surface unregisterIOSurfaceChangeCallbackWithUUID:uuid];
+//  [self.surface unregisterIOSurfaceChangeCallbackWithUUID:uuid];
 
   [self.surface unregisterDamageRectanglesCallbackWithUUID:uuid];
 }

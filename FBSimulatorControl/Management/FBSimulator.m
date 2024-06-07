@@ -12,6 +12,7 @@
 #import <CoreSimulator/SimDeviceSet.h>
 #import <CoreSimulator/SimDeviceType.h>
 #import <CoreSimulator/SimRuntime.h>
+#import <CoreSimulator/NSUserDefaults-SimDefaults.h>
 
 #import <Foundation/Foundation.h>
 
@@ -197,6 +198,11 @@ static NSString *const DefaultDeviceSet = @"~/Library/Developer/CoreSimulator/De
 
 #pragma mark Properties
 
+- (NSUserDefaults *)simulatorDefaults
+{
+    return [NSUserDefaults simulatorDefaults];
+}
+
 - (FBControlCoreProductFamily)productFamily
 {
   int familyID = self.device.deviceType.productFamilyID;
@@ -245,6 +251,17 @@ static NSString *const DefaultDeviceSet = @"~/Library/Developer/CoreSimulator/De
 {
   return [FBXcodeConfiguration.developerDirectory
     stringByAppendingPathComponent:@"Platforms/iPhoneSimulator.platform/Developer/Library/Xcode/Agents/xctest"];
+}
+
+- (BOOL)darwinNotificationSetState:(unsigned long long)arg1 name:(id)arg2 error:(NSError **)arg3
+{
+    [self.device darwinNotificationSetState:arg1 name:arg2 error:arg3];
+    [self.device postDarwinNotification:arg2 error:arg3];
+    return YES;
+}
+- (BOOL)darwinNotificationGetState:(unsigned long long *)arg1 name:(id)arg2 error:(NSError **)arg3
+{
+    return [self.device darwinNotificationGetState:arg1 name:arg2 error:arg3];
 }
 
 #pragma mark NSObject
