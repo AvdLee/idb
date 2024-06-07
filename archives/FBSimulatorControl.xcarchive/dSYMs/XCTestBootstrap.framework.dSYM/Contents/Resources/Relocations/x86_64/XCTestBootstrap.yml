@@ -1,0 +1,731 @@
+---
+triple:          'x86_64-apple-darwin'
+binary-path:     '/Users/avanderlee/Library/Developer/Xcode/DerivedData/FBSimulatorControl-fgithhtfmjkshqfppotgawmilrkq/Build/Intermediates.noindex/ArchiveIntermediates/FBSimulatorControl/InstallationBuildProductsLocation/Library/Frameworks/XCTestBootstrap.framework/Versions/A/XCTestBootstrap'
+relocations:
+  - { offsetInCU: 0x34, offset: 0xB1CDF, size: 0x8, addend: 0x0, symName: _XCTestBootstrapVersionString, symObjAddr: 0x0, symBinAddr: 0x3ECD0, symSize: 0x0 }
+  - { offsetInCU: 0x69, offset: 0xB1D14, size: 0x8, addend: 0x0, symName: _XCTestBootstrapVersionNumber, symObjAddr: 0x40, symBinAddr: 0x3ED10, symSize: 0x0 }
+  - { offsetInCU: 0x27, offset: 0xB1D51, size: 0x8, addend: 0x0, symName: '+[FBTestManagerAPIMediator connectAndRunUntilCompletionWithContext:target:reporter:logger:]', symObjAddr: 0x0, symBinAddr: 0x12A0, symSize: 0x140 }
+  - { offsetInCU: 0x2CD, offset: 0xB1FF7, size: 0x8, addend: 0x0, symName: '+[FBTestManagerAPIMediator connectAndRunUntilCompletionWithContext:target:reporter:logger:]', symObjAddr: 0x0, symBinAddr: 0x12A0, symSize: 0x140 }
+  - { offsetInCU: 0x351, offset: 0xB207B, size: 0x8, addend: 0x0, symName: '-[FBTestManagerAPIMediator initWithContext:target:reporter:logger:]', symObjAddr: 0x140, symBinAddr: 0x13E0, symSize: 0x200 }
+  - { offsetInCU: 0x3C6, offset: 0xB20F0, size: 0x8, addend: 0x0, symName: '-[FBTestManagerAPIMediator description]', symObjAddr: 0x340, symBinAddr: 0x15E0, symSize: 0x90 }
+  - { offsetInCU: 0x3FF, offset: 0xB2129, size: 0x8, addend: 0x0, symName: '-[FBTestManagerAPIMediator terminateSpawnedProcesses]', symObjAddr: 0x3D0, symBinAddr: 0x1670, symSize: 0x4D0 }
+  - { offsetInCU: 0x488, offset: 0xB21B2, size: 0x8, addend: 0x0, symName: '-[FBTestManagerAPIMediator connectAndRunUntilCompletion]', symObjAddr: 0x8A0, symBinAddr: 0x1B40, symSize: 0x420 }
+  - { offsetInCU: 0x4FD, offset: 0xB2227, size: 0x8, addend: 0x0, symName: '___56-[FBTestManagerAPIMediator connectAndRunUntilCompletion]_block_invoke', symObjAddr: 0xCC0, symBinAddr: 0x1F60, symSize: 0x300 }
+  - { offsetInCU: 0x5C5, offset: 0xB22EF, size: 0x8, addend: 0x0, symName: '___56-[FBTestManagerAPIMediator connectAndRunUntilCompletion]_block_invoke_2', symObjAddr: 0xFC0, symBinAddr: 0x2260, symSize: 0x80 }
+  - { offsetInCU: 0x660, offset: 0xB238A, size: 0x8, addend: 0x0, symName: ___copy_helper_block_e8_32s40s48s56s, symObjAddr: 0x1040, symBinAddr: 0x22E0, symSize: 0xA0 }
+  - { offsetInCU: 0x687, offset: 0xB23B1, size: 0x8, addend: 0x0, symName: ___destroy_helper_block_e8_32s40s48s56s, symObjAddr: 0x10E0, symBinAddr: 0x2380, symSize: 0x70 }
+  - { offsetInCU: 0x6A5, offset: 0xB23CF, size: 0x8, addend: 0x0, symName: '___56-[FBTestManagerAPIMediator connectAndRunUntilCompletion]_block_invoke.80', symObjAddr: 0x1150, symBinAddr: 0x23F0, symSize: 0xF0 }
+  - { offsetInCU: 0x724, offset: 0xB244E, size: 0x8, addend: 0x0, symName: ___copy_helper_block_e8_32s40s, symObjAddr: 0x1240, symBinAddr: 0x24E0, symSize: 0x60 }
+  - { offsetInCU: 0x74B, offset: 0xB2475, size: 0x8, addend: 0x0, symName: ___destroy_helper_block_e8_32s40s, symObjAddr: 0x12A0, symBinAddr: 0x2540, symSize: 0x40 }
+  - { offsetInCU: 0x769, offset: 0xB2493, size: 0x8, addend: 0x0, symName: '-[FBTestManagerAPIMediator runUntilCompletion:logger:queue:timeout:]', symObjAddr: 0x12E0, symBinAddr: 0x2580, symSize: 0x480 }
+  - { offsetInCU: 0x7DE, offset: 0xB2508, size: 0x8, addend: 0x0, symName: '___68-[FBTestManagerAPIMediator runUntilCompletion:logger:queue:timeout:]_block_invoke', symObjAddr: 0x1760, symBinAddr: 0x2A00, symSize: 0x100 }
+  - { offsetInCU: 0x843, offset: 0xB256D, size: 0x8, addend: 0x0, symName: '___68-[FBTestManagerAPIMediator runUntilCompletion:logger:queue:timeout:]_block_invoke.104', symObjAddr: 0x1860, symBinAddr: 0x2B00, symSize: 0x240 }
+  - { offsetInCU: 0x8CF, offset: 0xB25F9, size: 0x8, addend: 0x0, symName: '___68-[FBTestManagerAPIMediator runUntilCompletion:logger:queue:timeout:]_block_invoke_2', symObjAddr: 0x1AA0, symBinAddr: 0x2D40, symSize: 0xD0 }
+  - { offsetInCU: 0x930, offset: 0xB265A, size: 0x8, addend: 0x0, symName: ___copy_helper_block_e8_32s, symObjAddr: 0x1B70, symBinAddr: 0x2E10, symSize: 0x40 }
+  - { offsetInCU: 0x957, offset: 0xB2681, size: 0x8, addend: 0x0, symName: ___destroy_helper_block_e8_32s, symObjAddr: 0x1BB0, symBinAddr: 0x2E50, symSize: 0x30 }
+  - { offsetInCU: 0x975, offset: 0xB269F, size: 0x8, addend: 0x0, symName: '___68-[FBTestManagerAPIMediator runUntilCompletion:logger:queue:timeout:]_block_invoke.117', symObjAddr: 0x1BE0, symBinAddr: 0x2E80, symSize: 0xA0 }
+  - { offsetInCU: 0x9C8, offset: 0xB26F2, size: 0x8, addend: 0x0, symName: '-[FBTestManagerAPIMediator startAndRunApplicationTestHost]', symObjAddr: 0x1C80, symBinAddr: 0x2F20, symSize: 0x150 }
+  - { offsetInCU: 0xA01, offset: 0xB272B, size: 0x8, addend: 0x0, symName: '___58-[FBTestManagerAPIMediator startAndRunApplicationTestHost]_block_invoke', symObjAddr: 0x1DD0, symBinAddr: 0x3070, symSize: 0xB0 }
+  - { offsetInCU: 0xA4D, offset: 0xB2777, size: 0x8, addend: 0x0, symName: '-[FBTestManagerAPIMediator installAndLaunchApplication:atPath:]', symObjAddr: 0x1E80, symBinAddr: 0x3120, symSize: 0x4F0 }
+  - { offsetInCU: 0xAA4, offset: 0xB27CE, size: 0x8, addend: 0x0, symName: '___63-[FBTestManagerAPIMediator installAndLaunchApplication:atPath:]_block_invoke', symObjAddr: 0x2370, symBinAddr: 0x3610, symSize: 0x110 }
+  - { offsetInCU: 0xB09, offset: 0xB2833, size: 0x8, addend: 0x0, symName: '___63-[FBTestManagerAPIMediator installAndLaunchApplication:atPath:]_block_invoke.138', symObjAddr: 0x2480, symBinAddr: 0x3720, symSize: 0xA0 }
+  - { offsetInCU: 0xB6E, offset: 0xB2898, size: 0x8, addend: 0x0, symName: '___63-[FBTestManagerAPIMediator installAndLaunchApplication:atPath:]_block_invoke_2', symObjAddr: 0x2520, symBinAddr: 0x37C0, symSize: 0xA0 }
+  - { offsetInCU: 0xBD3, offset: 0xB28FD, size: 0x8, addend: 0x0, symName: '-[FBTestManagerAPIMediator launchApplication:atPath:]', symObjAddr: 0x25C0, symBinAddr: 0x3860, symSize: 0x290 }
+  - { offsetInCU: 0xC2A, offset: 0xB2954, size: 0x8, addend: 0x0, symName: '___53-[FBTestManagerAPIMediator launchApplication:atPath:]_block_invoke', symObjAddr: 0x2850, symBinAddr: 0x3AF0, symSize: 0x1D0 }
+  - { offsetInCU: 0xCBF, offset: 0xB29E9, size: 0x8, addend: 0x0, symName: ___copy_helper_block_e8_32s40s48s, symObjAddr: 0x2A20, symBinAddr: 0x3CC0, symSize: 0x80 }
+  - { offsetInCU: 0xCE6, offset: 0xB2A10, size: 0x8, addend: 0x0, symName: ___destroy_helper_block_e8_32s40s48s, symObjAddr: 0x2AA0, symBinAddr: 0x3D40, symSize: 0x60 }
+  - { offsetInCU: 0xD04, offset: 0xB2A2E, size: 0x8, addend: 0x0, symName: '-[FBTestManagerAPIMediator isApplicationInstalledWithBundleID:]', symObjAddr: 0x2B00, symBinAddr: 0x3DA0, symSize: 0x130 }
+  - { offsetInCU: 0xD4C, offset: 0xB2A76, size: 0x8, addend: 0x0, symName: '___63-[FBTestManagerAPIMediator isApplicationInstalledWithBundleID:]_block_invoke', symObjAddr: 0x2C30, symBinAddr: 0x3ED0, symSize: 0x130 }
+  - { offsetInCU: 0xD89, offset: 0xB2AB3, size: 0x8, addend: 0x0, symName: '-[FBTestManagerAPIMediator _XCT_launchProcessWithPath:bundleID:arguments:environmentVariables:]', symObjAddr: 0x2D60, symBinAddr: 0x4000, symSize: 0x650 }
+  - { offsetInCU: 0xE4D, offset: 0xB2B77, size: 0x8, addend: 0x0, symName: '___95-[FBTestManagerAPIMediator _XCT_launchProcessWithPath:bundleID:arguments:environmentVariables:]_block_invoke', symObjAddr: 0x33B0, symBinAddr: 0x4650, symSize: 0x130 }
+  - { offsetInCU: 0xEE3, offset: 0xB2C0D, size: 0x8, addend: 0x0, symName: '-[FBTestManagerAPIMediator _XCT_getProgressForLaunch:]', symObjAddr: 0x34E0, symBinAddr: 0x4780, symSize: 0x140 }
+  - { offsetInCU: 0xF3D, offset: 0xB2C67, size: 0x8, addend: 0x0, symName: '-[FBTestManagerAPIMediator _XCT_terminateProcess:]', symObjAddr: 0x3620, symBinAddr: 0x48C0, symSize: 0x4E0 }
+  - { offsetInCU: 0xFC9, offset: 0xB2CF3, size: 0x8, addend: 0x0, symName: '___50-[FBTestManagerAPIMediator _XCT_terminateProcess:]_block_invoke', symObjAddr: 0x3B00, symBinAddr: 0x4DA0, symSize: 0x90 }
+  - { offsetInCU: 0x102B, offset: 0xB2D55, size: 0x8, addend: 0x0, symName: '-[FBTestManagerAPIMediator _XCT_didBeginInitializingForUITesting]', symObjAddr: 0x3B90, symBinAddr: 0x4E30, symSize: 0x60 }
+  - { offsetInCU: 0x1065, offset: 0xB2D8F, size: 0x8, addend: 0x0, symName: '-[FBTestManagerAPIMediator _XCT_initializationForUITestingDidFailWithError:]', symObjAddr: 0x3BF0, symBinAddr: 0x4E90, symSize: 0x50 }
+  - { offsetInCU: 0x10AF, offset: 0xB2DD9, size: 0x8, addend: 0x0, symName: '-[FBTestManagerAPIMediator _XCT_handleCrashReportData:fromFileWithName:]', symObjAddr: 0x3C40, symBinAddr: 0x4EE0, symSize: 0x70 }
+  - { offsetInCU: 0x1109, offset: 0xB2E33, size: 0x8, addend: 0x0, symName: '-[FBTestManagerAPIMediator _XCT_testSuite:didStartAt:]', symObjAddr: 0x3CB0, symBinAddr: 0x4F50, symSize: 0x220 }
+  - { offsetInCU: 0x1182, offset: 0xB2EAC, size: 0x8, addend: 0x0, symName: '-[FBTestManagerAPIMediator _XCT_testSuiteWithIdentifier:didStartAt:]', symObjAddr: 0x3ED0, symBinAddr: 0x5170, symSize: 0xC0 }
+  - { offsetInCU: 0x11DC, offset: 0xB2F06, size: 0x8, addend: 0x0, symName: '-[FBTestManagerAPIMediator _XCT_didBeginExecutingTestPlan]', symObjAddr: 0x3F90, symBinAddr: 0x5230, symSize: 0xA0 }
+  - { offsetInCU: 0x1216, offset: 0xB2F40, size: 0x8, addend: 0x0, symName: '-[FBTestManagerAPIMediator _XCT_didFinishExecutingTestPlan]', symObjAddr: 0x4030, symBinAddr: 0x52D0, symSize: 0xA0 }
+  - { offsetInCU: 0x1250, offset: 0xB2F7A, size: 0x8, addend: 0x0, symName: '-[FBTestManagerAPIMediator _XCT_testBundleReadyWithProtocolVersion:minimumVersion:]', symObjAddr: 0x40D0, symBinAddr: 0x5370, symSize: 0x70 }
+  - { offsetInCU: 0x12AA, offset: 0xB2FD4, size: 0x8, addend: 0x0, symName: '-[FBTestManagerAPIMediator _XCT_testCaseDidStartForTestClass:method:]', symObjAddr: 0x4140, symBinAddr: 0x53E0, symSize: 0x100 }
+  - { offsetInCU: 0x1304, offset: 0xB302E, size: 0x8, addend: 0x0, symName: '-[FBTestManagerAPIMediator _XCT_testCaseDidStartWithIdentifier:testCaseRunConfiguration:]', symObjAddr: 0x4240, symBinAddr: 0x54E0, symSize: 0x1A0 }
+  - { offsetInCU: 0x135E, offset: 0xB3088, size: 0x8, addend: 0x0, symName: '-[FBTestManagerAPIMediator _XCT_testCaseWithIdentifier:didRecordIssue:]', symObjAddr: 0x43E0, symBinAddr: 0x5680, symSize: 0x440 }
+  - { offsetInCU: 0x13B8, offset: 0xB30E2, size: 0x8, addend: 0x0, symName: '-[FBTestManagerAPIMediator _XCT_testCaseDidFailForTestClass:method:withMessage:file:line:]', symObjAddr: 0x4820, symBinAddr: 0x5AC0, symSize: 0x190 }
+  - { offsetInCU: 0x1442, offset: 0xB316C, size: 0x8, addend: 0x0, symName: '-[FBTestManagerAPIMediator _XCT_logDebugMessage:]', symObjAddr: 0x49B0, symBinAddr: 0x5C50, symSize: 0xE0 }
+  - { offsetInCU: 0x148C, offset: 0xB31B6, size: 0x8, addend: 0x0, symName: '-[FBTestManagerAPIMediator _XCT_logMessage:]', symObjAddr: 0x4A90, symBinAddr: 0x5D30, symSize: 0x90 }
+  - { offsetInCU: 0x14D6, offset: 0xB3200, size: 0x8, addend: 0x0, symName: '-[FBTestManagerAPIMediator _XCT_testCaseDidFinishForTestClass:method:withStatus:duration:]', symObjAddr: 0x4B20, symBinAddr: 0x5DC0, symSize: 0x160 }
+  - { offsetInCU: 0x1550, offset: 0xB327A, size: 0x8, addend: 0x0, symName: '-[FBTestManagerAPIMediator _XCT_testCaseWithIdentifier:didFinishWithStatus:duration:]', symObjAddr: 0x4C80, symBinAddr: 0x5F20, symSize: 0x150 }
+  - { offsetInCU: 0x15BA, offset: 0xB32E4, size: 0x8, addend: 0x0, symName: '-[FBTestManagerAPIMediator _XCT_testSuite:didFinishAt:runCount:withFailures:unexpected:testDuration:totalDuration:]', symObjAddr: 0x4DD0, symBinAddr: 0x6070, symSize: 0x200 }
+  - { offsetInCU: 0x1665, offset: 0xB338F, size: 0x8, addend: 0x0, symName: '-[FBTestManagerAPIMediator _XCT_testSuiteWithIdentifier:didFinishAt:runCount:skipCount:failureCount:expectedFailureCount:uncaughtExceptionCount:testDuration:totalDuration:]', symObjAddr: 0x4FD0, symBinAddr: 0x6270, symSize: 0x1B0 }
+  - { offsetInCU: 0x1732, offset: 0xB345C, size: 0x8, addend: 0x0, symName: '-[FBTestManagerAPIMediator _XCT_testCase:method:didFinishActivity:]', symObjAddr: 0x5180, symBinAddr: 0x6420, symSize: 0xE0 }
+  - { offsetInCU: 0x179C, offset: 0xB34C6, size: 0x8, addend: 0x0, symName: '-[FBTestManagerAPIMediator _XCT_testCase:method:willStartActivity:]', symObjAddr: 0x5260, symBinAddr: 0x6500, symSize: 0xE0 }
+  - { offsetInCU: 0x1806, offset: 0xB3530, size: 0x8, addend: 0x0, symName: '-[FBTestManagerAPIMediator _XCT_testCaseWithIdentifier:didFinishActivity:]', symObjAddr: 0x5340, symBinAddr: 0x65E0, symSize: 0x100 }
+  - { offsetInCU: 0x1860, offset: 0xB358A, size: 0x8, addend: 0x0, symName: '-[FBTestManagerAPIMediator _XCT_testCaseWithIdentifier:willStartActivity:]', symObjAddr: 0x5440, symBinAddr: 0x66E0, symSize: 0x100 }
+  - { offsetInCU: 0x18BA, offset: 0xB35E4, size: 0x8, addend: 0x0, symName: '-[FBTestManagerAPIMediator _XCT_nativeFocusItemDidChangeAtTime:parameterSnapshot:applicationSnapshot:]', symObjAddr: 0x5540, symBinAddr: 0x67E0, symSize: 0xD0 }
+  - { offsetInCU: 0x1924, offset: 0xB364E, size: 0x8, addend: 0x0, symName: '-[FBTestManagerAPIMediator _XCT_recordedEventNames:timestamp:duration:startLocation:startElementSnapshot:startApplicationSnapshot:endLocation:endElementSnapshot:endApplicationSnapshot:]', symObjAddr: 0x5610, symBinAddr: 0x68B0, symSize: 0x240 }
+  - { offsetInCU: 0x19F1, offset: 0xB371B, size: 0x8, addend: 0x0, symName: '-[FBTestManagerAPIMediator _XCT_recordedOrientationChange:]', symObjAddr: 0x5850, symBinAddr: 0x6AF0, symSize: 0x70 }
+  - { offsetInCU: 0x1A3B, offset: 0xB3765, size: 0x8, addend: 0x0, symName: '-[FBTestManagerAPIMediator _XCT_recordedFirstResponderChangedWithApplicationSnapshot:]', symObjAddr: 0x58C0, symBinAddr: 0x6B60, symSize: 0x70 }
+  - { offsetInCU: 0x1A85, offset: 0xB37AF, size: 0x8, addend: 0x0, symName: '-[FBTestManagerAPIMediator _XCT_exchangeCurrentProtocolVersion:minimumVersion:]', symObjAddr: 0x5930, symBinAddr: 0x6BD0, symSize: 0xA0 }
+  - { offsetInCU: 0x1ADF, offset: 0xB3809, size: 0x8, addend: 0x0, symName: '-[FBTestManagerAPIMediator _XCT_recordedKeyEventsWithApplicationSnapshot:characters:charactersIgnoringModifiers:modifierFlags:]', symObjAddr: 0x59D0, symBinAddr: 0x6C70, symSize: 0x100 }
+  - { offsetInCU: 0x1B59, offset: 0xB3883, size: 0x8, addend: 0x0, symName: '-[FBTestManagerAPIMediator _XCT_recordedEventNames:duration:startLocation:startElementSnapshot:startApplicationSnapshot:endLocation:endElementSnapshot:endApplicationSnapshot:]', symObjAddr: 0x5AD0, symBinAddr: 0x6D70, symSize: 0x200 }
+  - { offsetInCU: 0x1C15, offset: 0xB393F, size: 0x8, addend: 0x0, symName: '-[FBTestManagerAPIMediator _XCT_recordedKeyEventsWithCharacters:charactersIgnoringModifiers:modifierFlags:]', symObjAddr: 0x5CD0, symBinAddr: 0x6F70, symSize: 0xD0 }
+  - { offsetInCU: 0x1C7F, offset: 0xB39A9, size: 0x8, addend: 0x0, symName: '-[FBTestManagerAPIMediator _XCT_recordedEventNames:duration:startElement:startApplicationSnapshot:endElement:endApplicationSnapshot:]', symObjAddr: 0x5DA0, symBinAddr: 0x7040, symSize: 0x180 }
+  - { offsetInCU: 0x1D19, offset: 0xB3A43, size: 0x8, addend: 0x0, symName: '-[FBTestManagerAPIMediator _XCT_recordedEvent:targetElementID:applicationSnapshot:]', symObjAddr: 0x5F20, symBinAddr: 0x71C0, symSize: 0xD0 }
+  - { offsetInCU: 0x1D83, offset: 0xB3AAD, size: 0x8, addend: 0x0, symName: '-[FBTestManagerAPIMediator _XCT_recordedEvent:forElement:]', symObjAddr: 0x5FF0, symBinAddr: 0x7290, symSize: 0xA0 }
+  - { offsetInCU: 0x1DDD, offset: 0xB3B07, size: 0x8, addend: 0x0, symName: '-[FBTestManagerAPIMediator _XCT_testMethod:ofClass:didMeasureMetric:file:line:]', symObjAddr: 0x6090, symBinAddr: 0x7330, symSize: 0x140 }
+  - { offsetInCU: 0x1E67, offset: 0xB3B91, size: 0x8, addend: 0x0, symName: '-[FBTestManagerAPIMediator _XCT_testCase:method:didStallOnMainThreadInFile:line:]', symObjAddr: 0x61D0, symBinAddr: 0x7470, symSize: 0x100 }
+  - { offsetInCU: 0x1EE1, offset: 0xB3C0B, size: 0x8, addend: 0x0, symName: '-[FBTestManagerAPIMediator _XCT_testCaseWasSkippedForTestClass:method:withMessage:file:line:]', symObjAddr: 0x62D0, symBinAddr: 0x7570, symSize: 0x140 }
+  - { offsetInCU: 0x1F6B, offset: 0xB3C95, size: 0x8, addend: 0x0, symName: '-[FBTestManagerAPIMediator _XCT_testSuite:didFinishAt:runCount:skipCount:failureCount:expectedFailureCount:uncaughtExceptionCount:testDuration:totalDuration:]', symObjAddr: 0x6410, symBinAddr: 0x76B0, symSize: 0x240 }
+  - { offsetInCU: 0x2038, offset: 0xB3D62, size: 0x8, addend: 0x0, symName: '-[FBTestManagerAPIMediator _XCT_testSuite:didFinishAt:runCount:skipCount:failureCount:unexpectedFailureCount:testDuration:totalDuration:]', symObjAddr: 0x6650, symBinAddr: 0x78F0, symSize: 0x200 }
+  - { offsetInCU: 0x20F4, offset: 0xB3E1E, size: 0x8, addend: 0x0, symName: '-[FBTestManagerAPIMediator _XCT_testMethod:ofClass:didMeasureValues:forPerformanceMetricID:name:withUnits:baselineName:baselineAverage:maxPercentRegression:maxPercentRelativeStandardDeviation:file:line:]', symObjAddr: 0x6850, symBinAddr: 0x7AF0, symSize: 0x300 }
+  - { offsetInCU: 0x21F4, offset: 0xB3F1E, size: 0x8, addend: 0x0, symName: '-[FBTestManagerAPIMediator _XCT_testBundleReady]', symObjAddr: 0x6B50, symBinAddr: 0x7DF0, symSize: 0x30 }
+  - { offsetInCU: 0x222E, offset: 0xB3F58, size: 0x8, addend: 0x0, symName: '-[FBTestManagerAPIMediator _XCT_testRunnerReadyWithCapabilities:]', symObjAddr: 0x6B80, symBinAddr: 0x7E20, symSize: 0x70 }
+  - { offsetInCU: 0x2278, offset: 0xB3FA2, size: 0x8, addend: 0x0, symName: '-[FBTestManagerAPIMediator _XCT_didFailToBootstrapWithError:]', symObjAddr: 0x6BF0, symBinAddr: 0x7E90, symSize: 0x70 }
+  - { offsetInCU: 0x22C2, offset: 0xB3FEC, size: 0x8, addend: 0x0, symName: '-[FBTestManagerAPIMediator _XCT_reportTestWithIdentifier:didExceedExecutionTimeAllowance:]', symObjAddr: 0x6C60, symBinAddr: 0x7F00, symSize: 0xA0 }
+  - { offsetInCU: 0x231C, offset: 0xB4046, size: 0x8, addend: 0x0, symName: '-[FBTestManagerAPIMediator _XCT_testCaseDidStartWithIdentifier:]', symObjAddr: 0x6D00, symBinAddr: 0x7FA0, symSize: 0x70 }
+  - { offsetInCU: 0x2366, offset: 0xB4090, size: 0x8, addend: 0x0, symName: '-[FBTestManagerAPIMediator _XCT_testCaseDidStartWithIdentifier:iteration:]', symObjAddr: 0x6D70, symBinAddr: 0x8010, symSize: 0xA0 }
+  - { offsetInCU: 0x23C0, offset: 0xB40EA, size: 0x8, addend: 0x0, symName: '-[FBTestManagerAPIMediator _XCT_testCaseWithIdentifier:didRecordExpectedFailure:]', symObjAddr: 0x6E10, symBinAddr: 0x80B0, symSize: 0xA0 }
+  - { offsetInCU: 0x241A, offset: 0xB4144, size: 0x8, addend: 0x0, symName: '-[FBTestManagerAPIMediator _XCT_testCaseWithIdentifier:didStallOnMainThreadInFile:line:]', symObjAddr: 0x6EB0, symBinAddr: 0x8150, symSize: 0xD0 }
+  - { offsetInCU: 0x2484, offset: 0xB41AE, size: 0x8, addend: 0x0, symName: '-[FBTestManagerAPIMediator _XCT_testCaseWithIdentifier:wasSkippedWithMessage:sourceCodeContext:]', symObjAddr: 0x6F80, symBinAddr: 0x8220, symSize: 0xD0 }
+  - { offsetInCU: 0x24EE, offset: 0xB4218, size: 0x8, addend: 0x0, symName: '-[FBTestManagerAPIMediator _XCT_testSuiteWithIdentifier:didRecordIssue:]', symObjAddr: 0x7050, symBinAddr: 0x82F0, symSize: 0xA0 }
+  - { offsetInCU: 0x2548, offset: 0xB4272, size: 0x8, addend: 0x0, symName: '-[FBTestManagerAPIMediator unknownMessageForSelector:]', symObjAddr: 0x70F0, symBinAddr: 0x8390, symSize: 0x80 }
+  - { offsetInCU: 0x2592, offset: 0xB42BC, size: 0x8, addend: 0x0, symName: '-[FBTestManagerAPIMediator handleUnimplementedXCTRequest:]', symObjAddr: 0x7170, symBinAddr: 0x8410, symSize: 0x120 }
+  - { offsetInCU: 0x25DC, offset: 0xB4306, size: 0x8, addend: 0x0, symName: '-[FBTestManagerAPIMediator _XCT_reportSelfDiagnosisIssue:description:]', symObjAddr: 0x7290, symBinAddr: 0x8530, symSize: 0xA0 }
+  - { offsetInCU: 0x2636, offset: 0xB4360, size: 0x8, addend: 0x0, symName: '-[FBTestManagerAPIMediator _XCT_testCaseWithIdentifier:didMeasureMetric:file:line:]', symObjAddr: 0x7330, symBinAddr: 0x85D0, symSize: 0x100 }
+  - { offsetInCU: 0x26B0, offset: 0xB43DA, size: 0x8, addend: 0x0, symName: '-[FBTestManagerAPIMediator context]', symObjAddr: 0x7430, symBinAddr: 0x86D0, symSize: 0x20 }
+  - { offsetInCU: 0x26E9, offset: 0xB4413, size: 0x8, addend: 0x0, symName: '-[FBTestManagerAPIMediator target]', symObjAddr: 0x7450, symBinAddr: 0x86F0, symSize: 0x20 }
+  - { offsetInCU: 0x2722, offset: 0xB444C, size: 0x8, addend: 0x0, symName: '-[FBTestManagerAPIMediator reporter]', symObjAddr: 0x7470, symBinAddr: 0x8710, symSize: 0x20 }
+  - { offsetInCU: 0x275B, offset: 0xB4485, size: 0x8, addend: 0x0, symName: '-[FBTestManagerAPIMediator logger]', symObjAddr: 0x7490, symBinAddr: 0x8730, symSize: 0x20 }
+  - { offsetInCU: 0x2794, offset: 0xB44BE, size: 0x8, addend: 0x0, symName: '-[FBTestManagerAPIMediator requestQueue]', symObjAddr: 0x74B0, symBinAddr: 0x8750, symSize: 0x20 }
+  - { offsetInCU: 0x27CD, offset: 0xB44F7, size: 0x8, addend: 0x0, symName: '-[FBTestManagerAPIMediator reporterAdapter]', symObjAddr: 0x74D0, symBinAddr: 0x8770, symSize: 0x20 }
+  - { offsetInCU: 0x2806, offset: 0xB4530, size: 0x8, addend: 0x0, symName: '-[FBTestManagerAPIMediator tokenToLaunchedAppMap]', symObjAddr: 0x74F0, symBinAddr: 0x8790, symSize: 0x20 }
+  - { offsetInCU: 0x283F, offset: 0xB4569, size: 0x8, addend: 0x0, symName: '-[FBTestManagerAPIMediator .cxx_destruct]', symObjAddr: 0x7510, symBinAddr: 0x87B0, symSize: 0x91 }
+  - { offsetInCU: 0x27, offset: 0xB5105, size: 0x8, addend: 0x0, symName: '-[FBTestRunnerConfiguration initWithSessionIdentifier:testRunner:launchEnvironment:testedApplicationAdditionalEnvironment:testConfiguration:]', symObjAddr: 0x0, symBinAddr: 0x8850, symSize: 0x1C0 }
+  - { offsetInCU: 0x195, offset: 0xB5273, size: 0x8, addend: 0x0, symName: '-[FBTestRunnerConfiguration initWithSessionIdentifier:testRunner:launchEnvironment:testedApplicationAdditionalEnvironment:testConfiguration:]', symObjAddr: 0x0, symBinAddr: 0x8850, symSize: 0x1C0 }
+  - { offsetInCU: 0x219, offset: 0xB52F7, size: 0x8, addend: 0x0, symName: '+[FBTestRunnerConfiguration prepareConfigurationWithTarget:testLaunchConfiguration:workingDirectory:codesign:]', symObjAddr: 0x1C0, symBinAddr: 0x8A10, symSize: 0x370 }
+  - { offsetInCU: 0x28E, offset: 0xB536C, size: 0x8, addend: 0x0, symName: '___110+[FBTestRunnerConfiguration prepareConfigurationWithTarget:testLaunchConfiguration:workingDirectory:codesign:]_block_invoke', symObjAddr: 0x530, symBinAddr: 0x8D80, symSize: 0x80 }
+  - { offsetInCU: 0x317, offset: 0xB53F5, size: 0x8, addend: 0x0, symName: '+[FBTestRunnerConfiguration launchEnvironmentWithHostApplication:hostApplicationAdditionalEnvironment:testBundle:testConfigurationPath:frameworkSearchPaths:]', symObjAddr: 0x690, symBinAddr: 0x8E00, symSize: 0x450 }
+  - { offsetInCU: 0x3C2, offset: 0xB54A0, size: 0x8, addend: 0x0, symName: '-[FBTestRunnerConfiguration launchArguments]', symObjAddr: 0xAE0, symBinAddr: 0x9250, symSize: 0xA0 }
+  - { offsetInCU: 0x3FB, offset: 0xB54D9, size: 0x8, addend: 0x0, symName: '-[FBTestRunnerConfiguration copyWithZone:]', symObjAddr: 0xB80, symBinAddr: 0x92F0, symSize: 0x20 }
+  - { offsetInCU: 0x443, offset: 0xB5521, size: 0x8, addend: 0x0, symName: '+[FBTestRunnerConfiguration addAdditionalEnvironmentVariables:]', symObjAddr: 0xBA0, symBinAddr: 0x9310, symSize: 0x4C0 }
+  - { offsetInCU: 0x4FD, offset: 0xB55DB, size: 0x8, addend: 0x0, symName: '+[FBTestRunnerConfiguration prepareConfigurationWithTargetAfterCodesignatureCheck:testLaunchConfiguration:workingDirectory:]', symObjAddr: 0x1060, symBinAddr: 0x97D0, symSize: 0xEE0 }
+  - { offsetInCU: 0x638, offset: 0xB5716, size: 0x8, addend: 0x0, symName: '___124+[FBTestRunnerConfiguration prepareConfigurationWithTargetAfterCodesignatureCheck:testLaunchConfiguration:workingDirectory:]_block_invoke', symObjAddr: 0x1F40, symBinAddr: 0xA6B0, symSize: 0x7A0 }
+  - { offsetInCU: 0x7B9, offset: 0xB5897, size: 0x8, addend: 0x0, symName: ___copy_helper_block_e8_32s40s48s56s64s72s, symObjAddr: 0x26E0, symBinAddr: 0xAE50, symSize: 0xE0 }
+  - { offsetInCU: 0x7E0, offset: 0xB58BE, size: 0x8, addend: 0x0, symName: ___destroy_helper_block_e8_32s40s48s56s64s72s, symObjAddr: 0x27C0, symBinAddr: 0xAF30, symSize: 0xA0 }
+  - { offsetInCU: 0x7FE, offset: 0xB58DC, size: 0x8, addend: 0x0, symName: '-[FBTestRunnerConfiguration sessionIdentifier]', symObjAddr: 0x2860, symBinAddr: 0xAFD0, symSize: 0x20 }
+  - { offsetInCU: 0x837, offset: 0xB5915, size: 0x8, addend: 0x0, symName: '-[FBTestRunnerConfiguration testRunner]', symObjAddr: 0x2880, symBinAddr: 0xAFF0, symSize: 0x20 }
+  - { offsetInCU: 0x870, offset: 0xB594E, size: 0x8, addend: 0x0, symName: '-[FBTestRunnerConfiguration launchEnvironment]', symObjAddr: 0x28A0, symBinAddr: 0xB010, symSize: 0x20 }
+  - { offsetInCU: 0x8A9, offset: 0xB5987, size: 0x8, addend: 0x0, symName: '-[FBTestRunnerConfiguration testedApplicationAdditionalEnvironment]', symObjAddr: 0x28C0, symBinAddr: 0xB030, symSize: 0x20 }
+  - { offsetInCU: 0x8E2, offset: 0xB59C0, size: 0x8, addend: 0x0, symName: '-[FBTestRunnerConfiguration testConfiguration]', symObjAddr: 0x28E0, symBinAddr: 0xB050, symSize: 0x20 }
+  - { offsetInCU: 0x91B, offset: 0xB59F9, size: 0x8, addend: 0x0, symName: '-[FBTestRunnerConfiguration .cxx_destruct]', symObjAddr: 0x2900, symBinAddr: 0xB070, symSize: 0x6F }
+  - { offsetInCU: 0x27, offset: 0xB5C87, size: 0x8, addend: 0x0, symName: '+[FBOToolOperation listSanitiserDylibsRequiredByBundle:onQueue:]', symObjAddr: 0x0, symBinAddr: 0xB0E0, symSize: 0x4E0 }
+  - { offsetInCU: 0x43, offset: 0xB5CA3, size: 0x8, addend: 0x0, symName: '+[FBOToolOperation listSanitiserDylibsRequiredByBundle:onQueue:]', symObjAddr: 0x0, symBinAddr: 0xB0E0, symSize: 0x4E0 }
+  - { offsetInCU: 0xE8, offset: 0xB5D48, size: 0x8, addend: 0x0, symName: '___64+[FBOToolOperation listSanitiserDylibsRequiredByBundle:onQueue:]_block_invoke', symObjAddr: 0x4E0, symBinAddr: 0xB5C0, symSize: 0xB0 }
+  - { offsetInCU: 0x15E, offset: 0xB5DBE, size: 0x8, addend: 0x0, symName: '+[FBOToolOperation extractSanitiserDylibsfromOtoolOutput:]', symObjAddr: 0x590, symBinAddr: 0xB670, symSize: 0x250 }
+  - { offsetInCU: 0x1F6, offset: 0xB5E56, size: 0x8, addend: 0x0, symName: '___58+[FBOToolOperation extractSanitiserDylibsfromOtoolOutput:]_block_invoke', symObjAddr: 0x7E0, symBinAddr: 0xB8C0, symSize: 0xD0 }
+  - { offsetInCU: 0x27, offset: 0xB60DB, size: 0x8, addend: 0x0, symName: '-[FBJSONTestReporter initWithTestBundlePath:testType:logger:dataConsumer:]', symObjAddr: 0x0, symBinAddr: 0xB990, symSize: 0x200 }
+  - { offsetInCU: 0x224, offset: 0xB62D8, size: 0x8, addend: 0x0, symName: '-[FBJSONTestReporter initWithTestBundlePath:testType:logger:dataConsumer:]', symObjAddr: 0x0, symBinAddr: 0xB990, symSize: 0x200 }
+  - { offsetInCU: 0x299, offset: 0xB634D, size: 0x8, addend: 0x0, symName: '-[FBJSONTestReporter printReportWithError:]', symObjAddr: 0x200, symBinAddr: 0xBB90, symSize: 0x2C0 }
+  - { offsetInCU: 0x30E, offset: 0xB63C2, size: 0x8, addend: 0x0, symName: '-[FBJSONTestReporter processWaitingForDebuggerWithProcessIdentifier:]', symObjAddr: 0x4C0, symBinAddr: 0xBE50, symSize: 0x70 }
+  - { offsetInCU: 0x352, offset: 0xB6406, size: 0x8, addend: 0x0, symName: '-[FBJSONTestReporter didBeginExecutingTestPlan]', symObjAddr: 0x530, symBinAddr: 0xBEC0, symSize: 0xD0 }
+  - { offsetInCU: 0x387, offset: 0xB643B, size: 0x8, addend: 0x0, symName: '-[FBJSONTestReporter didFinishExecutingTestPlan]', symObjAddr: 0x600, symBinAddr: 0xBF90, symSize: 0x270 }
+  - { offsetInCU: 0x3DA, offset: 0xB648E, size: 0x8, addend: 0x0, symName: '-[FBJSONTestReporter testSuite:didStartAt:]', symObjAddr: 0x870, symBinAddr: 0xC200, symSize: 0xB0 }
+  - { offsetInCU: 0x42D, offset: 0xB64E1, size: 0x8, addend: 0x0, symName: '-[FBJSONTestReporter testCaseDidStartForTestClass:method:]', symObjAddr: 0x920, symBinAddr: 0xC2B0, symSize: 0x160 }
+  - { offsetInCU: 0x48F, offset: 0xB6543, size: 0x8, addend: 0x0, symName: _FBFullyFormattedXCTestName, symObjAddr: 0xA80, symBinAddr: 0xC410, symSize: 0xB0 }
+  - { offsetInCU: 0x4CB, offset: 0xB657F, size: 0x8, addend: 0x0, symName: '-[FBJSONTestReporter testCaseDidFailForTestClass:method:exceptions:]', symObjAddr: 0xB30, symBinAddr: 0xC4C0, symSize: 0x3D0 }
+  - { offsetInCU: 0x561, offset: 0xB6615, size: 0x8, addend: 0x0, symName: '-[FBJSONTestReporter testCaseDidFinishForTestClass:method:withStatus:duration:logs:]', symObjAddr: 0xF00, symBinAddr: 0xC890, symSize: 0x1F0 }
+  - { offsetInCU: 0x5F0, offset: 0xB66A4, size: 0x8, addend: 0x0, symName: '-[FBJSONTestReporter finishedWithSummary:]', symObjAddr: 0x10F0, symBinAddr: 0xCA80, symSize: 0x90 }
+  - { offsetInCU: 0x634, offset: 0xB66E8, size: 0x8, addend: 0x0, symName: '-[FBJSONTestReporter didRecordVideoAtPath:]', symObjAddr: 0x1180, symBinAddr: 0xCB10, symSize: 0xF0 }
+  - { offsetInCU: 0x678, offset: 0xB672C, size: 0x8, addend: 0x0, symName: '-[FBJSONTestReporter didSaveOSLogAtPath:]', symObjAddr: 0x1270, symBinAddr: 0xCC00, symSize: 0xF0 }
+  - { offsetInCU: 0x6BC, offset: 0xB6770, size: 0x8, addend: 0x0, symName: '-[FBJSONTestReporter didCopiedTestArtifact:toPath:]', symObjAddr: 0x1360, symBinAddr: 0xCCF0, symSize: 0x130 }
+  - { offsetInCU: 0x712, offset: 0xB67C6, size: 0x8, addend: 0x0, symName: '-[FBJSONTestReporter testHadOutput:]', symObjAddr: 0x1490, symBinAddr: 0xCE20, symSize: 0xD0 }
+  - { offsetInCU: 0x756, offset: 0xB680A, size: 0x8, addend: 0x0, symName: '-[FBJSONTestReporter handleExternalEvent:]', symObjAddr: 0x1560, symBinAddr: 0xCEF0, symSize: 0x300 }
+  - { offsetInCU: 0x7D6, offset: 0xB688A, size: 0x8, addend: 0x0, symName: '-[FBJSONTestReporter processUnderTestDidExit]', symObjAddr: 0x1860, symBinAddr: 0xD1F0, symSize: 0x10 }
+  - { offsetInCU: 0x80B, offset: 0xB68BF, size: 0x8, addend: 0x0, symName: '-[FBJSONTestReporter didCrashDuringTest:]', symObjAddr: 0x1870, symBinAddr: 0xD200, symSize: 0x60 }
+  - { offsetInCU: 0x84F, offset: 0xB6903, size: 0x8, addend: 0x0, symName: '-[FBJSONTestReporter printEvent:]', symObjAddr: 0x18D0, symBinAddr: 0xD260, symSize: 0x220 }
+  - { offsetInCU: 0x8B1, offset: 0xB6965, size: 0x8, addend: 0x0, symName: '-[FBJSONTestReporter noStartOfTestPlanErrorMessage]', symObjAddr: 0x1AF0, symBinAddr: 0xD480, symSize: 0xC0 }
+  - { offsetInCU: 0x8F9, offset: 0xB69AD, size: 0x8, addend: 0x0, symName: '+[FBJSONTestReporter exceptionEvent:file:line:]', symObjAddr: 0x1BB0, symBinAddr: 0xD540, symSize: 0x150 }
+  - { offsetInCU: 0x963, offset: 0xB6A17, size: 0x8, addend: 0x0, symName: '+[FBJSONTestReporter beginTestCaseEvent:testMethod:]', symObjAddr: 0x1D00, symBinAddr: 0xD690, symSize: 0x150 }
+  - { offsetInCU: 0x9BE, offset: 0xB6A72, size: 0x8, addend: 0x0, symName: '+[FBJSONTestReporter beginTestSuiteEvent:]', symObjAddr: 0x1E50, symBinAddr: 0xD7E0, symSize: 0xD0 }
+  - { offsetInCU: 0xA06, offset: 0xB6ABA, size: 0x8, addend: 0x0, symName: '+[FBJSONTestReporter testOutputEvent:]', symObjAddr: 0x1F20, symBinAddr: 0xD8B0, symSize: 0xD0 }
+  - { offsetInCU: 0xA4E, offset: 0xB6B02, size: 0x8, addend: 0x0, symName: '+[FBJSONTestReporter waitingForDebuggerEvent:]', symObjAddr: 0x1FF0, symBinAddr: 0xD980, symSize: 0x170 }
+  - { offsetInCU: 0xA9B, offset: 0xB6B4F, size: 0x8, addend: 0x0, symName: '+[FBJSONTestReporter createOCUnitBeginEvent:testBundlePath:]', symObjAddr: 0x2160, symBinAddr: 0xDAF0, symSize: 0x150 }
+  - { offsetInCU: 0xAF9, offset: 0xB6BAD, size: 0x8, addend: 0x0, symName: '+[FBJSONTestReporter createOCUnitEndEvent:testBundlePath:message:success:]', symObjAddr: 0x22B0, symBinAddr: 0xDC40, symSize: 0x330 }
+  - { offsetInCU: 0xB8A, offset: 0xB6C3E, size: 0x8, addend: 0x0, symName: '+[FBJSONTestReporter finishedEventFromSummary:]', symObjAddr: 0x25E0, symBinAddr: 0xDF70, symSize: 0x310 }
+  - { offsetInCU: 0xBD7, offset: 0xB6C8B, size: 0x8, addend: 0x0, symName: '+[FBJSONTestReporter testCaseDidFinishForTestClass:method:status:duration:pendingTestOutput:xctestNameExceptionsMapping:]', symObjAddr: 0x28F0, symBinAddr: 0xE280, symSize: 0x480 }
+  - { offsetInCU: 0xC8A, offset: 0xB6D3E, size: 0x8, addend: 0x0, symName: '-[FBJSONTestReporter dataConsumer]', symObjAddr: 0x2D70, symBinAddr: 0xE700, symSize: 0x20 }
+  - { offsetInCU: 0xCC3, offset: 0xB6D77, size: 0x8, addend: 0x0, symName: '-[FBJSONTestReporter logger]', symObjAddr: 0x2D90, symBinAddr: 0xE720, symSize: 0x20 }
+  - { offsetInCU: 0xCFC, offset: 0xB6DB0, size: 0x8, addend: 0x0, symName: '-[FBJSONTestReporter testBundlePath]', symObjAddr: 0x2DB0, symBinAddr: 0xE740, symSize: 0x20 }
+  - { offsetInCU: 0xD35, offset: 0xB6DE9, size: 0x8, addend: 0x0, symName: '-[FBJSONTestReporter testType]', symObjAddr: 0x2DD0, symBinAddr: 0xE760, symSize: 0x20 }
+  - { offsetInCU: 0xD6E, offset: 0xB6E22, size: 0x8, addend: 0x0, symName: '-[FBJSONTestReporter events]', symObjAddr: 0x2DF0, symBinAddr: 0xE780, symSize: 0x20 }
+  - { offsetInCU: 0xDA7, offset: 0xB6E5B, size: 0x8, addend: 0x0, symName: '-[FBJSONTestReporter xctestNameExceptionsMapping]', symObjAddr: 0x2E10, symBinAddr: 0xE7A0, symSize: 0x20 }
+  - { offsetInCU: 0xDE0, offset: 0xB6E94, size: 0x8, addend: 0x0, symName: '-[FBJSONTestReporter pendingTestOutput]', symObjAddr: 0x2E30, symBinAddr: 0xE7C0, symSize: 0x20 }
+  - { offsetInCU: 0xE19, offset: 0xB6ECD, size: 0x8, addend: 0x0, symName: '-[FBJSONTestReporter currentTestName]', symObjAddr: 0x2E50, symBinAddr: 0xE7E0, symSize: 0x20 }
+  - { offsetInCU: 0xE52, offset: 0xB6F06, size: 0x8, addend: 0x0, symName: '-[FBJSONTestReporter setCurrentTestName:]', symObjAddr: 0x2E70, symBinAddr: 0xE800, symSize: 0x30 }
+  - { offsetInCU: 0xE94, offset: 0xB6F48, size: 0x8, addend: 0x0, symName: '-[FBJSONTestReporter crashError]', symObjAddr: 0x2EA0, symBinAddr: 0xE830, symSize: 0x20 }
+  - { offsetInCU: 0xECD, offset: 0xB6F81, size: 0x8, addend: 0x0, symName: '-[FBJSONTestReporter setCrashError:]', symObjAddr: 0x2EC0, symBinAddr: 0xE850, symSize: 0x30 }
+  - { offsetInCU: 0xF0F, offset: 0xB6FC3, size: 0x8, addend: 0x0, symName: '-[FBJSONTestReporter started]', symObjAddr: 0x2EF0, symBinAddr: 0xE880, symSize: 0x20 }
+  - { offsetInCU: 0xF48, offset: 0xB6FFC, size: 0x8, addend: 0x0, symName: '-[FBJSONTestReporter setStarted:]', symObjAddr: 0x2F10, symBinAddr: 0xE8A0, symSize: 0x20 }
+  - { offsetInCU: 0xF8A, offset: 0xB703E, size: 0x8, addend: 0x0, symName: '-[FBJSONTestReporter finished]', symObjAddr: 0x2F30, symBinAddr: 0xE8C0, symSize: 0x20 }
+  - { offsetInCU: 0xFC3, offset: 0xB7077, size: 0x8, addend: 0x0, symName: '-[FBJSONTestReporter setFinished:]', symObjAddr: 0x2F50, symBinAddr: 0xE8E0, symSize: 0x20 }
+  - { offsetInCU: 0x1005, offset: 0xB70B9, size: 0x8, addend: 0x0, symName: '-[FBJSONTestReporter .cxx_destruct]', symObjAddr: 0x2F70, symBinAddr: 0xE900, symSize: 0xB3 }
+  - { offsetInCU: 0x27, offset: 0xB723F, size: 0x8, addend: 0x0, symName: '-[XCTestBootstrapError init]', symObjAddr: 0x0, symBinAddr: 0xE9C0, symSize: 0xC0 }
+  - { offsetInCU: 0x41, offset: 0xB7259, size: 0x8, addend: 0x0, symName: _XCTestBootstrapErrorDomain, symObjAddr: 0x1D8, symBinAddr: 0x4C510, symSize: 0x0 }
+  - { offsetInCU: 0x61, offset: 0xB7279, size: 0x8, addend: 0x0, symName: _XCTestBootstrapErrorCodeStartupFailure, symObjAddr: 0x1E8, symBinAddr: 0x3ED20, symSize: 0x0 }
+  - { offsetInCU: 0x83, offset: 0xB729B, size: 0x8, addend: 0x0, symName: _XCTestBootstrapErrorCodeLostConnection, symObjAddr: 0x1F0, symBinAddr: 0x3ED28, symSize: 0x0 }
+  - { offsetInCU: 0x99, offset: 0xB72B1, size: 0x8, addend: 0x0, symName: _XCTestBootstrapErrorCodeStartupTimeout, symObjAddr: 0x1F8, symBinAddr: 0x3ED30, symSize: 0x0 }
+  - { offsetInCU: 0xAF, offset: 0xB72C7, size: 0x8, addend: 0x0, symName: _FBTestErrorDomain, symObjAddr: 0x1E0, symBinAddr: 0x4C518, symSize: 0x0 }
+  - { offsetInCU: 0xEB, offset: 0xB7303, size: 0x8, addend: 0x0, symName: '-[XCTestBootstrapError init]', symObjAddr: 0x0, symBinAddr: 0xE9C0, symSize: 0xC0 }
+  - { offsetInCU: 0x124, offset: 0xB733C, size: 0x8, addend: 0x0, symName: '-[FBXCTestError init]', symObjAddr: 0xC0, symBinAddr: 0xEA80, symSize: 0x9B }
+  - { offsetInCU: 0x27, offset: 0xB73B9, size: 0x8, addend: 0x0, symName: '-[FBLogicReporterAdapter initWithReporter:logger:]', symObjAddr: 0x0, symBinAddr: 0xEB20, symSize: 0x120 }
+  - { offsetInCU: 0x12C, offset: 0xB74BE, size: 0x8, addend: 0x0, symName: '-[FBLogicReporterAdapter initWithReporter:logger:]', symObjAddr: 0x0, symBinAddr: 0xEB20, symSize: 0x120 }
+  - { offsetInCU: 0x183, offset: 0xB7515, size: 0x8, addend: 0x0, symName: '-[FBLogicReporterAdapter didBeginExecutingTestPlan]', symObjAddr: 0x120, symBinAddr: 0xEC40, symSize: 0x50 }
+  - { offsetInCU: 0x1B8, offset: 0xB754A, size: 0x8, addend: 0x0, symName: '-[FBLogicReporterAdapter didFinishExecutingTestPlan]', symObjAddr: 0x170, symBinAddr: 0xEC90, symSize: 0x90 }
+  - { offsetInCU: 0x1ED, offset: 0xB757F, size: 0x8, addend: 0x0, symName: '-[FBLogicReporterAdapter processWaitingForDebuggerWithProcessIdentifier:]', symObjAddr: 0x200, symBinAddr: 0xED20, symSize: 0x60 }
+  - { offsetInCU: 0x231, offset: 0xB75C3, size: 0x8, addend: 0x0, symName: '-[FBLogicReporterAdapter testHadOutput:]', symObjAddr: 0x260, symBinAddr: 0xED80, symSize: 0x80 }
+  - { offsetInCU: 0x275, offset: 0xB7607, size: 0x8, addend: 0x0, symName: '-[FBLogicReporterAdapter handleEventJSONData:]', symObjAddr: 0x2E0, symBinAddr: 0xEE00, symSize: 0x930 }
+  - { offsetInCU: 0x39A, offset: 0xB772C, size: 0x8, addend: 0x0, symName: '-[FBLogicReporterAdapter handleEndTest:data:]', symObjAddr: 0xC10, symBinAddr: 0xF730, symSize: 0x350 }
+  - { offsetInCU: 0x45B, offset: 0xB77ED, size: 0x8, addend: 0x0, symName: '-[FBLogicReporterAdapter reportTestFailureForTestClass:testName:endTestEvent:]', symObjAddr: 0xF60, symBinAddr: 0xFA80, symSize: 0x490 }
+  - { offsetInCU: 0x548, offset: 0xB78DA, size: 0x8, addend: 0x0, symName: '-[FBLogicReporterAdapter didCrashDuringTest:]', symObjAddr: 0x13F0, symBinAddr: 0xFF10, symSize: 0x100 }
+  - { offsetInCU: 0x58C, offset: 0xB791E, size: 0x8, addend: 0x0, symName: '-[FBLogicReporterAdapter reporter]', symObjAddr: 0x14F0, symBinAddr: 0x10010, symSize: 0x20 }
+  - { offsetInCU: 0x5C5, offset: 0xB7957, size: 0x8, addend: 0x0, symName: '-[FBLogicReporterAdapter logger]', symObjAddr: 0x1510, symBinAddr: 0x10030, symSize: 0x20 }
+  - { offsetInCU: 0x5FE, offset: 0xB7990, size: 0x8, addend: 0x0, symName: '-[FBLogicReporterAdapter .cxx_destruct]', symObjAddr: 0x1530, symBinAddr: 0x10050, symSize: 0x3C }
+  - { offsetInCU: 0x27, offset: 0xB7B02, size: 0x8, addend: 0x0, symName: '+[FBXCTestProcess ensureProcess:completesWithin:crashLogCommands:queue:logger:]', symObjAddr: 0x0, symBinAddr: 0x10090, symSize: 0x500 }
+  - { offsetInCU: 0xA4, offset: 0xB7B7F, size: 0x8, addend: 0x0, symName: '+[FBXCTestProcess ensureProcess:completesWithin:crashLogCommands:queue:logger:]', symObjAddr: 0x0, symBinAddr: 0x10090, symSize: 0x500 }
+  - { offsetInCU: 0x137, offset: 0xB7C12, size: 0x8, addend: 0x0, symName: '___79+[FBXCTestProcess ensureProcess:completesWithin:crashLogCommands:queue:logger:]_block_invoke', symObjAddr: 0x500, symBinAddr: 0x10590, symSize: 0x40 }
+  - { offsetInCU: 0x1AD, offset: 0xB7C88, size: 0x8, addend: 0x0, symName: '___79+[FBXCTestProcess ensureProcess:completesWithin:crashLogCommands:queue:logger:]_block_invoke.15', symObjAddr: 0x620, symBinAddr: 0x105D0, symSize: 0x210 }
+  - { offsetInCU: 0x244, offset: 0xB7D1F, size: 0x8, addend: 0x0, symName: '___79+[FBXCTestProcess ensureProcess:completesWithin:crashLogCommands:queue:logger:]_block_invoke_2', symObjAddr: 0x830, symBinAddr: 0x107E0, symSize: 0xF0 }
+  - { offsetInCU: 0x2DB, offset: 0xB7DB6, size: 0x8, addend: 0x0, symName: ___copy_helper_block_e8_32s40s48s56s64s, symObjAddr: 0x920, symBinAddr: 0x108D0, symSize: 0xC0 }
+  - { offsetInCU: 0x302, offset: 0xB7DDD, size: 0x8, addend: 0x0, symName: ___destroy_helper_block_e8_32s40s48s56s64s, symObjAddr: 0x9E0, symBinAddr: 0x10990, symSize: 0x90 }
+  - { offsetInCU: 0x320, offset: 0xB7DFB, size: 0x8, addend: 0x0, symName: '+[FBXCTestProcess describeFailingExitCode:]', symObjAddr: 0xA70, symBinAddr: 0x10A20, symSize: 0x120 }
+  - { offsetInCU: 0x368, offset: 0xB7E43, size: 0x8, addend: 0x0, symName: '+[FBXCTestProcess performSampleStackshotOnProcess:forTimeout:queue:logger:]', symObjAddr: 0xB90, symBinAddr: 0x10B40, symSize: 0x340 }
+  - { offsetInCU: 0x3DD, offset: 0xB7EB8, size: 0x8, addend: 0x0, symName: '___75+[FBXCTestProcess performSampleStackshotOnProcess:forTimeout:queue:logger:]_block_invoke', symObjAddr: 0xED0, symBinAddr: 0x10E80, symSize: 0xD0 }
+  - { offsetInCU: 0x43E, offset: 0xB7F19, size: 0x8, addend: 0x0, symName: '___75+[FBXCTestProcess performSampleStackshotOnProcess:forTimeout:queue:logger:]_block_invoke.52', symObjAddr: 0x1010, symBinAddr: 0x10F50, symSize: 0x150 }
+  - { offsetInCU: 0x4AD, offset: 0xB7F88, size: 0x8, addend: 0x0, symName: '___75+[FBXCTestProcess performSampleStackshotOnProcess:forTimeout:queue:logger:]_block_invoke_2', symObjAddr: 0x1160, symBinAddr: 0x110A0, symSize: 0x70 }
+  - { offsetInCU: 0x50A, offset: 0xB7FE5, size: 0x8, addend: 0x0, symName: '+[FBXCTestProcess performCrashLogQueryForProcess:startDate:crashLogCommands:crashLogWaitTime:queue:logger:]', symObjAddr: 0x1270, symBinAddr: 0x11110, symSize: 0x270 }
+  - { offsetInCU: 0x59D, offset: 0xB8078, size: 0x8, addend: 0x0, symName: '___107+[FBXCTestProcess performCrashLogQueryForProcess:startDate:crashLogCommands:crashLogWaitTime:queue:logger:]_block_invoke', symObjAddr: 0x14E0, symBinAddr: 0x11380, symSize: 0xF0 }
+  - { offsetInCU: 0x5DA, offset: 0xB80B5, size: 0x8, addend: 0x0, symName: '+[FBXCTestProcess crashLogsForTerminationOfProcess:since:crashLogCommands:crashLogWaitTime:queue:]', symObjAddr: 0x15D0, symBinAddr: 0x11470, symSize: 0x283 }
+  - { offsetInCU: 0x27, offset: 0xB8616, size: 0x8, addend: 0x0, symName: '+[FBManagedTestRunStrategy runToCompletionWithTarget:configuration:codesign:workingDirectory:reporter:logger:]', symObjAddr: 0x0, symBinAddr: 0x11700, symSize: 0x6B0 }
+  - { offsetInCU: 0xAE, offset: 0xB869D, size: 0x8, addend: 0x0, symName: '+[FBManagedTestRunStrategy runToCompletionWithTarget:configuration:codesign:workingDirectory:reporter:logger:]', symObjAddr: 0x0, symBinAddr: 0x11700, symSize: 0x6B0 }
+  - { offsetInCU: 0x162, offset: 0xB8751, size: 0x8, addend: 0x0, symName: '___110+[FBManagedTestRunStrategy runToCompletionWithTarget:configuration:codesign:workingDirectory:reporter:logger:]_block_invoke', symObjAddr: 0x6B0, symBinAddr: 0x11DB0, symSize: 0x1C0 }
+  - { offsetInCU: 0x23C, offset: 0xB882B, size: 0x8, addend: 0x0, symName: '+[FBManagedTestRunStrategy prepareApplicationLaunchConfiguration:withTestRunnerConfiguration:]', symObjAddr: 0x9C0, symBinAddr: 0x11F70, symSize: 0x300 }
+  - { offsetInCU: 0x293, offset: 0xB8882, size: 0x8, addend: 0x0, symName: '+[FBManagedTestRunStrategy argumentsFromConfiguration:attributes:]', symObjAddr: 0xCC0, symBinAddr: 0x12270, symSize: 0x120 }
+  - { offsetInCU: 0x2EA, offset: 0xB88D9, size: 0x8, addend: 0x0, symName: '+[FBManagedTestRunStrategy environmentFromConfiguration:environment:]', symObjAddr: 0xDE0, symBinAddr: 0x12390, symSize: 0x117 }
+  - { offsetInCU: 0x27, offset: 0xB8BCA, size: 0x8, addend: 0x0, symName: '+[FBXcodeBuildOperation operationWithUDID:configuration:xcodeBuildPath:testRunFilePath:simDeviceSet:macOSTestShimPath:queue:logger:]', symObjAddr: 0x0, symBinAddr: 0x124B0, symSize: 0xD00 }
+  - { offsetInCU: 0x41, offset: 0xB8BE4, size: 0x8, addend: 0x0, symName: _XcodebuildEnvironmentTargetUDID, symObjAddr: 0x37D0, symBinAddr: 0x4C620, symSize: 0x0 }
+  - { offsetInCU: 0x61, offset: 0xB8C04, size: 0x8, addend: 0x0, symName: _XcodebuildEnvironmentDeviceSetPath, symObjAddr: 0x37D8, symBinAddr: 0x4C628, symSize: 0x0 }
+  - { offsetInCU: 0x77, offset: 0xB8C1A, size: 0x8, addend: 0x0, symName: _XcodebuildEnvironmentInsertDylib, symObjAddr: 0x37E0, symBinAddr: 0x4C630, symSize: 0x0 }
+  - { offsetInCU: 0x8D, offset: 0xB8C30, size: 0x8, addend: 0x0, symName: _XcodebuildDestinationTimeoutSecs, symObjAddr: 0x37E8, symBinAddr: 0x4C638, symSize: 0x0 }
+  - { offsetInCU: 0x20E, offset: 0xB8DB1, size: 0x8, addend: 0x0, symName: '+[FBXcodeBuildOperation operationWithUDID:configuration:xcodeBuildPath:testRunFilePath:simDeviceSet:macOSTestShimPath:queue:logger:]', symObjAddr: 0x0, symBinAddr: 0x124B0, symSize: 0xD00 }
+  - { offsetInCU: 0x327, offset: 0xB8ECA, size: 0x8, addend: 0x0, symName: '___132+[FBXcodeBuildOperation operationWithUDID:configuration:xcodeBuildPath:testRunFilePath:simDeviceSet:macOSTestShimPath:queue:logger:]_block_invoke', symObjAddr: 0xD00, symBinAddr: 0x131B0, symSize: 0xE0 }
+  - { offsetInCU: 0x388, offset: 0xB8F2B, size: 0x8, addend: 0x0, symName: '+[FBXcodeBuildOperation xctestRunProperties:]', symObjAddr: 0xE80, symBinAddr: 0x13290, symSize: 0x3E0 }
+  - { offsetInCU: 0x3D3, offset: 0xB8F76, size: 0x8, addend: 0x0, symName: '+[FBXcodeBuildOperation createXCTestRunFileAt:fromConfiguration:error:]', symObjAddr: 0x1260, symBinAddr: 0x13670, symSize: 0x320 }
+  - { offsetInCU: 0x477, offset: 0xB901A, size: 0x8, addend: 0x0, symName: '+[FBXcodeBuildOperation terminateAbandonedXcodebuildProcessesForUDID:processFetcher:queue:logger:]', symObjAddr: 0x1580, symBinAddr: 0x13990, symSize: 0x530 }
+  - { offsetInCU: 0x558, offset: 0xB90FB, size: 0x8, addend: 0x0, symName: '+[FBXcodeBuildOperation xcodeBuildPathWithError:]', symObjAddr: 0x1AB0, symBinAddr: 0x13EC0, symSize: 0x150 }
+  - { offsetInCU: 0x5AF, offset: 0xB9152, size: 0x8, addend: 0x0, symName: '+[FBXcodeBuildOperation overwriteXCTestRunPropertiesWithBaseProperties:newProperties:]', symObjAddr: 0x1C00, symBinAddr: 0x14010, symSize: 0x540 }
+  - { offsetInCU: 0x67F, offset: 0xB9222, size: 0x8, addend: 0x0, symName: '+[FBXcodeBuildOperation confirmExitOfXcodebuildOperation:configuration:reporter:target:logger:]', symObjAddr: 0x2140, symBinAddr: 0x14550, symSize: 0x670 }
+  - { offsetInCU: 0x703, offset: 0xB92A6, size: 0x8, addend: 0x0, symName: '___95+[FBXcodeBuildOperation confirmExitOfXcodebuildOperation:configuration:reporter:target:logger:]_block_invoke', symObjAddr: 0x27B0, symBinAddr: 0x14BC0, symSize: 0x40 }
+  - { offsetInCU: 0x755, offset: 0xB92F8, size: 0x8, addend: 0x0, symName: '___95+[FBXcodeBuildOperation confirmExitOfXcodebuildOperation:configuration:reporter:target:logger:]_block_invoke.212', symObjAddr: 0x27F0, symBinAddr: 0x14C00, symSize: 0x1A0 }
+  - { offsetInCU: 0x7EC, offset: 0xB938F, size: 0x8, addend: 0x0, symName: '___95+[FBXcodeBuildOperation confirmExitOfXcodebuildOperation:configuration:reporter:target:logger:]_block_invoke.229', symObjAddr: 0x2AE0, symBinAddr: 0x14DA0, symSize: 0xB0 }
+  - { offsetInCU: 0x84D, offset: 0xB93F0, size: 0x8, addend: 0x0, symName: '+[FBXcodeBuildOperation activeXcodebuildProcessesForUDID:processFetcher:]', symObjAddr: 0x2B90, symBinAddr: 0x14E50, symSize: 0x36A }
+  - { offsetInCU: 0x27, offset: 0xB97A9, size: 0x8, addend: 0x0, symName: '+[FBTestBundleConnection clientProcessUniqueIdentifier]', symObjAddr: 0x0, symBinAddr: 0x151C0, symSize: 0x80 }
+  - { offsetInCU: 0x35, offset: 0xB97B7, size: 0x8, addend: 0x0, symName: '+[FBTestBundleConnection clientProcessUniqueIdentifier]', symObjAddr: 0x0, symBinAddr: 0x151C0, symSize: 0x80 }
+  - { offsetInCU: 0x5F, offset: 0xB97E1, size: 0x8, addend: 0x0, symName: _clientProcessUniqueIdentifier.onceToken, symObjAddr: 0x14550, symBinAddr: 0x5EC68, symSize: 0x0 }
+  - { offsetInCU: 0x75, offset: 0xB97F7, size: 0x8, addend: 0x0, symName: _clientProcessUniqueIdentifier._clientProcessUniqueIdentifier, symObjAddr: 0x14558, symBinAddr: 0x5EC70, symSize: 0x0 }
+  - { offsetInCU: 0xCE, offset: 0xB9850, size: 0x8, addend: 0x0, symName: '+[FBTestBundleConnection clientProcessDisplayPath]', symObjAddr: 0xF0, symBinAddr: 0x152B0, symSize: 0x80 }
+  - { offsetInCU: 0xF8, offset: 0xB987A, size: 0x8, addend: 0x0, symName: _clientProcessDisplayPath.onceToken, symObjAddr: 0x14560, symBinAddr: 0x5EC78, symSize: 0x0 }
+  - { offsetInCU: 0x10E, offset: 0xB9890, size: 0x8, addend: 0x0, symName: _clientProcessDisplayPath._clientProcessDisplayPath, symObjAddr: 0x14568, symBinAddr: 0x5EC80, symSize: 0x0 }
+  - { offsetInCU: 0x194, offset: 0xB9916, size: 0x8, addend: 0x0, symName: _BundleReadyTimeout, symObjAddr: 0x8398, symBinAddr: 0x5E0F8, symSize: 0x0 }
+  - { offsetInCU: 0x1B1, offset: 0xB9933, size: 0x8, addend: 0x0, symName: _IDEInterfaceReadyTimeout, symObjAddr: 0x8940, symBinAddr: 0x5E280, symSize: 0x0 }
+  - { offsetInCU: 0x1C7, offset: 0xB9949, size: 0x8, addend: 0x0, symName: _DaemonSessionReadyTimeout, symObjAddr: 0x8BE8, symBinAddr: 0x5E528, symSize: 0x0 }
+  - { offsetInCU: 0x1DD, offset: 0xB995F, size: 0x8, addend: 0x0, symName: _CrashCheckWaitLimit, symObjAddr: 0x8D10, symBinAddr: 0x5E5F0, symSize: 0x0 }
+  - { offsetInCU: 0x4DD, offset: 0xB9C5F, size: 0x8, addend: 0x0, symName: '___55+[FBTestBundleConnection clientProcessUniqueIdentifier]_block_invoke', symObjAddr: 0x80, symBinAddr: 0x15240, symSize: 0x70 }
+  - { offsetInCU: 0x507, offset: 0xB9C89, size: 0x8, addend: 0x0, symName: '___50+[FBTestBundleConnection clientProcessDisplayPath]_block_invoke', symObjAddr: 0x170, symBinAddr: 0x15330, symSize: 0x130 }
+  - { offsetInCU: 0x54F, offset: 0xB9CD1, size: 0x8, addend: 0x0, symName: '-[FBTestBundleConnection initWithWithContext:target:interface:testHostApplication:requestQueue:logger:]', symObjAddr: 0x2A0, symBinAddr: 0x15460, symSize: 0x290 }
+  - { offsetInCU: 0x5E3, offset: 0xB9D65, size: 0x8, addend: 0x0, symName: '-[FBTestBundleConnection respondsToSelector:]', symObjAddr: 0x530, symBinAddr: 0x156F0, symSize: 0xC0 }
+  - { offsetInCU: 0x62B, offset: 0xB9DAD, size: 0x8, addend: 0x0, symName: '-[FBTestBundleConnection methodSignatureForSelector:]', symObjAddr: 0x5F0, symBinAddr: 0x157B0, symSize: 0x110 }
+  - { offsetInCU: 0x673, offset: 0xB9DF5, size: 0x8, addend: 0x0, symName: '-[FBTestBundleConnection forwardInvocation:]', symObjAddr: 0x700, symBinAddr: 0x158C0, symSize: 0x110 }
+  - { offsetInCU: 0x6B7, offset: 0xB9E39, size: 0x8, addend: 0x0, symName: '+[FBTestBundleConnection connectAndRunBundleToCompletionWithContext:target:interface:testHostApplication:requestQueue:logger:]', symObjAddr: 0x810, symBinAddr: 0x159D0, symSize: 0x1E0 }
+  - { offsetInCU: 0x75A, offset: 0xB9EDC, size: 0x8, addend: 0x0, symName: '-[FBTestBundleConnection performDiagnosisOnBundleConnectionError:]', symObjAddr: 0x9F0, symBinAddr: 0x15BB0, symSize: 0x350 }
+  - { offsetInCU: 0x7A2, offset: 0xB9F24, size: 0x8, addend: 0x0, symName: '___66-[FBTestBundleConnection performDiagnosisOnBundleConnectionError:]_block_invoke', symObjAddr: 0xD40, symBinAddr: 0x15F00, symSize: 0xA0 }
+  - { offsetInCU: 0x813, offset: 0xB9F95, size: 0x8, addend: 0x0, symName: '___66-[FBTestBundleConnection performDiagnosisOnBundleConnectionError:]_block_invoke.56', symObjAddr: 0xE50, symBinAddr: 0x15FA0, symSize: 0x410 }
+  - { offsetInCU: 0x896, offset: 0xBA018, size: 0x8, addend: 0x0, symName: '___66-[FBTestBundleConnection performDiagnosisOnBundleConnectionError:]_block_invoke_2', symObjAddr: 0x1260, symBinAddr: 0x163B0, symSize: 0x70 }
+  - { offsetInCU: 0x8E5, offset: 0xBA067, size: 0x8, addend: 0x0, symName: '___66-[FBTestBundleConnection performDiagnosisOnBundleConnectionError:]_block_invoke_3', symObjAddr: 0x12D0, symBinAddr: 0x16420, symSize: 0xF0 }
+  - { offsetInCU: 0x938, offset: 0xBA0BA, size: 0x8, addend: 0x0, symName: '-[FBTestBundleConnection connectAndRunToCompletion]', symObjAddr: 0x1460, symBinAddr: 0x16510, symSize: 0x620 }
+  - { offsetInCU: 0x99A, offset: 0xBA11C, size: 0x8, addend: 0x0, symName: ___Block_byref_object_copy_, symObjAddr: 0x1A80, symBinAddr: 0x16B30, symSize: 0x50 }
+  - { offsetInCU: 0x9C1, offset: 0xBA143, size: 0x8, addend: 0x0, symName: ___Block_byref_object_dispose_, symObjAddr: 0x1AD0, symBinAddr: 0x16B80, symSize: 0x30 }
+  - { offsetInCU: 0x9DF, offset: 0xBA161, size: 0x8, addend: 0x0, symName: '___51-[FBTestBundleConnection connectAndRunToCompletion]_block_invoke', symObjAddr: 0x1B00, symBinAddr: 0x16BB0, symSize: 0x1F0 }
+  - { offsetInCU: 0xA4A, offset: 0xBA1CC, size: 0x8, addend: 0x0, symName: '___51-[FBTestBundleConnection connectAndRunToCompletion]_block_invoke_2', symObjAddr: 0x1CF0, symBinAddr: 0x16DA0, symSize: 0x90 }
+  - { offsetInCU: 0xA8A, offset: 0xBA20C, size: 0x8, addend: 0x0, symName: ___copy_helper_block_e8_32s40r, symObjAddr: 0x1D80, symBinAddr: 0x16E30, symSize: 0x60 }
+  - { offsetInCU: 0xAB1, offset: 0xBA233, size: 0x8, addend: 0x0, symName: ___destroy_helper_block_e8_32s40r, symObjAddr: 0x1DE0, symBinAddr: 0x16E90, symSize: 0x40 }
+  - { offsetInCU: 0xACF, offset: 0xBA251, size: 0x8, addend: 0x0, symName: '___51-[FBTestBundleConnection connectAndRunToCompletion]_block_invoke.117', symObjAddr: 0x1E20, symBinAddr: 0x16ED0, symSize: 0x140 }
+  - { offsetInCU: 0xB3A, offset: 0xBA2BC, size: 0x8, addend: 0x0, symName: '___51-[FBTestBundleConnection connectAndRunToCompletion]_block_invoke.131', symObjAddr: 0x1F60, symBinAddr: 0x17010, symSize: 0x70 }
+  - { offsetInCU: 0xB8D, offset: 0xBA30F, size: 0x8, addend: 0x0, symName: '___51-[FBTestBundleConnection connectAndRunToCompletion]_block_invoke_2.134', symObjAddr: 0x1FD0, symBinAddr: 0x17080, symSize: 0x130 }
+  - { offsetInCU: 0xBF8, offset: 0xBA37A, size: 0x8, addend: 0x0, symName: '-[FBTestBundleConnection startTestmanagerdConnection]', symObjAddr: 0x2100, symBinAddr: 0x171B0, symSize: 0x1D0 }
+  - { offsetInCU: 0xC4F, offset: 0xBA3D1, size: 0x8, addend: 0x0, symName: '___53-[FBTestBundleConnection startTestmanagerdConnection]_block_invoke', symObjAddr: 0x22D0, symBinAddr: 0x17380, symSize: 0xA0 }
+  - { offsetInCU: 0xCB0, offset: 0xBA432, size: 0x8, addend: 0x0, symName: '+[FBTestBundleConnection connectionWithSocket:queue:logger:]', symObjAddr: 0x2370, symBinAddr: 0x17420, symSize: 0x3E0 }
+  - { offsetInCU: 0xD35, offset: 0xBA4B7, size: 0x8, addend: 0x0, symName: '___60+[FBTestBundleConnection connectionWithSocket:queue:logger:]_block_invoke', symObjAddr: 0x2750, symBinAddr: 0x17800, symSize: 0x40 }
+  - { offsetInCU: 0xD71, offset: 0xBA4F3, size: 0x8, addend: 0x0, symName: '___60+[FBTestBundleConnection connectionWithSocket:queue:logger:]_block_invoke_2', symObjAddr: 0x2790, symBinAddr: 0x17840, symSize: 0x40 }
+  - { offsetInCU: 0xDAD, offset: 0xBA52F, size: 0x8, addend: 0x0, symName: '___60+[FBTestBundleConnection connectionWithSocket:queue:logger:]_block_invoke_3', symObjAddr: 0x27D0, symBinAddr: 0x17880, symSize: 0xE0 }
+  - { offsetInCU: 0xE1D, offset: 0xBA59F, size: 0x8, addend: 0x0, symName: '-[FBTestBundleConnection setupTestBundleConnectionWithConnection:]', symObjAddr: 0x28B0, symBinAddr: 0x17960, symSize: 0x2A0 }
+  - { offsetInCU: 0xE77, offset: 0xBA5F9, size: 0x8, addend: 0x0, symName: '___66-[FBTestBundleConnection setupTestBundleConnectionWithConnection:]_block_invoke', symObjAddr: 0x2B50, symBinAddr: 0x17C00, symSize: 0x150 }
+  - { offsetInCU: 0xEFC, offset: 0xBA67E, size: 0x8, addend: 0x0, symName: '-[FBTestBundleConnection sendStartSessionRequestWithConnection:]', symObjAddr: 0x2CA0, symBinAddr: 0x17D50, symSize: 0x640 }
+  - { offsetInCU: 0xF96, offset: 0xBA718, size: 0x8, addend: 0x0, symName: '___64-[FBTestBundleConnection sendStartSessionRequestWithConnection:]_block_invoke', symObjAddr: 0x32E0, symBinAddr: 0x18390, symSize: 0x1A0 }
+  - { offsetInCU: 0x1032, offset: 0xBA7B4, size: 0x8, addend: 0x0, symName: '-[FBTestBundleConnection bundleDisconnectedSuccessfully]', symObjAddr: 0x3590, symBinAddr: 0x18530, symSize: 0x100 }
+  - { offsetInCU: 0x106C, offset: 0xBA7EE, size: 0x8, addend: 0x0, symName: '___56-[FBTestBundleConnection bundleDisconnectedSuccessfully]_block_invoke', symObjAddr: 0x3690, symBinAddr: 0x18630, symSize: 0x180 }
+  - { offsetInCU: 0x10C3, offset: 0xBA845, size: 0x8, addend: 0x0, symName: '-[FBTestBundleConnection failedFutureWithCrashLogOrNotFoundErrorDescription:]', symObjAddr: 0x3810, symBinAddr: 0x187B0, symSize: 0x1E0 }
+  - { offsetInCU: 0x110D, offset: 0xBA88F, size: 0x8, addend: 0x0, symName: '___77-[FBTestBundleConnection failedFutureWithCrashLogOrNotFoundErrorDescription:]_block_invoke', symObjAddr: 0x39F0, symBinAddr: 0x18990, symSize: 0x170 }
+  - { offsetInCU: 0x117F, offset: 0xBA901, size: 0x8, addend: 0x0, symName: '-[FBTestBundleConnection findCrashedProcessLog]', symObjAddr: 0x3B60, symBinAddr: 0x18B00, symSize: 0x3D0 }
+  - { offsetInCU: 0x11D9, offset: 0xBA95B, size: 0x8, addend: 0x0, symName: '___47-[FBTestBundleConnection findCrashedProcessLog]_block_invoke', symObjAddr: 0x3F30, symBinAddr: 0x18ED0, symSize: 0x3D0 }
+  - { offsetInCU: 0x1295, offset: 0xBAA17, size: 0x8, addend: 0x0, symName: '___47-[FBTestBundleConnection findCrashedProcessLog]_block_invoke.455', symObjAddr: 0x43E0, symBinAddr: 0x192A0, symSize: 0x110 }
+  - { offsetInCU: 0x1304, offset: 0xBAA86, size: 0x8, addend: 0x0, symName: '-[FBTestBundleConnection concludeWithError:]', symObjAddr: 0x44F0, symBinAddr: 0x193B0, symSize: 0x120 }
+  - { offsetInCU: 0x134A, offset: 0xBAACC, size: 0x8, addend: 0x0, symName: '-[FBTestBundleConnection _XCT_didFinishExecutingTestPlan]', symObjAddr: 0x4610, symBinAddr: 0x194D0, symSize: 0xF0 }
+  - { offsetInCU: 0x1384, offset: 0xBAB06, size: 0x8, addend: 0x0, symName: '-[FBTestBundleConnection _XCT_testBundleReadyWithProtocolVersion:minimumVersion:]', symObjAddr: 0x4700, symBinAddr: 0x195C0, symSize: 0x3C0 }
+  - { offsetInCU: 0x143D, offset: 0xBABBF, size: 0x8, addend: 0x0, symName: '-[FBTestBundleConnection _XCT_initializationForUITestingDidFailWithError:]', symObjAddr: 0x4AC0, symBinAddr: 0x19980, symSize: 0x110 }
+  - { offsetInCU: 0x1497, offset: 0xBAC19, size: 0x8, addend: 0x0, symName: '-[FBTestBundleConnection _XCT_testRunnerReadyWithCapabilities:]', symObjAddr: 0x4BD0, symBinAddr: 0x19A90, symSize: 0x210 }
+  - { offsetInCU: 0x14F1, offset: 0xBAC73, size: 0x8, addend: 0x0, symName: '-[FBTestBundleConnection context]', symObjAddr: 0x4DE0, symBinAddr: 0x19CA0, symSize: 0x20 }
+  - { offsetInCU: 0x152A, offset: 0xBACAC, size: 0x8, addend: 0x0, symName: '-[FBTestBundleConnection target]', symObjAddr: 0x4E00, symBinAddr: 0x19CC0, symSize: 0x20 }
+  - { offsetInCU: 0x1563, offset: 0xBACE5, size: 0x8, addend: 0x0, symName: '-[FBTestBundleConnection interface]', symObjAddr: 0x4E20, symBinAddr: 0x19CE0, symSize: 0x20 }
+  - { offsetInCU: 0x159C, offset: 0xBAD1E, size: 0x8, addend: 0x0, symName: '-[FBTestBundleConnection testHostApplication]', symObjAddr: 0x4E40, symBinAddr: 0x19D00, symSize: 0x20 }
+  - { offsetInCU: 0x15D5, offset: 0xBAD57, size: 0x8, addend: 0x0, symName: '-[FBTestBundleConnection requestQueue]', symObjAddr: 0x4E60, symBinAddr: 0x19D20, symSize: 0x20 }
+  - { offsetInCU: 0x160E, offset: 0xBAD90, size: 0x8, addend: 0x0, symName: '-[FBTestBundleConnection logger]', symObjAddr: 0x4E80, symBinAddr: 0x19D40, symSize: 0x20 }
+  - { offsetInCU: 0x1647, offset: 0xBADC9, size: 0x8, addend: 0x0, symName: '-[FBTestBundleConnection bundleDisconnected]', symObjAddr: 0x4EA0, symBinAddr: 0x19D60, symSize: 0x20 }
+  - { offsetInCU: 0x1680, offset: 0xBAE02, size: 0x8, addend: 0x0, symName: '-[FBTestBundleConnection bundleReadyFuture]', symObjAddr: 0x4EC0, symBinAddr: 0x19D80, symSize: 0x20 }
+  - { offsetInCU: 0x16B9, offset: 0xBAE3B, size: 0x8, addend: 0x0, symName: '-[FBTestBundleConnection testPlanFuture]', symObjAddr: 0x4EE0, symBinAddr: 0x19DA0, symSize: 0x20 }
+  - { offsetInCU: 0x16F2, offset: 0xBAE74, size: 0x8, addend: 0x0, symName: '-[FBTestBundleConnection .cxx_destruct]', symObjAddr: 0x4F00, symBinAddr: 0x19DC0, symSize: 0xB3 }
+  - { offsetInCU: 0x27, offset: 0xBBDF7, size: 0x8, addend: 0x0, symName: '-[FBListTestStrategy_ReporterWrapped initWithStrategy:reporter:]', symObjAddr: 0x0, symBinAddr: 0x19E80, symSize: 0x110 }
+  - { offsetInCU: 0x2B6, offset: 0xBC086, size: 0x8, addend: 0x0, symName: '-[FBListTestStrategy_ReporterWrapped initWithStrategy:reporter:]', symObjAddr: 0x0, symBinAddr: 0x19E80, symSize: 0x110 }
+  - { offsetInCU: 0x30D, offset: 0xBC0DD, size: 0x8, addend: 0x0, symName: '-[FBListTestStrategy_ReporterWrapped execute]', symObjAddr: 0x110, symBinAddr: 0x19F90, symSize: 0x1B0 }
+  - { offsetInCU: 0x346, offset: 0xBC116, size: 0x8, addend: 0x0, symName: '___45-[FBListTestStrategy_ReporterWrapped execute]_block_invoke', symObjAddr: 0x2C0, symBinAddr: 0x1A140, symSize: 0x3C0 }
+  - { offsetInCU: 0x3F2, offset: 0xBC1C2, size: 0x8, addend: 0x0, symName: '-[FBListTestStrategy_ReporterWrapped strategy]', symObjAddr: 0x6F0, symBinAddr: 0x1A500, symSize: 0x20 }
+  - { offsetInCU: 0x42B, offset: 0xBC1FB, size: 0x8, addend: 0x0, symName: '-[FBListTestStrategy_ReporterWrapped reporter]', symObjAddr: 0x710, symBinAddr: 0x1A520, symSize: 0x20 }
+  - { offsetInCU: 0x464, offset: 0xBC234, size: 0x8, addend: 0x0, symName: '-[FBListTestStrategy_ReporterWrapped .cxx_destruct]', symObjAddr: 0x730, symBinAddr: 0x1A540, symSize: 0x40 }
+  - { offsetInCU: 0x499, offset: 0xBC269, size: 0x8, addend: 0x0, symName: '-[FBListTestStrategy initWithTarget:configuration:logger:]', symObjAddr: 0x770, symBinAddr: 0x1A580, symSize: 0x140 }
+  - { offsetInCU: 0x4FF, offset: 0xBC2CF, size: 0x8, addend: 0x0, symName: '-[FBListTestStrategy listTests]', symObjAddr: 0x8B0, symBinAddr: 0x1A6C0, symSize: 0x2C0 }
+  - { offsetInCU: 0x547, offset: 0xBC317, size: 0x8, addend: 0x0, symName: '___31-[FBListTestStrategy listTests]_block_invoke', symObjAddr: 0xB70, symBinAddr: 0x1A980, symSize: 0xF0 }
+  - { offsetInCU: 0x5AC, offset: 0xBC37C, size: 0x8, addend: 0x0, symName: '-[FBListTestStrategy listTestsWithShimPath:shimOutput:shimBuffer:]', symObjAddr: 0xD00, symBinAddr: 0x1AA70, symSize: 0x610 }
+  - { offsetInCU: 0x654, offset: 0xBC424, size: 0x8, addend: 0x0, symName: '___66-[FBListTestStrategy listTestsWithShimPath:shimOutput:shimBuffer:]_block_invoke', symObjAddr: 0x1310, symBinAddr: 0x1B080, symSize: 0x470 }
+  - { offsetInCU: 0x725, offset: 0xBC4F5, size: 0x8, addend: 0x0, symName: '___66-[FBListTestStrategy listTestsWithShimPath:shimOutput:shimBuffer:]_block_invoke_2', symObjAddr: 0x1780, symBinAddr: 0x1B4F0, symSize: 0x550 }
+  - { offsetInCU: 0x826, offset: 0xBC5F6, size: 0x8, addend: 0x0, symName: '___66-[FBListTestStrategy listTestsWithShimPath:shimOutput:shimBuffer:]_block_invoke_3', symObjAddr: 0x1CD0, symBinAddr: 0x1BA40, symSize: 0x130 }
+  - { offsetInCU: 0x8C1, offset: 0xBC691, size: 0x8, addend: 0x0, symName: ___copy_helper_block_e8_32s40s48s56s64s72s80s88s96s, symObjAddr: 0x1F50, symBinAddr: 0x1BB70, symSize: 0x140 }
+  - { offsetInCU: 0x8E8, offset: 0xBC6B8, size: 0x8, addend: 0x0, symName: ___destroy_helper_block_e8_32s40s48s56s64s72s80s88s96s, symObjAddr: 0x2090, symBinAddr: 0x1BCB0, symSize: 0xF0 }
+  - { offsetInCU: 0x906, offset: 0xBC6D6, size: 0x8, addend: 0x0, symName: ___copy_helper_block_e8_32s40s48s56s64s72s80s88s, symObjAddr: 0x2180, symBinAddr: 0x1BDA0, symSize: 0x120 }
+  - { offsetInCU: 0x92D, offset: 0xBC6FD, size: 0x8, addend: 0x0, symName: ___destroy_helper_block_e8_32s40s48s56s64s72s80s88s, symObjAddr: 0x22A0, symBinAddr: 0x1BEC0, symSize: 0xD0 }
+  - { offsetInCU: 0x94B, offset: 0xBC71B, size: 0x8, addend: 0x0, symName: '+[FBListTestStrategy setupEnvironmentWithDylibs:shimPath:shimOutputFilePath:bundlePath:]', symObjAddr: 0x2370, symBinAddr: 0x1BF90, symSize: 0x200 }
+  - { offsetInCU: 0x9E5, offset: 0xBC7B5, size: 0x8, addend: 0x0, symName: '+[FBListTestStrategy launchedProcessWithExitCode:shimOutput:shimBuffer:stdOutBuffer:stdErrBuffer:queue:]', symObjAddr: 0x2570, symBinAddr: 0x1C190, symSize: 0x450 }
+  - { offsetInCU: 0xA78, offset: 0xBC848, size: 0x8, addend: 0x0, symName: '___104+[FBListTestStrategy launchedProcessWithExitCode:shimOutput:shimBuffer:stdOutBuffer:stdErrBuffer:queue:]_block_invoke', symObjAddr: 0x29C0, symBinAddr: 0x1C5E0, symSize: 0x90 }
+  - { offsetInCU: 0xB21, offset: 0xBC8F1, size: 0x8, addend: 0x0, symName: '___104+[FBListTestStrategy launchedProcessWithExitCode:shimOutput:shimBuffer:stdOutBuffer:stdErrBuffer:queue:]_block_invoke.171', symObjAddr: 0x2BD0, symBinAddr: 0x1C670, symSize: 0x500 }
+  - { offsetInCU: 0xBE8, offset: 0xBC9B8, size: 0x8, addend: 0x0, symName: '+[FBListTestStrategy onQueue:confirmExit:closingOutput:shimBuffer:stdOutBuffer:stdErrBuffer:]', symObjAddr: 0x30D0, symBinAddr: 0x1CB70, symSize: 0x2A0 }
+  - { offsetInCU: 0xC7B, offset: 0xBCA4B, size: 0x8, addend: 0x0, symName: '___93+[FBListTestStrategy onQueue:confirmExit:closingOutput:shimBuffer:stdOutBuffer:stdErrBuffer:]_block_invoke', symObjAddr: 0x3370, symBinAddr: 0x1CE10, symSize: 0x2C0 }
+  - { offsetInCU: 0xD3B, offset: 0xBCB0B, size: 0x8, addend: 0x0, symName: '+[FBListTestStrategy listTestProcessWithTarget:configuration:xctestPath:environment:stdOutConsumer:stdErrConsumer:logger:temporaryDirectory:]', symObjAddr: 0x3710, symBinAddr: 0x1D0D0, symSize: 0x970 }
+  - { offsetInCU: 0xEB4, offset: 0xBCC84, size: 0x8, addend: 0x0, symName: '___141+[FBListTestStrategy listTestProcessWithTarget:configuration:xctestPath:environment:stdOutConsumer:stdErrConsumer:logger:temporaryDirectory:]_block_invoke', symObjAddr: 0x4080, symBinAddr: 0x1DA40, symSize: 0x80 }
+  - { offsetInCU: 0xF27, offset: 0xBCCF7, size: 0x8, addend: 0x0, symName: '+[FBListTestStrategy listTestProcessWithSpawnConfiguration:onTarget:timeout:logger:]', symObjAddr: 0x4100, symBinAddr: 0x1DAC0, symSize: 0x230 }
+  - { offsetInCU: 0xFA1, offset: 0xBCD71, size: 0x8, addend: 0x0, symName: '___84+[FBListTestStrategy listTestProcessWithSpawnConfiguration:onTarget:timeout:logger:]_block_invoke', symObjAddr: 0x4330, symBinAddr: 0x1DCF0, symSize: 0xD0 }
+  - { offsetInCU: 0x101A, offset: 0xBCDEA, size: 0x8, addend: 0x0, symName: '-[FBListTestStrategy wrapInReporter:]', symObjAddr: 0x4400, symBinAddr: 0x1DDC0, symSize: 0x80 }
+  - { offsetInCU: 0x1064, offset: 0xBCE34, size: 0x8, addend: 0x0, symName: '-[FBListTestStrategy configuration]', symObjAddr: 0x4480, symBinAddr: 0x1DE40, symSize: 0x20 }
+  - { offsetInCU: 0x109D, offset: 0xBCE6D, size: 0x8, addend: 0x0, symName: '-[FBListTestStrategy target]', symObjAddr: 0x44A0, symBinAddr: 0x1DE60, symSize: 0x20 }
+  - { offsetInCU: 0x10D6, offset: 0xBCEA6, size: 0x8, addend: 0x0, symName: '-[FBListTestStrategy logger]', symObjAddr: 0x44C0, symBinAddr: 0x1DE80, symSize: 0x20 }
+  - { offsetInCU: 0x110F, offset: 0xBCEDF, size: 0x8, addend: 0x0, symName: '-[FBListTestStrategy .cxx_destruct]', symObjAddr: 0x44E0, symBinAddr: 0x1DEA0, symSize: 0x4D }
+  - { offsetInCU: 0x27, offset: 0xBD621, size: 0x8, addend: 0x0, symName: '+[FBTestManagerResultSummary fromTestSuite:finishingAt:runCount:failures:unexpected:testDuration:totalDuration:]', symObjAddr: 0x0, symBinAddr: 0x1DEF0, symSize: 0x6F0 }
+  - { offsetInCU: 0x14E, offset: 0xBD748, size: 0x8, addend: 0x0, symName: '+[FBTestManagerResultSummary fromTestSuite:finishingAt:runCount:failures:unexpected:testDuration:totalDuration:]', symObjAddr: 0x0, symBinAddr: 0x1DEF0, symSize: 0x6F0 }
+  - { offsetInCU: 0x1F1, offset: 0xBD7EB, size: 0x8, addend: 0x0, symName: '-[FBTestManagerResultSummary initWithTestSuite:finishTime:runCount:failureCount:unexpected:testDuration:totalDuration:]', symObjAddr: 0x6F0, symBinAddr: 0x1E5E0, symSize: 0x1A0 }
+  - { offsetInCU: 0x294, offset: 0xBD88E, size: 0x8, addend: 0x0, symName: '-[FBTestManagerResultSummary description]', symObjAddr: 0x890, symBinAddr: 0x1E780, symSize: 0x150 }
+  - { offsetInCU: 0x2CD, offset: 0xBD8C7, size: 0x8, addend: 0x0, symName: '-[FBTestManagerResultSummary isEqual:]', symObjAddr: 0x9E0, symBinAddr: 0x1E8D0, symSize: 0x370 }
+  - { offsetInCU: 0x315, offset: 0xBD90F, size: 0x8, addend: 0x0, symName: '+[FBTestManagerResultSummary statusForStatusString:]', symObjAddr: 0xD50, symBinAddr: 0x1EC40, symSize: 0xC0 }
+  - { offsetInCU: 0x35D, offset: 0xBD957, size: 0x8, addend: 0x0, symName: '+[FBTestManagerResultSummary statusStringForStatus:]', symObjAddr: 0xE10, symBinAddr: 0x1ED00, symSize: 0xA0 }
+  - { offsetInCU: 0x3A5, offset: 0xBD99F, size: 0x8, addend: 0x0, symName: '+[FBTestManagerResultSummary dateFormatter]', symObjAddr: 0xEB0, symBinAddr: 0x1EDA0, symSize: 0xE0 }
+  - { offsetInCU: 0x3ED, offset: 0xBD9E7, size: 0x8, addend: 0x0, symName: '-[FBTestManagerResultSummary testSuite]', symObjAddr: 0xF90, symBinAddr: 0x1EE80, symSize: 0x20 }
+  - { offsetInCU: 0x426, offset: 0xBDA20, size: 0x8, addend: 0x0, symName: '-[FBTestManagerResultSummary finishTime]', symObjAddr: 0xFB0, symBinAddr: 0x1EEA0, symSize: 0x20 }
+  - { offsetInCU: 0x45F, offset: 0xBDA59, size: 0x8, addend: 0x0, symName: '-[FBTestManagerResultSummary runCount]', symObjAddr: 0xFD0, symBinAddr: 0x1EEC0, symSize: 0x20 }
+  - { offsetInCU: 0x498, offset: 0xBDA92, size: 0x8, addend: 0x0, symName: '-[FBTestManagerResultSummary failureCount]', symObjAddr: 0xFF0, symBinAddr: 0x1EEE0, symSize: 0x20 }
+  - { offsetInCU: 0x4D1, offset: 0xBDACB, size: 0x8, addend: 0x0, symName: '-[FBTestManagerResultSummary unexpected]', symObjAddr: 0x1010, symBinAddr: 0x1EF00, symSize: 0x20 }
+  - { offsetInCU: 0x50A, offset: 0xBDB04, size: 0x8, addend: 0x0, symName: '-[FBTestManagerResultSummary testDuration]', symObjAddr: 0x1030, symBinAddr: 0x1EF20, symSize: 0x20 }
+  - { offsetInCU: 0x543, offset: 0xBDB3D, size: 0x8, addend: 0x0, symName: '-[FBTestManagerResultSummary totalDuration]', symObjAddr: 0x1050, symBinAddr: 0x1EF40, symSize: 0x20 }
+  - { offsetInCU: 0x57C, offset: 0xBDB76, size: 0x8, addend: 0x0, symName: '-[FBTestManagerResultSummary .cxx_destruct]', symObjAddr: 0x1070, symBinAddr: 0x1EF60, symSize: 0x3C }
+  - { offsetInCU: 0x27, offset: 0xBDC4B, size: 0x8, addend: 0x0, symName: '+[FBActivityRecord from:]', symObjAddr: 0x0, symBinAddr: 0x1EFA0, symSize: 0x70 }
+  - { offsetInCU: 0x163, offset: 0xBDD87, size: 0x8, addend: 0x0, symName: '+[FBActivityRecord from:]', symObjAddr: 0x0, symBinAddr: 0x1EFA0, symSize: 0x70 }
+  - { offsetInCU: 0x1AB, offset: 0xBDDCF, size: 0x8, addend: 0x0, symName: '-[FBActivityRecord initFromRecord:]', symObjAddr: 0x70, symBinAddr: 0x1F010, symSize: 0x4F0 }
+  - { offsetInCU: 0x21D, offset: 0xBDE41, size: 0x8, addend: 0x0, symName: '-[FBActivityRecord description]', symObjAddr: 0x560, symBinAddr: 0x1F500, symSize: 0x140 }
+  - { offsetInCU: 0x256, offset: 0xBDE7A, size: 0x8, addend: 0x0, symName: '-[FBActivityRecord title]', symObjAddr: 0x6A0, symBinAddr: 0x1F640, symSize: 0x20 }
+  - { offsetInCU: 0x28F, offset: 0xBDEB3, size: 0x8, addend: 0x0, symName: '-[FBActivityRecord activityType]', symObjAddr: 0x6C0, symBinAddr: 0x1F660, symSize: 0x20 }
+  - { offsetInCU: 0x2C8, offset: 0xBDEEC, size: 0x8, addend: 0x0, symName: '-[FBActivityRecord uuid]', symObjAddr: 0x6E0, symBinAddr: 0x1F680, symSize: 0x20 }
+  - { offsetInCU: 0x301, offset: 0xBDF25, size: 0x8, addend: 0x0, symName: '-[FBActivityRecord start]', symObjAddr: 0x700, symBinAddr: 0x1F6A0, symSize: 0x20 }
+  - { offsetInCU: 0x33A, offset: 0xBDF5E, size: 0x8, addend: 0x0, symName: '-[FBActivityRecord finish]', symObjAddr: 0x720, symBinAddr: 0x1F6C0, symSize: 0x20 }
+  - { offsetInCU: 0x373, offset: 0xBDF97, size: 0x8, addend: 0x0, symName: '-[FBActivityRecord attachments]', symObjAddr: 0x740, symBinAddr: 0x1F6E0, symSize: 0x20 }
+  - { offsetInCU: 0x3AC, offset: 0xBDFD0, size: 0x8, addend: 0x0, symName: '-[FBActivityRecord duration]', symObjAddr: 0x760, symBinAddr: 0x1F700, symSize: 0x20 }
+  - { offsetInCU: 0x3E5, offset: 0xBE009, size: 0x8, addend: 0x0, symName: '-[FBActivityRecord name]', symObjAddr: 0x780, symBinAddr: 0x1F720, symSize: 0x20 }
+  - { offsetInCU: 0x41E, offset: 0xBE042, size: 0x8, addend: 0x0, symName: '-[FBActivityRecord subactivities]', symObjAddr: 0x7A0, symBinAddr: 0x1F740, symSize: 0x20 }
+  - { offsetInCU: 0x457, offset: 0xBE07B, size: 0x8, addend: 0x0, symName: '-[FBActivityRecord setSubactivities:]', symObjAddr: 0x7C0, symBinAddr: 0x1F760, symSize: 0x30 }
+  - { offsetInCU: 0x499, offset: 0xBE0BD, size: 0x8, addend: 0x0, symName: '-[FBActivityRecord .cxx_destruct]', symObjAddr: 0x7F0, symBinAddr: 0x1F790, symSize: 0xA2 }
+  - { offsetInCU: 0x27, offset: 0xBE3FA, size: 0x8, addend: 0x0, symName: '-[FBCodeCoverageConfiguration initWithDirectory:format:enableContinuousCoverageCollection:]', symObjAddr: 0x0, symBinAddr: 0x1F840, symSize: 0x100 }
+  - { offsetInCU: 0xD9, offset: 0xBE4AC, size: 0x8, addend: 0x0, symName: '-[FBCodeCoverageConfiguration initWithDirectory:format:enableContinuousCoverageCollection:]', symObjAddr: 0x0, symBinAddr: 0x1F840, symSize: 0x100 }
+  - { offsetInCU: 0x13F, offset: 0xBE512, size: 0x8, addend: 0x0, symName: '-[FBCodeCoverageConfiguration description]', symObjAddr: 0x100, symBinAddr: 0x1F940, symSize: 0xC0 }
+  - { offsetInCU: 0x178, offset: 0xBE54B, size: 0x8, addend: 0x0, symName: '-[FBCodeCoverageConfiguration coverageDirectory]', symObjAddr: 0x1C0, symBinAddr: 0x1FA00, symSize: 0x20 }
+  - { offsetInCU: 0x1B1, offset: 0xBE584, size: 0x8, addend: 0x0, symName: '-[FBCodeCoverageConfiguration format]', symObjAddr: 0x1E0, symBinAddr: 0x1FA20, symSize: 0x20 }
+  - { offsetInCU: 0x1EA, offset: 0xBE5BD, size: 0x8, addend: 0x0, symName: '-[FBCodeCoverageConfiguration shouldEnableContinuousCoverageCollection]', symObjAddr: 0x200, symBinAddr: 0x1FA40, symSize: 0x20 }
+  - { offsetInCU: 0x223, offset: 0xBE5F6, size: 0x8, addend: 0x0, symName: '-[FBCodeCoverageConfiguration .cxx_destruct]', symObjAddr: 0x220, symBinAddr: 0x1FA60, symSize: 0x27 }
+  - { offsetInCU: 0x27, offset: 0xBE6A1, size: 0x8, addend: 0x0, symName: '-[FBTestManagerContext initWithSessionIdentifier:timeout:testHostLaunchConfiguration:testedApplicationAdditionalEnvironment:testConfiguration:]', symObjAddr: 0x0, symBinAddr: 0x1FA90, symSize: 0x1A0 }
+  - { offsetInCU: 0x102, offset: 0xBE77C, size: 0x8, addend: 0x0, symName: '-[FBTestManagerContext initWithSessionIdentifier:timeout:testHostLaunchConfiguration:testedApplicationAdditionalEnvironment:testConfiguration:]', symObjAddr: 0x0, symBinAddr: 0x1FA90, symSize: 0x1A0 }
+  - { offsetInCU: 0x186, offset: 0xBE800, size: 0x8, addend: 0x0, symName: '-[FBTestManagerContext description]', symObjAddr: 0x1A0, symBinAddr: 0x1FC30, symSize: 0x100 }
+  - { offsetInCU: 0x1BF, offset: 0xBE839, size: 0x8, addend: 0x0, symName: '-[FBTestManagerContext copyWithZone:]', symObjAddr: 0x2A0, symBinAddr: 0x1FD30, symSize: 0x20 }
+  - { offsetInCU: 0x207, offset: 0xBE881, size: 0x8, addend: 0x0, symName: '-[FBTestManagerContext sessionIdentifier]', symObjAddr: 0x2C0, symBinAddr: 0x1FD50, symSize: 0x20 }
+  - { offsetInCU: 0x240, offset: 0xBE8BA, size: 0x8, addend: 0x0, symName: '-[FBTestManagerContext timeout]', symObjAddr: 0x2E0, symBinAddr: 0x1FD70, symSize: 0x20 }
+  - { offsetInCU: 0x279, offset: 0xBE8F3, size: 0x8, addend: 0x0, symName: '-[FBTestManagerContext testHostLaunchConfiguration]', symObjAddr: 0x300, symBinAddr: 0x1FD90, symSize: 0x20 }
+  - { offsetInCU: 0x2B2, offset: 0xBE92C, size: 0x8, addend: 0x0, symName: '-[FBTestManagerContext testedApplicationAdditionalEnvironment]', symObjAddr: 0x320, symBinAddr: 0x1FDB0, symSize: 0x20 }
+  - { offsetInCU: 0x2EB, offset: 0xBE965, size: 0x8, addend: 0x0, symName: '-[FBTestManagerContext testConfiguration]', symObjAddr: 0x340, symBinAddr: 0x1FDD0, symSize: 0x20 }
+  - { offsetInCU: 0x324, offset: 0xBE99E, size: 0x8, addend: 0x0, symName: '-[FBTestManagerContext .cxx_destruct]', symObjAddr: 0x360, symBinAddr: 0x1FDF0, symSize: 0x5E }
+  - { offsetInCU: 0x27, offset: 0xBEA53, size: 0x8, addend: 0x0, symName: '+[FBXCTestResultToolOperation internalOperationWithArguments:queue:logger:]', symObjAddr: 0x0, symBinAddr: 0x1FE50, symSize: 0x2B0 }
+  - { offsetInCU: 0x41, offset: 0xBEA6D, size: 0x8, addend: 0x0, symName: _XcrunPath, symObjAddr: 0x1928, symBinAddr: 0x4CAE0, symSize: 0x0 }
+  - { offsetInCU: 0x61, offset: 0xBEA8D, size: 0x8, addend: 0x0, symName: _SipsPath, symObjAddr: 0x1930, symBinAddr: 0x4CAE8, symSize: 0x0 }
+  - { offsetInCU: 0x77, offset: 0xBEAA3, size: 0x8, addend: 0x0, symName: _HEIC, symObjAddr: 0x1938, symBinAddr: 0x4CAF0, symSize: 0x0 }
+  - { offsetInCU: 0x8D, offset: 0xBEAB9, size: 0x8, addend: 0x0, symName: _JPEG, symObjAddr: 0x1940, symBinAddr: 0x4CAF8, symSize: 0x0 }
+  - { offsetInCU: 0xA5, offset: 0xBEAD1, size: 0x8, addend: 0x0, symName: '+[FBXCTestResultToolOperation internalOperationWithArguments:queue:logger:]', symObjAddr: 0x0, symBinAddr: 0x1FE50, symSize: 0x2B0 }
+  - { offsetInCU: 0x11A, offset: 0xBEB46, size: 0x8, addend: 0x0, symName: '___75+[FBXCTestResultToolOperation internalOperationWithArguments:queue:logger:]_block_invoke', symObjAddr: 0x2B0, symBinAddr: 0x20100, symSize: 0x60 }
+  - { offsetInCU: 0x157, offset: 0xBEB83, size: 0x8, addend: 0x0, symName: '+[FBXCTestResultToolOperation exportFrom:to:forId:withType:queue:logger:]', symObjAddr: 0x310, symBinAddr: 0x20160, symSize: 0x250 }
+  - { offsetInCU: 0x202, offset: 0xBEC2E, size: 0x8, addend: 0x0, symName: '+[FBXCTestResultToolOperation getJSONFromTask:]', symObjAddr: 0x560, symBinAddr: 0x203B0, symSize: 0xE0 }
+  - { offsetInCU: 0x259, offset: 0xBEC85, size: 0x8, addend: 0x0, symName: '+[FBXCTestResultToolOperation getJSONFrom:forId:queue:logger:]', symObjAddr: 0x640, symBinAddr: 0x20490, symSize: 0x2E0 }
+  - { offsetInCU: 0x2E4, offset: 0xBED10, size: 0x8, addend: 0x0, symName: '___62+[FBXCTestResultToolOperation getJSONFrom:forId:queue:logger:]_block_invoke', symObjAddr: 0x920, symBinAddr: 0x20770, symSize: 0x70 }
+  - { offsetInCU: 0x321, offset: 0xBED4D, size: 0x8, addend: 0x0, symName: '+[FBXCTestResultToolOperation exportFileFrom:to:forId:queue:logger:]', symObjAddr: 0x990, symBinAddr: 0x207E0, symSize: 0x160 }
+  - { offsetInCU: 0x3A5, offset: 0xBEDD1, size: 0x8, addend: 0x0, symName: '+[FBXCTestResultToolOperation exportJPEGFrom:to:forId:type:queue:logger:]', symObjAddr: 0xAF0, symBinAddr: 0x20940, symSize: 0x2F0 }
+  - { offsetInCU: 0x438, offset: 0xBEE64, size: 0x8, addend: 0x0, symName: '___73+[FBXCTestResultToolOperation exportJPEGFrom:to:forId:type:queue:logger:]_block_invoke', symObjAddr: 0xDE0, symBinAddr: 0x20C30, symSize: 0x340 }
+  - { offsetInCU: 0x4CF, offset: 0xBEEFB, size: 0x8, addend: 0x0, symName: '+[FBXCTestResultToolOperation exportDirectoryFrom:to:forId:queue:logger:]', symObjAddr: 0x1200, symBinAddr: 0x20F70, symSize: 0x160 }
+  - { offsetInCU: 0x553, offset: 0xBEF7F, size: 0x8, addend: 0x0, symName: '+[FBXCTestResultToolOperation describeFormat:logger:]', symObjAddr: 0x1360, symBinAddr: 0x210D0, symSize: 0x140 }
+  - { offsetInCU: 0x5B9, offset: 0xBEFE5, size: 0x8, addend: 0x0, symName: '___53+[FBXCTestResultToolOperation describeFormat:logger:]_block_invoke', symObjAddr: 0x14A0, symBinAddr: 0x21210, symSize: 0x6F }
+  - { offsetInCU: 0x27, offset: 0xBF2CF, size: 0x8, addend: 0x0, symName: '+[XCTestBootstrapFrameworkLoader allDependentFrameworks]', symObjAddr: 0x0, symBinAddr: 0x21280, symSize: 0x80 }
+  - { offsetInCU: 0x35, offset: 0xBF2DD, size: 0x8, addend: 0x0, symName: '+[XCTestBootstrapFrameworkLoader allDependentFrameworks]', symObjAddr: 0x0, symBinAddr: 0x21280, symSize: 0x80 }
+  - { offsetInCU: 0x5F, offset: 0xBF307, size: 0x8, addend: 0x0, symName: _allDependentFrameworks.onceToken, symObjAddr: 0x1868, symBinAddr: 0x5EC88, symSize: 0x0 }
+  - { offsetInCU: 0x75, offset: 0xBF31D, size: 0x8, addend: 0x0, symName: _allDependentFrameworks.loader, symObjAddr: 0x1870, symBinAddr: 0x5EC90, symSize: 0x0 }
+  - { offsetInCU: 0x138, offset: 0xBF3E0, size: 0x8, addend: 0x0, symName: '___56+[XCTestBootstrapFrameworkLoader allDependentFrameworks]_block_invoke', symObjAddr: 0x80, symBinAddr: 0x21300, symSize: 0x113 }
+  - { offsetInCU: 0x27, offset: 0xBF4D4, size: 0x8, addend: 0x0, symName: '-[FBXCTestConfiguration initWithEnvironment:workingDirectory:testBundlePath:waitForDebugger:timeout:]', symObjAddr: 0x0, symBinAddr: 0x21420, symSize: 0x2C0 }
+  - { offsetInCU: 0x41, offset: 0xBF4EE, size: 0x8, addend: 0x0, symName: _FBXCTestTypeApplicationTest, symObjAddr: 0x3598, symBinAddr: 0x4CBF0, symSize: 0x0 }
+  - { offsetInCU: 0x6C, offset: 0xBF519, size: 0x8, addend: 0x0, symName: _FBXCTestTypeLogicTest, symObjAddr: 0x35A0, symBinAddr: 0x4CBF8, symSize: 0x0 }
+  - { offsetInCU: 0x82, offset: 0xBF52F, size: 0x8, addend: 0x0, symName: _FBXCTestTypeListTest, symObjAddr: 0x35A8, symBinAddr: 0x4CC00, symSize: 0x0 }
+  - { offsetInCU: 0x98, offset: 0xBF545, size: 0x8, addend: 0x0, symName: _FBXCTestTypeUITest, symObjAddr: 0x35B0, symBinAddr: 0x4CC08, symSize: 0x0 }
+  - { offsetInCU: 0xAE, offset: 0xBF55B, size: 0x8, addend: 0x0, symName: _KeyEnvironment, symObjAddr: 0x35B8, symBinAddr: 0x4CC10, symSize: 0x0 }
+  - { offsetInCU: 0xC9, offset: 0xBF576, size: 0x8, addend: 0x0, symName: _KeyListTestsOnly, symObjAddr: 0x35C0, symBinAddr: 0x4CC18, symSize: 0x0 }
+  - { offsetInCU: 0xDF, offset: 0xBF58C, size: 0x8, addend: 0x0, symName: _KeyOSLogPath, symObjAddr: 0x35C8, symBinAddr: 0x4CC20, symSize: 0x0 }
+  - { offsetInCU: 0xF5, offset: 0xBF5A2, size: 0x8, addend: 0x0, symName: _KeyRunnerAppPath, symObjAddr: 0x35D0, symBinAddr: 0x4CC28, symSize: 0x0 }
+  - { offsetInCU: 0x10B, offset: 0xBF5B8, size: 0x8, addend: 0x0, symName: _KeyRunnerTargetPath, symObjAddr: 0x35D8, symBinAddr: 0x4CC30, symSize: 0x0 }
+  - { offsetInCU: 0x121, offset: 0xBF5CE, size: 0x8, addend: 0x0, symName: _KeyTestArtifactsFilenameGlobs, symObjAddr: 0x35E0, symBinAddr: 0x4CC38, symSize: 0x0 }
+  - { offsetInCU: 0x137, offset: 0xBF5E4, size: 0x8, addend: 0x0, symName: _KeyTestBundlePath, symObjAddr: 0x35E8, symBinAddr: 0x4CC40, symSize: 0x0 }
+  - { offsetInCU: 0x14D, offset: 0xBF5FA, size: 0x8, addend: 0x0, symName: _KeyTestFilter, symObjAddr: 0x35F0, symBinAddr: 0x4CC48, symSize: 0x0 }
+  - { offsetInCU: 0x163, offset: 0xBF610, size: 0x8, addend: 0x0, symName: _KeyTestMirror, symObjAddr: 0x35F8, symBinAddr: 0x4CC50, symSize: 0x0 }
+  - { offsetInCU: 0x179, offset: 0xBF626, size: 0x8, addend: 0x0, symName: _KeyTestTimeout, symObjAddr: 0x3600, symBinAddr: 0x4CC58, symSize: 0x0 }
+  - { offsetInCU: 0x18F, offset: 0xBF63C, size: 0x8, addend: 0x0, symName: _KeyTestType, symObjAddr: 0x3608, symBinAddr: 0x4CC60, symSize: 0x0 }
+  - { offsetInCU: 0x1A5, offset: 0xBF652, size: 0x8, addend: 0x0, symName: _KeyVideoRecordingPath, symObjAddr: 0x3610, symBinAddr: 0x4CC68, symSize: 0x0 }
+  - { offsetInCU: 0x1BB, offset: 0xBF668, size: 0x8, addend: 0x0, symName: _KeyWaitForDebugger, symObjAddr: 0x3618, symBinAddr: 0x4CC70, symSize: 0x0 }
+  - { offsetInCU: 0x1D1, offset: 0xBF67E, size: 0x8, addend: 0x0, symName: _KeyWorkingDirectory, symObjAddr: 0x3620, symBinAddr: 0x4CC78, symSize: 0x0 }
+  - { offsetInCU: 0x50D, offset: 0xBF9BA, size: 0x8, addend: 0x0, symName: '-[FBXCTestConfiguration initWithEnvironment:workingDirectory:testBundlePath:waitForDebugger:timeout:]', symObjAddr: 0x0, symBinAddr: 0x21420, symSize: 0x2C0 }
+  - { offsetInCU: 0x5A1, offset: 0xBFA4E, size: 0x8, addend: 0x0, symName: '-[FBXCTestConfiguration defaultTimeout]', symObjAddr: 0x2C0, symBinAddr: 0x216E0, symSize: 0x20 }
+  - { offsetInCU: 0x5DA, offset: 0xBFA87, size: 0x8, addend: 0x0, symName: '-[FBXCTestConfiguration testType]', symObjAddr: 0x2E0, symBinAddr: 0x21700, symSize: 0xF0 }
+  - { offsetInCU: 0x613, offset: 0xBFAC0, size: 0x8, addend: 0x0, symName: '-[FBXCTestConfiguration buildEnvironmentWithEntries:]', symObjAddr: 0x3D0, symBinAddr: 0x217F0, symSize: 0x660 }
+  - { offsetInCU: 0x712, offset: 0xBFBBF, size: 0x8, addend: 0x0, symName: '-[FBXCTestConfiguration description]', symObjAddr: 0xA30, symBinAddr: 0x21E50, symSize: 0x140 }
+  - { offsetInCU: 0x75A, offset: 0xBFC07, size: 0x8, addend: 0x0, symName: '-[FBXCTestConfiguration isEqual:]', symObjAddr: 0xB70, symBinAddr: 0x21F90, symSize: 0x6B0 }
+  - { offsetInCU: 0x7A2, offset: 0xBFC4F, size: 0x8, addend: 0x0, symName: '-[FBXCTestConfiguration hash]', symObjAddr: 0x1220, symBinAddr: 0x22640, symSize: 0x1A0 }
+  - { offsetInCU: 0x7DB, offset: 0xBFC88, size: 0x8, addend: 0x0, symName: '-[FBXCTestConfiguration jsonSerializableRepresentation]', symObjAddr: 0x13C0, symBinAddr: 0x227E0, symSize: 0x280 }
+  - { offsetInCU: 0x816, offset: 0xBFCC3, size: 0x8, addend: 0x0, symName: '-[FBXCTestConfiguration copyWithZone:]', symObjAddr: 0x1640, symBinAddr: 0x22A60, symSize: 0x20 }
+  - { offsetInCU: 0x85E, offset: 0xBFD0B, size: 0x8, addend: 0x0, symName: '-[FBXCTestConfiguration processUnderTestEnvironment]', symObjAddr: 0x1660, symBinAddr: 0x22A80, symSize: 0x20 }
+  - { offsetInCU: 0x897, offset: 0xBFD44, size: 0x8, addend: 0x0, symName: '-[FBXCTestConfiguration workingDirectory]', symObjAddr: 0x1680, symBinAddr: 0x22AA0, symSize: 0x20 }
+  - { offsetInCU: 0x8D0, offset: 0xBFD7D, size: 0x8, addend: 0x0, symName: '-[FBXCTestConfiguration testBundlePath]', symObjAddr: 0x16A0, symBinAddr: 0x22AC0, symSize: 0x20 }
+  - { offsetInCU: 0x909, offset: 0xBFDB6, size: 0x8, addend: 0x0, symName: '-[FBXCTestConfiguration waitForDebugger]', symObjAddr: 0x16C0, symBinAddr: 0x22AE0, symSize: 0x20 }
+  - { offsetInCU: 0x942, offset: 0xBFDEF, size: 0x8, addend: 0x0, symName: '-[FBXCTestConfiguration testTimeout]', symObjAddr: 0x16E0, symBinAddr: 0x22B00, symSize: 0x20 }
+  - { offsetInCU: 0x97B, offset: 0xBFE28, size: 0x8, addend: 0x0, symName: '-[FBXCTestConfiguration .cxx_destruct]', symObjAddr: 0x1700, symBinAddr: 0x22B20, symSize: 0x50 }
+  - { offsetInCU: 0x9B0, offset: 0xBFE5D, size: 0x8, addend: 0x0, symName: '+[FBListTestConfiguration configurationWithEnvironment:workingDirectory:testBundlePath:runnerAppPath:waitForDebugger:timeout:architectures:]', symObjAddr: 0x1750, symBinAddr: 0x22B70, symSize: 0x180 }
+  - { offsetInCU: 0xA52, offset: 0xBFEFF, size: 0x8, addend: 0x0, symName: '-[FBListTestConfiguration initWithEnvironment:workingDirectory:testBundlePath:runnerAppPath:waitForDebugger:timeout:architectures:]', symObjAddr: 0x18D0, symBinAddr: 0x22CF0, symSize: 0x1C0 }
+  - { offsetInCU: 0xAF5, offset: 0xBFFA2, size: 0x8, addend: 0x0, symName: '-[FBListTestConfiguration testType]', symObjAddr: 0x1A90, symBinAddr: 0x22EB0, symSize: 0x20 }
+  - { offsetInCU: 0xB2E, offset: 0xBFFDB, size: 0x8, addend: 0x0, symName: '-[FBListTestConfiguration jsonSerializableRepresentation]', symObjAddr: 0x1AB0, symBinAddr: 0x22ED0, symSize: 0x180 }
+  - { offsetInCU: 0xB76, offset: 0xC0023, size: 0x8, addend: 0x0, symName: '-[FBListTestConfiguration architectures]', symObjAddr: 0x1C30, symBinAddr: 0x23050, symSize: 0x20 }
+  - { offsetInCU: 0xBAF, offset: 0xC005C, size: 0x8, addend: 0x0, symName: '-[FBListTestConfiguration runnerAppPath]', symObjAddr: 0x1C50, symBinAddr: 0x23070, symSize: 0x20 }
+  - { offsetInCU: 0xBE8, offset: 0xC0095, size: 0x8, addend: 0x0, symName: '-[FBListTestConfiguration .cxx_destruct]', symObjAddr: 0x1C70, symBinAddr: 0x23090, symSize: 0x50 }
+  - { offsetInCU: 0xC1D, offset: 0xC00CA, size: 0x8, addend: 0x0, symName: '+[FBTestManagerTestConfiguration configurationWithEnvironment:workingDirectory:testBundlePath:waitForDebugger:timeout:runnerAppPath:testTargetAppPath:testFilter:videoRecordingPath:testArtifactsFilenameGlobs:osLogPath:]', symObjAddr: 0x1CC0, symBinAddr: 0x230E0, symSize: 0x300 }
+  - { offsetInCU: 0xD04, offset: 0xC01B1, size: 0x8, addend: 0x0, symName: '-[FBTestManagerTestConfiguration initWithEnvironment:workingDirectory:testBundlePath:waitForDebugger:timeout:runnerAppPath:testTargetAppPath:testFilter:videoRecordingPath:testArtifactsFilenameGlobs:osLogPath:]', symObjAddr: 0x1FC0, symBinAddr: 0x233E0, symSize: 0x300 }
+  - { offsetInCU: 0xDE8, offset: 0xC0295, size: 0x8, addend: 0x0, symName: '-[FBTestManagerTestConfiguration testType]', symObjAddr: 0x22C0, symBinAddr: 0x236E0, symSize: 0x40 }
+  - { offsetInCU: 0xE21, offset: 0xC02CE, size: 0x8, addend: 0x0, symName: '-[FBTestManagerTestConfiguration jsonSerializableRepresentation]', symObjAddr: 0x2300, symBinAddr: 0x23720, symSize: 0x410 }
+  - { offsetInCU: 0xE69, offset: 0xC0316, size: 0x8, addend: 0x0, symName: '-[FBTestManagerTestConfiguration runnerAppPath]', symObjAddr: 0x2710, symBinAddr: 0x23B30, symSize: 0x20 }
+  - { offsetInCU: 0xEA2, offset: 0xC034F, size: 0x8, addend: 0x0, symName: '-[FBTestManagerTestConfiguration testTargetAppPath]', symObjAddr: 0x2730, symBinAddr: 0x23B50, symSize: 0x20 }
+  - { offsetInCU: 0xEDB, offset: 0xC0388, size: 0x8, addend: 0x0, symName: '-[FBTestManagerTestConfiguration testFilter]', symObjAddr: 0x2750, symBinAddr: 0x23B70, symSize: 0x20 }
+  - { offsetInCU: 0xF14, offset: 0xC03C1, size: 0x8, addend: 0x0, symName: '-[FBTestManagerTestConfiguration osLogPath]', symObjAddr: 0x2770, symBinAddr: 0x23B90, symSize: 0x20 }
+  - { offsetInCU: 0xF4D, offset: 0xC03FA, size: 0x8, addend: 0x0, symName: '-[FBTestManagerTestConfiguration videoRecordingPath]', symObjAddr: 0x2790, symBinAddr: 0x23BB0, symSize: 0x20 }
+  - { offsetInCU: 0xF86, offset: 0xC0433, size: 0x8, addend: 0x0, symName: '-[FBTestManagerTestConfiguration testArtifactsFilenameGlobs]', symObjAddr: 0x27B0, symBinAddr: 0x23BD0, symSize: 0x20 }
+  - { offsetInCU: 0xFBF, offset: 0xC046C, size: 0x8, addend: 0x0, symName: '-[FBTestManagerTestConfiguration .cxx_destruct]', symObjAddr: 0x27D0, symBinAddr: 0x23BF0, symSize: 0xA0 }
+  - { offsetInCU: 0xFF4, offset: 0xC04A1, size: 0x8, addend: 0x0, symName: '+[FBLogicTestConfiguration configurationWithEnvironment:workingDirectory:testBundlePath:waitForDebugger:timeout:testFilter:mirroring:coverageConfiguration:binaryPath:logDirectoryPath:architectures:]', symObjAddr: 0x2870, symBinAddr: 0x23C90, symSize: 0x2C0 }
+  - { offsetInCU: 0x10DA, offset: 0xC0587, size: 0x8, addend: 0x0, symName: '-[FBLogicTestConfiguration initWithEnvironment:workingDirectory:testBundlePath:waitForDebugger:timeout:testFilter:mirroring:coverageConfiguration:binaryPath:logDirectoryPath:architectures:]', symObjAddr: 0x2B30, symBinAddr: 0x23F50, symSize: 0x2D0 }
+  - { offsetInCU: 0x11BD, offset: 0xC066A, size: 0x8, addend: 0x0, symName: '-[FBLogicTestConfiguration testType]', symObjAddr: 0x2E00, symBinAddr: 0x24220, symSize: 0x20 }
+  - { offsetInCU: 0x11F7, offset: 0xC06A4, size: 0x8, addend: 0x0, symName: '-[FBLogicTestConfiguration jsonSerializableRepresentation]', symObjAddr: 0x2E20, symBinAddr: 0x24240, symSize: 0x150 }
+  - { offsetInCU: 0x1241, offset: 0xC06EE, size: 0x8, addend: 0x0, symName: '-[FBLogicTestConfiguration testFilter]', symObjAddr: 0x2F70, symBinAddr: 0x24390, symSize: 0x20 }
+  - { offsetInCU: 0x127A, offset: 0xC0727, size: 0x8, addend: 0x0, symName: '-[FBLogicTestConfiguration mirroring]', symObjAddr: 0x2F90, symBinAddr: 0x243B0, symSize: 0x20 }
+  - { offsetInCU: 0x12B3, offset: 0xC0760, size: 0x8, addend: 0x0, symName: '-[FBLogicTestConfiguration coverageConfiguration]', symObjAddr: 0x2FB0, symBinAddr: 0x243D0, symSize: 0x20 }
+  - { offsetInCU: 0x12EC, offset: 0xC0799, size: 0x8, addend: 0x0, symName: '-[FBLogicTestConfiguration binaryPath]', symObjAddr: 0x2FD0, symBinAddr: 0x243F0, symSize: 0x20 }
+  - { offsetInCU: 0x1325, offset: 0xC07D2, size: 0x8, addend: 0x0, symName: '-[FBLogicTestConfiguration logDirectoryPath]', symObjAddr: 0x2FF0, symBinAddr: 0x24410, symSize: 0x20 }
+  - { offsetInCU: 0x135E, offset: 0xC080B, size: 0x8, addend: 0x0, symName: '-[FBLogicTestConfiguration architectures]', symObjAddr: 0x3010, symBinAddr: 0x24430, symSize: 0x20 }
+  - { offsetInCU: 0x1397, offset: 0xC0844, size: 0x8, addend: 0x0, symName: '-[FBLogicTestConfiguration .cxx_destruct]', symObjAddr: 0x3030, symBinAddr: 0x24450, symSize: 0x7E }
+  - { offsetInCU: 0x27, offset: 0xC092A, size: 0x8, addend: 0x0, symName: '+[FBOToolDynamicLibs findFullPathForSanitiserDyldInBundle:onQueue:]', symObjAddr: 0x0, symBinAddr: 0x244D0, symSize: 0x160 }
+  - { offsetInCU: 0x44, offset: 0xC0947, size: 0x8, addend: 0x0, symName: '+[FBOToolDynamicLibs findFullPathForSanitiserDyldInBundle:onQueue:]', symObjAddr: 0x0, symBinAddr: 0x244D0, symSize: 0x160 }
+  - { offsetInCU: 0x9B, offset: 0xC099E, size: 0x8, addend: 0x0, symName: '___67+[FBOToolDynamicLibs findFullPathForSanitiserDyldInBundle:onQueue:]_block_invoke', symObjAddr: 0x160, symBinAddr: 0x24630, symSize: 0x9B0 }
+  - { offsetInCU: 0x1FF, offset: 0xC0B02, size: 0x8, addend: 0x0, symName: '+[FBOToolDynamicLibs filesInDirectory:error:]', symObjAddr: 0xB80, symBinAddr: 0x24FE0, symSize: 0x218 }
+  - { offsetInCU: 0x27, offset: 0xC0CEE, size: 0x8, addend: 0x0, symName: '+[FBTestReporterAdapter withReporter:]', symObjAddr: 0x0, symBinAddr: 0x25200, symSize: 0x70 }
+  - { offsetInCU: 0xE3, offset: 0xC0DAA, size: 0x8, addend: 0x0, symName: '+[FBTestReporterAdapter withReporter:]', symObjAddr: 0x0, symBinAddr: 0x25200, symSize: 0x70 }
+  - { offsetInCU: 0x12B, offset: 0xC0DF2, size: 0x8, addend: 0x0, symName: '-[FBTestReporterAdapter initWithReporter:]', symObjAddr: 0x70, symBinAddr: 0x25270, symSize: 0xD0 }
+  - { offsetInCU: 0x173, offset: 0xC0E3A, size: 0x8, addend: 0x0, symName: '-[FBTestReporterAdapter _XCT_testSuite:didStartAt:]', symObjAddr: 0x140, symBinAddr: 0x25340, symSize: 0xB0 }
+  - { offsetInCU: 0x1CA, offset: 0xC0E91, size: 0x8, addend: 0x0, symName: '-[FBTestReporterAdapter _XCT_didBeginExecutingTestPlan]', symObjAddr: 0x1F0, symBinAddr: 0x253F0, symSize: 0x50 }
+  - { offsetInCU: 0x203, offset: 0xC0ECA, size: 0x8, addend: 0x0, symName: '-[FBTestReporterAdapter _XCT_testCaseDidStartForTestClass:method:]', symObjAddr: 0x240, symBinAddr: 0x25440, symSize: 0xB0 }
+  - { offsetInCU: 0x25A, offset: 0xC0F21, size: 0x8, addend: 0x0, symName: '-[FBTestReporterAdapter _XCT_testCaseDidFailForTestClass:method:withMessage:file:line:]', symObjAddr: 0x2F0, symBinAddr: 0x254F0, symSize: 0x220 }
+  - { offsetInCU: 0x2DF, offset: 0xC0FA6, size: 0x8, addend: 0x0, symName: '-[FBTestReporterAdapter _XCT_didFinishExecutingTestPlan]', symObjAddr: 0x510, symBinAddr: 0x25710, symSize: 0x50 }
+  - { offsetInCU: 0x318, offset: 0xC0FDF, size: 0x8, addend: 0x0, symName: '-[FBTestReporterAdapter _XCT_testCaseDidFinishForTestClass:method:withStatus:duration:]', symObjAddr: 0x560, symBinAddr: 0x25760, symSize: 0x150 }
+  - { offsetInCU: 0x39C, offset: 0xC1063, size: 0x8, addend: 0x0, symName: '-[FBTestReporterAdapter _XCT_testSuite:didFinishAt:runCount:withFailures:unexpected:testDuration:totalDuration:]', symObjAddr: 0x6B0, symBinAddr: 0x258B0, symSize: 0x1E0 }
+  - { offsetInCU: 0x44F, offset: 0xC1116, size: 0x8, addend: 0x0, symName: '-[FBTestReporterAdapter _XCT_testCase:method:didFinishActivity:]', symObjAddr: 0x890, symBinAddr: 0x25A90, symSize: 0x150 }
+  - { offsetInCU: 0x4C4, offset: 0xC118B, size: 0x8, addend: 0x0, symName: '-[FBTestReporterAdapter _XCT_testCase:method:willStartActivity:]', symObjAddr: 0x9E0, symBinAddr: 0x25BE0, symSize: 0x150 }
+  - { offsetInCU: 0x539, offset: 0xC1200, size: 0x8, addend: 0x0, symName: '-[FBTestReporterAdapter reporter]', symObjAddr: 0xB30, symBinAddr: 0x25D30, symSize: 0x20 }
+  - { offsetInCU: 0x572, offset: 0xC1239, size: 0x8, addend: 0x0, symName: '-[FBTestReporterAdapter .cxx_destruct]', symObjAddr: 0xB50, symBinAddr: 0x25D50, symSize: 0x27 }
+  - { offsetInCU: 0x27, offset: 0xC15B5, size: 0x8, addend: 0x0, symName: '+[FBXCTestResultBundleParser parse:target:reporter:logger:extractScreenshots:]', symObjAddr: 0x0, symBinAddr: 0x25D80, symSize: 0x5A0 }
+  - { offsetInCU: 0x41, offset: 0xC15CF, size: 0x8, addend: 0x0, symName: _XCTestOperationTimeoutSecs, symObjAddr: 0xBDB8, symBinAddr: 0x3ED68, symSize: 0x0 }
+  - { offsetInCU: 0x168, offset: 0xC16F6, size: 0x8, addend: 0x0, symName: '+[FBXCTestResultBundleParser parse:target:reporter:logger:extractScreenshots:]', symObjAddr: 0x0, symBinAddr: 0x25D80, symSize: 0x5A0 }
+  - { offsetInCU: 0x26A, offset: 0xC17F8, size: 0x8, addend: 0x0, symName: _readNumberFromDict, symObjAddr: 0x5A0, symBinAddr: 0x26320, symSize: 0xB0 }
+  - { offsetInCU: 0x2A3, offset: 0xC1831, size: 0x8, addend: 0x0, symName: '___78+[FBXCTestResultBundleParser parse:target:reporter:logger:extractScreenshots:]_block_invoke', symObjAddr: 0x650, symBinAddr: 0x263D0, symSize: 0x5A0 }
+  - { offsetInCU: 0x3CD, offset: 0xC195B, size: 0x8, addend: 0x0, symName: '___78+[FBXCTestResultBundleParser parse:target:reporter:logger:extractScreenshots:]_block_invoke_2', symObjAddr: 0xBF0, symBinAddr: 0x26970, symSize: 0x140 }
+  - { offsetInCU: 0x4A6, offset: 0xC1A34, size: 0x8, addend: 0x0, symName: _accessAndUnwrapValues, symObjAddr: 0xD30, symBinAddr: 0x26AB0, symSize: 0x270 }
+  - { offsetInCU: 0x51B, offset: 0xC1AA9, size: 0x8, addend: 0x0, symName: '+[FBXCTestResultBundleParser reportResults:reporter:]', symObjAddr: 0x1200, symBinAddr: 0x26D20, symSize: 0x160 }
+  - { offsetInCU: 0x57D, offset: 0xC1B0B, size: 0x8, addend: 0x0, symName: '+[FBXCTestResultBundleParser reportTargetTests:reporter:]', symObjAddr: 0x1360, symBinAddr: 0x26E80, symSize: 0x3A0 }
+  - { offsetInCU: 0x5F3, offset: 0xC1B81, size: 0x8, addend: 0x0, symName: '+[FBXCTestResultBundleParser reportTargetTest:reporter:]', symObjAddr: 0x1700, symBinAddr: 0x27220, symSize: 0x210 }
+  - { offsetInCU: 0x664, offset: 0xC1BF2, size: 0x8, addend: 0x0, symName: _readStringFromDict, symObjAddr: 0x1910, symBinAddr: 0x27430, symSize: 0xB0 }
+  - { offsetInCU: 0x69D, offset: 0xC1C2B, size: 0x8, addend: 0x0, symName: '+[FBXCTestResultBundleParser reportSelectedTests:testBundleName:reporter:]', symObjAddr: 0x19C0, symBinAddr: 0x274E0, symSize: 0x3E0 }
+  - { offsetInCU: 0x723, offset: 0xC1CB1, size: 0x8, addend: 0x0, symName: '+[FBXCTestResultBundleParser reportSelectedTest:testBundleName:reporter:]', symObjAddr: 0x1DA0, symBinAddr: 0x278C0, symSize: 0x210 }
+  - { offsetInCU: 0x794, offset: 0xC1D22, size: 0x8, addend: 0x0, symName: '+[FBXCTestResultBundleParser reportTestTargetXctests:testBundleName:reporter:]', symObjAddr: 0x1FB0, symBinAddr: 0x27AD0, symSize: 0x3E0 }
+  - { offsetInCU: 0x81A, offset: 0xC1DA8, size: 0x8, addend: 0x0, symName: '+[FBXCTestResultBundleParser reportTestTargetXctest:testBundleName:reporter:]', symObjAddr: 0x2390, symBinAddr: 0x27EB0, symSize: 0x210 }
+  - { offsetInCU: 0x88B, offset: 0xC1E19, size: 0x8, addend: 0x0, symName: '+[FBXCTestResultBundleParser reportTestClasses:testBundleName:reporter:]', symObjAddr: 0x25A0, symBinAddr: 0x280C0, symSize: 0x3E0 }
+  - { offsetInCU: 0x911, offset: 0xC1E9F, size: 0x8, addend: 0x0, symName: '+[FBXCTestResultBundleParser reportTestClass:testBundleName:reporter:]', symObjAddr: 0x2980, symBinAddr: 0x284A0, symSize: 0x240 }
+  - { offsetInCU: 0x991, offset: 0xC1F1F, size: 0x8, addend: 0x0, symName: '+[FBXCTestResultBundleParser reportTestMethods:testBundleName:testClassName:reporter:]', symObjAddr: 0x2BC0, symBinAddr: 0x286E0, symSize: 0x420 }
+  - { offsetInCU: 0xA27, offset: 0xC1FB5, size: 0x8, addend: 0x0, symName: '+[FBXCTestResultBundleParser reportTestMethod:testBundleName:testClassName:reporter:]', symObjAddr: 0x2FE0, symBinAddr: 0x28B00, symSize: 0x5D0 }
+  - { offsetInCU: 0xB1E, offset: 0xC20AC, size: 0x8, addend: 0x0, symName: _readArrayFromDict, symObjAddr: 0x35B0, symBinAddr: 0x290D0, symSize: 0xB0 }
+  - { offsetInCU: 0xB57, offset: 0xC20E5, size: 0x8, addend: 0x0, symName: '+[FBXCTestResultBundleParser buildTestLogLegacy:testBundleName:testClassName:testMethodName:testPassed:duration:]', symObjAddr: 0x3660, symBinAddr: 0x29180, symSize: 0x500 }
+  - { offsetInCU: 0xC74, offset: 0xC2202, size: 0x8, addend: 0x0, symName: _readDoubleFromDict, symObjAddr: 0x3B60, symBinAddr: 0x29680, symSize: 0xA0 }
+  - { offsetInCU: 0xCBC, offset: 0xC224A, size: 0x8, addend: 0x0, symName: '+[FBXCTestResultBundleParser addTestLogsFromLegacyActivitySummary:logs:testStartTimeInterval:indent:]', symObjAddr: 0x3C00, symBinAddr: 0x29720, symSize: 0x5B0 }
+  - { offsetInCU: 0xDBE, offset: 0xC234C, size: 0x8, addend: 0x0, symName: '+[FBXCTestResultBundleParser buildErrorMessageLegacy:]', symObjAddr: 0x41B0, symBinAddr: 0x29CD0, symSize: 0x370 }
+  - { offsetInCU: 0xE3C, offset: 0xC23CA, size: 0x8, addend: 0x0, symName: '+[FBXCTestResultBundleParser parseActions:logger:]', symObjAddr: 0x4520, symBinAddr: 0x2A040, symSize: 0x4F0 }
+  - { offsetInCU: 0xEDC, offset: 0xC246A, size: 0x8, addend: 0x0, symName: _unwrapValues, symObjAddr: 0x4A10, symBinAddr: 0x2A530, symSize: 0x100 }
+  - { offsetInCU: 0xF24, offset: 0xC24B2, size: 0x8, addend: 0x0, symName: '+[FBXCTestResultBundleParser parseAction:logger:]', symObjAddr: 0x4B10, symBinAddr: 0x2A630, symSize: 0x210 }
+  - { offsetInCU: 0xF8E, offset: 0xC251C, size: 0x8, addend: 0x0, symName: '+[FBXCTestResultBundleParser parseActionResult:logger:]', symObjAddr: 0x4D20, symBinAddr: 0x2A840, symSize: 0x210 }
+  - { offsetInCU: 0xFF8, offset: 0xC2586, size: 0x8, addend: 0x0, symName: '+[FBXCTestResultBundleParser parseTestsRef:logger:]', symObjAddr: 0x4F30, symBinAddr: 0x2AA50, symSize: 0x1D0 }
+  - { offsetInCU: 0x1052, offset: 0xC25E0, size: 0x8, addend: 0x0, symName: _accessAndUnwrapValue, symObjAddr: 0x5100, symBinAddr: 0x2AC20, symSize: 0x270 }
+  - { offsetInCU: 0x10C7, offset: 0xC2655, size: 0x8, addend: 0x0, symName: '+[FBXCTestResultBundleParser reportSummaries:reporter:queue:resultBundlePath:logger:extractScreenshots:]', symObjAddr: 0x5370, symBinAddr: 0x2AE90, symSize: 0x470 }
+  - { offsetInCU: 0x1184, offset: 0xC2712, size: 0x8, addend: 0x0, symName: '+[FBXCTestResultBundleParser reportResults:reporter:queue:resultBundlePath:logger:extractScreenshots:]', symObjAddr: 0x57E0, symBinAddr: 0x2B300, symSize: 0x200 }
+  - { offsetInCU: 0x122A, offset: 0xC27B8, size: 0x8, addend: 0x0, symName: '+[FBXCTestResultBundleParser reportTargetTests:reporter:queue:resultBundlePath:logger:extractScreenshots:]', symObjAddr: 0x59E0, symBinAddr: 0x2B500, symSize: 0x470 }
+  - { offsetInCU: 0x12E7, offset: 0xC2875, size: 0x8, addend: 0x0, symName: '+[FBXCTestResultBundleParser reportTargetTest:reporter:queue:resultBundlePath:logger:extractScreenshots:]', symObjAddr: 0x5E50, symBinAddr: 0x2B970, symSize: 0x430 }
+  - { offsetInCU: 0x13C0, offset: 0xC294E, size: 0x8, addend: 0x0, symName: '+[FBXCTestResultBundleParser reportSelectedTests:testBundleName:reporter:queue:resultBundlePath:logger:extractScreenshots:]', symObjAddr: 0x6280, symBinAddr: 0x2BDA0, symSize: 0x4B0 }
+  - { offsetInCU: 0x148E, offset: 0xC2A1C, size: 0x8, addend: 0x0, symName: '+[FBXCTestResultBundleParser reportSelectedTest:testBundleName:reporter:queue:resultBundlePath:logger:extractScreenshots:]', symObjAddr: 0x6730, symBinAddr: 0x2C250, symSize: 0x3C0 }
+  - { offsetInCU: 0x1547, offset: 0xC2AD5, size: 0x8, addend: 0x0, symName: '+[FBXCTestResultBundleParser reportTestTargetXctests:testBundleName:reporter:queue:resultBundlePath:logger:extractScreenshots:]', symObjAddr: 0x6AF0, symBinAddr: 0x2C610, symSize: 0x4B0 }
+  - { offsetInCU: 0x1615, offset: 0xC2BA3, size: 0x8, addend: 0x0, symName: '+[FBXCTestResultBundleParser reportTestTargetXctest:testBundleName:reporter:queue:resultBundlePath:logger:extractScreenshots:]', symObjAddr: 0x6FA0, symBinAddr: 0x2CAC0, symSize: 0x3C0 }
+  - { offsetInCU: 0x16CE, offset: 0xC2C5C, size: 0x8, addend: 0x0, symName: '+[FBXCTestResultBundleParser reportTestClasses:testBundleName:reporter:queue:resultBundlePath:logger:extractScreenshots:]', symObjAddr: 0x7360, symBinAddr: 0x2CE80, symSize: 0x4B0 }
+  - { offsetInCU: 0x179C, offset: 0xC2D2A, size: 0x8, addend: 0x0, symName: '+[FBXCTestResultBundleParser reportTestClass:testBundleName:reporter:queue:resultBundlePath:logger:extractScreenshots:]', symObjAddr: 0x7810, symBinAddr: 0x2D330, symSize: 0x410 }
+  - { offsetInCU: 0x1867, offset: 0xC2DF5, size: 0x8, addend: 0x0, symName: '+[FBXCTestResultBundleParser reportTestMethods:testBundleName:testClassName:reporter:queue:resultBundlePath:logger:extractScreenshots:]', symObjAddr: 0x7C20, symBinAddr: 0x2D740, symSize: 0x500 }
+  - { offsetInCU: 0x1946, offset: 0xC2ED4, size: 0x8, addend: 0x0, symName: '+[FBXCTestResultBundleParser reportTestMethod:testBundleName:testClassName:reporter:queue:resultBundlePath:logger:extractScreenshots:]', symObjAddr: 0x8120, symBinAddr: 0x2DC40, symSize: 0x830 }
+  - { offsetInCU: 0x1A63, offset: 0xC2FF1, size: 0x8, addend: 0x0, symName: '___134+[FBXCTestResultBundleParser reportTestMethod:testBundleName:testClassName:reporter:queue:resultBundlePath:logger:extractScreenshots:]_block_invoke', symObjAddr: 0x8950, symBinAddr: 0x2E470, symSize: 0x4B0 }
+  - { offsetInCU: 0x1C17, offset: 0xC31A5, size: 0x8, addend: 0x0, symName: '+[FBXCTestResultBundleParser buildTestLog:testBundleName:testClassName:testMethodName:testPassed:duration:logger:]', symObjAddr: 0x9030, symBinAddr: 0x2E920, symSize: 0x5B0 }
+  - { offsetInCU: 0x1D65, offset: 0xC32F3, size: 0x8, addend: 0x0, symName: _dateFromString, symObjAddr: 0x95E0, symBinAddr: 0x2EED0, symSize: 0xB0 }
+  - { offsetInCU: 0x1D9E, offset: 0xC332C, size: 0x8, addend: 0x0, symName: '+[FBXCTestResultBundleParser addTestLogsFromActivitySummary:logs:testStartTimeInterval:indent:logger:]', symObjAddr: 0x9690, symBinAddr: 0x2EF80, symSize: 0x680 }
+  - { offsetInCU: 0x1ED3, offset: 0xC3461, size: 0x8, addend: 0x0, symName: '+[FBXCTestResultBundleParser extractScreenshotsFromActivities:queue:resultBundlePath:logger:]', symObjAddr: 0x9D10, symBinAddr: 0x2F600, symSize: 0x500 }
+  - { offsetInCU: 0x1FD1, offset: 0xC355F, size: 0x8, addend: 0x0, symName: '+[FBXCTestResultBundleParser ensureSubdirectory:insideResultBundle:error:]', symObjAddr: 0xA210, symBinAddr: 0x2FB00, symSize: 0x220 }
+  - { offsetInCU: 0x209E, offset: 0xC362C, size: 0x8, addend: 0x0, symName: '+[FBXCTestResultBundleParser extractScreenshotsFromAttachments:to:queue:resultBundlePath:logger:]', symObjAddr: 0xA430, symBinAddr: 0x2FD20, symSize: 0x8A0 }
+  - { offsetInCU: 0x2237, offset: 0xC37C5, size: 0x8, addend: 0x0, symName: '+[FBXCTestResultBundleParser savePerformanceMetrics:toTestResultBundle:forTestTarget:testClass:testMethod:logger:]', symObjAddr: 0xACD0, symBinAddr: 0x305C0, symSize: 0x990 }
+  - { offsetInCU: 0x23D7, offset: 0xC3965, size: 0x8, addend: 0x0, symName: _unwrapValue, symObjAddr: 0xB660, symBinAddr: 0x30F50, symSize: 0x100 }
+  - { offsetInCU: 0x241F, offset: 0xC39AD, size: 0x8, addend: 0x0, symName: '+[FBXCTestResultBundleParser buildErrorMessage:logger:]', symObjAddr: 0xB760, symBinAddr: 0x31050, symSize: 0x3B0 }
+  - { offsetInCU: 0x24AE, offset: 0xC3A3C, size: 0x8, addend: 0x0, symName: _readFromDict, symObjAddr: 0xBB10, symBinAddr: 0x31400, symSize: 0x268 }
+  - { offsetInCU: 0x27, offset: 0xC3E31, size: 0x8, addend: 0x0, symName: '-[FBExceptionInfo initWithMessage:file:line:]', symObjAddr: 0x0, symBinAddr: 0x31670, symSize: 0x120 }
+  - { offsetInCU: 0xAE, offset: 0xC3EB8, size: 0x8, addend: 0x0, symName: '-[FBExceptionInfo initWithMessage:file:line:]', symObjAddr: 0x0, symBinAddr: 0x31670, symSize: 0x120 }
+  - { offsetInCU: 0x114, offset: 0xC3F1E, size: 0x8, addend: 0x0, symName: '-[FBExceptionInfo initWithMessage:]', symObjAddr: 0x120, symBinAddr: 0x31790, symSize: 0xF0 }
+  - { offsetInCU: 0x15C, offset: 0xC3F66, size: 0x8, addend: 0x0, symName: '-[FBExceptionInfo description]', symObjAddr: 0x210, symBinAddr: 0x31880, symSize: 0xD0 }
+  - { offsetInCU: 0x195, offset: 0xC3F9F, size: 0x8, addend: 0x0, symName: '-[FBExceptionInfo message]', symObjAddr: 0x2E0, symBinAddr: 0x31950, symSize: 0x20 }
+  - { offsetInCU: 0x1CE, offset: 0xC3FD8, size: 0x8, addend: 0x0, symName: '-[FBExceptionInfo file]', symObjAddr: 0x300, symBinAddr: 0x31970, symSize: 0x20 }
+  - { offsetInCU: 0x207, offset: 0xC4011, size: 0x8, addend: 0x0, symName: '-[FBExceptionInfo line]', symObjAddr: 0x320, symBinAddr: 0x31990, symSize: 0x20 }
+  - { offsetInCU: 0x240, offset: 0xC404A, size: 0x8, addend: 0x0, symName: '-[FBExceptionInfo .cxx_destruct]', symObjAddr: 0x340, symBinAddr: 0x319B0, symSize: 0x3C }
+  - { offsetInCU: 0x27, offset: 0xC40F5, size: 0x8, addend: 0x0, symName: '+[FBXCTestLogger logDirectory]', symObjAddr: 0x0, symBinAddr: 0x319F0, symSize: 0x260 }
+  - { offsetInCU: 0x41, offset: 0xC410F, size: 0x8, addend: 0x0, symName: _fbxctestOutputLogDirectoryEnv, symObjAddr: 0x1B18, symBinAddr: 0x4CD40, symSize: 0x0 }
+  - { offsetInCU: 0x61, offset: 0xC412F, size: 0x8, addend: 0x0, symName: _xctoolOutputLogDirectoryEnv, symObjAddr: 0x1B20, symBinAddr: 0x4CD48, symSize: 0x0 }
+  - { offsetInCU: 0x127, offset: 0xC41F5, size: 0x8, addend: 0x0, symName: '+[FBXCTestLogger logDirectory]', symObjAddr: 0x0, symBinAddr: 0x319F0, symSize: 0x260 }
+  - { offsetInCU: 0x16F, offset: 0xC423D, size: 0x8, addend: 0x0, symName: '+[FBXCTestLogger defaultLogName]', symObjAddr: 0x260, symBinAddr: 0x31C50, symSize: 0xC0 }
+  - { offsetInCU: 0x1A8, offset: 0xC4276, size: 0x8, addend: 0x0, symName: '+[FBXCTestLogger defaultLoggerInDefaultDirectory]', symObjAddr: 0x320, symBinAddr: 0x31D10, symSize: 0x80 }
+  - { offsetInCU: 0x1E1, offset: 0xC42AF, size: 0x8, addend: 0x0, symName: '+[FBXCTestLogger loggerInDefaultDirectory:]', symObjAddr: 0x3A0, symBinAddr: 0x31D90, symSize: 0xB0 }
+  - { offsetInCU: 0x229, offset: 0xC42F7, size: 0x8, addend: 0x0, symName: '+[FBXCTestLogger defaultLoggerInDirectory:]', symObjAddr: 0x450, symBinAddr: 0x31E40, symSize: 0xB0 }
+  - { offsetInCU: 0x271, offset: 0xC433F, size: 0x8, addend: 0x0, symName: '+[FBXCTestLogger loggerInDirectory:name:]', symObjAddr: 0x500, symBinAddr: 0x31EF0, symSize: 0x550 }
+  - { offsetInCU: 0x317, offset: 0xC43E5, size: 0x8, addend: 0x0, symName: '-[FBXCTestLogger initWithBaseLogger:logDirectory:]', symObjAddr: 0xA50, symBinAddr: 0x32440, symSize: 0x110 }
+  - { offsetInCU: 0x36E, offset: 0xC443C, size: 0x8, addend: 0x0, symName: '-[FBXCTestLogger log:]', symObjAddr: 0xB60, symBinAddr: 0x32550, symSize: 0x90 }
+  - { offsetInCU: 0x3B6, offset: 0xC4484, size: 0x8, addend: 0x0, symName: '-[FBXCTestLogger logFormat:]', symObjAddr: 0xBF0, symBinAddr: 0x325E0, symSize: 0x160 }
+  - { offsetInCU: 0x41D, offset: 0xC44EB, size: 0x8, addend: 0x0, symName: '-[FBXCTestLogger info]', symObjAddr: 0xD50, symBinAddr: 0x32740, symSize: 0xE0 }
+  - { offsetInCU: 0x456, offset: 0xC4524, size: 0x8, addend: 0x0, symName: '-[FBXCTestLogger debug]', symObjAddr: 0xE30, symBinAddr: 0x32820, symSize: 0xE0 }
+  - { offsetInCU: 0x48F, offset: 0xC455D, size: 0x8, addend: 0x0, symName: '-[FBXCTestLogger error]', symObjAddr: 0xF10, symBinAddr: 0x32900, symSize: 0xE0 }
+  - { offsetInCU: 0x4C8, offset: 0xC4596, size: 0x8, addend: 0x0, symName: '-[FBXCTestLogger withName:]', symObjAddr: 0xFF0, symBinAddr: 0x329E0, symSize: 0x110 }
+  - { offsetInCU: 0x510, offset: 0xC45DE, size: 0x8, addend: 0x0, symName: '-[FBXCTestLogger withDateFormatEnabled:]', symObjAddr: 0x1100, symBinAddr: 0x32AF0, symSize: 0xF0 }
+  - { offsetInCU: 0x558, offset: 0xC4626, size: 0x8, addend: 0x0, symName: '-[FBXCTestLogger name]', symObjAddr: 0x11F0, symBinAddr: 0x32BE0, symSize: 0x70 }
+  - { offsetInCU: 0x591, offset: 0xC465F, size: 0x8, addend: 0x0, symName: '-[FBXCTestLogger level]', symObjAddr: 0x1260, symBinAddr: 0x32C50, symSize: 0x60 }
+  - { offsetInCU: 0x5CA, offset: 0xC4698, size: 0x8, addend: 0x0, symName: '-[FBXCTestLogger logConsumptionOf:toFileNamed:logger:]', symObjAddr: 0x12C0, symBinAddr: 0x32CB0, symSize: 0x2A0 }
+  - { offsetInCU: 0x64E, offset: 0xC471C, size: 0x8, addend: 0x0, symName: '___54-[FBXCTestLogger logConsumptionOf:toFileNamed:logger:]_block_invoke', symObjAddr: 0x1560, symBinAddr: 0x32F50, symSize: 0x170 }
+  - { offsetInCU: 0x6C1, offset: 0xC478F, size: 0x8, addend: 0x0, symName: '-[FBXCTestLogger logDirectory]', symObjAddr: 0x17B0, symBinAddr: 0x330C0, symSize: 0x20 }
+  - { offsetInCU: 0x6FA, offset: 0xC47C8, size: 0x8, addend: 0x0, symName: '-[FBXCTestLogger filePath]', symObjAddr: 0x17D0, symBinAddr: 0x330E0, symSize: 0x20 }
+  - { offsetInCU: 0x733, offset: 0xC4801, size: 0x8, addend: 0x0, symName: '-[FBXCTestLogger fileHandle]', symObjAddr: 0x17F0, symBinAddr: 0x33100, symSize: 0x20 }
+  - { offsetInCU: 0x76C, offset: 0xC483A, size: 0x8, addend: 0x0, symName: '-[FBXCTestLogger baseLogger]', symObjAddr: 0x1810, symBinAddr: 0x33120, symSize: 0x20 }
+  - { offsetInCU: 0x7A5, offset: 0xC4873, size: 0x8, addend: 0x0, symName: '-[FBXCTestLogger .cxx_destruct]', symObjAddr: 0x1830, symBinAddr: 0x33140, symSize: 0x5E }
+  - { offsetInCU: 0x27, offset: 0xC4A05, size: 0x8, addend: 0x0, symName: '-[FBLogicTestRunOutputs initWithStdOutConsumer:stdErrConsumer:stdErrBuffer:shimConsumer:shimOutput:]', symObjAddr: 0x0, symBinAddr: 0x331A0, symSize: 0x1C0 }
+  - { offsetInCU: 0x4F, offset: 0xC4A2D, size: 0x8, addend: 0x0, symName: _EndOfFileFromStopReadingTimeout, symObjAddr: 0x7C68, symBinAddr: 0x5E6B8, symSize: 0x0 }
+  - { offsetInCU: 0x40C, offset: 0xC4DEA, size: 0x8, addend: 0x0, symName: '-[FBLogicTestRunOutputs initWithStdOutConsumer:stdErrConsumer:stdErrBuffer:shimConsumer:shimOutput:]', symObjAddr: 0x0, symBinAddr: 0x331A0, symSize: 0x1C0 }
+  - { offsetInCU: 0x490, offset: 0xC4E6E, size: 0x8, addend: 0x0, symName: '-[FBLogicTestRunOutputs stdOutConsumer]', symObjAddr: 0x1C0, symBinAddr: 0x33360, symSize: 0x20 }
+  - { offsetInCU: 0x4C9, offset: 0xC4EA7, size: 0x8, addend: 0x0, symName: '-[FBLogicTestRunOutputs stdErrConsumer]', symObjAddr: 0x1E0, symBinAddr: 0x33380, symSize: 0x20 }
+  - { offsetInCU: 0x502, offset: 0xC4EE0, size: 0x8, addend: 0x0, symName: '-[FBLogicTestRunOutputs stdErrBuffer]', symObjAddr: 0x200, symBinAddr: 0x333A0, symSize: 0x20 }
+  - { offsetInCU: 0x53B, offset: 0xC4F19, size: 0x8, addend: 0x0, symName: '-[FBLogicTestRunOutputs shimConsumer]', symObjAddr: 0x220, symBinAddr: 0x333C0, symSize: 0x20 }
+  - { offsetInCU: 0x574, offset: 0xC4F52, size: 0x8, addend: 0x0, symName: '-[FBLogicTestRunOutputs shimOutput]', symObjAddr: 0x240, symBinAddr: 0x333E0, symSize: 0x20 }
+  - { offsetInCU: 0x5AD, offset: 0xC4F8B, size: 0x8, addend: 0x0, symName: '-[FBLogicTestRunOutputs .cxx_destruct]', symObjAddr: 0x260, symBinAddr: 0x33400, symSize: 0x70 }
+  - { offsetInCU: 0x5E2, offset: 0xC4FC0, size: 0x8, addend: 0x0, symName: '-[FBLogicTestRunStrategy initWithTarget:configuration:reporter:logger:]', symObjAddr: 0x2D0, symBinAddr: 0x33470, symSize: 0x180 }
+  - { offsetInCU: 0x657, offset: 0xC5035, size: 0x8, addend: 0x0, symName: '-[FBLogicTestRunStrategy execute]', symObjAddr: 0x450, symBinAddr: 0x335F0, symSize: 0x30 }
+  - { offsetInCU: 0x690, offset: 0xC506E, size: 0x8, addend: 0x0, symName: '-[FBLogicTestRunStrategy testFuture]', symObjAddr: 0x480, symBinAddr: 0x33620, symSize: 0x290 }
+  - { offsetInCU: 0x6D8, offset: 0xC50B6, size: 0x8, addend: 0x0, symName: '___36-[FBLogicTestRunStrategy testFuture]_block_invoke', symObjAddr: 0x710, symBinAddr: 0x338B0, symSize: 0xF0 }
+  - { offsetInCU: 0x73D, offset: 0xC511B, size: 0x8, addend: 0x0, symName: '-[FBLogicTestRunStrategy testFutureWithOutputs:shimPath:uuid:]', symObjAddr: 0x8A0, symBinAddr: 0x339A0, symSize: 0x5B0 }
+  - { offsetInCU: 0x7F4, offset: 0xC51D2, size: 0x8, addend: 0x0, symName: '___62-[FBLogicTestRunStrategy testFutureWithOutputs:shimPath:uuid:]_block_invoke', symObjAddr: 0xE50, symBinAddr: 0x33F50, symSize: 0x3A0 }
+  - { offsetInCU: 0x88F, offset: 0xC526D, size: 0x8, addend: 0x0, symName: '___62-[FBLogicTestRunStrategy testFutureWithOutputs:shimPath:uuid:]_block_invoke_2', symObjAddr: 0x11F0, symBinAddr: 0x342F0, symSize: 0x510 }
+  - { offsetInCU: 0x95A, offset: 0xC5338, size: 0x8, addend: 0x0, symName: '___62-[FBLogicTestRunStrategy testFutureWithOutputs:shimPath:uuid:]_block_invoke_3', symObjAddr: 0x1700, symBinAddr: 0x34800, symSize: 0x70 }
+  - { offsetInCU: 0x9BF, offset: 0xC539D, size: 0x8, addend: 0x0, symName: '+[FBLogicTestRunStrategy setupEnvironmentWithDylibs:withLibraries:shimOutputFilePath:shimPath:bundlePath:coverageConfiguration:logDirectoryPath:waitForDebugger:]', symObjAddr: 0x1A40, symBinAddr: 0x34870, symSize: 0x500 }
+  - { offsetInCU: 0xAE8, offset: 0xC54C6, size: 0x8, addend: 0x0, symName: '-[FBLogicTestRunStrategy completeLaunchedProcess:outputs:]', symObjAddr: 0x1F40, symBinAddr: 0x34D70, symSize: 0x5C0 }
+  - { offsetInCU: 0xB6C, offset: 0xC554A, size: 0x8, addend: 0x0, symName: '___58-[FBLogicTestRunStrategy completeLaunchedProcess:outputs:]_block_invoke', symObjAddr: 0x2500, symBinAddr: 0x35330, symSize: 0x110 }
+  - { offsetInCU: 0xBF5, offset: 0xC55D3, size: 0x8, addend: 0x0, symName: '___58-[FBLogicTestRunStrategy completeLaunchedProcess:outputs:]_block_invoke.169', symObjAddr: 0x2720, symBinAddr: 0x35440, symSize: 0xB0 }
+  - { offsetInCU: 0xC56, offset: 0xC5634, size: 0x8, addend: 0x0, symName: '___58-[FBLogicTestRunStrategy completeLaunchedProcess:outputs:]_block_invoke.182', symObjAddr: 0x27D0, symBinAddr: 0x354F0, symSize: 0xC0 }
+  - { offsetInCU: 0xCB7, offset: 0xC5695, size: 0x8, addend: 0x0, symName: '-[FBLogicTestRunStrategy waitForSuccessfulCompletion:closingOutputs:]', symObjAddr: 0x2890, symBinAddr: 0x355B0, symSize: 0x350 }
+  - { offsetInCU: 0xD2C, offset: 0xC570A, size: 0x8, addend: 0x0, symName: '___69-[FBLogicTestRunStrategy waitForSuccessfulCompletion:closingOutputs:]_block_invoke', symObjAddr: 0x2BE0, symBinAddr: 0x35900, symSize: 0x210 }
+  - { offsetInCU: 0xD9F, offset: 0xC577D, size: 0x8, addend: 0x0, symName: '___69-[FBLogicTestRunStrategy waitForSuccessfulCompletion:closingOutputs:]_block_invoke.207', symObjAddr: 0x2ED0, symBinAddr: 0x35B10, symSize: 0x230 }
+  - { offsetInCU: 0xE4B, offset: 0xC5829, size: 0x8, addend: 0x0, symName: '+[FBLogicTestRunStrategy fromQueue:reportWaitForDebugger:forProcessIdentifier:reporter:]', symObjAddr: 0x3100, symBinAddr: 0x35D40, symSize: 0x1D0 }
+  - { offsetInCU: 0xECF, offset: 0xC58AD, size: 0x8, addend: 0x0, symName: '___88+[FBLogicTestRunStrategy fromQueue:reportWaitForDebugger:forProcessIdentifier:reporter:]_block_invoke', symObjAddr: 0x32D0, symBinAddr: 0x35F10, symSize: 0x180 }
+  - { offsetInCU: 0xF30, offset: 0xC590E, size: 0x8, addend: 0x0, symName: '-[FBLogicTestRunStrategy buildOutputsForUUID:]', symObjAddr: 0x34C0, symBinAddr: 0x36090, symSize: 0xC40 }
+  - { offsetInCU: 0x10C1, offset: 0xC5A9F, size: 0x8, addend: 0x0, symName: '___46-[FBLogicTestRunStrategy buildOutputsForUUID:]_block_invoke', symObjAddr: 0x4100, symBinAddr: 0x36CD0, symSize: 0x60 }
+  - { offsetInCU: 0x110F, offset: 0xC5AED, size: 0x8, addend: 0x0, symName: '___46-[FBLogicTestRunStrategy buildOutputsForUUID:]_block_invoke.261', symObjAddr: 0x4160, symBinAddr: 0x36D30, symSize: 0x90 }
+  - { offsetInCU: 0x115D, offset: 0xC5B3B, size: 0x8, addend: 0x0, symName: '___46-[FBLogicTestRunStrategy buildOutputsForUUID:]_block_invoke.269', symObjAddr: 0x41F0, symBinAddr: 0x36DC0, symSize: 0x90 }
+  - { offsetInCU: 0x11AB, offset: 0xC5B89, size: 0x8, addend: 0x0, symName: '___46-[FBLogicTestRunStrategy buildOutputsForUUID:]_block_invoke_2', symObjAddr: 0x4280, symBinAddr: 0x36E50, symSize: 0x230 }
+  - { offsetInCU: 0x1215, offset: 0xC5BF3, size: 0x8, addend: 0x0, symName: '___46-[FBLogicTestRunStrategy buildOutputsForUUID:]_block_invoke_3', symObjAddr: 0x44B0, symBinAddr: 0x37080, symSize: 0x140 }
+  - { offsetInCU: 0x127B, offset: 0xC5C59, size: 0x8, addend: 0x0, symName: '-[FBLogicTestRunStrategy startTestProcessWithLaunchPath:arguments:environment:outputs:temporaryDirectory:]', symObjAddr: 0x45F0, symBinAddr: 0x371C0, symSize: 0x7B0 }
+  - { offsetInCU: 0x137D, offset: 0xC5D5B, size: 0x8, addend: 0x0, symName: '___106-[FBLogicTestRunStrategy startTestProcessWithLaunchPath:arguments:environment:outputs:temporaryDirectory:]_block_invoke', symObjAddr: 0x4DA0, symBinAddr: 0x37970, symSize: 0xA0 }
+  - { offsetInCU: 0x13D4, offset: 0xC5DB2, size: 0x8, addend: 0x0, symName: '___106-[FBLogicTestRunStrategy startTestProcessWithLaunchPath:arguments:environment:outputs:temporaryDirectory:]_block_invoke.327', symObjAddr: 0x4E40, symBinAddr: 0x37A10, symSize: 0x280 }
+  - { offsetInCU: 0x1477, offset: 0xC5E55, size: 0x8, addend: 0x0, symName: '___106-[FBLogicTestRunStrategy startTestProcessWithLaunchPath:arguments:environment:outputs:temporaryDirectory:]_block_invoke_2', symObjAddr: 0x50C0, symBinAddr: 0x37C90, symSize: 0xD0 }
+  - { offsetInCU: 0x151A, offset: 0xC5EF8, size: 0x8, addend: 0x0, symName: '-[FBLogicTestRunStrategy target]', symObjAddr: 0x5190, symBinAddr: 0x37D60, symSize: 0x20 }
+  - { offsetInCU: 0x1553, offset: 0xC5F31, size: 0x8, addend: 0x0, symName: '-[FBLogicTestRunStrategy configuration]', symObjAddr: 0x51B0, symBinAddr: 0x37D80, symSize: 0x20 }
+  - { offsetInCU: 0x158C, offset: 0xC5F6A, size: 0x8, addend: 0x0, symName: '-[FBLogicTestRunStrategy reporter]', symObjAddr: 0x51D0, symBinAddr: 0x37DA0, symSize: 0x20 }
+  - { offsetInCU: 0x15C5, offset: 0xC5FA3, size: 0x8, addend: 0x0, symName: '-[FBLogicTestRunStrategy logger]', symObjAddr: 0x51F0, symBinAddr: 0x37DC0, symSize: 0x20 }
+  - { offsetInCU: 0x15FE, offset: 0xC5FDC, size: 0x8, addend: 0x0, symName: '-[FBLogicTestRunStrategy .cxx_destruct]', symObjAddr: 0x5210, symBinAddr: 0x37DE0, symSize: 0x5E }
+  - { offsetInCU: 0x27, offset: 0xC6AA3, size: 0x8, addend: 0x0, symName: '+[FBAttachment from:]', symObjAddr: 0x0, symBinAddr: 0x37E40, symSize: 0x70 }
+  - { offsetInCU: 0xEB, offset: 0xC6B67, size: 0x8, addend: 0x0, symName: '+[FBAttachment from:]', symObjAddr: 0x0, symBinAddr: 0x37E40, symSize: 0x70 }
+  - { offsetInCU: 0x133, offset: 0xC6BAF, size: 0x8, addend: 0x0, symName: '-[FBAttachment initFromAttachment:]', symObjAddr: 0x70, symBinAddr: 0x37EB0, symSize: 0x200 }
+  - { offsetInCU: 0x17B, offset: 0xC6BF7, size: 0x8, addend: 0x0, symName: '-[FBAttachment payload]', symObjAddr: 0x270, symBinAddr: 0x380B0, symSize: 0x20 }
+  - { offsetInCU: 0x1B4, offset: 0xC6C30, size: 0x8, addend: 0x0, symName: '-[FBAttachment timestamp]', symObjAddr: 0x290, symBinAddr: 0x380D0, symSize: 0x20 }
+  - { offsetInCU: 0x1ED, offset: 0xC6C69, size: 0x8, addend: 0x0, symName: '-[FBAttachment name]', symObjAddr: 0x2B0, symBinAddr: 0x380F0, symSize: 0x20 }
+  - { offsetInCU: 0x226, offset: 0xC6CA2, size: 0x8, addend: 0x0, symName: '-[FBAttachment uniformTypeIdentifier]', symObjAddr: 0x2D0, symBinAddr: 0x38110, symSize: 0x20 }
+  - { offsetInCU: 0x25F, offset: 0xC6CDB, size: 0x8, addend: 0x0, symName: '-[FBAttachment userInfo]', symObjAddr: 0x2F0, symBinAddr: 0x38130, symSize: 0x20 }
+  - { offsetInCU: 0x298, offset: 0xC6D14, size: 0x8, addend: 0x0, symName: '-[FBAttachment .cxx_destruct]', symObjAddr: 0x310, symBinAddr: 0x38150, symSize: 0x6F }
+  - { offsetInCU: 0x27, offset: 0xC6E98, size: 0x8, addend: 0x0, symName: '+[FBMacDevice applicationInstallDirectory]', symObjAddr: 0x0, symBinAddr: 0x381C0, symSize: 0x80 }
+  - { offsetInCU: 0x35, offset: 0xC6EA6, size: 0x8, addend: 0x0, symName: '+[FBMacDevice applicationInstallDirectory]', symObjAddr: 0x0, symBinAddr: 0x381C0, symSize: 0x80 }
+  - { offsetInCU: 0x5F, offset: 0xC6ED0, size: 0x8, addend: 0x0, symName: _applicationInstallDirectory.onceToken, symObjAddr: 0x13148, symBinAddr: 0x5EC98, symSize: 0x0 }
+  - { offsetInCU: 0x75, offset: 0xC6EE6, size: 0x8, addend: 0x0, symName: _applicationInstallDirectory._value, symObjAddr: 0x13150, symBinAddr: 0x5ECA0, symSize: 0x0 }
+  - { offsetInCU: 0x2DA, offset: 0xC714B, size: 0x8, addend: 0x0, symName: '___42+[FBMacDevice applicationInstallDirectory]_block_invoke', symObjAddr: 0x80, symBinAddr: 0x38240, symSize: 0xF0 }
+  - { offsetInCU: 0x331, offset: 0xC71A2, size: 0x8, addend: 0x0, symName: '+[FBMacDevice fetchInstalledApplications]', symObjAddr: 0x170, symBinAddr: 0x38330, symSize: 0x4B0 }
+  - { offsetInCU: 0x3E0, offset: 0xC7251, size: 0x8, addend: 0x0, symName: '-[FBMacDevice init]', symObjAddr: 0x620, symBinAddr: 0x387E0, symSize: 0x5B0 }
+  - { offsetInCU: 0x44C, offset: 0xC72BD, size: 0x8, addend: 0x0, symName: '-[FBMacDevice initWithLogger:]', symObjAddr: 0xBD0, symBinAddr: 0x38D90, symSize: 0xB0 }
+  - { offsetInCU: 0x494, offset: 0xC7305, size: 0x8, addend: 0x0, symName: '-[FBMacDevice restorePrimaryDeviceState]', symObjAddr: 0xC80, symBinAddr: 0x38E40, symSize: 0x6B0 }
+  - { offsetInCU: 0x52D, offset: 0xC739E, size: 0x8, addend: 0x0, symName: '-[FBMacDevice runtimeRootDirectory]', symObjAddr: 0x1330, symBinAddr: 0x394F0, symSize: 0x30 }
+  - { offsetInCU: 0x566, offset: 0xC73D7, size: 0x8, addend: 0x0, symName: '-[FBMacDevice platformRootDirectory]', symObjAddr: 0x1360, symBinAddr: 0x39520, symSize: 0x80 }
+  - { offsetInCU: 0x59F, offset: 0xC7410, size: 0x8, addend: 0x0, symName: '-[FBMacDevice xctestPath]', symObjAddr: 0x13E0, symBinAddr: 0x395A0, symSize: 0x80 }
+  - { offsetInCU: 0x5D8, offset: 0xC7449, size: 0x8, addend: 0x0, symName: '-[FBMacDevice extendedTestShim]', symObjAddr: 0x1460, symBinAddr: 0x39620, symSize: 0xE0 }
+  - { offsetInCU: 0x611, offset: 0xC7482, size: 0x8, addend: 0x0, symName: '___31-[FBMacDevice extendedTestShim]_block_invoke', symObjAddr: 0x1540, symBinAddr: 0x39700, symSize: 0x70 }
+  - { offsetInCU: 0x668, offset: 0xC74D9, size: 0x8, addend: 0x0, symName: '+[FBMacDevice resolveDeviceUDID]', symObjAddr: 0x15B0, symBinAddr: 0x39770, symSize: 0xA0 }
+  - { offsetInCU: 0x6DE, offset: 0xC754F, size: 0x8, addend: 0x0, symName: '-[FBMacDevice transportForTestManagerService]', symObjAddr: 0x1650, symBinAddr: 0x39810, symSize: 0x870 }
+  - { offsetInCU: 0x78D, offset: 0xC75FE, size: 0x8, addend: 0x0, symName: '___45-[FBMacDevice transportForTestManagerService]_block_invoke', symObjAddr: 0x1EC0, symBinAddr: 0x3A080, symSize: 0x70 }
+  - { offsetInCU: 0x7DB, offset: 0xC764C, size: 0x8, addend: 0x0, symName: ___copy_helper_block_e8_32s40w, symObjAddr: 0x1F30, symBinAddr: 0x3A0F0, symSize: 0x60 }
+  - { offsetInCU: 0x802, offset: 0xC7673, size: 0x8, addend: 0x0, symName: ___destroy_helper_block_e8_32s40w, symObjAddr: 0x1F90, symBinAddr: 0x3A150, symSize: 0x40 }
+  - { offsetInCU: 0x820, offset: 0xC7691, size: 0x8, addend: 0x0, symName: '___45-[FBMacDevice transportForTestManagerService]_block_invoke.179', symObjAddr: 0x1FD0, symBinAddr: 0x3A190, symSize: 0x70 }
+  - { offsetInCU: 0x86E, offset: 0xC76DF, size: 0x8, addend: 0x0, symName: '___45-[FBMacDevice transportForTestManagerService]_block_invoke_2', symObjAddr: 0x2040, symBinAddr: 0x3A200, symSize: 0xF0 }
+  - { offsetInCU: 0x8CB, offset: 0xC773C, size: 0x8, addend: 0x0, symName: ___Block_byref_object_copy_, symObjAddr: 0x2130, symBinAddr: 0x3A2F0, symSize: 0x50 }
+  - { offsetInCU: 0x8F2, offset: 0xC7763, size: 0x8, addend: 0x0, symName: ___Block_byref_object_dispose_, symObjAddr: 0x2180, symBinAddr: 0x3A340, symSize: 0x30 }
+  - { offsetInCU: 0x910, offset: 0xC7781, size: 0x8, addend: 0x0, symName: '___45-[FBMacDevice transportForTestManagerService]_block_invoke.194', symObjAddr: 0x21B0, symBinAddr: 0x3A370, symSize: 0x110 }
+  - { offsetInCU: 0x99A, offset: 0xC780B, size: 0x8, addend: 0x0, symName: ___copy_helper_block_e8_32s40r48r, symObjAddr: 0x22C0, symBinAddr: 0x3A480, symSize: 0x80 }
+  - { offsetInCU: 0x9C1, offset: 0xC7832, size: 0x8, addend: 0x0, symName: ___destroy_helper_block_e8_32s40r48r, symObjAddr: 0x2340, symBinAddr: 0x3A500, symSize: 0x60 }
+  - { offsetInCU: 0x9DF, offset: 0xC7850, size: 0x8, addend: 0x0, symName: '___45-[FBMacDevice transportForTestManagerService]_block_invoke.209', symObjAddr: 0x23A0, symBinAddr: 0x3A560, symSize: 0xA0 }
+  - { offsetInCU: 0xA43, offset: 0xC78B4, size: 0x8, addend: 0x0, symName: ___copy_helper_block_e8_32r, symObjAddr: 0x2440, symBinAddr: 0x3A600, symSize: 0x30 }
+  - { offsetInCU: 0xA6A, offset: 0xC78DB, size: 0x8, addend: 0x0, symName: ___destroy_helper_block_e8_32r, symObjAddr: 0x2470, symBinAddr: 0x3A630, symSize: 0x30 }
+  - { offsetInCU: 0xA88, offset: 0xC78F9, size: 0x8, addend: 0x0, symName: '-[FBMacDevice processIDWithBundleID:]', symObjAddr: 0x24A0, symBinAddr: 0x3A660, symSize: 0x1F0 }
+  - { offsetInCU: 0xAFD, offset: 0xC796E, size: 0x8, addend: 0x0, symName: '-[FBMacDevice consoleString]', symObjAddr: 0x2690, symBinAddr: 0x3A850, symSize: 0x80 }
+  - { offsetInCU: 0xB36, offset: 0xC79A7, size: 0x8, addend: 0x0, symName: '-[FBMacDevice requiresBundlesToBeSigned]', symObjAddr: 0x2710, symBinAddr: 0x3A8D0, symSize: 0x20 }
+  - { offsetInCU: 0xB6F, offset: 0xC79E0, size: 0x8, addend: 0x0, symName: '+[FBMacDevice commandsWithTarget:]', symObjAddr: 0x2730, symBinAddr: 0x3A8F0, symSize: 0xB0 }
+  - { offsetInCU: 0xBB9, offset: 0xC7A2A, size: 0x8, addend: 0x0, symName: '-[FBMacDevice installApplicationWithPath:]', symObjAddr: 0x27E0, symBinAddr: 0x3A9A0, symSize: 0x1D0 }
+  - { offsetInCU: 0xC23, offset: 0xC7A94, size: 0x8, addend: 0x0, symName: '-[FBMacDevice uninstallApplicationWithBundleID:]', symObjAddr: 0x29B0, symBinAddr: 0x3AB70, symSize: 0x3A0 }
+  - { offsetInCU: 0xC8D, offset: 0xC7AFE, size: 0x8, addend: 0x0, symName: '-[FBMacDevice installedApplications]', symObjAddr: 0x2D50, symBinAddr: 0x3AF10, symSize: 0x470 }
+  - { offsetInCU: 0xD1B, offset: 0xC7B8C, size: 0x8, addend: 0x0, symName: '-[FBMacDevice installedApplicationWithBundleID:]', symObjAddr: 0x31C0, symBinAddr: 0x3B380, symSize: 0x1E0 }
+  - { offsetInCU: 0xD96, offset: 0xC7C07, size: 0x8, addend: 0x0, symName: '-[FBMacDevice killApplicationWithBundleID:]', symObjAddr: 0x33A0, symBinAddr: 0x3B560, symSize: 0x210 }
+  - { offsetInCU: 0xE0F, offset: 0xC7C80, size: 0x8, addend: 0x0, symName: '-[FBMacDevice launchApplication:]', symObjAddr: 0x35B0, symBinAddr: 0x3B770, symSize: 0x3F0 }
+  - { offsetInCU: 0xE69, offset: 0xC7CDA, size: 0x8, addend: 0x0, symName: '___33-[FBMacDevice launchApplication:]_block_invoke', symObjAddr: 0x39A0, symBinAddr: 0x3BB60, symSize: 0x180 }
+  - { offsetInCU: 0xED3, offset: 0xC7D44, size: 0x8, addend: 0x0, symName: '-[FBMacDevice runningApplications]', symObjAddr: 0x3BC0, symBinAddr: 0x3BCE0, symSize: 0x360 }
+  - { offsetInCU: 0xF61, offset: 0xC7DD2, size: 0x8, addend: 0x0, symName: '-[FBMacDevice runTestWithLaunchConfiguration:reporter:logger:]', symObjAddr: 0x3F20, symBinAddr: 0x3C040, symSize: 0x140 }
+  - { offsetInCU: 0xFCB, offset: 0xC7E3C, size: 0x8, addend: 0x0, symName: '-[FBMacDevice uniqueIdentifier]', symObjAddr: 0x4060, symBinAddr: 0x3C180, symSize: 0x30 }
+  - { offsetInCU: 0x1005, offset: 0xC7E76, size: 0x8, addend: 0x0, symName: '-[FBMacDevice extendedInformation]', symObjAddr: 0x4090, symBinAddr: 0x3C1B0, symSize: 0x20 }
+  - { offsetInCU: 0x103F, offset: 0xC7EB0, size: 0x8, addend: 0x0, symName: '-[FBMacDevice compare:]', symObjAddr: 0x40B0, symBinAddr: 0x3C1D0, symSize: 0x50 }
+  - { offsetInCU: 0x1089, offset: 0xC7EFA, size: 0x8, addend: 0x0, symName: '-[FBMacDevice customDeviceSetPath]', symObjAddr: 0x4100, symBinAddr: 0x3C220, symSize: 0x10 }
+  - { offsetInCU: 0x10C3, offset: 0xC7F34, size: 0x8, addend: 0x0, symName: '-[FBMacDevice resolveState:]', symObjAddr: 0x4110, symBinAddr: 0x3C230, symSize: 0x30 }
+  - { offsetInCU: 0x110D, offset: 0xC7F7E, size: 0x8, addend: 0x0, symName: '-[FBMacDevice resolveLeavesState:]', symObjAddr: 0x4140, symBinAddr: 0x3C260, symSize: 0x30 }
+  - { offsetInCU: 0x1157, offset: 0xC7FC8, size: 0x8, addend: 0x0, symName: '-[FBMacDevice replacementMapping]', symObjAddr: 0x4170, symBinAddr: 0x3C290, symSize: 0x30 }
+  - { offsetInCU: 0x1191, offset: 0xC8002, size: 0x8, addend: 0x0, symName: '-[FBMacDevice createStreamWithConfiguration:]', symObjAddr: 0x41A0, symBinAddr: 0x3C2C0, symSize: 0x110 }
+  - { offsetInCU: 0x11DB, offset: 0xC804C, size: 0x8, addend: 0x0, symName: '-[FBMacDevice startRecordingToFile:]', symObjAddr: 0x42B0, symBinAddr: 0x3C3D0, symSize: 0x110 }
+  - { offsetInCU: 0x1225, offset: 0xC8096, size: 0x8, addend: 0x0, symName: '-[FBMacDevice stopRecording]', symObjAddr: 0x43C0, symBinAddr: 0x3C4E0, symSize: 0xE0 }
+  - { offsetInCU: 0x125F, offset: 0xC80D0, size: 0x8, addend: 0x0, symName: '-[FBMacDevice listTestsForBundleAtPath:timeout:withAppAtPath:]', symObjAddr: 0x44A0, symBinAddr: 0x3C5C0, symSize: 0x310 }
+  - { offsetInCU: 0x12FA, offset: 0xC816B, size: 0x8, addend: 0x0, symName: '-[FBMacDevice tailLog:consumer:]', symObjAddr: 0x47B0, symBinAddr: 0x3C8D0, symSize: 0x150 }
+  - { offsetInCU: 0x1354, offset: 0xC81C5, size: 0x8, addend: 0x0, symName: '-[FBMacDevice takeScreenshot:]', symObjAddr: 0x4900, symBinAddr: 0x3CA20, symSize: 0x110 }
+  - { offsetInCU: 0x139E, offset: 0xC820F, size: 0x8, addend: 0x0, symName: '-[FBMacDevice notifyOfCrash:]', symObjAddr: 0x4A10, symBinAddr: 0x3CB30, symSize: 0xA0 }
+  - { offsetInCU: 0x13E8, offset: 0xC8259, size: 0x8, addend: 0x0, symName: '-[FBMacDevice crashes:useCache:]', symObjAddr: 0x4AB0, symBinAddr: 0x3CBD0, symSize: 0x120 }
+  - { offsetInCU: 0x1442, offset: 0xC82B3, size: 0x8, addend: 0x0, symName: '-[FBMacDevice pruneCrashes:]', symObjAddr: 0x4BD0, symBinAddr: 0x3CCF0, symSize: 0x110 }
+  - { offsetInCU: 0x148C, offset: 0xC82FD, size: 0x8, addend: 0x0, symName: '-[FBMacDevice crashLogFiles]', symObjAddr: 0x4CE0, symBinAddr: 0x3CE00, symSize: 0xE0 }
+  - { offsetInCU: 0x14C6, offset: 0xC8337, size: 0x8, addend: 0x0, symName: '-[FBMacDevice startInstruments:logger:]', symObjAddr: 0x4DC0, symBinAddr: 0x3CEE0, symSize: 0x150 }
+  - { offsetInCU: 0x1520, offset: 0xC8391, size: 0x8, addend: 0x0, symName: '-[FBMacDevice startXctraceRecord:logger:]', symObjAddr: 0x4F10, symBinAddr: 0x3D030, symSize: 0x150 }
+  - { offsetInCU: 0x157A, offset: 0xC83EB, size: 0x8, addend: 0x0, symName: '-[FBMacDevice launchProcess:]', symObjAddr: 0x5060, symBinAddr: 0x3D180, symSize: 0xC0 }
+  - { offsetInCU: 0x15C4, offset: 0xC8435, size: 0x8, addend: 0x0, symName: '-[FBMacDevice temporaryDirectory]', symObjAddr: 0x5120, symBinAddr: 0x3D240, symSize: 0x20 }
+  - { offsetInCU: 0x15FD, offset: 0xC846E, size: 0x8, addend: 0x0, symName: '-[FBMacDevice udid]', symObjAddr: 0x5140, symBinAddr: 0x3D260, symSize: 0x20 }
+  - { offsetInCU: 0x1636, offset: 0xC84A7, size: 0x8, addend: 0x0, symName: '-[FBMacDevice architectures]', symObjAddr: 0x5160, symBinAddr: 0x3D280, symSize: 0x20 }
+  - { offsetInCU: 0x166F, offset: 0xC84E0, size: 0x8, addend: 0x0, symName: '-[FBMacDevice asyncQueue]', symObjAddr: 0x5180, symBinAddr: 0x3D2A0, symSize: 0x20 }
+  - { offsetInCU: 0x16A8, offset: 0xC8519, size: 0x8, addend: 0x0, symName: '-[FBMacDevice auxillaryDirectory]', symObjAddr: 0x51A0, symBinAddr: 0x3D2C0, symSize: 0x20 }
+  - { offsetInCU: 0x16E1, offset: 0xC8552, size: 0x8, addend: 0x0, symName: '-[FBMacDevice name]', symObjAddr: 0x51C0, symBinAddr: 0x3D2E0, symSize: 0x20 }
+  - { offsetInCU: 0x171A, offset: 0xC858B, size: 0x8, addend: 0x0, symName: '-[FBMacDevice logger]', symObjAddr: 0x51E0, symBinAddr: 0x3D300, symSize: 0x20 }
+  - { offsetInCU: 0x1753, offset: 0xC85C4, size: 0x8, addend: 0x0, symName: '-[FBMacDevice osVersion]', symObjAddr: 0x5200, symBinAddr: 0x3D320, symSize: 0x20 }
+  - { offsetInCU: 0x178C, offset: 0xC85FD, size: 0x8, addend: 0x0, symName: '-[FBMacDevice state]', symObjAddr: 0x5220, symBinAddr: 0x3D340, symSize: 0x20 }
+  - { offsetInCU: 0x17C5, offset: 0xC8636, size: 0x8, addend: 0x0, symName: '-[FBMacDevice targetType]', symObjAddr: 0x5240, symBinAddr: 0x3D360, symSize: 0x20 }
+  - { offsetInCU: 0x17FE, offset: 0xC866F, size: 0x8, addend: 0x0, symName: '-[FBMacDevice workQueue]', symObjAddr: 0x5260, symBinAddr: 0x3D380, symSize: 0x20 }
+  - { offsetInCU: 0x1837, offset: 0xC86A8, size: 0x8, addend: 0x0, symName: '-[FBMacDevice screenInfo]', symObjAddr: 0x5280, symBinAddr: 0x3D3A0, symSize: 0x20 }
+  - { offsetInCU: 0x1870, offset: 0xC86E1, size: 0x8, addend: 0x0, symName: '-[FBMacDevice deviceType]', symObjAddr: 0x52A0, symBinAddr: 0x3D3C0, symSize: 0x20 }
+  - { offsetInCU: 0x18A9, offset: 0xC871A, size: 0x8, addend: 0x0, symName: '-[FBMacDevice bundleIDToProductMap]', symObjAddr: 0x52C0, symBinAddr: 0x3D3E0, symSize: 0x20 }
+  - { offsetInCU: 0x18E2, offset: 0xC8753, size: 0x8, addend: 0x0, symName: '-[FBMacDevice setBundleIDToProductMap:]', symObjAddr: 0x52E0, symBinAddr: 0x3D400, symSize: 0x30 }
+  - { offsetInCU: 0x1924, offset: 0xC8795, size: 0x8, addend: 0x0, symName: '-[FBMacDevice bundleIDToRunningTask]', symObjAddr: 0x5310, symBinAddr: 0x3D430, symSize: 0x20 }
+  - { offsetInCU: 0x195D, offset: 0xC87CE, size: 0x8, addend: 0x0, symName: '-[FBMacDevice setBundleIDToRunningTask:]', symObjAddr: 0x5330, symBinAddr: 0x3D450, symSize: 0x30 }
+  - { offsetInCU: 0x199F, offset: 0xC8810, size: 0x8, addend: 0x0, symName: '-[FBMacDevice connection]', symObjAddr: 0x5360, symBinAddr: 0x3D480, symSize: 0x20 }
+  - { offsetInCU: 0x19D8, offset: 0xC8849, size: 0x8, addend: 0x0, symName: '-[FBMacDevice setConnection:]', symObjAddr: 0x5380, symBinAddr: 0x3D4A0, symSize: 0x30 }
+  - { offsetInCU: 0x1A1A, offset: 0xC888B, size: 0x8, addend: 0x0, symName: '-[FBMacDevice workingDirectory]', symObjAddr: 0x53B0, symBinAddr: 0x3D4D0, symSize: 0x20 }
+  - { offsetInCU: 0x1A53, offset: 0xC88C4, size: 0x8, addend: 0x0, symName: '-[FBMacDevice setWorkingDirectory:]', symObjAddr: 0x53D0, symBinAddr: 0x3D4F0, symSize: 0x30 }
+  - { offsetInCU: 0x1A95, offset: 0xC8906, size: 0x8, addend: 0x0, symName: '-[FBMacDevice .cxx_destruct]', symObjAddr: 0x5400, symBinAddr: 0x3D520, symSize: 0x11F }
+  - { offsetInCU: 0x27, offset: 0xC8F70, size: 0x8, addend: 0x0, symName: '-[FBMacLaunchedApplication initWithBundleID:processIdentifier:device:queue:]', symObjAddr: 0x0, symBinAddr: 0x3D640, symSize: 0x140 }
+  - { offsetInCU: 0xED, offset: 0xC9036, size: 0x8, addend: 0x0, symName: '-[FBMacLaunchedApplication initWithBundleID:processIdentifier:device:queue:]', symObjAddr: 0x0, symBinAddr: 0x3D640, symSize: 0x140 }
+  - { offsetInCU: 0x162, offset: 0xC90AB, size: 0x8, addend: 0x0, symName: '-[FBMacLaunchedApplication applicationTerminated]', symObjAddr: 0x140, symBinAddr: 0x3D780, symSize: 0x1B0 }
+  - { offsetInCU: 0x1B9, offset: 0xC9102, size: 0x8, addend: 0x0, symName: '___49-[FBMacLaunchedApplication applicationTerminated]_block_invoke', symObjAddr: 0x2F0, symBinAddr: 0x3D930, symSize: 0x30 }
+  - { offsetInCU: 0x20B, offset: 0xC9154, size: 0x8, addend: 0x0, symName: '-[FBMacLaunchedApplication bundleID]', symObjAddr: 0x3C0, symBinAddr: 0x3D960, symSize: 0x20 }
+  - { offsetInCU: 0x244, offset: 0xC918D, size: 0x8, addend: 0x0, symName: '-[FBMacLaunchedApplication processIdentifier]', symObjAddr: 0x3E0, symBinAddr: 0x3D980, symSize: 0x20 }
+  - { offsetInCU: 0x27D, offset: 0xC91C6, size: 0x8, addend: 0x0, symName: '-[FBMacLaunchedApplication process]', symObjAddr: 0x400, symBinAddr: 0x3D9A0, symSize: 0x20 }
+  - { offsetInCU: 0x2B6, offset: 0xC91FF, size: 0x8, addend: 0x0, symName: '-[FBMacLaunchedApplication setProcess:]', symObjAddr: 0x420, symBinAddr: 0x3D9C0, symSize: 0x30 }
+  - { offsetInCU: 0x2F8, offset: 0xC9241, size: 0x8, addend: 0x0, symName: '-[FBMacLaunchedApplication device]', symObjAddr: 0x450, symBinAddr: 0x3D9F0, symSize: 0x30 }
+  - { offsetInCU: 0x331, offset: 0xC927A, size: 0x8, addend: 0x0, symName: '-[FBMacLaunchedApplication setDevice:]', symObjAddr: 0x480, symBinAddr: 0x3DA20, symSize: 0x30 }
+  - { offsetInCU: 0x373, offset: 0xC92BC, size: 0x8, addend: 0x0, symName: '-[FBMacLaunchedApplication queue]', symObjAddr: 0x4B0, symBinAddr: 0x3DA50, symSize: 0x20 }
+  - { offsetInCU: 0x3AC, offset: 0xC92F5, size: 0x8, addend: 0x0, symName: '-[FBMacLaunchedApplication setQueue:]', symObjAddr: 0x4D0, symBinAddr: 0x3DA70, symSize: 0x20 }
+  - { offsetInCU: 0x3EE, offset: 0xC9337, size: 0x8, addend: 0x0, symName: '-[FBMacLaunchedApplication .cxx_destruct]', symObjAddr: 0x4F0, symBinAddr: 0x3DA90, symSize: 0x49 }
+  - { offsetInCU: 0x27, offset: 0xC94AA, size: 0x8, addend: 0x0, symName: '+[FBTestConfiguration configurationByWritingToFileWithSessionIdentifier:moduleName:testBundlePath:uiTesting:testsToRun:testsToSkip:targetApplicationPath:targetApplicationBundleID:testApplicationDependencies:automationFrameworkPath:reportActivities:error:]', symObjAddr: 0x0, symBinAddr: 0x3DAE0, symSize: 0x680 }
+  - { offsetInCU: 0x50A, offset: 0xC998D, size: 0x8, addend: 0x0, symName: '+[FBTestConfiguration configurationByWritingToFileWithSessionIdentifier:moduleName:testBundlePath:uiTesting:testsToRun:testsToSkip:targetApplicationPath:targetApplicationBundleID:testApplicationDependencies:automationFrameworkPath:reportActivities:error:]', symObjAddr: 0x0, symBinAddr: 0x3DAE0, symSize: 0x680 }
+  - { offsetInCU: 0x64E, offset: 0xC9AD1, size: 0x8, addend: 0x0, symName: '+[FBTestConfiguration setTestsToRun:andTestsToSkip:to:]', symObjAddr: 0x680, symBinAddr: 0x3E160, symSize: 0x160 }
+  - { offsetInCU: 0x6B0, offset: 0xC9B33, size: 0x8, addend: 0x0, symName: '+[FBTestConfiguration xctestIdentifierSetFromSetOfStrings:]', symObjAddr: 0x7E0, symBinAddr: 0x3E2C0, symSize: 0x310 }
+  - { offsetInCU: 0x761, offset: 0xC9BE4, size: 0x8, addend: 0x0, symName: '+[FBTestConfiguration configurationWithSessionIdentifier:moduleName:testBundlePath:path:uiTesting:xcTestConfiguration:]', symObjAddr: 0xAF0, symBinAddr: 0x3E5D0, symSize: 0x160 }
+  - { offsetInCU: 0x7F4, offset: 0xC9C77, size: 0x8, addend: 0x0, symName: '-[FBTestConfiguration initWithSessionIdentifier:moduleName:testBundlePath:path:uiTesting:xcTestConfiguration:]', symObjAddr: 0xC50, symBinAddr: 0x3E730, symSize: 0x1D0 }
+  - { offsetInCU: 0x887, offset: 0xC9D0A, size: 0x8, addend: 0x0, symName: '-[FBTestConfiguration sessionIdentifier]', symObjAddr: 0xE20, symBinAddr: 0x3E900, symSize: 0x20 }
+  - { offsetInCU: 0x8C0, offset: 0xC9D43, size: 0x8, addend: 0x0, symName: '-[FBTestConfiguration moduleName]', symObjAddr: 0xE40, symBinAddr: 0x3E920, symSize: 0x20 }
+  - { offsetInCU: 0x8F9, offset: 0xC9D7C, size: 0x8, addend: 0x0, symName: '-[FBTestConfiguration testBundlePath]', symObjAddr: 0xE60, symBinAddr: 0x3E940, symSize: 0x20 }
+  - { offsetInCU: 0x932, offset: 0xC9DB5, size: 0x8, addend: 0x0, symName: '-[FBTestConfiguration path]', symObjAddr: 0xE80, symBinAddr: 0x3E960, symSize: 0x20 }
+  - { offsetInCU: 0x96B, offset: 0xC9DEE, size: 0x8, addend: 0x0, symName: '-[FBTestConfiguration automationFramework]', symObjAddr: 0xEA0, symBinAddr: 0x3E980, symSize: 0x20 }
+  - { offsetInCU: 0x9A4, offset: 0xC9E27, size: 0x8, addend: 0x0, symName: '-[FBTestConfiguration shouldInitializeForUITesting]', symObjAddr: 0xEC0, symBinAddr: 0x3E9A0, symSize: 0x20 }
+  - { offsetInCU: 0x9DD, offset: 0xC9E60, size: 0x8, addend: 0x0, symName: '-[FBTestConfiguration xcTestConfiguration]', symObjAddr: 0xEE0, symBinAddr: 0x3E9C0, symSize: 0x20 }
+  - { offsetInCU: 0xA16, offset: 0xC9E99, size: 0x8, addend: 0x0, symName: '-[FBTestConfiguration .cxx_destruct]', symObjAddr: 0xF00, symBinAddr: 0x3E9E0, symSize: 0x80 }
+...
