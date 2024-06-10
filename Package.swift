@@ -12,8 +12,8 @@ let package = Package(
         .library(name: "XCTestBootstrap", targets: ["XCTestBootstrap"])
     ],
     targets: [
-        .binaryTarget(name: "FBSimulatorControl", path: "../xcframeworks/FBSimulatorControl.xcframework"),
-        .binaryTarget(name: "FBControlCore", path: "../xcframeworks/FBControlCore.xcframework"),
-        .binaryTarget(name: "XCTestBootstrap", path: "../xcframeworks/XCTestBootstrap.xcframework")
+        .binaryTarget(name: "FBSimulatorControl", path: "SPM/xcframeworks/FBSimulatorControl.xcframework"),
+        .binaryTarget(name: "FBControlCore", path: "SPM/xcframeworks/FBControlCore.xcframework"),
+        .binaryTarget(name: "XCTestBootstrap", path: "SPM/xcframeworks/XCTestBootstrap.xcframework")
     ]
 )
