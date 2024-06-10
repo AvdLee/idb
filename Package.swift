@@ -4,7 +4,7 @@
 import PackageDescription
 
 let package = Package(
-    name: "FBSimulatorControlSPM",
+    name: "idb",
     platforms: [.macOS(.v14)],
     products: [
         .library(name: "FBSimulatorControl", targets: ["FBSimulatorControl"]),
