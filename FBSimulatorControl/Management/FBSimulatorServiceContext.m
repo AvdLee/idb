@@ -58,6 +58,11 @@
   Class serviceContextClass = objc_lookUpClass("SimServiceContext");
   NSAssert([serviceContextClass respondsToSelector:@selector(sharedServiceContextForDeveloperDir:error:)], @"Service Context cannot be instantiated");
   NSError *innerError = nil;
+  NSXPCConnection *conn = [[NSXPCConnection alloc] initWithServiceName:@"com.apple.CoreSimulator.CoreSimulatorService"];
+  if (@available(macOS 11.0, *)) {
+      [conn activate];
+  }
+
   SimServiceContext *serviceContext = [serviceContextClass sharedServiceContextForDeveloperDir:FBXcodeConfiguration.developerDirectory error:&innerError];
   NSAssert(serviceContext, @"Could not create a service context with error %@", innerError);
   return [[FBSimulatorServiceContext alloc] initWithServiceContext:serviceContext];
