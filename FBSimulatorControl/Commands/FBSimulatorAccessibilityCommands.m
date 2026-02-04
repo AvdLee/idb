@@ -512,12 +512,15 @@ static NSString *const AXPrefix = @"AX";
 
 @property (nonatomic, weak, readonly) AXPTranslator *translator;
 @property (nonatomic, strong, readonly) id<FBControlCoreLogger> logger;
-@property (nonatomic, strong, readonly) dispatch_queue_t callbackQueue;
+@property (nonatomic, strong, readonly) dispatch_queue_t workQueue;
+@property (nonatomic, strong, readonly) dispatch_queue_t xpcCompletionQueue;
 @property (nonatomic, strong, readonly) NSMutableDictionary<NSString *, FBAXTranslationRequest *> *tokenToRequest;
 
 @end
 
 @implementation FBAXTranslationDispatcher
+
+static void *FBAXTranslationDispatcherWorkQueueKey = &FBAXTranslationDispatcherWorkQueueKey;
 
 #pragma mark Initializers
 
@@ -530,7 +533,10 @@ static NSString *const AXPrefix = @"AX";
 
   _translator = translator;
   _logger = logger;
-  _callbackQueue = dispatch_queue_create("com.facebook.fbsimulatorcontrol.accessibility_translator.callback", DISPATCH_QUEUE_SERIAL);
+  _workQueue = dispatch_queue_create("com.facebook.fbsimulatorcontrol.accessibility_translator.work", DISPATCH_QUEUE_SERIAL);
+  dispatch_queue_set_specific(_workQueue, FBAXTranslationDispatcherWorkQueueKey, FBAXTranslationDispatcherWorkQueueKey, NULL);
+  // Use a separate queue for CoreSimulator callbacks. Never use the same serial queue that is doing the synchronous wait.
+  _xpcCompletionQueue = dispatch_get_global_queue(QOS_CLASS_USER_INITIATED, 0);
   _tokenToRequest = [NSMutableDictionary dictionary];
 
   return self;
@@ -541,7 +547,7 @@ static NSString *const AXPrefix = @"AX";
 - (FBFutureContext<NSArray<id> *> *)translationObjectAndMacPlatformElementForSimulator:(FBSimulator *)simulator request:(FBAXTranslationRequest *)request
 {
   return [[FBFuture
-    onQueue:simulator.workQueue resolveValue:^ NSArray<id> * (NSError **error){
+    onQueue:self.workQueue resolveValue:^ NSArray<id> * (NSError **error){
       request.device = simulator.device;
       [self pushRequest:request];
       FBAccessibilityProfilingCollector *collector = request.collector;
@@ -570,7 +576,7 @@ static NSString *const AXPrefix = @"AX";
       element.translation.bridgeDelegateToken = request.token;
       return @[translation, element];
     }]
-    onQueue:simulator.workQueue contextualTeardown:^ FBFuture<NSNull *> * (id _, FBFutureState __){
+    onQueue:self.workQueue contextualTeardown:^ FBFuture<NSNull *> * (id _, FBFutureState __){
       [self popRequest:request];
       return FBFuture.empty;
     }];
@@ -599,7 +605,14 @@ static NSString *const AXPrefix = @"AX";
 // This also means that the queue that this happens on should **never be the main queue**. An async global queue will suffice here.
 - (AXPTranslationCallback)accessibilityTranslationDelegateBridgeCallbackWithToken:(NSString *)token
 {
-  FBAXTranslationRequest *request = [self.tokenToRequest objectForKey:token];
+  __block FBAXTranslationRequest *request = nil;
+  if (dispatch_get_specific(FBAXTranslationDispatcherWorkQueueKey)) {
+    request = [self.tokenToRequest objectForKey:token];
+  } else {
+    dispatch_sync(self.workQueue, ^{
+      request = [self.tokenToRequest objectForKey:token];
+    });
+  }
   if (!request) {
     return ^ AXPTranslatorResponse * (AXPTranslatorRequest *axRequest) {
       [self.logger logFormat:@"Request with token %@ is gone. Returning empty response", token];
@@ -618,11 +631,20 @@ static NSString *const AXPrefix = @"AX";
     __block AXPTranslatorResponse *response = nil;
 
     CFAbsoluteTime xpcStart = CFAbsoluteTimeGetCurrent();
-    [device sendAccessibilityRequestAsync:axRequest completionQueue:self.callbackQueue completionHandler:^(AXPTranslatorResponse *innerResponse) {
+    [device sendAccessibilityRequestAsync:axRequest completionQueue:self.xpcCompletionQueue completionHandler:^(AXPTranslatorResponse *innerResponse) {
       response = innerResponse;
       dispatch_group_leave(group);
     }];
-    dispatch_group_wait(group, DISPATCH_TIME_FOREVER);
+    // CoreSimulator accessibility requests should never block forever.
+    // If this times out, return an empty response so the overall request can complete (with partial data) or fail upstream.
+    dispatch_time_t timeout = FBCreateDispatchTimeFromDuration(FBControlCoreGlobalConfiguration.regularTimeout);
+    long waitResult = dispatch_group_wait(group, timeout);
+    if (waitResult != 0) {
+      if (logger) {
+        [logger logFormat:@"Timed out waiting for CoreSimulator accessibility response (token=%@ request=%@)", token, axRequest];
+      }
+      return [objc_getClass("AXPTranslatorResponse") emptyResponse];
+    }
     if (collector) {
       [collector addXPCCallDuration:CFAbsoluteTimeGetCurrent() - xpcStart];
     }
@@ -782,6 +804,8 @@ static NSString *const CoreSimulatorBridgeServiceName = @"com.apple.CoreSimulato
 
 + (FBFuture<FBAccessibilityElementsResponse *> *)accessibilityElementWithTranslationRequest:(FBAXTranslationRequest *)request simulator:(FBSimulator *)simulator remediationPermitted:(BOOL)remediationPermitted
 {
+  FBAXTranslationDispatcher *dispatcher = (FBAXTranslationDispatcher *) simulator.accessibilityTranslationDispatcher;
+  dispatch_queue_t serializationQueue = dispatcher.workQueue ?: simulator.asyncQueue;
   return [[[[simulator.accessibilityTranslationDispatcher
     translationObjectAndMacPlatformElementForSimulator:simulator request:request]
     // This next steps appends remediation information (if required).
@@ -801,7 +825,7 @@ static NSString *const CoreSimulatorBridgeServiceName = @"com.apple.CoreSimulato
       }
       return [FBFuture futureWithResult:@[translationObject, macPlatformElement, @NO]];
     }]
-    onQueue:simulator.workQueue pop:^ id (NSArray<id> *tuple){
+    onQueue:serializationQueue pop:^ id (NSArray<id> *tuple){
       // If remediation is required, then return an empty value, we pop the context here to finish the translation process.
       BOOL remediationRequired = [tuple[2] boolValue];
       if (remediationRequired) {
@@ -831,14 +855,14 @@ static NSString *const CoreSimulatorBridgeServiceName = @"com.apple.CoreSimulato
            profilingData:profilingData];
       return [FBFuture futureWithResult:response];
     }]
-    onQueue:simulator.workQueue fmap:^ FBFuture<FBAccessibilityElementsResponse *> * (FBAccessibilityElementsResponse *result) {
+    onQueue:serializationQueue fmap:^ FBFuture<FBAccessibilityElementsResponse *> * (FBAccessibilityElementsResponse *result) {
       // At this point we will either have an empty result, or the result.
       // In the empty (remediation) state, then we should recurse, but not allow further remediation.
       if ([result isEqual:NSNull.null]) {
         FBAXTranslationRequest *nextRequest = [request cloneWithNewToken];
         return [[self
           remediateSpringBoardForSimulator:simulator]
-          onQueue:simulator.workQueue fmap:^ FBFuture<FBAccessibilityElementsResponse *> * (id _) {
+          onQueue:serializationQueue fmap:^ FBFuture<FBAccessibilityElementsResponse *> * (id _) {
             return [self accessibilityElementWithTranslationRequest:nextRequest simulator:simulator remediationPermitted:NO];
           }];
       }
