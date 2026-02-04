@@ -20,6 +20,8 @@
 
 @implementation FBSimulatorConfiguration
 
+static FBSimulatorConfiguration *FBSimulatorConfigurationDefaultOverride = nil;
+
 #pragma mark Device Selection
 
 static NSInteger FBDeviceModelGenerationFromName(NSString *name)
@@ -133,12 +135,33 @@ static NSComparisonResult FBCompareDeviceNames(NSString *left, NSString *right)
 
 + (instancetype)defaultConfiguration
 {
+  @synchronized(self) {
+    if (FBSimulatorConfigurationDefaultOverride) {
+      return FBSimulatorConfigurationDefaultOverride;
+    }
+  }
   static dispatch_once_t onceToken;
   static FBSimulatorConfiguration *configuration;
   dispatch_once(&onceToken, ^{
     configuration = [self makeDefaultConfiguration];
   });
   return configuration;
+}
+
++ (void)overrideDefaultConfigurationWithDeviceModel:(FBDeviceModel)model osName:(FBOSVersionName)osName
+{
+  FBDeviceType *device = FBiOSTargetConfiguration.nameToDevice[model] ?: [FBDeviceType genericWithName:model];
+  FBOSVersion *os = FBiOSTargetConfiguration.nameToOSVersion[osName] ?: [FBOSVersion genericWithName:osName];
+  @synchronized(self) {
+    FBSimulatorConfigurationDefaultOverride = [[FBSimulatorConfiguration alloc] initWithNamedDevice:device os:os];
+  }
+}
+
++ (void)clearDefaultConfigurationOverride
+{
+  @synchronized(self) {
+    FBSimulatorConfigurationDefaultOverride = nil;
+  }
 }
 
 + (instancetype)makeDefaultConfiguration

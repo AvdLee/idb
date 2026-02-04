@@ -42,6 +42,18 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic, copy, readonly, class) FBSimulatorConfiguration *defaultConfiguration;
 
+/**
+ Overrides the default configuration at runtime.
+ This is useful when the host cannot query CoreSimulator runtimes (e.g. sandboxed),
+ but the caller already knows the active simulator device and OS name.
+ */
++ (void)overrideDefaultConfigurationWithDeviceModel:(FBDeviceModel)model osName:(FBOSVersionName)osName;
+
+/**
+ Clears any previously set default configuration override.
+ */
++ (void)clearDefaultConfigurationOverride;
+
 #pragma mark Models
 
 /**
