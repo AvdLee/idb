@@ -11,11 +11,102 @@
 
 #import <FBControlCore/FBControlCoreGlobalConfiguration.h>
 
+#import <CoreSimulator/SimDeviceType.h>
+
 #import "FBSimulatorConfiguration+CoreSimulator.h"
 #import "FBSimulatorControl+PrincipalClass.h"
 #import "FBSimulatorControlFrameworkLoader.h"
+#import "FBSimulatorServiceContext.h"
 
 @implementation FBSimulatorConfiguration
+
+#pragma mark Device Selection
+
+static NSInteger FBDeviceModelGenerationFromName(NSString *name)
+{
+  NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:@"iPhone\\s+(\\d+)" options:0 error:nil];
+  NSTextCheckingResult *match = [regex firstMatchInString:name options:0 range:NSMakeRange(0, name.length)];
+  if (!match || match.numberOfRanges < 2) {
+    return -1;
+  }
+  NSString *numberString = [name substringWithRange:[match rangeAtIndex:1]];
+  return numberString.integerValue;
+}
+
+static NSInteger FBDeviceModelProRankFromName(NSString *name)
+{
+  if ([name containsString:@"Pro Max"]) {
+    return 2;
+  }
+  if ([name containsString:@"Pro"]) {
+    return 1;
+  }
+  return 0;
+}
+
+static NSComparisonResult FBCompareDeviceNames(NSString *left, NSString *right)
+{
+  NSInteger leftGeneration = FBDeviceModelGenerationFromName(left);
+  NSInteger rightGeneration = FBDeviceModelGenerationFromName(right);
+  if (leftGeneration != rightGeneration) {
+    if (leftGeneration == -1) {
+      return NSOrderedAscending;
+    }
+    if (rightGeneration == -1) {
+      return NSOrderedDescending;
+    }
+    return leftGeneration < rightGeneration ? NSOrderedAscending : NSOrderedDescending;
+  }
+
+  NSInteger leftRank = FBDeviceModelProRankFromName(left);
+  NSInteger rightRank = FBDeviceModelProRankFromName(right);
+  if (leftRank != rightRank) {
+    return leftRank < rightRank ? NSOrderedAscending : NSOrderedDescending;
+  }
+
+  return [left compare:right options:NSNumericSearch];
+}
+
++ (nullable FBDeviceType *)newestAvailableDeviceMatching:(BOOL (^)(NSString *name))predicate
+{
+  NSMutableArray<FBDeviceType *> *devices = [NSMutableArray array];
+  for (SimDeviceType *deviceType in [FBSimulatorServiceContext.sharedServiceContext supportedDeviceTypes]) {
+    if (!predicate(deviceType.name)) {
+      continue;
+    }
+    FBDeviceType *device = FBiOSTargetConfiguration.nameToDevice[deviceType.name];
+    if (device) {
+      [devices addObject:device];
+    }
+  }
+  if (devices.count == 0) {
+    return nil;
+  }
+  return [[devices sortedArrayUsingComparator:^NSComparisonResult(FBDeviceType *left, FBDeviceType *right) {
+    return FBCompareDeviceNames(left.model, right.model);
+  }] lastObject];
+}
+
++ (nullable FBDeviceType *)newestAvailableiPhoneProDevice
+{
+  return [self newestAvailableDeviceMatching:^BOOL(NSString *name) {
+    return [name containsString:@"iPhone"] && [name containsString:@"Pro"];
+  }];
+}
+
++ (nullable FBDeviceType *)newestAvailableiPhoneDevice
+{
+  return [self newestAvailableDeviceMatching:^BOOL(NSString *name) {
+    return [name containsString:@"iPhone"];
+  }];
+}
+
++ (nullable FBDeviceType *)newestAvailableDevice
+{
+  return [self newestAvailableDeviceMatching:^BOOL(NSString *name) {
+    return name.length > 0;
+  }];
+}
 
 + (void)initialize
 {
@@ -52,13 +143,13 @@
 
 + (instancetype)makeDefaultConfiguration
 {
-  FBDeviceModel model = FBDeviceModeliPhone15;
-  FBDeviceType *device = FBiOSTargetConfiguration.nameToDevice[model];
+  FBDeviceType *device = [self newestAvailableiPhoneProDevice] ?: [self newestAvailableiPhoneDevice] ?: [self newestAvailableDevice];
+  NSAssert(device, @"Could not obtain an available device type. Available Device Types %@", [FBSimulatorServiceContext.sharedServiceContext supportedDeviceTypes]);
   FBOSVersion *os = [FBSimulatorConfiguration newestAvailableOSForDevice:device];
   NSAssert(
     os,
     @"Could not obtain OS for model '%@'. Supported OS Versions for Model %@. All Available OS Versions %@",
-    model,
+    device.model,
     [FBCollectionInformation oneLineDescriptionFromArray:[FBSimulatorConfiguration supportedOSVersionsForDevice:device]],
     [FBCollectionInformation oneLineDescriptionFromArray:[FBSimulatorConfiguration supportedOSVersions]]
   );
