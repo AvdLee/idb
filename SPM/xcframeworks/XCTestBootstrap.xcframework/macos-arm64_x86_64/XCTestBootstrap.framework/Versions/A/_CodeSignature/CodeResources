@@ -6,7 +6,7 @@
 	<dict>
 		<key>Resources/Info.plist</key>
 		<data>
-		HxJf4npBmHTykemjeMFVFOR4/Y0=
+		UDskk8lbtPEpvos5JGupBFNbpxg=
 		</data>
 	</dict>
 	<key>files2</key>
@@ -15,10 +15,10 @@
 		<dict>
 			<key>cdhash</key>
 			<data>
-			j0TIBxhf24bNEfwtcc101WcBMTQ=
+			aW0z4WujwgWUuED7HgUWW2g9iuM=
 			</data>
 			<key>requirement</key>
-			<string>cdhash H"8f44c807185fdb86cd11fc2d71cd74d567013134" or cdhash H"c5dc2d0b3ba1ed6e6ca46a7c5e60dc019bf732ee"</string>
+			<string>cdhash H"696d33e16ba3c20594b840fb1e05165b683d8ae3" or cdhash H"08c1125b327a04f101e67129d93bbc973ec4f9bf"</string>
 		</dict>
 		<key>Headers/FBActivityRecord.h</key>
 		<dict>
@@ -87,7 +87,14 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			LAxH2bmhwsNbe2lFZHTE8+qAPTq0fe8IdzxRD2IxFRI=
+			4SS5MnBIgUMIfM/RXFVa37xbnkMRX/GGUqqmsUVMEZE=
+			</data>
+		</dict>
+		<key>Headers/FBMacLaunchedApplication.h</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			VO11bJ3OhPoto/52RzNILTCosxYTgv/UaTWg7QGXNoc=
 			</data>
 		</dict>
 		<key>Headers/FBManagedTestRunStrategy.h</key>
@@ -111,6 +118,13 @@
 			elxGJBp7mTXlb+b+kKRecd/MaBk5BHWSFxb/d0J3G6Q=
 			</data>
 		</dict>
+		<key>Headers/FBTestBundleConnection.h</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			xVjYFCH1R6jsRKTcRmX/k3LsNhcwglIvfstH8YKjwN0=
+			</data>
+		</dict>
 		<key>Headers/FBTestConfiguration.h</key>
 		<dict>
 			<key>hash2</key>
@@ -125,11 +139,25 @@
 			GgqpKfpZu/xEuLowrESVxqee4t5bQFgkAe2elGFuqNw=
 			</data>
 		</dict>
+		<key>Headers/FBTestManagerContext.h</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			DNV3X4GmBwVbZxtjPKQy3Uua31RZU5cV/qwMBBwM/jw=
+			</data>
+		</dict>
 		<key>Headers/FBTestManagerResultSummary.h</key>
 		<dict>
 			<key>hash2</key>
 			<data>
 			2+l8tnW5fDnUKlRgXo71xwM3vKhGIDV39ONARrhveYg=
+			</data>
+		</dict>
+		<key>Headers/FBTestReporterAdapter.h</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			lOfDA5z3Kk6EJzDV/SoiRUAnrbizaQSQjR1KIHHYvi0=
 			</data>
 		</dict>
 		<key>Headers/FBTestRunnerConfiguration.h</key>
@@ -157,7 +185,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			hYRsubVo+DTJpavPrIT11sedlrrZY76jEAaOqJS4JB8=
+			ffy4+LliMmuYERYYfTRs2DCCt79EPbLcwAPbbkBp1EY=
 			</data>
 		</dict>
 		<key>Headers/FBXCTestReporter.h</key>
@@ -178,7 +206,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			SzhlIzhFzaScBzlqym63VWgXsaR6ANe9Yjb7gMNFv3Q=
+			a8RSiqjs/2+pbE9uysn2YeQ8MrtayQbZT3G1PAPoGF4=
 			</data>
 		</dict>
 		<key>Headers/FBXCTestRunner.h</key>
@@ -192,14 +220,14 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			+FmechxQGgvg9omjziY3HPH0scoTJ22tOTo0QwFff7s=
+			uLYXshfanCCStyi1SpzUhnPs28pKY3yA/bbpVjVSVbI=
 			</data>
 		</dict>
 		<key>Headers/XCTestBootstrap.h</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			3IPSmtTU+3TPmYSkuTUxZG/cARtBAsyFegJBGsXlpEA=
+			Wwl+98DVH4zoerWwvyEXZ/JVTpYnEzrs11Eam/mdBEA=
 			</data>
 		</dict>
 		<key>Headers/XCTestBootstrapError.h</key>
@@ -220,21 +248,14 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			Nlz3t0kW7LM8Q97FS7PghDImIxcgPbbzas0idywgcq0=
-			</data>
-		</dict>
-		<key>PrivateHeaders/FBTestReporterAdapter.h</key>
-		<dict>
-			<key>hash2</key>
-			<data>
-			lOfDA5z3Kk6EJzDV/SoiRUAnrbizaQSQjR1KIHHYvi0=
+			pIr4cxLpZwcWvHj64jnCSnXQZgh3BwueO4Yc9ktpzyg=
 			</data>
 		</dict>
 		<key>Resources/Info.plist</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			wATm2ztrH9rk9iTIvO+iA48Mf2mKQBVaGbThHRcXNG8=
+			C57Tp0Ypnm6ZVRwkfrGT8OO7HQfYc1Lue+Fu9YXXG8M=
 			</data>
 		</dict>
 	</dict>

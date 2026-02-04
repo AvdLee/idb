@@ -6,11 +6,7 @@
 	<dict>
 		<key>Resources/Info.plist</key>
 		<data>
-		F2yoydKoP934onQDF9stR2IKG+o=
-		</data>
-		<key>Resources/libShimulator.dylib</key>
-		<data>
-		ZKTchyLIS0X8zoSbsNNFzpvGETg=
+		0cAd5u9rxNuEGL/ins8RFH0+ots=
 		</data>
 	</dict>
 	<key>files2</key>
@@ -19,14 +15,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			fcXwSMoy6WdLbICrEIQsys3sdi0QQJ3J3IQ3BAzpV5A=
-			</data>
-		</dict>
-		<key>Resources/libShimulator.dylib</key>
-		<dict>
-			<key>hash2</key>
-			<data>
-			gkWP32BM3TE3okeaRGtXk+qyD3D1LoY1O49kC0uDmdU=
+			/bThCN2q6UCyMYDA+7e8bm4wtpgRXmbOiswXUPNdZCw=
 			</data>
 		</dict>
 	</dict>

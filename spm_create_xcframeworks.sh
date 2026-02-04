@@ -3,6 +3,9 @@
 set -e
 set -o pipefail
 
+# Ensure Xcode projects are generated (xcodegen).
+./build.sh generate
+
 #!/bin/bash
 
 # Function to archive and create xcframework
