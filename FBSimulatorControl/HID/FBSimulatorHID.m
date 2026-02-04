@@ -22,7 +22,10 @@
 #import <mach/mach_time.h>
 
 #import "FBSimulator.h"
+#import "FBSimulatorControlFrameworkLoader.h"
 #import "FBSimulatorError.h"
+
+#import <FBControlCore/FBXcodeConfiguration.h>
 
 @interface FBSimulatorHID ()
 
@@ -45,9 +48,20 @@ static const char *SimulatorHIDClientClassName = "SimulatorKit.SimDeviceLegacyHI
 
 + (FBFuture<FBSimulatorHID *> *)hidForSimulator:(FBSimulator *)simulator
 {
-  Class clientClass = objc_lookUpClass(SimulatorHIDClientClassName);
-  NSParameterAssert(clientClass);
   NSError *error = nil;
+  if (![FBSimulatorControlFrameworkLoader.xcodeFrameworks loadPrivateFrameworks:simulator.logger error:&error]) {
+    return [[[FBSimulatorError
+      describe:@"Failed to load SimulatorKit before creating HID client"]
+      causedBy:error]
+      failFuture];
+  }
+  Class clientClass = objc_lookUpClass(SimulatorHIDClientClassName);
+  if (!clientClass) {
+    return [[[FBSimulatorError
+      describeFormat:@"Missing %@ after loading SimulatorKit (developer dir: %@)", @(SimulatorHIDClientClassName), FBXcodeConfiguration.developerDirectory]
+      causedBy:error]
+      failFuture];
+  }
   SimDeviceLegacyClient *client = [[clientClass alloc] initWithDevice:simulator.device error:&error];
   if (!client) {
     return [[[FBSimulatorError
@@ -57,7 +71,10 @@ static const char *SimulatorHIDClientClassName = "SimulatorKit.SimDeviceLegacyHI
   }
   FBSimulatorIndigoHID *indigo = [FBSimulatorIndigoHID simulatorKitHIDWithError:&error];
   if (!indigo) {
-    return nil;
+    return [[[FBSimulatorError
+      describe:@"Failed to create Indigo HID translator"]
+      causedBy:error]
+      failFuture];
   }
   CGSize mainScreenSize = simulator.device.deviceType.mainScreenSize;
   float scale = simulator.device.deviceType.mainScreenScale;

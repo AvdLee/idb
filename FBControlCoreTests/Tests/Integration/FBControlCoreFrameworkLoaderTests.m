@@ -7,6 +7,8 @@
 
 #import <XCTest/XCTest.h>
 
+#import <objc/runtime.h>
+
 #import <FBControlCore/FBControlCore.h>
 
 @interface FBControlCoreFrameworkLoaderTests : XCTestCase
@@ -46,6 +48,13 @@
 - (void)testLoadsSimulatorKit
 {
   [self assertLoadsFramework:FBWeakFramework.SimulatorKit];
+}
+
+- (void)testSimulatorKitProvidesLegacyHIDClient
+{
+  [self assertLoadsFramework:FBWeakFramework.SimulatorKit];
+  Class clientClass = objc_lookUpClass("SimulatorKit.SimDeviceLegacyHIDClient");
+  XCTAssertNotNil(clientClass);
 }
 
 - (void)testLoadsXCTest
