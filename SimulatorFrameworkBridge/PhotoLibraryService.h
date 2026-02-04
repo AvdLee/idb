@@ -7,20 +7,9 @@
 
 #import <Foundation/Foundation.h>
 
-NS_ASSUME_NONNULL_BEGIN
-
 /**
- The Entry-Point for fbxctest.
+ * Clears the photo library on the simulator.
+ *
+ * @return 0 on success, 1 on failure
  */
-@interface FBXCTestBootstrapper : NSObject
-
-/**
- Starts fbxctest.
-
- @return YES if successful, NO otherwise.
- */
-- (BOOL)bootstrap;
-
-@end
-
-NS_ASSUME_NONNULL_END
+int handlePhotoLibraryAction(NSString *action);

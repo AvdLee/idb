@@ -78,11 +78,6 @@ typedef struct {
   return [NSData dataWithBytesNoCopy:message length:messageSize freeWhenDone:YES];
 }
 
-- (NSData *)touchScreenSize:(CGSize)screenSize direction:(FBSimulatorHIDDirection)direction x:(double)x y:(double)y
-{
-  return [self touchScreenSize:screenSize screenScale:1.0 direction:direction x:x y:y];
-}
-
 - (NSData *)touchScreenSize:(CGSize)screenSize screenScale:(float)screenScale direction:(FBSimulatorHIDDirection)direction x:(double)x y:(double)y
 {
   // Convert Screen Offset to Ratio for Indigo.
@@ -133,8 +128,10 @@ typedef struct {
       return ButtonEventSourceSideButton;
     case FBSimulatorHIDButtonSiri:
       return ButtonEventSourceSiri;
+    default:
+      NSAssert(NO, @"Button Code %lul is not known", (unsigned long)button);
+      abort();
   }
-  NSAssert(NO, @"Button Code %lul is not known", (unsigned long)button);
 }
 
 + (unsigned int)eventTypeForDirection:(FBSimulatorHIDDirection)direction
@@ -144,8 +141,10 @@ typedef struct {
       return ButtonEventTypeDown;
     case FBSimulatorHIDDirectionUp:
       return  ButtonEventTypeUp;
+    default:
+      NSAssert(NO, @"Direction Code %lul is not known", (unsigned long)direction);
+      abort();
   }
-  NSAssert(NO, @"Direction Code %lul is not known", (unsigned long)direction);
 }
 
 + (CGPoint)screenRatioFromPoint:(CGPoint)point screenSize:(CGSize)screenSize screenScale:(float)screenScale
@@ -201,4 +200,3 @@ typedef struct {
 
 
 @end
-

@@ -107,6 +107,11 @@ FBFileContainerKind const FBFileContainerKindWallpaper = @"wallpaper";
   return self.path;
 }
 
+- (NSDictionary<NSString *, NSString *> *)pathMapping
+{
+  return nil;
+}
+
 #pragma mark NSObject
 
 - (NSString *)description
@@ -214,6 +219,11 @@ FBFileContainerKind const FBFileContainerKindWallpaper = @"wallpaper";
 - (NSString *)pathOnHostFileSystem
 {
   return nil;
+}
+
+- (NSDictionary<NSString *, NSString *> *)pathMapping
+{
+  return self.mappingPaths;
 }
 
 #pragma mark NSObject
@@ -352,7 +362,7 @@ FBFileContainerKind const FBFileContainerKindWallpaper = @"wallpaper";
 {
   return [[[self
     mapToContainedFile:path]
-    onQueue:self.queue fmap:^ FBFuture<FBProcess<NSNull *, id<FBDataConsumer>, NSData *> *> * (id<FBContainedFile> fileToTail) {
+    onQueue:self.queue fmap:^ FBFuture<FBSubprocess<NSNull *, id<FBDataConsumer>, NSData *> *> * (id<FBContainedFile> fileToTail) {
       NSString *pathOnHostFileSystem = fileToTail.pathOnHostFileSystem;
       if (!pathOnHostFileSystem) {
         return [[FBControlCoreError
@@ -365,7 +375,7 @@ FBFileContainerKind const FBFileContainerKindWallpaper = @"wallpaper";
         withStdOutConsumer:consumer]
         start];
     }]
-    onQueue:self.queue map:^(FBProcess *process) {
+    onQueue:self.queue map:^(FBSubprocess *process) {
       return [process.statLoc
         onQueue:self.queue respondToCancellation:^{
           return [process sendSignal:SIGTERM backingOffToKillWithTimeout:1 logger:nil];
@@ -547,24 +557,32 @@ FBFileContainerKind const FBFileContainerKindWallpaper = @"wallpaper";
   return [[FBFileContainer_ProvisioningProfile alloc] initWithCommands:commands queue:queue];
 }
 
++ (id<FBContainedFile>)containedFileForBasePath:(NSString *)basePath
+{
+  return  [[FBContainedFile_Host alloc] initWithFileManager:NSFileManager.defaultManager path:basePath];
+}
+
++ (id<FBContainedFile>)containedFileForPathMapping:(NSDictionary<NSString *, NSString *> *)pathMapping
+{
+  return [[FBContainedFile_Mapped_Host alloc] initWithMappingPaths:pathMapping fileManager:NSFileManager.defaultManager];
+}
+
 + (id<FBFileContainer>)fileContainerForBasePath:(NSString *)basePath
 {
-  id<FBContainedFile> rootFile = [[FBContainedFile_Host alloc] initWithFileManager:NSFileManager.defaultManager path:basePath];
-  return [self fileContainerForRootFile:rootFile];
+  id<FBContainedFile> rootFile = [self containedFileForBasePath:basePath];
+  return [self fileContainerForContainedFile:rootFile];
 }
 
 + (id<FBFileContainer>)fileContainerForPathMapping:(NSDictionary<NSString *, NSString *> *)pathMapping
 {
-  id<FBContainedFile> rootFile = [[FBContainedFile_Mapped_Host alloc] initWithMappingPaths:pathMapping fileManager:NSFileManager.defaultManager];
-  return [self fileContainerForRootFile:rootFile];
+  id<FBContainedFile> rootFile = [self containedFileForPathMapping:pathMapping];
+  return [self fileContainerForContainedFile:rootFile];
 }
 
-#pragma mark Private
-
-+ (id<FBFileContainer>)fileContainerForRootFile:(id<FBContainedFile>)root
++ (id<FBFileContainer>)fileContainerForContainedFile:(id<FBContainedFile>)containedFile
 {
   dispatch_queue_t queue = dispatch_queue_create("com.facebook.fbcontrolcore.file_container", DISPATCH_QUEUE_SERIAL);
-  return [[FBContainedFile_ContainedRoot alloc] initWithRootFile:root queue:queue];
+  return [[FBContainedFile_ContainedRoot alloc] initWithRootFile:containedFile queue:queue];
 }
 
 @end

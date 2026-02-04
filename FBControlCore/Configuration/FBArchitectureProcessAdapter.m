@@ -90,7 +90,7 @@ static int processIsTranslated(void)
     runUntilCompletionWithAcceptableExitCodes:[NSSet setWithObject:@0]]
     rephraseFailure:@"Desired architecture %@ not found in %@ binary", architecture, binary]
     mapReplace:[NSNull null]]
-    timeout:10 waitingFor:@"lipo -verify_arch"];
+    timeout:20 waitingFor:@"lipo -verify_arch"];
 }
 
 -(FBFuture<NSString *> *)extractArchitecture:(FBArchitecture)architecture processConfiguration:(FBProcessSpawnConfiguration *)processConfiguration queue:(dispatch_queue_t)queue outputPath:(NSURL *)outputPath {
@@ -133,7 +133,7 @@ static int processIsTranslated(void)
       withStdErrToDevNull]
       runUntilCompletionWithAcceptableExitCodes:[NSSet setWithObject:@0]]
       rephraseFailure:@"Failed query otool -l from %@", binary]
-      onQueue:queue fmap:^FBFuture<NSString *>*(FBProcess<NSNull *, NSString *, NSString *> *task) {
+      onQueue:queue fmap:^FBFuture<NSString *>*(FBSubprocess<NSNull *, NSString *, NSString *> *task) {
         if (task.stdOut) {
             return [FBFuture futureWithResult: task.stdOut];
         }

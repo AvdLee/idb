@@ -7,8 +7,6 @@
 
 #import "FBXcodeConfiguration.h"
 
-#import <Cocoa/Cocoa.h>
-
 #import "FBBundleDescriptor.h"
 #import "FBFuture+Sync.h"
 #import "FBiOSTargetConfiguration.h"
@@ -24,7 +22,7 @@
 
 + (nullable NSString *)getDeveloperDirectoryIfExists
 {
-  return [self findXcodeDeveloperDirectoryFromXcodeSelect:nil];
+  return [self findXcodeDeveloperDirectory:nil];
 }
 
 + (NSString *)contentsDirectory
@@ -83,16 +81,6 @@
     formatter.maximumFractionDigits = 3;
   });
   return formatter;
-}
-
-+ (BOOL)isXcode9OrGreater
-{
-  return [FBXcodeConfiguration.xcodeVersionNumber compare:[NSDecimalNumber decimalNumberWithString:@"9.0"]] != NSOrderedAscending;
-}
-
-+ (BOOL)isXcode10OrGreater
-{
-  return [FBXcodeConfiguration.xcodeVersionNumber compare:[NSDecimalNumber decimalNumberWithString:@"10.0"]] != NSOrderedAscending;
 }
 
 + (BOOL)isXcode12OrGreater
@@ -155,19 +143,19 @@
 + (NSString *)findXcodeDeveloperDirectoryOrAssert
 {
   NSError *error = nil;
-  NSString *directory = [self findXcodeDeveloperDirectoryFromXcodeSelect:&error];
+  NSString *directory = [self findXcodeDeveloperDirectory:&error];
   NSAssert(directory, @"Failed to get developer directory from xcode-select: %@", error.description);
   return directory;
 }
 
-+ (nullable NSString *)findXcodeDeveloperDirectoryFromXcodeSelect:(NSError **)error
++ (nullable NSString *)findXcodeDeveloperDirectory:(NSError **)error
 {
   static dispatch_once_t onceToken;
   static NSString *directory;
   static NSError *savedError;
   dispatch_once(&onceToken, ^{
     NSError *innerError = nil;
-    directory = [FBXcodeDirectory.xcodeSelectDeveloperDirectory await:&innerError];
+    directory = [FBXcodeDirectory symlinkedDeveloperDirectoryWithError:&innerError];
     savedError = innerError;
   });
   if (error) {

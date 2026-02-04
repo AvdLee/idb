@@ -22,11 +22,13 @@ final class CompanionServiceProvider: Idb_CompanionServiceAsyncProvider {
   private let logger: FBIDBLogger
   private let interceptorFactory: Idb_CompanionServiceServerInterceptorFactoryProtocol
 
-  init(target: FBiOSTarget,
-       commandExecutor: FBIDBCommandExecutor,
-       reporter: FBEventReporter,
-       logger: FBIDBLogger,
-       interceptors: Idb_CompanionServiceServerInterceptorFactoryProtocol) {
+  init(
+    target: FBiOSTarget,
+    commandExecutor: FBIDBCommandExecutor,
+    reporter: FBEventReporter,
+    logger: FBIDBLogger,
+    interceptors: Idb_CompanionServiceServerInterceptorFactoryProtocol
+  ) {
     self.target = target
     self.commandExecutor = commandExecutor
     self.reporter = reporter
@@ -175,6 +177,20 @@ final class CompanionServiceProvider: Idb_CompanionServiceAsyncProvider {
     return try await FBTeardownContext.withAutocleanup {
       try await ContactsUpdateMethodHandler(commandExecutor: commandExecutor)
         .handle(request: request, context: context)
+    }
+  }
+
+  func contacts_clear(request: Idb_ContactsClearRequest, context: GRPCAsyncServerCallContext) async throws -> Idb_ContactsClearResponse {
+    return try await FBTeardownContext.withAutocleanup {
+      _ = try await BridgeFuture.await(commandExecutor.clear_contacts())
+      return Idb_ContactsClearResponse()
+    }
+  }
+
+  func photos_clear(request: Idb_PhotosClearRequest, context: GRPCAsyncServerCallContext) async throws -> Idb_PhotosClearResponse {
+    return try await FBTeardownContext.withAutocleanup {
+      _ = try await BridgeFuture.await(commandExecutor.clear_photos())
+      return Idb_PhotosClearResponse()
     }
   }
 

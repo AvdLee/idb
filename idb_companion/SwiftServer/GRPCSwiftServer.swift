@@ -35,26 +35,30 @@ final class GRPCSwiftServer: NSObject {
   let completed: FBMutableFuture<NSNull>
 
   @objc
-  init(target: FBiOSTarget,
-       commandExecutor: FBIDBCommandExecutor,
-       reporter: FBEventReporter,
-       logger: FBIDBLogger,
-       ports: IDBPortsConfiguration) throws {
+  init(
+    target: FBiOSTarget,
+    commandExecutor: FBIDBCommandExecutor,
+    reporter: FBEventReporter,
+    logger: FBIDBLogger,
+    ports: IDBPortsConfiguration
+  ) throws {
 
     let group = MultiThreadedEventLoopGroup(numberOfThreads: 4)
     let tlsCerts = Self.loadCertificates(tlsCertPath: ports.tlsCertPath, logger: logger)
 
     let interceptors = CompanionServiceInterceptors(logger: logger, reporter: reporter)
 
-    self.provider = CompanionServiceProvider(target: target,
-                                             commandExecutor: commandExecutor,
-                                             reporter: reporter,
-                                             logger: logger,
-                                             interceptors: interceptors)
+    self.provider = CompanionServiceProvider(
+      target: target,
+      commandExecutor: commandExecutor,
+      reporter: reporter,
+      logger: logger,
+      interceptors: interceptors)
 
-    var serverConfiguration = Server.Configuration.default(target: ports.swiftServerTarget.grpcConnection,
-                                                           eventLoopGroup: group,
-                                                           serviceProviders: [provider])
+    var serverConfiguration = Server.Configuration.default(
+      target: ports.swiftServerTarget.grpcConnection,
+      eventLoopGroup: group,
+      serviceProviders: [provider])
     serverConfiguration.maximumReceiveMessageLength = 16777216
 
     if ports.swiftServerTarget.supportsTLSCert {
@@ -170,7 +174,7 @@ final class GRPCSwiftServer: NSObject {
 
   private static func loadCertificates(tlsCertPath: String?, logger: FBIDBLogger) -> TLSCertificates? {
     guard let tlsPath = tlsCertPath,
-          !tlsPath.isEmpty
+      !tlsPath.isEmpty
     else { return nil }
 
     let tlsURL = URL(fileURLWithPath: tlsPath)

@@ -24,8 +24,10 @@ final class CompanionServiceInterceptors: Idb_CompanionServiceServerInterceptorF
   }
 
   private func commonInterceptors<Request, Response>() -> [ServerInterceptor<Request, Response>] {
-    [MethodInfoSetterInterceptor(),
-     LoggingInterceptor(logger: logger, reporter: reporter)]
+    [
+      MethodInfoSetterInterceptor(),
+      LoggingInterceptor(logger: logger, reporter: reporter),
+    ]
   }
 
   func makeconnectInterceptors() -> [ServerInterceptor<Idb_ConnectRequest, Idb_ConnectResponse>] {
@@ -101,6 +103,14 @@ final class CompanionServiceInterceptors: Idb_CompanionServiceServerInterceptorF
   }
 
   func makecontacts_updateInterceptors() -> [ServerInterceptor<Idb_ContactsUpdateRequest, Idb_ContactsUpdateResponse>] {
+    commonInterceptors()
+  }
+
+  func makecontacts_clearInterceptors() -> [ServerInterceptor<Idb_ContactsClearRequest, Idb_ContactsClearResponse>] {
+    commonInterceptors()
+  }
+
+  func makephotos_clearInterceptors() -> [ServerInterceptor<Idb_PhotosClearRequest, Idb_PhotosClearResponse>] {
     commonInterceptors()
   }
 

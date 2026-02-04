@@ -24,9 +24,10 @@
 @interface FBMacDevice()
 
 @property (nonatomic, strong) NSMutableDictionary<NSString *, FBBundleDescriptor *> *bundleIDToProductMap;
-@property (nonatomic, strong) NSMutableDictionary<NSString *, FBProcess *> *bundleIDToRunningTask;
+@property (nonatomic, strong) NSMutableDictionary<NSString *, FBSubprocess *> *bundleIDToRunningTask;
 @property (nonatomic, strong) NSXPCConnection *connection;
 @property (nonatomic, copy) NSString *workingDirectory;
+@property (nonatomic, assign, readonly) BOOL catalyst;
 
 @end
 
@@ -92,11 +93,17 @@
   return self;
 }
 
-- (instancetype)initWithLogger:(nonnull id<FBControlCoreLogger>)logger
+- (instancetype)initWithLogger:(nonnull id<FBControlCoreLogger>)logger;
+{
+  return [self initWithLogger:logger catalyst:NO];
+}
+
+- (instancetype)initWithLogger:(nonnull id<FBControlCoreLogger>)logger catalyst:(BOOL)catalyst;
 {
   self = [self init];
   if (self) {
     _logger = logger;
+    _catalyst = catalyst;
   }
   return self;
 }
@@ -218,7 +225,7 @@
 
 - (nonnull FBFuture<NSNumber *> *)processIDWithBundleID:(nonnull NSString *)bundleID
 {
-  FBProcess *task = self.bundleIDToRunningTask[bundleID];
+  FBSubprocess *task = self.bundleIDToRunningTask[bundleID];
   if (!task) {
     NSError *error = [XCTestBootstrapError errorForFormat:@"Application with bundleID (%@) was not launched by XCTestBootstrap", bundleID];
     return [FBFuture futureWithError:error];
@@ -321,7 +328,7 @@
 
 - (nonnull FBFuture<NSNull *> *)killApplicationWithBundleID:(nonnull NSString *)bundleID
 {
-  FBProcess *task = self.bundleIDToRunningTask[bundleID];
+  FBSubprocess *task = self.bundleIDToRunningTask[bundleID];
   if (!task) {
     NSError *error = [XCTestBootstrapError errorForFormat:@"Application with bundleID (%@) was not launched by XCTestBootstrap", bundleID];
     return [FBFuture futureWithError:error];
@@ -344,7 +351,7 @@
     withArguments:configuration.arguments]
     withEnvironment:configuration.environment]
     start]
-    onQueue:self.workQueue map:^ FBMacLaunchedApplication* (FBProcess *task) {
+    onQueue:self.workQueue map:^ FBMacLaunchedApplication* (FBSubprocess *task) {
       self.bundleIDToRunningTask[bundle.identifier] = task;
       return [[FBMacLaunchedApplication alloc]
        initWithBundleID:bundle.identifier
@@ -359,7 +366,7 @@
   NSMutableDictionary<NSString *, FBProcessInfo *> *runningProcesses = @{}.mutableCopy;
   FBProcessFetcher *fetcher = [FBProcessFetcher new];
   for (NSString *bundleId in self.bundleIDToRunningTask.allKeys) {
-    FBProcess *task = self.bundleIDToRunningTask[bundleId];
+    FBSubprocess *task = self.bundleIDToRunningTask[bundleId];
     runningProcesses[bundleId] = [fetcher processInfoFor:task.processIdentifier];
   }
   return [FBFuture futureWithResult:runningProcesses];
@@ -410,6 +417,17 @@
 {
   return NSDictionary.dictionary;
 }
+
+- (NSDictionary<NSString *, NSString *> *)environmentAdditions
+{
+  if (self.catalyst) {
+    return @{@"DYLD_FORCE_PLATFORM" : @"6"};
+  }
+  else {
+    return NSDictionary.dictionary;
+  }
+}
+
 
 #pragma mark Not supported
 
@@ -512,9 +530,9 @@
     failFuture];
 }
 
-- (FBFuture<FBProcess *> *)launchProcess:(FBProcessSpawnConfiguration *)configuration
+- (FBFuture<FBSubprocess *> *)launchProcess:(FBProcessSpawnConfiguration *)configuration
 {
-  return [FBProcess launchProcessWithConfiguration:configuration logger:self.logger];
+  return [FBSubprocess launchProcessWithConfiguration:configuration logger:self.logger];
 }
 
 @end

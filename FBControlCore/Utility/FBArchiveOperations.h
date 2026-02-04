@@ -8,9 +8,11 @@
 #import <Foundation/Foundation.h>
 
 #import <FBControlCore/FBFuture.h>
-#import <FBControlCore/FBProcess.h>
+#import <FBControlCore/FBSubprocess.h>
 
 NS_ASSUME_NONNULL_BEGIN
+
+extern NSString *const BSDTarPath;
 
 /**
  An enum representing the compression types available.
@@ -28,6 +30,16 @@ typedef NS_ENUM(NSUInteger, FBCompressionFormat) {
 @interface FBArchiveOperations : NSObject
 
 /**
+ Builds a command to extract from a file on disk
+ 
+ @param path the path to the archive.
+ @param extractPath the extraction path.
+ @param overrideMTime if YES the archive contests' `mtime` will be ignored. Current timestamp will be used as mtime of extracted files/directories.
+ @return an array of strings for the command to invoke.
+ */
++ (NSArray<NSString *> *)commandToExtractArchiveAtPath:(NSString *)path toPath:(NSString *)extractPath overrideModificationTime:(BOOL)overrideMTime debugLogging:(BOOL)debugLogging;
+
+/**
  Extracts a tar, or zip file archive to a directory.
  The file can be a:
  - An uncompressed tar.
@@ -37,11 +49,21 @@ typedef NS_ENUM(NSUInteger, FBCompressionFormat) {
  @param path the path to the archive.
  @param extractPath the extraction path.
  @param overrideMTime if YES the archive contests' `mtime` will be ignored. Current timestamp will be used as mtime of extracted files/directories.
- @param queue the queue to do work on.
  @param logger the logger to log to.
  @return a Future wrapping the extracted tar destination.
  */
-+ (FBFuture<NSString *> *)extractArchiveAtPath:(NSString *)path toPath:(NSString *)extractPath overrideModificationTime:(BOOL)overrideMTime queue:(dispatch_queue_t)queue logger:(id<FBControlCoreLogger>)logger;
++ (FBFuture<NSString *> *)extractArchiveAtPath:(NSString *)path toPath:(NSString *)extractPath overrideModificationTime:(BOOL)overrideMTime logger:(id<FBControlCoreLogger>)logger;
+
+/**
+ Builds a command to extract via stdin
+
+ @param extractPath the extraction path
+ @param overrideMTime if YES the archive contests' `mtime` will be ignored. Current timestamp will be used as mtime of extracted files/directories.
+ @param compression compression format used by client
+ @param debugLogging whether to apply debug logging in the command.
+ @return an array of strings for the command to invoke.
+ */
++ (NSArray<NSString *> *)commandToExtractFromStdInWithExtractPath:(NSString *)extractPath overrideModificationTime:(BOOL)overrideMTime compression:(FBCompressionFormat)compression debugLogging:(BOOL)debugLogging;
 
 /**
  Extracts a tar, or zip stream archive to a directory.
@@ -54,12 +76,11 @@ typedef NS_ENUM(NSUInteger, FBCompressionFormat) {
  @param stream the stream of the archive.
  @param extractPath the extraction path
  @param overrideMTime if YES the archive contests' `mtime` will be ignored. Current timestamp will be used as mtime of extracted files/directories.
- @param queue the queue to do work on
  @param logger the logger to log to
  @param compression compression format used by client
  @return a Future wrapping the extracted tar destination.
  */
-+ (FBFuture<NSString *> *)extractArchiveFromStream:(FBProcessInput *)stream toPath:(NSString *)extractPath overrideModificationTime:(BOOL)overrideMTime queue:(dispatch_queue_t)queue logger:(id<FBControlCoreLogger>)logger compression:(FBCompressionFormat)compression;
++ (FBFuture<NSString *> *)extractArchiveFromStream:(FBProcessInput *)stream toPath:(NSString *)extractPath overrideModificationTime:(BOOL)overrideMTime logger:(id<FBControlCoreLogger>)logger compression:(FBCompressionFormat)compression;
 
 /**
  Extracts a gzip from a stream to a single file.
@@ -67,11 +88,10 @@ typedef NS_ENUM(NSUInteger, FBCompressionFormat) {
 
  @param stream the stream of the gzip archive.
  @param extractPath the extraction path.
- @param queue the queue to do work on
  @param logger the logger to log to
  @return a Future wrapping the extracted tar destination.
  */
-+ (FBFuture<NSString *> *)extractGzipFromStream:(FBProcessInput *)stream toPath:(NSString *)extractPath queue:(dispatch_queue_t)queue logger:(id<FBControlCoreLogger>)logger;
++ (FBFuture<NSString *> *)extractGzipFromStream:(FBProcessInput *)stream toPath:(NSString *)extractPath logger:(id<FBControlCoreLogger>)logger;
 
 /**
  Creates a gzipped archive compressing the data provided.
@@ -80,7 +100,7 @@ typedef NS_ENUM(NSUInteger, FBCompressionFormat) {
  @param logger the logger to log to.
  @return a Future wrapping the archive data.
  */
-+ (FBFuture<FBProcess<id, NSData *, id> *> *)createGzipDataFromProcessInput:(FBProcessInput *)input logger:(id<FBControlCoreLogger>)logger;
++ (FBFuture<FBSubprocess<id, NSData *, id> *> *)createGzipDataFromProcessInput:(FBProcessInput *)input logger:(id<FBControlCoreLogger>)logger;
 
 /**
  Creates a gzips archive, returning an task that has an NSInputStream attached to stdout.
@@ -89,11 +109,10 @@ typedef NS_ENUM(NSUInteger, FBCompressionFormat) {
  To confirm that the stream has been correctly written, the caller should check the exit code of the returned task upon completion.
 
  @param path the path to archive.
- @param queue the queue to do work on
  @param logger the logger to log to.
  @return a Future containing a task with an NSInputStream attached to stdout.
  */
-+ (FBFuture<FBProcess<NSNull *, NSInputStream *, id> *> *)createGzipForPath:(NSString *)path queue:(dispatch_queue_t)queue logger:(id<FBControlCoreLogger>)logger;
++ (FBFuture<FBSubprocess<NSNull *, NSInputStream *, id> *> *)createGzipForPath:(NSString *)path logger:(id<FBControlCoreLogger>)logger;
 
 /**
  Creates a gzipped tar archive, returning an task that has an NSInputStream attached to stdout.
@@ -104,7 +123,7 @@ typedef NS_ENUM(NSUInteger, FBCompressionFormat) {
  @param logger the logger to log to.
  @return a Future containing a task with an NSInputStream attached to stdout.
  */
-+ (FBFuture<FBProcess<NSNull *, NSInputStream *, id> *> *)createGzippedTarForPath:(NSString *)path logger:(id<FBControlCoreLogger>)logger;
++ (FBFuture<FBSubprocess<NSNull *, NSInputStream *, id> *> *)createGzippedTarForPath:(NSString *)path logger:(id<FBControlCoreLogger>)logger;
 
 /**
  Creates a gzipped tar archive, returning an the data of the tar.

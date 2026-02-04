@@ -11,6 +11,7 @@
 
 #import <FBControlCore/FBControlCore.h>
 
+#import "FBAppleSimctlCommandExecutor.h"
 #import "FBDefaultsModificationStrategy.h"
 #import "FBSimulator.h"
 #import "FBSimulatorBootConfiguration.h"
@@ -354,7 +355,43 @@ static NSString *const SpringBoardServiceName = @"com.apple.SpringBoard";
   return FBFuture.empty;
 }
 
+- (FBFuture<NSNull *> *)clearContacts
+{
+  return [self runSimulatorFrameworkBridgeWithService:@"contacts" action:@"clear"];
+}
+
+- (FBFuture<NSNull *> *)clearPhotos
+{
+  return [self runSimulatorFrameworkBridgeWithService:@"photos" action:@"clear"];
+}
+
 #pragma mark Private
+
+- (FBFuture<NSNull *> *)runSimulatorFrameworkBridgeWithService:(NSString *)service action:(NSString *)action
+{
+  return [FBFuture onQueue:self.simulator.asyncQueue resolve:^{
+    NSString *helperPath = [[NSBundle bundleForClass:[self class]] pathForResource:@"SimulatorFrameworkBridge" ofType:nil];
+    if (!helperPath) {
+      return [[FBSimulatorError
+        describe:@"SimulatorFrameworkBridge binary not found in bundle resources. Ensure FBSimulatorControl was built correctly."]
+        failFuture];
+    }
+
+    if (![NSFileManager.defaultManager fileExistsAtPath:helperPath]) {
+      return [[FBSimulatorError
+        describeFormat:@"SimulatorFrameworkBridge binary found in bundle but does not exist at path: %@", helperPath]
+        failFuture];
+    }
+
+    return [[[self.simulator.simctlExecutor
+      taskBuilderWithCommand:@"spawn" arguments:@[helperPath, service, action]]
+      runUntilCompletionWithAcceptableExitCodes:[NSSet setWithObject:@0]]
+      onQueue:self.simulator.asyncQueue fmap:^(FBSubprocess *task) {
+        [self.simulator.logger logFormat:@"SimulatorFrameworkBridge %@ %@ completed successfully", service, action];
+        return [FBFuture futureWithResult:NSNull.null];
+      }];
+  }];
+}
 
 - (FBFuture<NSNull *> *)authorizeLocationSettings:(NSArray<NSString *> *)bundleIDs
 {
@@ -404,7 +441,7 @@ static NSString *const SpringBoardServiceName = @"com.apple.SpringBoard";
           return [FBSimulatorError failFutureWithError:readError];
         }
         properties[@"$objects"][2] = bundleID;
-        properties[@"$objects"][3][@"allowsNotifications"] = @(YES);
+        properties[@"$objects"][3][@"allowsNotifications"] = @YES;
 
         NSError *writeError = nil;
         NSData *resultData = [NSPropertyListSerialization dataWithPropertyList:properties format:NSPropertyListBinaryFormat_v1_0 options:0 error:&writeError];
@@ -450,7 +487,7 @@ static NSString *const SpringBoardServiceName = @"com.apple.SpringBoard";
       describeFormat:@"Database file at path %@ is not writable", databasePath]
       failFuture];
   }
-  
+
   id<FBControlCoreLogger> logger = [self.simulator.logger withName:@"sqlite_auth"];
   dispatch_queue_t queue = self.simulator.asyncQueue;
 
@@ -714,7 +751,7 @@ static NSString *const SpringBoardServiceName = @"com.apple.SpringBoard";
     withStdErrInMemoryAsString]
     withTaskLifecycleLoggingTo:logger]
     runUntilCompletionWithAcceptableExitCodes:[NSSet setWithArray:@[@0, @1]]]
-    onQueue:queue fmap:^(FBProcess<NSNull *, NSString *, NSString *> *task) {
+    onQueue:queue fmap:^(FBSubprocess<NSNull *, NSString *, NSString *> *task) {
       if (![task.exitCode.result isEqualToNumber:@0]) {
           return [[FBSimulatorError
             describeFormat:@"Task did not exit 0: %@ %@ %@", task.exitCode.result, task.stdOut, task.stdErr]

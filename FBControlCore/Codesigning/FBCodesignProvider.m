@@ -74,9 +74,9 @@ static NSString *const CDHashPrefix = @"CDHash=";
     withStdErrInMemoryAsString]
     withTaskLifecycleLoggingTo:logger]
     runUntilCompletionWithAcceptableExitCodes:nil]
-    onQueue:self.queue fmap:^ FBFuture<NSNull *> * (FBProcess<NSNull *, NSString *, NSString *> *task) {
+    onQueue:self.queue fmap:^ FBFuture<NSNull *> * (FBSubprocess<NSNull *, NSString *, NSString *> *task) {
       NSNumber *exitCode = task.exitCode.result;
-      if (![exitCode isEqualTo:@0]) {
+      if (![exitCode isEqualToNumber:@0]) {
         return [[FBControlCoreError
           describeFormat:@"Codesigning failed with exit code %@, %@\n%@", exitCode, task.stdOut, task.stdErr]
           failFuture];
@@ -142,9 +142,9 @@ static NSString *const CDHashPrefix = @"CDHash=";
     withStdErrInMemoryAsString]
     withTaskLifecycleLoggingTo:logger]
     runUntilCompletionWithAcceptableExitCodes:nil]
-    onQueue:self.queue fmap:^ FBFuture<NSString *> * (FBProcess<NSNull *,NSString *,NSString *> *task) {
+    onQueue:self.queue fmap:^ FBFuture<NSString *> * (FBSubprocess<NSNull *,NSString *,NSString *> *task) {
       NSNumber *exitCode = task.exitCode.result;
-      if (![exitCode isEqualTo:@0]) {
+      if (![exitCode isEqualToNumber:@0]) {
         return [[FBControlCoreError
           describeFormat:@"Checking CDHash of codesign execution failed %@, %@\n%@", exitCode, task.stdOut, task.stdErr]
           failFuture];

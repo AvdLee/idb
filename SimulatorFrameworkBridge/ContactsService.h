@@ -7,14 +7,9 @@
 
 #import <Foundation/Foundation.h>
 
-#import "FBXCTestBootstrapper.h"
-
-int main(int argc, const char *argv[])
-{
-  @autoreleasepool {
-    if (![FBXCTestBootstrapper.new bootstrap]) {
-      return 2;
-    }
-  }
-  return 0;
-}
+/**
+ * Clears all contacts from the simulator's Contacts database.
+ *
+ * @return 0 on success, 1 on failure
+ */
+int handleContactsAction(NSString *action);

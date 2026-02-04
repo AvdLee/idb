@@ -27,9 +27,6 @@
 @interface FBSimulatorHID ()
 
 @property (nonatomic, strong, readonly) SimDeviceLegacyClient *client;
-@property (nonatomic, strong, readonly) FBSimulatorIndigoHID *indigo;
-@property (nonatomic, assign, readonly) CGSize mainScreenSize;
-@property (nonatomic, assign, readonly) float mainScreenScale;
 
 - (instancetype)initWithIndigo:(FBSimulatorIndigoHID *)indigo client:(SimDeviceLegacyClient *)client mainScreenSize:(CGSize)mainScreenSize mainScreenScale:(float)mainScreenScale queue:(dispatch_queue_t)queue;
 
@@ -86,19 +83,30 @@ static const char *SimulatorHIDClientClassName = "SimulatorKit.SimDeviceLegacyHI
 
 #pragma mark HID Manipulation
 
-- (FBFuture<NSNull *> *)sendKeyboardEventWithDirection:(FBSimulatorHIDDirection)direction keyCode:(unsigned int)keycode
+- (FBFuture<NSNull *> *)sendEvent:(NSData *)data
 {
-  return [self sendIndigoMessageDataOnWorkQueue:[self.indigo keyboardWithDirection:direction keyCode:keycode]];
+  return [FBFuture onQueue:self.queue resolve:^{
+    FBMutableFuture<NSNull *> *future = FBMutableFuture.future;
+    [self sendIndigoMessageData:data completionQueue:self.queue completion:^(NSError *error) {
+      if (error) {
+        [future resolveWithError:error];
+      } else {
+        [future resolveWithResult:NSNull.null];
+      }
+    }];
+    return future;
+  }];
 }
 
-- (FBFuture<NSNull *> *)sendButtonEventWithDirection:(FBSimulatorHIDDirection)direction button:(FBSimulatorHIDButton)button
+- (void)sendIndigoMessageData:(NSData *)data completionQueue:(dispatch_queue_t)completionQueue completion:(void (^)(NSError *))completion
 {
-  return [self sendIndigoMessageDataOnWorkQueue:[self.indigo buttonWithDirection:direction button:button]];
-}
-
-- (FBFuture<NSNull *> *)sendTouchWithType:(FBSimulatorHIDDirection)type x:(double)x y:(double)y
-{
-  return [self sendIndigoMessageDataOnWorkQueue:[self.indigo touchScreenSize:self.mainScreenSize screenScale:self.mainScreenScale direction:type x:x y:y]];
+  // The event is delivered asynchronously.
+  // Therefore copy the message and let the client manage the lifecycle of it.
+  // The free of the buffer is performed by the client and the NSData will free when it falls out of scope.
+  size_t size = (mach_msg_size_t) data.length;
+  IndigoMessage *message = malloc(size);
+  memcpy(message, data.bytes, size);
+  [self.client sendWithMessage:message freeWhenDone:YES completionQueue:completionQueue completion:completion];
 }
 
 #pragma mark NSObject
@@ -126,34 +134,5 @@ static const char *SimulatorHIDClientClassName = "SimulatorKit.SimDeviceLegacyHI
   return FBFuture.empty;
 }
 
-#pragma mark Private
-
-- (FBFuture<NSNull *> *)sendIndigoMessageDataOnWorkQueue:(NSData *)data
-{
-  return [FBFuture onQueue:self.queue resolve:^{
-    return [self sendIndigoMessageData:data];
-  }];
-}
-
-- (FBFuture<NSNull *> *)sendIndigoMessageData:(NSData *)data
-{
-  // The event is delivered asynchronously.
-  // Therefore copy the message and let the client manage the lifecycle of it.
-  // The free of the buffer is performed by the client and the NSData will free when it falls out of scope.
-  size_t size = (mach_msg_size_t) data.length;
-  IndigoMessage *message = malloc(size);
-  memcpy(message, data.bytes, size);
-
-  // Resolve the future when done and pass this back to the caller.
-  FBMutableFuture<NSNull *> *future = FBMutableFuture.future;
-  [self.client sendWithMessage:message freeWhenDone:YES completionQueue:self.queue completion:^(NSError *error){
-    if (error) {
-      [future resolveWithError:error];
-    } else {
-      [future resolveWithResult:NSNull.null];
-    }
-  }];
-  return future;
-}
 
 @end

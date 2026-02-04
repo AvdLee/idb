@@ -10,13 +10,15 @@
 #import <FBControlCore/FBControlCore.h>
 
 #import <FBSimulatorControl/FBSimulatorAccessibilityCommands.h>
+#import <FBSimulatorControl/FBSimulatorApplicationCommands.h>
+#import <FBSimulatorControl/FBSimulatorFileCommands.h>
 #import <FBSimulatorControl/FBSimulatorKeychainCommands.h>
 #import <FBSimulatorControl/FBSimulatorLaunchCtlCommands.h>
 #import <FBSimulatorControl/FBSimulatorLifecycleCommands.h>
 #import <FBSimulatorControl/FBSimulatorMediaCommands.h>
 #import <FBSimulatorControl/FBSimulatorMemoryCommands.h>
-#import <FBSimulatorControl/FBSimulatorSettingsCommands.h>
 #import <FBSimulatorControl/FBSimulatorNotificationCommands.h>
+#import <FBSimulatorControl/FBSimulatorSettingsCommands.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -31,7 +33,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  An implementation of FBiOSTarget for iOS Simulators.
  */
-@interface FBSimulator : NSObject <FBiOSTarget, FBAccessibilityCommands, FBMemoryCommands, FBFileCommands, FBLocationCommands, FBNotificationCommands, FBProcessSpawnCommands, FBSimulatorKeychainCommands, FBSimulatorSettingsCommands, FBSimulatorLifecycleCommands, FBSimulatorLaunchCtlCommands, FBSimulatorMediaCommands, FBXCTestExtendedCommands, FBDapServerCommand>
+@interface FBSimulator : NSObject <FBiOSTarget, FBAccessibilityCommands, FBMemoryCommands, FBFileCommands, FBLocationCommands, FBNotificationCommands, FBProcessSpawnCommands, FBSimulatorKeychainCommands, FBSimulatorSettingsCommands, FBSimulatorLifecycleCommands, FBSimulatorLaunchCtlCommands, FBSimulatorMediaCommands, FBXCTestExtendedCommands, FBDapServerCommand, FBSimulatorAccessibilityOperations, FBSimulatorApplicationCommands, FBSimulatorFileCommands>
 
 #pragma mark Properties
 
@@ -80,6 +82,31 @@ NS_ASSUME_NONNULL_BEGIN
 - (BOOL)darwinNotificationSetState:(unsigned long long)arg1 name:(id)arg2 error:(NSError **)arg3;
 - (BOOL)darwinNotificationGetState:(unsigned long long *)arg1 name:(id)arg2 error:(NSError **)arg3;
 - (NSUserDefaults *)simulatorDefaults;
+
+@end
+
+#pragma mark - Accessibility Dispatcher
+
+/**
+ Category for accessibility translation dispatcher access.
+ */
+@interface FBSimulator (FBAccessibilityDispatcher)
+
+/**
+ Creates a translation dispatcher with the given translator.
+ Used by tests to create a dispatcher with a mock translator.
+ @param translator The AXPTranslator (or mock) to use for the dispatcher.
+ @return A new dispatcher instance.
+ */
++ (id)createAccessibilityTranslationDispatcherWithTranslator:(id)translator;
+
+/**
+ Returns the translation dispatcher for accessibility operations.
+ In production, creates/returns the shared instance using the real translator.
+ Test doubles can override this to return a mock dispatcher.
+ @return The translation dispatcher.
+ */
+- (id)accessibilityTranslationDispatcher;
 
 @end
 

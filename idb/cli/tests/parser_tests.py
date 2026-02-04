@@ -28,7 +28,7 @@ from idb.utils.testing import AsyncContextManagerMock, AsyncMock, TestCase
 
 
 T = TypeVar("T")
-COMPANION_PATH: Optional[str] = (
+COMPANION_PATH: str | None = (
     "/usr/local/bin/idb_companion" if sys.platform == "darwin" else None
 )
 
@@ -37,7 +37,7 @@ class AsyncGeneratorMock(AsyncMock):
     def __call__(self) -> None:
         super()
 
-    def __init__(self, iter_list: Tuple[T, ...] = ()) -> None:
+    def __init__(self, iter_list: tuple[T, ...] = ()) -> None:
         super().__init__()
         self.iter_list = iter_list
         self.iter_pos: int = -1
@@ -853,6 +853,22 @@ class TestParser(TestCase):
         self.client_mock.contacts_update.assert_called_once_with(
             contacts_path="/dev/null"
         )
+
+    async def test_contacts_clear(self) -> None:
+        target_description = MagicMock()
+        target_description.target_type = 0
+        self.client_mock.describe = AsyncMock(return_value=target_description)
+        self.client_mock.contacts_clear = AsyncMock(return_value=None)
+        await cli_main(cmd_input=["contacts", "clear"])
+        self.client_mock.contacts_clear.assert_called_once()
+
+    async def test_photos_clear(self) -> None:
+        target_description = MagicMock()
+        target_description.target_type = 0
+        self.client_mock.describe = AsyncMock(return_value=target_description)
+        self.client_mock.photos_clear = AsyncMock(return_value=None)
+        await cli_main(cmd_input=["photos", "clear"])
+        self.client_mock.photos_clear.assert_called_once()
 
     async def test_accessibility_info_all(self) -> None:
         self.client_mock.accessibility_info = AsyncMock()

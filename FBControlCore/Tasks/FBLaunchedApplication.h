@@ -6,12 +6,13 @@
  */
 
 #import <Foundation/Foundation.h>
+#import <FBControlCore/FBFuture.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
 /**
  An in-memory representation of a launched application.
- This is distinct from FBProcess, as exit codes for the process are not available.
+ This is distinct from FBSubprocess, as exit codes for the process are not available.
  However, an event for when termination of the application occurs is communicated through a Future.
  */
 @protocol FBLaunchedApplication <NSObject>

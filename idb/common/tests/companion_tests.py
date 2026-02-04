@@ -8,8 +8,8 @@
 
 import json
 import os
+from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
-from typing import AsyncIterator
 from unittest import mock
 
 from idb.common.companion import (
@@ -50,11 +50,13 @@ class CompanionTests(TestCase):
     async def _mock_all_the_things(
         self, report: CompanionReport
     ) -> AsyncIterator[AsyncMock]:
-        with mock.patch(
-            "idb.common.companion.asyncio.create_subprocess_exec",
-            new=AsyncMock(),
-        ) as exec_mock, mock.patch("idb.common.companion.open"), mock.patch(
-            "idb.common.companion.get_last_n_lines"
+        with (
+            mock.patch(
+                "idb.common.companion.asyncio.create_subprocess_exec",
+                new=AsyncMock(),
+            ) as exec_mock,
+            mock.patch("idb.common.companion.open"),
+            mock.patch("idb.common.companion.get_last_n_lines"),
         ):
             process_mock = mock.Mock()
             process_mock.stdout.readline = AsyncMock(

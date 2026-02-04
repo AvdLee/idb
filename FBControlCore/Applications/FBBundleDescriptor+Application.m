@@ -14,34 +14,52 @@
 #import "FBControlCoreError.h"
 #import "FBControlCoreGlobalConfiguration.h"
 #import "FBControlCoreLogger.h"
-#import "FBProcess.h"
+#import "FBSubprocess.h"
 #import "FBProcessBuilder.h"
 
 @implementation FBBundleDescriptor (Application)
 
 #pragma mark Public
 
-
-+ (FBFuture<FBBundleDescriptor *> *)findAppPathFromDirectory:(NSURL *)directory
++ (FBBundleDescriptor *)findAppPathFromDirectory:(NSURL *)directory logger:(id<FBControlCoreLogger>)logger error:(NSError **)error
 {
   NSDirectoryEnumerator *directoryEnumerator = [NSFileManager.defaultManager
     enumeratorAtURL:directory
     includingPropertiesForKeys:@[NSURLIsDirectoryKey]
     options:0
     errorHandler:nil];
-  NSSet<NSURL*> *applicationURLs = [NSSet set];
+  NSMutableArray<NSString *> *applicationPaths = NSMutableArray.array;
+  NSMutableArray<NSString *> *nonApplicationPaths = NSMutableArray.array;
+  [logger logFormat:@"Finding Application Path from root directory %@", directory];
   for (NSURL *fileURL in directoryEnumerator) {
-    if ([FBBundleDescriptor isApplicationAtPath:fileURL.path]) {
-      applicationURLs = [applicationURLs setByAddingObject:fileURL];
+    NSString *path = fileURL.path;
+    if ([FBBundleDescriptor isApplicationAtPath:path]) {
+      [logger logFormat:@"Found application at path %@", path];
+      [applicationPaths addObject:path];
       [directoryEnumerator skipDescendants];
+    } else {
+      [logger logFormat:@"Non-application path at %@", path];
+      [nonApplicationPaths addObject:path];
     }
   }
-  if (applicationURLs.count != 1) {
+  if (applicationPaths.count == 0) {
     return [[FBControlCoreError
-      describeFormat:@"Expected only one Application in IPA, found %lu: %@", applicationURLs.count, [FBCollectionInformation oneLineDescriptionFromArray:[applicationURLs.allObjects valueForKey:@"lastPathComponent"]]]
-      failFuture];
+      describeFormat:@"Could not find an Application in IPA, present files %@", [FBCollectionInformation oneLineDescriptionFromArray:[nonApplicationPaths valueForKey:@"lastPathComponent"]]]
+      fail:error];
   }
-  return [self extractedApplicationAtPath:[applicationURLs.allObjects.firstObject path]];
+  if (applicationPaths.count > 1) {
+    return [[FBControlCoreError
+      describeFormat:@"Expected only one Application in IPA, found %lu: %@", applicationPaths.count, [FBCollectionInformation oneLineDescriptionFromArray:[applicationPaths valueForKey:@"lastPathComponent"]]]
+      fail:error];
+  }
+  NSString *applicationPath = applicationPaths.firstObject;
+  [logger logFormat:@"Using Application at path %@", applicationPath];
+  FBBundleDescriptor *bundle = [FBBundleDescriptor bundleFromPath:applicationPath error:error];
+  [logger logFormat:@"Bundle in IPA is %@", bundle];
+  if (!bundle) {
+    return nil;
+  }
+  return bundle;
 }
 
 + (BOOL)isApplicationAtPath:(NSString *)path
@@ -51,16 +69,6 @@
     && [path hasSuffix:@".app"]
     && [[NSFileManager defaultManager] fileExistsAtPath:path isDirectory:&isDirectory]
     && isDirectory;
-}
-
-+ (FBFuture<FBBundleDescriptor *> *)extractedApplicationAtPath:(NSString *)appPath
-{
-  NSError *error = nil;
-  FBBundleDescriptor *bundle = [FBBundleDescriptor bundleFromPath:appPath error:&error];
-  if (!bundle) {
-    return [FBFuture futureWithError:error];
-  }
-  return [FBFuture futureWithResult:bundle];
 }
 
 @end

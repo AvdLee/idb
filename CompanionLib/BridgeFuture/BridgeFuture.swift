@@ -5,7 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import FBControlCore
+@preconcurrency import FBControlCore
 import Foundation
 import IDBCompanionUtilities
 
@@ -25,7 +25,7 @@ public enum BridgeFuture {
   /// Use this to receive results from multiple futures. The results are **ordered in the same order as passed futures**, so you can safely access them from
   /// array by indexes.
   /// - Note: We should *not* use @discardableResult, results should be dropped explicitly by the callee.
-  public static func values<T: AnyObject>(_ futures: FBFuture<T>...) async throws -> [T] {
+  public static func values<T: Sendable>(_ futures: FBFuture<T>...) async throws -> [T] {
     let futuresArr: [FBFuture<T>] = futures
     return try await values(futuresArr)
   }
@@ -33,7 +33,7 @@ public enum BridgeFuture {
   /// Use this to receive results from multiple futures. The results are **ordered in the same order as passed futures**, so you can safely access them from
   /// array by indexes.
   /// - Note: We should *not* use @discardableResult, results should be dropped explicitly by the callee.
-  public static func values<T: AnyObject>(_ futures: [FBFuture<T>]) async throws -> [T] {
+  public static func values<T: Sendable>(_ futures: [FBFuture<T>]) async throws -> [T] {
     return try await withThrowingTaskGroup(of: (Int, T).self, returning: [T].self) { group in
       var results = [T?].init(repeating: nil, count: futures.count)
 
@@ -62,16 +62,18 @@ public enum BridgeFuture {
   public static func value<T: AnyObject>(_ future: FBFuture<T>) async throws -> T {
     try await withTaskCancellationHandler {
       try await withCheckedThrowingContinuation { continuation in
-        future.onQueue(BridgeQueues.futureSerialFullfillmentQueue, notifyOfCompletion: { resultFuture in
-          if let error = resultFuture.error {
-            continuation.resume(throwing: error)
-          } else if let value = resultFuture.result {
-            // swiftlint:disable force_cast
-            continuation.resume(returning: value as! T)
-          } else {
-            continuation.resume(throwing: FBFutureError.continuationFullfilledWithoutValues)
-          }
-        })
+        future.onQueue(
+          BridgeQueues.futureSerialFullfillmentQueue,
+          notifyOfCompletion: { resultFuture in
+            if let error = resultFuture.error {
+              continuation.resume(throwing: error)
+            } else if let value = resultFuture.result {
+              // swiftlint:disable force_cast
+              continuation.resume(returning: value as! T)
+            } else {
+              continuation.resume(throwing: FBFutureError.continuationFullfilledWithoutValues)
+            }
+          })
       }
     } onCancel: {
       future.cancel()

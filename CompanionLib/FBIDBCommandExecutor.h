@@ -25,6 +25,7 @@ NS_ASSUME_NONNULL_BEGIN
 @class FBXCTestRunRequest;
 
 @protocol FBXCTestReporter;
+@protocol FBSimulatorHIDEvent;
 
 extern FBFileContainerKind const FBFileContainerKindXctest;
 extern FBFileContainerKind const FBFileContainerKindDylib;
@@ -178,9 +179,9 @@ extern FBFileContainerKind const FBFileContainerKindFramework;
 
  @param point location on the screen (NSValue<NSPoint> *), returns info for the whole screen if nil
  @param nestedFormat YES if the legacy format should be used, NO otherwise.
- @return A Future that resolves with the accessibility info
+ @return A Future that resolves with the accessibility info response
  */
-- (FBFuture<id> *)accessibility_info_at_point:(nullable NSValue *)point nestedFormat:(BOOL)nestedFormat;
+- (FBFuture<FBAccessibilityElementsResponse *> *)accessibility_info_at_point:(nullable NSValue *)point nestedFormat:(BOOL)nestedFormat;
 
 /**
  Adds media files (photos, videos, ...) to the target
@@ -196,7 +197,7 @@ extern FBFileContainerKind const FBFileContainerKindFramework;
  @param event hid event to perform
  @return A future that resolves when successful.
  */
-- (FBFuture<NSNull *> *)hid:(FBSimulatorHIDEvent *)event;
+- (FBFuture<NSNull *> *)hid:(id<FBSimulatorHIDEvent>)event;
 
 /**
  Sets latitude and longitude of the Simulator.
@@ -276,6 +277,20 @@ This enables the permission popup the first time we open a deeplink
  @return a Future that resolves when complete.
  */
 - (FBFuture<NSNull *> *)update_contacts:(NSData *)dbTarData;
+
+/**
+ Clears all contacts from the simulator using the CNContacts framework.
+
+ @return a Future that resolves when complete.
+ */
+- (FBFuture<NSNull *> *)clear_contacts;
+
+/**
+ Clears all photos from the simulator using the Photos framework.
+
+ @return a Future that resolves when complete.
+ */
+- (FBFuture<NSNull *> *)clear_photos;
 
 /**
  List the xctests installed
@@ -550,7 +565,7 @@ This enables the permission popup the first time we open a deeplink
  @param stdOut where the dap process writes
  @return A Future that resolves when the dap server is spawned. Returns the dap server process.
  */
-- (FBFuture<FBProcess<id, id<FBDataConsumer>, NSString *> *> *) dapServerWithPath:(NSString *)dapPath stdIn:(FBProcessInput *)stdIn stdOut:(id<FBDataConsumer>)stdOut;
+- (FBFuture<FBSubprocess<id, id<FBDataConsumer>, NSString *> *> *) dapServerWithPath:(NSString *)dapPath stdIn:(FBProcessInput *)stdIn stdOut:(id<FBDataConsumer>)stdOut;
 
 /**
  Simulates a memory warning

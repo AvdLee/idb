@@ -27,7 +27,7 @@ from idb.cli.commands.app import (
     AppUninstallCommand,
 )
 from idb.cli.commands.approve import ApproveCommand
-from idb.cli.commands.contacts import ContactsUpdateCommand
+from idb.cli.commands.contacts import ContactsClearCommand, ContactsUpdateCommand
 from idb.cli.commands.crash import (
     CrashDeleteCommand,
     CrashListCommand,
@@ -72,6 +72,7 @@ from idb.cli.commands.log import CompanionLogCommand, LogCommand
 from idb.cli.commands.media import MediaAddCommand
 from idb.cli.commands.memory import SimulateMemoryWarningCommand
 from idb.cli.commands.notification import SendNotificationCommand
+from idb.cli.commands.photos import PhotosClearCommand
 from idb.cli.commands.revoke import RevokeCommand
 from idb.cli.commands.screenshot import ScreenshotCommand
 from idb.cli.commands.settings import (
@@ -117,7 +118,7 @@ logging.basicConfig(
 logger: logging.Logger = logging.getLogger()
 
 
-def get_default_companion_path() -> Optional[str]:
+def get_default_companion_path() -> str | None:
     if sys.platform != "darwin":
         return None
     return shutil.which("idb_companion") or "/usr/local/bin/idb_companion"
@@ -126,7 +127,7 @@ def get_default_companion_path() -> Optional[str]:
 SysExitArg = Union[int, str, None]
 
 
-async def gen_main(cmd_input: Optional[List[str]] = None) -> SysExitArg:
+async def gen_main(cmd_input: list[str] | None = None) -> SysExitArg:
     # Make sure all files are created with global rw permissions
     os.umask(0o000)
     # Setup parser
@@ -180,7 +181,7 @@ async def gen_main(cmd_input: Optional[List[str]] = None) -> SysExitArg:
         help="If flagged will not modify local state when a companion is known to be unresponsive",
     )
     shell_command = ShellCommand(parser=parser)
-    commands: List[Command] = [
+    commands: list[Command] = [
         AppInstallCommand(),
         AppUninstallCommand(),
         AppListCommand(),
@@ -214,7 +215,12 @@ async def gen_main(cmd_input: Optional[List[str]] = None) -> SysExitArg:
         CommandGroup(
             name="contacts",
             description="Contacts database operations on target",
-            commands=[ContactsUpdateCommand()],
+            commands=[ContactsUpdateCommand(), ContactsClearCommand()],
+        ),
+        CommandGroup(
+            name="photos",
+            description="Photos library operations on target",
+            commands=[PhotosClearCommand()],
         ),
         LogCommand(),
         CommandGroup(
@@ -340,7 +346,7 @@ async def gen_main(cmd_input: Optional[List[str]] = None) -> SysExitArg:
         await drain_coroutines(pending)
 
 
-async def drain_coroutines(pending: Set[asyncio.Task]) -> None:
+async def drain_coroutines(pending: set[asyncio.Task]) -> None:
     if not pending:
         return
     logger.debug(f"Shutting down {len(pending)} coroutines")
@@ -355,7 +361,7 @@ async def drain_coroutines(pending: Set[asyncio.Task]) -> None:
         pass
 
 
-def main(cmd_input: Optional[List[str]] = None) -> SysExitArg:
+def main(cmd_input: list[str] | None = None) -> SysExitArg:
     loop = asyncio.get_event_loop()
     try:
         return loop.run_until_complete(gen_main(cmd_input))

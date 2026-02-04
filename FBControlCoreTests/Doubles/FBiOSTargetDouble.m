@@ -48,6 +48,11 @@
   return @{};
 }
 
+- (NSDictionary<NSString *, NSString *> *)environmentAdditions
+{
+  return @{};
+}
+
 - (FBFuture<NSNull *> *)installApplicationWithPath:(NSString *)path
 {
   return [FBFuture futureWithError:[[FBControlCoreError describe:@"Unimplemented"] build]];
@@ -58,7 +63,7 @@
   return [FBFuture futureWithError:[[FBControlCoreError describe:@"Unimplemented"] build]];
 }
 
-- (FBFuture<FBProcess *> *)launchApplication:(FBApplicationLaunchConfiguration *)configuration
+- (FBFuture<FBSubprocess *> *)launchApplication:(FBApplicationLaunchConfiguration *)configuration
 {
   return [FBFuture futureWithError:[[FBControlCoreError describe:@"Unimplemented"] build]];
 }

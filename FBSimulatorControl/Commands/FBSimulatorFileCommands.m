@@ -7,6 +7,8 @@
 
 #import "FBSimulatorFileCommands.h"
 
+#import <CoreSimulator/SimDevice.h>
+
 #import "FBSimulator.h"
 #import "FBSimulatorApplicationCommands.h"
 #import "FBSimulatorError.h"
@@ -42,10 +44,10 @@
 
 - (FBFutureContext<id<FBFileContainer>> *)fileCommandsForContainerApplication:(NSString *)bundleID
 {
-  return [[[self
-    dataContainerForBundleID:bundleID]
-    onQueue:self.simulator.asyncQueue map:^(NSString *containerPath) {
-      return [FBFileContainer fileContainerForBasePath:containerPath];
+  return [[FBFuture
+    onQueue:self.simulator.asyncQueue resolveValue:^ id<FBFileContainer> (NSError **error) {
+      id<FBContainedFile> containedFile = [self containedFileForApplication:bundleID error:error];
+      return [FBFileContainer fileContainerForContainedFile:containedFile];
     }]
     onQueue:self.simulator.asyncQueue contextualTeardown:^(id _, FBFutureState __) {
       // Do nothing.
@@ -60,14 +62,13 @@
 
 - (FBFutureContext<id<FBFileContainer>> *)fileCommandsForApplicationContainers
 {
-  return [[[FBSimulatorApplicationCommands
-    applicationContainerToPathMappingForSimulator:self.simulator]
-    onQueue:self.simulator.asyncQueue map:^(NSDictionary<NSString *, NSURL *> *pathMappingURLs) {
-      NSMutableDictionary<NSString *, NSString *> *pathMapping = NSMutableDictionary.dictionary;
-      for (NSString *identifier in pathMappingURLs.allKeys) {
-        pathMapping[identifier] = pathMappingURLs[identifier].path;
+  return [[FBFuture
+    onQueue:self.simulator.workQueue resolveValue:^ id<FBFileContainer> (NSError **error) {
+      id<FBContainedFile> containedFile = [self containedFileForApplicationContainersWithError:error];
+      if (!containedFile) {
+        return nil;
       }
-      return [FBFileContainer fileContainerForPathMapping:pathMapping];
+      return [FBFileContainer fileContainerForContainedFile:containedFile];
     }]
     onQueue:self.simulator.asyncQueue contextualTeardown:^(id _, FBFutureState __) {
       // Do nothing.
@@ -77,14 +78,13 @@
 
 - (FBFutureContext<id<FBFileContainer>> *)fileCommandsForGroupContainers
 {
-  return [[[FBSimulatorApplicationCommands
-    groupContainerToPathMappingForSimulator:self.simulator]
-    onQueue:self.simulator.asyncQueue map:^(NSDictionary<NSString *, NSURL *> *pathMappingURLs) {
-      NSMutableDictionary<NSString *, NSString *> *pathMapping = NSMutableDictionary.dictionary;
-      for (NSString *identifier in pathMappingURLs.allKeys) {
-        pathMapping[identifier] = pathMappingURLs[identifier].path;
+  return [[FBFuture
+    onQueue:self.simulator.workQueue resolveValue:^ id<FBFileContainer> (NSError **error) {
+      id<FBContainedFile> containedFile = [self containedFileForGroupContainersWithError:error];
+      if (!containedFile) {
+        return nil;
       }
-      return [FBFileContainer fileContainerForPathMapping:pathMapping];
+      return [FBFileContainer fileContainerForContainedFile:containedFile];
     }]
     onQueue:self.simulator.asyncQueue contextualTeardown:^(id _, FBFutureState __) {
       // Do nothing.
@@ -94,7 +94,9 @@
 
 - (FBFutureContext<id<FBFileContainer>> *)fileCommandsForRootFilesystem
 {
-  return [FBFutureContext futureContextWithResult:[FBFileContainer fileContainerForBasePath:self.simulator.dataDirectory]];
+  id<FBContainedFile> containedFile = [self containedFileForRootFilesystem];
+  id<FBFileContainer> fileContainer = [FBFileContainer fileContainerForContainedFile:containedFile];
+  return [FBFutureContext futureContextWithResult:fileContainer];
 }
 
 - (FBFutureContext<id<FBFileContainer>> *)fileCommandsForMediaDirectory
@@ -145,21 +147,66 @@
     failFutureContext];
 }
 
-#pragma mark Private
+#pragma mark FBSimulatorFileCommands Implementation
 
-- (FBFuture<NSString *> *)dataContainerForBundleID:(NSString *)bundleID
+- (id<FBContainedFile>)containedFileForApplication:(NSString *)bundleID error:(NSError **)error
 {
-  return [[self.simulator
-    installedApplicationWithBundleID:bundleID]
-    onQueue:self.simulator.asyncQueue fmap:^ FBFuture<NSString *> * (FBInstalledApplication *installedApplication) {
-      NSString *container = installedApplication.dataContainer;
-      if (!container) {
-        return [[FBSimulatorError
-          describeFormat:@"No data container present for application %@", installedApplication]
-          failFuture];
-      }
-      return [FBFuture futureWithResult:container];
-    }];
+  FBInstalledApplication *installedApplication = [self.simulator installedApplicationWithBundleID:bundleID error:error];
+  if (!installedApplication) {
+    return nil;
+  }
+  NSString *container = installedApplication.dataContainer;
+  if (!container) {
+    return [[FBSimulatorError
+      describeFormat:@"No data container present for application %@", installedApplication]
+      fail:error];
+  }
+  return [FBFileContainer containedFileForBasePath:container];
+}
+
+- (nullable id<FBContainedFile>)containedFileForApplicationContainersWithError:(NSError **)error
+{
+  NSDictionary<NSString *, id> *installedApps = [self.simulator.device installedAppsWithError:error];
+  if (!installedApps) {
+    return nil;
+  }
+  NSMutableDictionary<NSString *, NSString *> *mapping = NSMutableDictionary.dictionary;
+  for (NSString *bundleID in installedApps.allKeys) {
+    NSDictionary<NSString *, id> *app = installedApps[bundleID];
+    NSURL *dataContainer = app[@"DataContainer"];
+    if (!dataContainer) {
+      continue;
+    }
+    mapping[bundleID] = dataContainer.path;
+  }
+  return [FBFileContainer containedFileForPathMapping:mapping];
+}
+
+- (nullable id<FBContainedFile>)containedFileForGroupContainersWithError:(NSError **)error
+{
+  NSDictionary<NSString *, id> *installedApps = [self.simulator.device installedAppsWithError:error];
+  if (!installedApps) {
+    return nil;
+  }
+  NSMutableDictionary<NSString *, NSURL *> *bundleIDToURL = NSMutableDictionary.dictionary;
+  for (NSString *key in installedApps.allKeys) {
+    NSDictionary<NSString *, id> *app = installedApps[key];
+    NSDictionary<NSString *, id> *appContainers = app[@"GroupContainers"];
+    if (!appContainers) {
+      continue;
+    }
+    [bundleIDToURL addEntriesFromDictionary:appContainers];
+  }
+  NSMutableDictionary<NSString *, NSString *> *pathMapping = NSMutableDictionary.dictionary;
+  for (NSString *identifier in bundleIDToURL.allKeys) {
+    pathMapping[identifier] = bundleIDToURL[identifier].path;
+  }
+  return [FBFileContainer containedFileForPathMapping:pathMapping];
+}
+
+- (id<FBContainedFile>)containedFileForRootFilesystem
+{
+  return [FBFileContainer containedFileForBasePath:self.simulator.dataDirectory];
 }
 
 @end

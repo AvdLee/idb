@@ -93,7 +93,7 @@ static NSString *const DefaultDeviceSet = @"~/Library/Developer/CoreSimulator/De
     wrap:[FBiOSTargetCommandForwarder forwarderWithTarget:self commandClasses:FBSimulator.commandResponders statefulCommands:FBSimulator.statefulCommands]
     simplifiedNaming:NO
     eventReporter:reporter
-    logger:logger];
+    logger:_logger];
 
   return self;
 }
@@ -190,6 +190,11 @@ static NSString *const DefaultDeviceSet = @"~/Library/Developer/CoreSimulator/De
   return @{
     @"%%SIM_ROOT%%": self.dataDirectory,
   };
+}
+
+- (NSDictionary<NSString *, NSString *> *)environmentAdditions
+{
+  return @{};
 }
 
 - (BOOL)requiresBundlesToBeSigned {

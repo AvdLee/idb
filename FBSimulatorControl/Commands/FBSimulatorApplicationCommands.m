@@ -162,31 +162,9 @@
 
 - (FBFuture<FBInstalledApplication *> *)installedApplicationWithBundleID:(NSString *)bundleID
 {
-  SimDevice *device = self.simulator.device;
-
   return [FBFuture
     onQueue:self.simulator.workQueue resolveValue:^ FBInstalledApplication * (NSError **error) {
-      // -[SimDevice propertiesOfApplication:error:] will return in success if the app could not be found.
-      // The dictionary only contains one element, which is the bundle id of the non-existant app.
-      // This internal helper method understands this, so we can just re-use it here.
-      NSString *applicationType = nil;
-      BOOL applicationIsInstalled = [device applicationIsInstalled:bundleID type:&applicationType error:error];
-      if (!applicationIsInstalled) {
-        return [[FBSimulatorError
-          describeFormat:@"Cannot get app information for '%@', it is not installed", bundleID]
-          fail:error];
-      }
-      // appInfo is usually always returned, even if there is no app installed.
-      NSDictionary<NSString *, id> *appInfo = [device propertiesOfApplication:bundleID error:error];
-      if (!appInfo) {
-        return nil;
-      }
-      // Therefore we have to parse the app info to see that it is actually a real app.
-      FBInstalledApplication *application = [FBSimulatorApplicationCommands installedApplicationFromInfo:appInfo error:error];
-      if (!application) {
-        return nil;
-      }
-      return application;
+      return [self installedApplicationWithBundleID:bundleID error:error];
     }];
 }
 
@@ -235,61 +213,35 @@
     }];
 }
 
-#pragma mark Public
+#pragma mark - FBSimulatorApplicationCommands
 
-+ (FBFuture<NSDictionary<NSString *, NSURL *> *> *)groupContainerToPathMappingForSimulator:(FBSimulator *)simulator
+- (FBInstalledApplication *)installedApplicationWithBundleID:(NSString *)bundleID error:(NSError **)error;
 {
-  FBSimulatorApplicationCommands *commands = [[FBSimulatorApplicationCommands alloc] initWithSimulator:simulator];
-  return [commands groupContainerToPathMapping];
-}
-
-+ (FBFuture<NSDictionary<NSString *, NSURL *> *> *)applicationContainerToPathMappingForSimulator:(FBSimulator *)simulator
-{
-  FBSimulatorApplicationCommands *commands = [[FBSimulatorApplicationCommands alloc] initWithSimulator:simulator];
-  return [commands applicationContainerToPathMapping];
+  // -[SimDevice propertiesOfApplication:error:] will return in success if the app could not be found.
+  // The dictionary only contains one element, which is the bundle id of the non-existant app.
+  // This internal helper method understands this, so we can just re-use it here.
+  SimDevice *device = self.simulator.device;
+  NSString *applicationType = nil;
+  BOOL applicationIsInstalled = [device applicationIsInstalled:bundleID type:&applicationType error:error];
+  if (!applicationIsInstalled) {
+    return [[FBSimulatorError
+      describeFormat:@"Cannot get app information for '%@', it is not installed", bundleID]
+      fail:error];
+  }
+  // appInfo is usually always returned, even if there is no app installed.
+  NSDictionary<NSString *, id> *appInfo = [device propertiesOfApplication:bundleID error:error];
+  if (!appInfo) {
+    return nil;
+  }
+  // Therefore we have to parse the app info to see that it is actually a real app.
+  FBInstalledApplication *application = [FBSimulatorApplicationCommands installedApplicationFromInfo:appInfo error:error];
+  if (!application) {
+    return nil;
+  }
+  return application;
 }
 
 #pragma mark Private
-
-- (FBFuture<NSDictionary<NSString *, NSURL *> *> *)groupContainerToPathMapping
-{
-  return [[FBFuture
-    onQueue:self.simulator.workQueue resolveValue:^ NSDictionary<NSString *, id> * (NSError **error) {
-      return [self.simulator.device installedAppsWithError:error];
-    }]
-    onQueue:self.simulator.asyncQueue map:^(NSDictionary<NSString *, id> *installedApps) {
-      NSMutableDictionary<NSString *, NSURL *> *mapping = NSMutableDictionary.dictionary;
-      for (NSString *key in installedApps.allKeys) {
-        NSDictionary<NSString *, id> *app = installedApps[key];
-        NSDictionary<NSString *, id> *appContainers = app[@"GroupContainers"];
-        if (!appContainers) {
-          continue;
-        }
-        [mapping addEntriesFromDictionary:appContainers];
-      }
-      return [mapping copy];
-    }];
-}
-
-- (FBFuture<NSDictionary<NSString *, NSURL *> *> *)applicationContainerToPathMapping
-{
-  return [[FBFuture
-    onQueue:self.simulator.workQueue resolveValue:^ NSDictionary<NSString *, id>  * (NSError **error) {
-      return [self.simulator.device installedAppsWithError:error];
-    }]
-    onQueue:self.simulator.asyncQueue map:^(NSDictionary<NSString *, id> *installedApps) {
-      NSMutableDictionary<NSString *, NSURL *> *mapping = NSMutableDictionary.dictionary;
-      for (NSString *bundleID in installedApps.allKeys) {
-        NSDictionary<NSString *, id> *app = installedApps[bundleID];
-        NSURL *dataContainer = app[KeyDataContainer];
-        if (!dataContainer) {
-          continue;
-        }
-        mapping[bundleID] = dataContainer;
-      }
-      return [mapping copy];
-    }];
-}
 
 - (FBFuture<NSNumber *> *)ensureApplicationIsInstalled:(NSString *)bundleID
 {
@@ -321,7 +273,7 @@
       }
       if (launchMode == FBApplicationLaunchModeFailIfRunning) {
         return [[FBSimulatorError
-          describeFormat:@"App %@ can't be launched as is running (PID=%@)", bundleID, processID]
+          describeFormat:@"App '%@' can't be launched as it is already running (PID=%@)", bundleID, processID]
           failFuture];
       } else if (launchMode == FBApplicationLaunchModeRelaunchIfRunning) {
         return [self killApplicationWithBundleID:bundleID];

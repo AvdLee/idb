@@ -80,7 +80,12 @@ FBFileContainerKind const FBFileContainerKindFramework = @"framework";
 {
   // Use .app directly, or extract an .ipa
   if ([FBBundleDescriptor isApplicationAtPath:filePath]) {
-    return [self installAppBundle:[FBFutureContext futureContextWithFuture:[FBBundleDescriptor extractedApplicationAtPath:filePath]] makeDebuggable:makeDebuggable];
+    NSError *error = nil;
+    FBBundleDescriptor *bundleDescriptor = [FBBundleDescriptor bundleFromPath:filePath error:&error];
+    if (!bundleDescriptor) {
+      return [FBFuture futureWithError:error];
+    }
+    return [self installAppBundle:[FBFutureContext futureContextWithResult:bundleDescriptor] makeDebuggable:makeDebuggable];
   } else {
     return [self installExtractedApp:[self.temporaryDirectory withArchiveExtractedFromFile:filePath overrideModificationTime:overrideModificationTime] makeDebuggable:makeDebuggable];
   }
@@ -142,15 +147,19 @@ FBFileContainerKind const FBFileContainerKindFramework = @"framework";
     }];
 }
 
-- (FBFuture<id> *)accessibility_info_at_point:(nullable NSValue *)value nestedFormat:(BOOL)nestedFormat
+- (FBFuture<FBAccessibilityElementsResponse *> *)accessibility_info_at_point:(nullable NSValue *)value nestedFormat:(BOOL)nestedFormat
 {
   return [[self
     accessibilityCommands]
     onQueue:self.target.workQueue fmap:^ FBFuture * (id<FBAccessibilityCommands> commands) {
+      FBAccessibilityRequestOptions *options = [FBAccessibilityRequestOptions defaultOptions];
+      options.nestedFormat = nestedFormat;
+      options.enableLogging = YES;
+
       if (value) {
-        return [commands accessibilityElementAtPoint:value.pointValue nestedFormat:nestedFormat];
+        return [commands accessibilityElementAtPoint:value.pointValue options:options];
       } else {
-        return [commands accessibilityElementsWithNestedFormat:nestedFormat];
+        return [commands accessibilityElementsWithOptions:options];
       }
     }];
 }
@@ -274,6 +283,20 @@ FBFileContainerKind const FBFileContainerKindFramework = @"framework";
         return [commands updateContacts:tempDirectory.path];
       }];
     }];
+}
+
+- (FBFuture<NSNull *> *)clear_contacts
+{
+  return [self.settingsCommands onQueue:self.target.workQueue fmap:^FBFuture *(id<FBSimulatorSettingsCommands> commands) {
+    return [commands clearContacts];
+  }];
+}
+
+- (FBFuture<NSNull *> *)clear_photos
+{
+  return [self.settingsCommands onQueue:self.target.workQueue fmap:^FBFuture *(id<FBSimulatorSettingsCommands> commands) {
+    return [commands clearPhotos];
+  }];
 }
 
 - (FBFuture<NSArray<id<FBXCTestDescriptor>> *> *)list_test_bundles
@@ -492,7 +515,7 @@ static const NSTimeInterval ListTestBundleTimeout = 180.0;
   return [commands fetchDiagnosticInformation];
 }
 
-- (FBFuture<NSNull *> *)hid:(FBSimulatorHIDEvent *)event
+- (FBFuture<NSNull *> *)hid:(id<FBSimulatorHIDEvent>)event
 {
   return [self.connectToHID
     onQueue:self.target.workQueue fmap:^FBFuture *(FBSimulatorHID *hid) {
@@ -680,7 +703,7 @@ static const NSTimeInterval ListTestBundleTimeout = 180.0;
     }];
 }
 
-- (FBFuture<FBProcess<id, id<FBDataConsumer>, NSString *> *> *) dapServerWithPath:(NSString *)dapPath stdIn:(FBProcessInput *)stdIn stdOut:(id<FBDataConsumer>)stdOut
+- (FBFuture<FBSubprocess<id, id<FBDataConsumer>, NSString *> *> *) dapServerWithPath:(NSString *)dapPath stdIn:(FBProcessInput *)stdIn stdOut:(id<FBDataConsumer>)stdOut
 {
   id<FBDapServerCommand> commands = (id<FBDapServerCommand>) self.target;
   if (![commands conformsToProtocol:@protocol(FBDapServerCommand)]) {
@@ -844,7 +867,12 @@ static const NSTimeInterval ListTestBundleTimeout = 180.0;
 {
   FBFutureContext<FBBundleDescriptor *> *bundleContext = [extractedAppContext
     onQueue:self.target.asyncQueue pend:^(NSURL *extractPath) {
-      return [FBBundleDescriptor findAppPathFromDirectory:extractPath];
+      NSError *error = nil;
+      FBBundleDescriptor *bundleDescriptor = [FBBundleDescriptor findAppPathFromDirectory:extractPath logger:self.target.logger error:&error];
+      if (!bundleDescriptor) {
+        return [FBFuture futureWithError:error];
+      }
+      return [FBFuture futureWithResult:bundleDescriptor];
     }];
   return [self installAppBundle:bundleContext makeDebuggable:makeDebuggable];
 }

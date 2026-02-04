@@ -15,15 +15,40 @@
 
 @implementation FBXcodeDirectoryTests
 
-- (void)testDirectoryExists
+- (void)testXcodeSelect
 {
   NSError *error = nil;
   NSString *directory = [FBXcodeDirectory.xcodeSelectDeveloperDirectory await:&error];
   XCTAssertNil(error);
   XCTAssertNotNil(directory);
+  
+  [self assertDirectory:directory];
+}
 
-  NSString *xctestPath = NSProcessInfo.processInfo.arguments[0];
-  XCTAssertTrue([xctestPath hasPrefix:directory]);
+- (void)testFromSymlink
+{
+  NSError *error = nil;
+  NSString *directory = [FBXcodeDirectory symlinkedDeveloperDirectoryWithError:&error];
+  XCTAssertNil(error);
+  XCTAssertNotNil(directory);
+  
+  [self assertDirectory:directory];
+}
+  
+- (void)assertDirectory:(NSString *)directory
+{
+  NSError *error = nil;
+  BOOL isDirectory = NO;
+  BOOL exists = [NSFileManager.defaultManager fileExistsAtPath:directory isDirectory:&isDirectory];
+  XCTAssertTrue(exists);
+  XCTAssertTrue(isDirectory);
+  
+  NSSet<NSString *> *expectedContents = [NSSet setWithArray:@[@"Applications", @"Platforms"]];
+  NSArray<NSString *> *actualContents = [NSFileManager.defaultManager contentsOfDirectoryAtPath:directory error:&error];
+  NSMutableSet<NSString *> *intersection = [NSMutableSet setWithArray:actualContents];
+  [intersection intersectSet:expectedContents];
+  
+  XCTAssertEqualObjects([intersection copy], expectedContents);
 }
 
 @end
