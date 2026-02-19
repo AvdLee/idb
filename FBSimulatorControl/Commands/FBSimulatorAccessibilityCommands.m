@@ -15,6 +15,7 @@
 #import <AccessibilityPlatformTranslation/AXPTranslatorResponse.h>
 #import <AccessibilityPlatformTranslation/AXPTranslatorRequest.h>
 #import <AccessibilityPlatformTranslation/AXPMacPlatformElement.h>
+#import <ApplicationServices/ApplicationServices.h>
 
 #import "FBSimulator.h"
 #import "FBSimulatorControlFrameworkLoader.h"
@@ -898,6 +899,302 @@ static NSString *const CoreSimulatorBridgeServiceName = @"com.apple.CoreSimulato
     stopServiceWithName:CoreSimulatorBridgeServiceName]
     mapReplace:NSNull.null]
     rephraseFailure:@"Could not restart %@ bridge when attempting to remediate SpringBoard Crash", CoreSimulatorBridgeServiceName];
+}
+
+#pragma mark - AXUIElement-based Accessibility (macOS System API)
+
+- (FBFuture<NSArray<NSDictionary<NSString *, id> *> *> *)accessibilityElementsViaAXUIElementForSimulatorPID:(pid_t)simulatorPID deviceName:(nullable NSString *)deviceName nestedFormat:(BOOL)nestedFormat
+{
+  return [FBFuture onQueue:dispatch_get_global_queue(QOS_CLASS_USER_INITIATED, 0) resolveValue:^NSArray<NSDictionary<NSString *, id> *> *(NSError **error) {
+    AXUIElementRef appRef = AXUIElementCreateApplication(simulatorPID);
+    if (!appRef) {
+      [[FBSimulatorError describeFormat:@"Failed to create AXUIElement for Simulator PID %d", simulatorPID] fail:error];
+      return nil;
+    }
+
+    AXUIElementRef renderableView = [FBSimulatorAccessibilityCommands copySimDisplayRenderableViewFromApp:appRef deviceName:deviceName];
+    CFRelease(appRef);
+    if (!renderableView) {
+      [[FBSimulatorError describeFormat:@"Could not find SimDisplayRenderableView in Simulator.app (PID %d, device: %@)", simulatorPID, deviceName ?: @"any"] fail:error];
+      return nil;
+    }
+
+    CGPoint renderableOrigin = [FBSimulatorAccessibilityCommands originOfElement:renderableView];
+
+    NSArray<NSDictionary<NSString *, id> *> *result;
+    if (nestedFormat) {
+      NSDictionary *tree = [FBSimulatorAccessibilityCommands nestedDictionaryFromAXElement:renderableView origin:renderableOrigin];
+      result = tree ? @[tree] : @[];
+    } else {
+      result = [FBSimulatorAccessibilityCommands flatArrayFromAXElement:renderableView origin:renderableOrigin];
+    }
+
+    CFRelease(renderableView);
+    return result;
+  }];
+}
+
++ (nullable AXUIElementRef)copySimDisplayRenderableViewFromApp:(AXUIElementRef)appRef deviceName:(nullable NSString *)deviceName
+{
+  CFArrayRef windowsRef = NULL;
+  AXError err = AXUIElementCopyAttributeValue(appRef, kAXWindowsAttribute, (CFTypeRef *)&windowsRef);
+  if (err != kAXErrorSuccess || !windowsRef) {
+    return NULL;
+  }
+
+  CFIndex windowCount = CFArrayGetCount(windowsRef);
+  AXUIElementRef targetWindow = NULL;
+
+  for (CFIndex i = 0; i < windowCount; i++) {
+    AXUIElementRef window = (AXUIElementRef)CFArrayGetValueAtIndex(windowsRef, i);
+    if (deviceName) {
+      CFTypeRef titleRef = NULL;
+      AXUIElementCopyAttributeValue(window, kAXTitleAttribute, &titleRef);
+      if (titleRef) {
+        NSString *title = (__bridge NSString *)titleRef;
+        BOOL matches = [title containsString:deviceName];
+        CFRelease(titleRef);
+        if (!matches) continue;
+      } else {
+        continue;
+      }
+    }
+    targetWindow = window;
+    break;
+  }
+
+  if (!targetWindow) {
+    CFRelease(windowsRef);
+    return NULL;
+  }
+
+  // Drill into window children to find SimDisplayRenderableView (a group child)
+  AXUIElementRef renderableView = [self copyRenderableViewFromElement:targetWindow];
+  CFRelease(windowsRef);
+  return renderableView;
+}
+
++ (nullable AXUIElementRef)copyRenderableViewFromElement:(AXUIElementRef)element
+{
+  CFArrayRef childrenRef = NULL;
+  AXError err = AXUIElementCopyAttributeValue(element, kAXChildrenAttribute, (CFTypeRef *)&childrenRef);
+  if (err != kAXErrorSuccess || !childrenRef) {
+    return NULL;
+  }
+
+  CFIndex count = CFArrayGetCount(childrenRef);
+  AXUIElementRef result = NULL;
+
+  for (CFIndex i = 0; i < count; i++) {
+    AXUIElementRef child = (AXUIElementRef)CFArrayGetValueAtIndex(childrenRef, i);
+
+    CFTypeRef roleRef = NULL;
+    AXUIElementCopyAttributeValue(child, kAXRoleAttribute, &roleRef);
+    if (!roleRef) continue;
+
+    NSString *role = (__bridge NSString *)roleRef;
+    BOOL isGroup = [role isEqualToString:NSAccessibilityGroupRole];
+    CFRelease(roleRef);
+
+    if (isGroup) {
+      CFTypeRef descRef = NULL;
+      AXUIElementCopyAttributeValue(child, kAXDescriptionAttribute, &descRef);
+      NSString *desc = descRef ? (__bridge_transfer NSString *)descRef : nil;
+
+      // SimDisplayRenderableView typically has no description or a specific one.
+      // It's the first group directly under the window that contains the iOS content.
+      // We verify by checking it has children (the iOS accessibility tree).
+      CFArrayRef grandchildren = NULL;
+      AXUIElementCopyAttributeValue(child, kAXChildrenAttribute, (CFTypeRef *)&grandchildren);
+      if (grandchildren) {
+        CFIndex grandchildCount = CFArrayGetCount(grandchildren);
+        CFRelease(grandchildren);
+        if (grandchildCount > 0) {
+          result = child;
+          CFRetain(result);
+          break;
+        }
+      }
+      (void)desc;
+    }
+  }
+
+  CFRelease(childrenRef);
+  return result;
+}
+
++ (CGPoint)originOfElement:(AXUIElementRef)element
+{
+  CFTypeRef posRef = NULL;
+  AXError err = AXUIElementCopyAttributeValue(element, kAXPositionAttribute, &posRef);
+  if (err != kAXErrorSuccess || !posRef) {
+    return CGPointZero;
+  }
+  CGPoint point = CGPointZero;
+  AXValueGetValue(posRef, kAXValueCGPointType, &point);
+  CFRelease(posRef);
+  return point;
+}
+
++ (CGSize)sizeOfElement:(AXUIElementRef)element
+{
+  CFTypeRef sizeRef = NULL;
+  AXError err = AXUIElementCopyAttributeValue(element, kAXSizeAttribute, &sizeRef);
+  if (err != kAXErrorSuccess || !sizeRef) {
+    return CGSizeZero;
+  }
+  CGSize size = CGSizeZero;
+  AXValueGetValue(sizeRef, kAXValueCGSizeType, &size);
+  CFRelease(sizeRef);
+  return size;
+}
+
+static NSString *FBStringAttributeFromAXElement(AXUIElementRef element, CFStringRef attribute)
+{
+  CFTypeRef ref = NULL;
+  AXError err = AXUIElementCopyAttributeValue(element, attribute, &ref);
+  if (err != kAXErrorSuccess || !ref) return nil;
+  if (CFGetTypeID(ref) != CFStringGetTypeID()) {
+    CFRelease(ref);
+    return nil;
+  }
+  return (__bridge_transfer NSString *)ref;
+}
+
+static NSNumber *FBBoolAttributeFromAXElement(AXUIElementRef element, CFStringRef attribute)
+{
+  CFTypeRef ref = NULL;
+  AXError err = AXUIElementCopyAttributeValue(element, attribute, &ref);
+  if (err != kAXErrorSuccess || !ref) return nil;
+  if (CFGetTypeID(ref) != CFBooleanGetTypeID()) {
+    CFRelease(ref);
+    return nil;
+  }
+  BOOL value = (BOOL)CFBooleanGetValue(ref);
+  CFRelease(ref);
+  return @(value);
+}
+
++ (NSDictionary<NSString *, id> *)dictionaryFromAXElement:(AXUIElementRef)element origin:(CGPoint)containerOrigin
+{
+  NSMutableDictionary<NSString *, id> *dict = [NSMutableDictionary dictionary];
+
+  // Position & size -> frame in simulator-relative coordinates
+  CGPoint pos = [self originOfElement:element];
+  CGSize size = [self sizeOfElement:element];
+  CGRect frame = CGRectMake(pos.x - containerOrigin.x, pos.y - containerOrigin.y, size.width, size.height);
+
+  dict[FBAXKeysFrame] = NSStringFromRect(frame);
+  dict[FBAXKeysFrameDict] = @{
+    @"x": @(frame.origin.x),
+    @"y": @(frame.origin.y),
+    @"width": @(frame.size.width),
+    @"height": @(frame.size.height),
+  };
+
+  NSString *role = FBStringAttributeFromAXElement(element, kAXRoleAttribute);
+  dict[FBAXKeysRole] = role ?: [NSNull null];
+
+  NSString *typeValue = role;
+  if ([role hasPrefix:@"AX"]) {
+    typeValue = [role substringFromIndex:2];
+  }
+  dict[FBAXKeysType] = typeValue ?: [NSNull null];
+
+  NSString *label = FBStringAttributeFromAXElement(element, kAXDescriptionAttribute);
+  dict[FBAXKeysLabel] = label ?: [NSNull null];
+
+  NSString *value = FBStringAttributeFromAXElement(element, kAXValueAttribute);
+  dict[FBAXKeysValue] = value ?: [NSNull null];
+
+  NSString *identifier = FBStringAttributeFromAXElement(element, CFSTR("AXIdentifier"));
+  dict[FBAXKeysUniqueID] = identifier ?: [NSNull null];
+
+  NSString *title = FBStringAttributeFromAXElement(element, kAXTitleAttribute);
+  dict[FBAXKeysTitle] = title ?: [NSNull null];
+
+  NSString *help = FBStringAttributeFromAXElement(element, kAXHelpAttribute);
+  dict[FBAXKeysHelp] = help ?: [NSNull null];
+
+  NSNumber *enabled = FBBoolAttributeFromAXElement(element, CFSTR("AXEnabled"));
+  dict[FBAXKeysEnabled] = enabled ?: @YES;
+
+  NSString *roleDescription = FBStringAttributeFromAXElement(element, kAXRoleDescriptionAttribute);
+  dict[FBAXKeysRoleDescription] = roleDescription ?: [NSNull null];
+
+  NSString *subrole = FBStringAttributeFromAXElement(element, kAXSubroleAttribute);
+  dict[FBAXKeysSubrole] = subrole ?: [NSNull null];
+
+  dict[FBAXKeysContentRequired] = @NO;
+
+  dict[FBAXKeysPID] = @0;
+
+  // Custom actions
+  CFArrayRef actionsRef = NULL;
+  AXUIElementCopyActionNames(element, &actionsRef);
+  NSArray *actions = actionsRef ? (__bridge_transfer NSArray *)actionsRef : @[];
+  NSMutableArray *customActionNames = [NSMutableArray array];
+  for (NSString *action in actions) {
+    if (![action isEqualToString:@"AXPress"] && ![action isEqualToString:@"AXCancel"] &&
+        ![action isEqualToString:@"AXRaise"] && ![action isEqualToString:@"AXShowMenu"]) {
+      CFStringRef descRef = NULL;
+      AXUIElementCopyActionDescription(element, (__bridge CFStringRef)action, &descRef);
+      NSString *desc = descRef ? (__bridge_transfer NSString *)descRef : action;
+      [customActionNames addObject:desc];
+    }
+  }
+  dict[FBAXKeysCustomActions] = [customActionNames copy];
+
+  // Traits are iOS-specific and not available via AXUIElement; return NSNull
+  dict[FBAXKeysTraits] = [NSNull null];
+
+  return [dict copy];
+}
+
++ (NSArray<NSDictionary<NSString *, id> *> *)flatArrayFromAXElement:(AXUIElementRef)element origin:(CGPoint)containerOrigin
+{
+  NSMutableArray<NSDictionary<NSString *, id> *> *results = [NSMutableArray array];
+  [self flatRecurseAXElement:element origin:containerOrigin into:results];
+  return [results copy];
+}
+
++ (void)flatRecurseAXElement:(AXUIElementRef)element origin:(CGPoint)containerOrigin into:(NSMutableArray<NSDictionary<NSString *, id> *> *)results
+{
+  [results addObject:[self dictionaryFromAXElement:element origin:containerOrigin]];
+
+  CFArrayRef childrenRef = NULL;
+  AXError err = AXUIElementCopyAttributeValue(element, kAXChildrenAttribute, (CFTypeRef *)&childrenRef);
+  if (err != kAXErrorSuccess || !childrenRef) return;
+
+  CFIndex count = CFArrayGetCount(childrenRef);
+  for (CFIndex i = 0; i < count; i++) {
+    AXUIElementRef child = (AXUIElementRef)CFArrayGetValueAtIndex(childrenRef, i);
+    [self flatRecurseAXElement:child origin:containerOrigin into:results];
+  }
+  CFRelease(childrenRef);
+}
+
++ (NSDictionary<NSString *, id> *)nestedDictionaryFromAXElement:(AXUIElementRef)element origin:(CGPoint)containerOrigin
+{
+  NSMutableDictionary<NSString *, id> *dict = [[self dictionaryFromAXElement:element origin:containerOrigin] mutableCopy];
+
+  NSMutableArray<NSDictionary<NSString *, id> *> *childDicts = [NSMutableArray array];
+  CFArrayRef childrenRef = NULL;
+  AXError err = AXUIElementCopyAttributeValue(element, kAXChildrenAttribute, (CFTypeRef *)&childrenRef);
+  if (err == kAXErrorSuccess && childrenRef) {
+    CFIndex count = CFArrayGetCount(childrenRef);
+    for (CFIndex i = 0; i < count; i++) {
+      AXUIElementRef child = (AXUIElementRef)CFArrayGetValueAtIndex(childrenRef, i);
+      NSDictionary *childDict = [self nestedDictionaryFromAXElement:child origin:containerOrigin];
+      if (childDict) {
+        [childDicts addObject:childDict];
+      }
+    }
+    CFRelease(childrenRef);
+  }
+  dict[@"children"] = childDicts;
+
+  return [dict copy];
 }
 
 @end

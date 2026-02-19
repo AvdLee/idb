@@ -1,0 +1,67 @@
+{
+  "object" : {
+    "artifacts" : [
+      {
+        "kind" : {
+          "xcframework" : {
+
+          }
+        },
+        "packageRef" : {
+          "identity" : "idb",
+          "kind" : "root",
+          "location" : "/Users/avanderlee/Developer/GIT-Projects/Forks/idb",
+          "name" : "idb"
+        },
+        "path" : "/Users/avanderlee/Developer/GIT-Projects/Forks/idb/SPM/xcframeworks/FBSimulatorControl.xcframework",
+        "source" : {
+          "type" : "local"
+        },
+        "targetName" : "FBSimulatorControl"
+      },
+      {
+        "kind" : {
+          "xcframework" : {
+
+          }
+        },
+        "packageRef" : {
+          "identity" : "idb",
+          "kind" : "root",
+          "location" : "/Users/avanderlee/Developer/GIT-Projects/Forks/idb",
+          "name" : "idb"
+        },
+        "path" : "/Users/avanderlee/Developer/GIT-Projects/Forks/idb/SPM/xcframeworks/FBControlCore.xcframework",
+        "source" : {
+          "type" : "local"
+        },
+        "targetName" : "FBControlCore"
+      },
+      {
+        "kind" : {
+          "xcframework" : {
+
+          }
+        },
+        "packageRef" : {
+          "identity" : "idb",
+          "kind" : "root",
+          "location" : "/Users/avanderlee/Developer/GIT-Projects/Forks/idb",
+          "name" : "idb"
+        },
+        "path" : "/Users/avanderlee/Developer/GIT-Projects/Forks/idb/SPM/xcframeworks/XCTestBootstrap.xcframework",
+        "source" : {
+          "type" : "local"
+        },
+        "targetName" : "XCTestBootstrap"
+      }
+    ],
+    "dependencies" : [
+
+    ],
+    "prebuilts" : [
+
+    ]
+  },
+  "version" : 7
+}

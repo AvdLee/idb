@@ -33,6 +33,21 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface FBSimulatorAccessibilityCommands : NSObject <FBAccessibilityCommands, FBSimulatorAccessibilityOperations>
 
+/**
+ Fetches accessibility elements by querying Simulator.app's macOS accessibility tree
+ via the AXUIElement C API. This is the same API path that Accessibility Inspector uses,
+ which returns the full element hierarchy including navigation bar children that are
+ invisible to the CoreSimulator XPC path.
+
+ Requires that Simulator.app is running with a visible window for the given simulator.
+
+ @param simulatorPID the pid of the Simulator.app process hosting the target device window.
+ @param deviceName the name of the device window to find (e.g. "iPhone 16 Pro"). Pass nil to use the first window.
+ @param nestedFormat if YES, returns elements in a nested tree; if NO, returns a flat list.
+ @return a future wrapping an array of accessibility element dictionaries in the same format as accessibilityElementsWithOptions:.
+ */
+- (FBFuture<NSArray<NSDictionary<NSString *, id> *> *> *)accessibilityElementsViaAXUIElementForSimulatorPID:(pid_t)simulatorPID deviceName:(nullable NSString *)deviceName nestedFormat:(BOOL)nestedFormat;
+
 @end
 
 NS_ASSUME_NONNULL_END
