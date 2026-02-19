@@ -1160,8 +1160,19 @@ static NSNumber *FBBoolAttributeFromAXElement(AXUIElementRef element, CFStringRe
   }
   dict[FBAXKeysCustomActions] = [customActionNames copy];
 
-  // Traits are iOS-specific and not available via AXUIElement; return NSNull
-  dict[FBAXKeysTraits] = [NSNull null];
+  // Simulator.app bridges iOS elements via AXPTranslator, so AXTraits may be
+  // readable even through the C API. Fall back to NSNull when unavailable.
+  CFTypeRef traitsRef = NULL;
+  AXError traitsErr = AXUIElementCopyAttributeValue(element, CFSTR("AXTraits"), &traitsRef);
+  if (traitsErr == kAXErrorSuccess && traitsRef && CFGetTypeID(traitsRef) == CFNumberGetTypeID()) {
+    uint64_t bitmask = 0;
+    CFNumberGetValue(traitsRef, kCFNumberLongLongType, &bitmask);
+    dict[FBAXKeysTraits] = AXExtractTraits(bitmask).allObjects;
+    CFRelease(traitsRef);
+  } else {
+    dict[FBAXKeysTraits] = [NSNull null];
+    if (traitsRef) CFRelease(traitsRef);
+  }
 
   return [dict copy];
 }
