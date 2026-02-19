@@ -903,7 +903,9 @@ static NSString *const CoreSimulatorBridgeServiceName = @"com.apple.CoreSimulato
 
 #pragma mark - AXUIElement-based Accessibility (macOS System API)
 
-- (FBFuture<NSArray<NSDictionary<NSString *, id> *> *> *)accessibilityElementsViaAXUIElementForSimulatorPID:(pid_t)simulatorPID deviceName:(nullable NSString *)deviceName nestedFormat:(BOOL)nestedFormat
+extern AXError _AXUIElementGetWindow(AXUIElementRef element, CGWindowID *outWindowID);
+
+- (FBFuture<NSArray<NSDictionary<NSString *, id> *> *> *)accessibilityElementsViaAXUIElementForSimulatorPID:(pid_t)simulatorPID windowID:(CGWindowID)windowID deviceName:(nullable NSString *)deviceName nestedFormat:(BOOL)nestedFormat
 {
   return [FBFuture onQueue:dispatch_get_global_queue(QOS_CLASS_USER_INITIATED, 0) resolveValue:^NSArray<NSDictionary<NSString *, id> *> *(NSError **error) {
     AXUIElementRef appRef = AXUIElementCreateApplication(simulatorPID);
@@ -912,10 +914,10 @@ static NSString *const CoreSimulatorBridgeServiceName = @"com.apple.CoreSimulato
       return nil;
     }
 
-    AXUIElementRef renderableView = [FBSimulatorAccessibilityCommands copySimDisplayRenderableViewFromApp:appRef deviceName:deviceName];
+    AXUIElementRef renderableView = [FBSimulatorAccessibilityCommands copySimDisplayRenderableViewFromApp:appRef windowID:windowID deviceName:deviceName];
     CFRelease(appRef);
     if (!renderableView) {
-      [[FBSimulatorError describeFormat:@"Could not find SimDisplayRenderableView in Simulator.app (PID %d, device: %@)", simulatorPID, deviceName ?: @"any"] fail:error];
+      [[FBSimulatorError describeFormat:@"Could not find SimDisplayRenderableView in Simulator.app (PID %d, window: %u, device: %@)", simulatorPID, windowID, deviceName ?: @"any"] fail:error];
       return nil;
     }
 
@@ -934,7 +936,7 @@ static NSString *const CoreSimulatorBridgeServiceName = @"com.apple.CoreSimulato
   }];
 }
 
-+ (nullable AXUIElementRef)copySimDisplayRenderableViewFromApp:(AXUIElementRef)appRef deviceName:(nullable NSString *)deviceName
++ (nullable AXUIElementRef)copySimDisplayRenderableViewFromApp:(AXUIElementRef)appRef windowID:(CGWindowID)windowID deviceName:(nullable NSString *)deviceName
 {
   CFArrayRef windowsRef = NULL;
   AXError err = AXUIElementCopyAttributeValue(appRef, kAXWindowsAttribute, (CFTypeRef *)&windowsRef);
@@ -945,22 +947,36 @@ static NSString *const CoreSimulatorBridgeServiceName = @"com.apple.CoreSimulato
   CFIndex windowCount = CFArrayGetCount(windowsRef);
   AXUIElementRef targetWindow = NULL;
 
-  for (CFIndex i = 0; i < windowCount; i++) {
-    AXUIElementRef window = (AXUIElementRef)CFArrayGetValueAtIndex(windowsRef, i);
-    if (deviceName) {
-      CFTypeRef titleRef = NULL;
-      AXUIElementCopyAttributeValue(window, kAXTitleAttribute, &titleRef);
-      if (titleRef) {
-        NSString *title = (__bridge NSString *)titleRef;
-        BOOL matches = [title containsString:deviceName];
-        CFRelease(titleRef);
-        if (!matches) continue;
-      } else {
-        continue;
+  if (windowID != 0) {
+    for (CFIndex i = 0; i < windowCount; i++) {
+      AXUIElementRef window = (AXUIElementRef)CFArrayGetValueAtIndex(windowsRef, i);
+      CGWindowID axWindowID = 0;
+      AXError axErr = _AXUIElementGetWindow(window, &axWindowID);
+      if (axErr == kAXErrorSuccess && axWindowID == windowID) {
+        targetWindow = window;
+        break;
       }
     }
-    targetWindow = window;
-    break;
+  }
+
+  if (!targetWindow) {
+    for (CFIndex i = 0; i < windowCount; i++) {
+      AXUIElementRef window = (AXUIElementRef)CFArrayGetValueAtIndex(windowsRef, i);
+      if (deviceName) {
+        CFTypeRef titleRef = NULL;
+        AXUIElementCopyAttributeValue(window, kAXTitleAttribute, &titleRef);
+        if (titleRef) {
+          NSString *title = (__bridge NSString *)titleRef;
+          BOOL matches = [title containsString:deviceName];
+          CFRelease(titleRef);
+          if (!matches) continue;
+        } else {
+          continue;
+        }
+      }
+      targetWindow = window;
+      break;
+    }
   }
 
   if (!targetWindow) {
@@ -968,7 +984,6 @@ static NSString *const CoreSimulatorBridgeServiceName = @"com.apple.CoreSimulato
     return NULL;
   }
 
-  // Drill into window children to find SimDisplayRenderableView (a group child)
   AXUIElementRef renderableView = [self copyRenderableViewFromElement:targetWindow];
   CFRelease(windowsRef);
   return renderableView;
