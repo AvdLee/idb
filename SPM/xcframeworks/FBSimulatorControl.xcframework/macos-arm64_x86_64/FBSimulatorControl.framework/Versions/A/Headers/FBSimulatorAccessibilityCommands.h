@@ -42,12 +42,11 @@ NS_ASSUME_NONNULL_BEGIN
  Requires that Simulator.app is running with a visible window for the given simulator.
 
  @param simulatorPID the pid of the Simulator.app process hosting the target device window.
- @param windowID the CGWindowID of the simulator window. When non-zero, matches the exact window via _AXUIElementGetWindow. Pass 0 to fall back to name-based matching.
- @param deviceName the name of the device window to find (e.g. "iPhone 16 Pro"). Used as fallback when windowID is 0. Pass nil to use the first window.
+ @param deviceName the name of the device window to find (e.g. "iPhone 16 Pro"). Pass nil to use the first window.
  @param nestedFormat if YES, returns elements in a nested tree; if NO, returns a flat list.
  @return a future wrapping an array of accessibility element dictionaries in the same format as accessibilityElementsWithOptions:.
  */
-- (FBFuture<NSArray<NSDictionary<NSString *, id> *> *> *)accessibilityElementsViaAXUIElementForSimulatorPID:(pid_t)simulatorPID windowID:(CGWindowID)windowID deviceName:(nullable NSString *)deviceName nestedFormat:(BOOL)nestedFormat;
+- (FBFuture<NSArray<NSDictionary<NSString *, id> *> *> *)accessibilityElementsViaAXUIElementForSimulatorPID:(pid_t)simulatorPID deviceName:(nullable NSString *)deviceName nestedFormat:(BOOL)nestedFormat;
 
 @end
 
