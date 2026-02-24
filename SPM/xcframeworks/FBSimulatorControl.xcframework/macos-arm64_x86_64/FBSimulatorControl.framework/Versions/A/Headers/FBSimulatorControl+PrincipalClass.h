@@ -32,6 +32,20 @@ NS_ASSUME_NONNULL_BEGIN
  */
 + (nullable instancetype)withConfiguration:(FBSimulatorControlConfiguration *)configuration error:(NSError **)error;
 
+/**
+ Creates and returns a new `FBSimulatorControl` instance using an explicit developer directory.
+ Use this from sandboxed apps that cannot resolve the Xcode path via xcode-select.
+ When developerDirectory is nil, falls back to xcode-select resolution.
+
+ @param configuration the Configuration to setup the instance with.
+ @param developerDirectory the Xcode Contents/Developer path, or nil.
+ @param error any error that occurred during instantiation.
+ @return a new FBSimulatorControl instance.
+ */
++ (nullable instancetype)withConfiguration:(FBSimulatorControlConfiguration *)configuration
+                        developerDirectory:(nullable NSString *)developerDirectory
+                                     error:(NSError **)error;
+
 #pragma mark Properties
 
 /**

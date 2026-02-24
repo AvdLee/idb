@@ -33,6 +33,19 @@ NS_ASSUME_NONNULL_BEGIN
 + (instancetype)sharedServiceContextWithLogger:(nullable id<FBControlCoreLogger>)logger;
 
 /**
+ Returns a Service Context for a specific developer directory.
+ When developerDirectory is nil, falls back to the shared cached context.
+ When non-nil, creates a context using the provided path (for sandboxed apps
+ that cannot read xcode-select).
+
+ @param logger the logger to use.
+ @param developerDirectory the Xcode Contents/Developer path, or nil.
+ @return the context.
+ */
++ (instancetype)serviceContextWithLogger:(nullable id<FBControlCoreLogger>)logger
+                      developerDirectory:(nullable NSString *)developerDirectory;
+
+/**
  Returns the shared Service Context instance.
 
  @return the shared context.
