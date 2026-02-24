@@ -46,14 +46,22 @@
   static dispatch_once_t onceToken;
   static FBSimulatorServiceContext *serviceContext = nil;
   dispatch_once(&onceToken, ^{
-    serviceContext = [self createServiceContextWithLogger:logger];
+    serviceContext = [self createServiceContextWithLogger:logger developerDirectory:nil];
   });
   return serviceContext;
 }
 
++ (instancetype)serviceContextWithLogger:(id<FBControlCoreLogger>)logger developerDirectory:(NSString *)developerDirectory
+{
+  if (!developerDirectory) {
+    return [self sharedServiceContextWithLogger:logger];
+  }
+  return [self createServiceContextWithLogger:logger developerDirectory:developerDirectory];
+}
+
 #pragma mark Initialization Private
 
-+ (instancetype)createServiceContextWithLogger:(id<FBControlCoreLogger>)logger
++ (instancetype)createServiceContextWithLogger:(id<FBControlCoreLogger>)logger developerDirectory:(nullable NSString *)developerDirectory
 {
   Class serviceContextClass = objc_lookUpClass("SimServiceContext");
   NSAssert([serviceContextClass respondsToSelector:@selector(sharedServiceContextForDeveloperDir:error:)], @"Service Context cannot be instantiated");
@@ -63,7 +71,8 @@
       [conn activate];
   }
 
-  SimServiceContext *serviceContext = [serviceContextClass sharedServiceContextForDeveloperDir:FBXcodeConfiguration.developerDirectory error:&innerError];
+  NSString *devDir = developerDirectory ?: FBXcodeConfiguration.developerDirectory;
+  SimServiceContext *serviceContext = [serviceContextClass sharedServiceContextForDeveloperDir:devDir error:&innerError];
   NSAssert(serviceContext, @"Could not create a service context with error %@", innerError);
   return [[FBSimulatorServiceContext alloc] initWithServiceContext:serviceContext];
 }

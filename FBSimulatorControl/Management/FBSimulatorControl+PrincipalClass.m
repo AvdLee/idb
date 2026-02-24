@@ -34,8 +34,15 @@
 
 + (nullable instancetype)withConfiguration:(FBSimulatorControlConfiguration *)configuration error:(NSError **)error
 {
+  return [self withConfiguration:configuration developerDirectory:nil error:error];
+}
+
++ (nullable instancetype)withConfiguration:(FBSimulatorControlConfiguration *)configuration
+                        developerDirectory:(nullable NSString *)developerDirectory
+                                     error:(NSError **)error
+{
   NSError *innerError = nil;
-  FBSimulatorServiceContext *serviceContext = [FBSimulatorServiceContext sharedServiceContextWithLogger:configuration.logger];
+  FBSimulatorServiceContext *serviceContext = [FBSimulatorServiceContext serviceContextWithLogger:configuration.logger developerDirectory:developerDirectory];
   SimDeviceSet *deviceSet = [serviceContext createDeviceSetWithConfiguration:configuration error:&innerError];
   if (!deviceSet) {
     return [FBSimulatorError failWithError:innerError errorOut:error];
