@@ -13,11 +13,21 @@
 #import "FBProcessBuilder.h"
 #import "FBXcodeDirectory.h"
 
+static NSString *_injectedDeveloperDirectory;
+
 @implementation FBXcodeConfiguration
 
-+ (NSString *)developerDirectory
++ (void)setInjectedDeveloperDirectory:(nullable NSString *)directory
 {
-  return [self findXcodeDeveloperDirectoryOrAssert];
+  _injectedDeveloperDirectory = [directory copy];
+}
+
++ (nullable NSString *)developerDirectory
+{
+  if (_injectedDeveloperDirectory) {
+    return _injectedDeveloperDirectory;
+  }
+  return [self findXcodeDeveloperDirectory:nil];
 }
 
 + (nullable NSString *)getDeveloperDirectoryIfExists
@@ -97,7 +107,9 @@
 {
   NSError *error = nil;
   FBBundleDescriptor *application = [FBBundleDescriptor bundleFromPath:self.simulatorApplicationPath error:&error];
-  NSAssert(application, @"Expected to be able to build an Application, got an error %@", application);
+  if (!application) {
+    NSLog(@"FBXcodeConfiguration: failed to build Simulator.app descriptor: %@", error);
+  }
   return application;
 }
 
@@ -140,14 +152,6 @@
     stringByAppendingPathComponent:@"Info.plist"];
 }
 
-+ (NSString *)findXcodeDeveloperDirectoryOrAssert
-{
-  NSError *error = nil;
-  NSString *directory = [self findXcodeDeveloperDirectory:&error];
-  NSAssert(directory, @"Failed to get developer directory from xcode-select: %@", error.description);
-  return directory;
-}
-
 + (nullable NSString *)findXcodeDeveloperDirectory:(NSError **)error
 {
   static dispatch_once_t onceToken;
@@ -166,11 +170,19 @@
 
 + (nullable id)readValueForKey:(NSString *)key fromPlistAtPath:(NSString *)plistPath
 {
-  NSAssert([NSFileManager.defaultManager fileExistsAtPath:plistPath], @"plist does not exist at path '%@'", plistPath);
+  if (!plistPath || ![NSFileManager.defaultManager fileExistsAtPath:plistPath]) {
+    NSLog(@"FBXcodeConfiguration: plist does not exist at path '%@'", plistPath);
+    return nil;
+  }
   NSDictionary *infoPlist = [NSDictionary dictionaryWithContentsOfFile:plistPath];
-  NSAssert(infoPlist, @"Could not read plist at '%@'", plistPath);
+  if (!infoPlist) {
+    NSLog(@"FBXcodeConfiguration: could not read plist at '%@'", plistPath);
+    return nil;
+  }
   id value = infoPlist[key];
-  NSAssert(value, @"'%@' does not exist in plist '%@'", key, infoPlist.allKeys);
+  if (!value) {
+    NSLog(@"FBXcodeConfiguration: '%@' does not exist in plist '%@'", key, infoPlist.allKeys);
+  }
   return value;
 }
 

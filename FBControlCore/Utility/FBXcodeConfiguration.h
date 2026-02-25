@@ -19,8 +19,19 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  The File Path to of Xcode's /Xcode.app/Contents/Developer directory.
+ Returns the injected directory if set, otherwise attempts symlink / xcode-select resolution.
+ Returns nil when neither source can provide a valid path (e.g. sandboxed without injection).
  */
-@property (nonatomic, copy, readonly, class) NSString *developerDirectory;
+@property (nonatomic, copy, readonly, nullable, class) NSString *developerDirectory;
+
+/**
+ Sets an explicit developer directory for sandboxed environments where
+ xcode-select and /var/db/xcode_select_link are not accessible.
+ Call this before the first access to +developerDirectory.
+
+ @param directory the Xcode Contents/Developer path, or nil to clear.
+ */
++ (void)setInjectedDeveloperDirectory:(nullable NSString *)directory;
 
 /**
  The File Path to of Xcode's /Xcode.app/Contents directory.
