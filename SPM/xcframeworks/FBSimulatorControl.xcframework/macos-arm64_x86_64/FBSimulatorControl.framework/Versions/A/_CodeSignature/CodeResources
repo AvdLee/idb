@@ -6,7 +6,7 @@
 	<dict>
 		<key>Resources/Info.plist</key>
 		<data>
-		R7cmbhiJZaNfS3xq2QrpYGp6XdE=
+		E/U3kSoT3z0ZqQzRlCgWPvLhBB8=
 		</data>
 		<key>Resources/README.md</key>
 		<data>
@@ -23,19 +23,19 @@
 		<dict>
 			<key>cdhash</key>
 			<data>
-			NQMHW2CLj3TzSx/+jMSVA2Bw918=
+			cyhxi3K4L1ei07HRFLZqTBtrz+I=
 			</data>
 			<key>requirement</key>
-			<string>cdhash H"3503075b608b8f74f34b1ffe8cc495036070f75f" or cdhash H"01f335db2de3246b3c31b05af6cd01ae655959e0"</string>
+			<string>cdhash H"7328718b72b82f57a2d3b1d114b66a4c1b6bcfe2" or cdhash H"dc38c01b7669ba4e7790c6ea1232cd523b5fe627"</string>
 		</dict>
 		<key>Frameworks/XCTestBootstrap.framework</key>
 		<dict>
 			<key>cdhash</key>
 			<data>
-			BXKzjxyrolsN+IlFLFP5ApoI3PI=
+			8xZc2VTXnMzTLvHvtdAFSHusEbs=
 			</data>
 			<key>requirement</key>
-			<string>cdhash H"0572b38f1caba25b0df889452c53f9029a08dcf2" or cdhash H"f7edfd872290c8e76df6f16e5a9bca8145bb6cba"</string>
+			<string>cdhash H"f3165cd954d79cccd32ef1efb5d005487bac11bb" or cdhash H"fa340886ebbd2a92b352940e3f9376481df06762"</string>
 		</dict>
 		<key>Headers/FBAppleSimctlCommandExecutor.h</key>
 		<dict>
@@ -412,7 +412,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			1LOmxCv/6er5PxOa+M6AplEAnwwhDjN/IKEVBzkdF48=
+			hTdWmon1QiYzq7//2jWWhNwjp99ItBfoDOqKWSMHAFI=
 			</data>
 		</dict>
 		<key>Resources/README.md</key>

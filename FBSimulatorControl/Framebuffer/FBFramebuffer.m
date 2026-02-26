@@ -29,6 +29,8 @@
 #import "FBSimulator+Private.h"
 #import "FBSimulatorError.h"
 
+static NSString *const SimDeviceScreenClassName = @"_TtC12SimulatorKit15SimDeviceScreen";
+
 @interface FBFramebuffer ()
 
 @property (nonatomic, strong, readonly) NSMapTable<id<FBFramebufferConsumer>, NSUUID *> *consumers;
@@ -50,30 +52,92 @@
 
 + (instancetype)mainScreenSurfaceForSimulator:(FBSimulator *)simulator logger:(id<FBControlCoreLogger>)logger error:(NSError **)error;
 {
+  // Path 1: Legacy ioPorts-based discovery (works on Xcode <= 26.2)
   id<SimDeviceIOProtocol> ioClient = simulator.device.io;
-  for (id<SimDeviceIOPortInterface> port in ioClient.ioPorts) {
+  NSArray *ports = ioClient.ioPorts;
+  [logger logFormat:@"[FBFramebuffer] ioPorts returned %lu port(s)", (unsigned long)ports.count];
+
+  for (id<SimDeviceIOPortInterface> port in ports) {
     if (![port conformsToProtocol:@protocol(SimDeviceIOPortInterface)]) {
+      [logger logFormat:@"[FBFramebuffer] Port %@ does not conform to SimDeviceIOPortInterface, skipping", port];
       continue;
     }
-    id<SimDisplayIOSurfaceRenderable, SimDisplayRenderable> descriptor = [port descriptor];
+    id descriptor = [port descriptor];
+    [logger logFormat:@"[FBFramebuffer] Port descriptor: %@, class: %@", descriptor, NSStringFromClass([descriptor class])];
+
     if (![descriptor conformsToProtocol:@protocol(SimDisplayRenderable)]) {
+      [logger logFormat:@"[FBFramebuffer] Descriptor does not conform to SimDisplayRenderable, skipping"];
       continue;
     }
     if (![descriptor conformsToProtocol:@protocol(SimDisplayIOSurfaceRenderable)]) {
+      [logger logFormat:@"[FBFramebuffer] Descriptor does not conform to SimDisplayIOSurfaceRenderable, skipping"];
       continue;
     }
     if (![descriptor respondsToSelector:@selector(state)]) {
-      [logger logFormat:@"SimDisplay %@ does not have a state, cannot determine if it is the main display", descriptor];
+      [logger logFormat:@"[FBFramebuffer] SimDisplay %@ does not have a state, cannot determine if it is the main display", descriptor];
       continue;
     }
     id<SimDisplayDescriptorState> descriptorState = [descriptor performSelector:@selector(state)];
     unsigned short displayClass = descriptorState.displayClass;
     if (displayClass != 0) {
-      [logger logFormat:@"SimDisplay Class is '%d' which is not the main display '0'", displayClass];
+      [logger logFormat:@"[FBFramebuffer] SimDisplay Class is '%d' which is not the main display '0'", displayClass];
       continue;
     }
-    return [[FBFramebuffer_Legacy alloc] initWithSurface:descriptor logger:logger];
+    [logger logFormat:@"[FBFramebuffer] Found main display via ioPorts path"];
+    return [[FBFramebuffer_Legacy alloc] initWithSurface:(id<SimDisplayIOSurfaceRenderable, SimDisplayRenderable>)descriptor logger:logger];
   }
+
+  [logger logFormat:@"[FBFramebuffer] ioPorts path failed, trying SimDeviceScreen fallback (Xcode 26.3+)"];
+
+  // Path 2: SimDeviceScreen-based discovery (Xcode 26.3+)
+  Class screenClass = NSClassFromString(SimDeviceScreenClassName);
+  if (screenClass) {
+    for (uint32_t screenID = 0; screenID < 8; screenID++) {
+      SEL initSel = @selector(initWithDevice:screenID:);
+      NSMethodSignature *initSig = [screenClass instanceMethodSignatureForSelector:initSel];
+      if (!initSig) { continue; }
+      NSInvocation *initInv = [NSInvocation invocationWithMethodSignature:initSig];
+      [initInv setTarget:[screenClass alloc]];
+      [initInv setSelector:initSel];
+      SimDevice *device = simulator.device;
+      [initInv setArgument:&device atIndex:2];
+      [initInv setArgument:&screenID atIndex:3];
+      [initInv invoke];
+      __unsafe_unretained id deviceScreen = nil;
+      [initInv getReturnValue:&deviceScreen];
+      if (!deviceScreen) {
+        continue;
+      }
+
+      [logger logFormat:@"[FBFramebuffer] SimDeviceScreen created for screenID=%u, isDefault=%d",
+       screenID, [[deviceScreen valueForKey:@"isDefault"] boolValue]];
+
+      id simScreen = [deviceScreen performSelector:@selector(screen)];
+      if (!simScreen) {
+        [logger logFormat:@"[FBFramebuffer] SimDeviceScreen screenID=%u has nil screen proxy", screenID];
+        continue;
+      }
+
+      [logger logFormat:@"[FBFramebuffer] SimScreen proxy: %@, class: %@", simScreen, NSStringFromClass([simScreen class])];
+
+      BOOL hasRenderable = [simScreen conformsToProtocol:@protocol(SimDisplayIOSurfaceRenderable)];
+      BOOL hasNewCallbacks = [simScreen respondsToSelector:@selector(registerScreenCallbacksWithUUID:callbackQueue:frameCallback:surfacesChangedCallback:propertiesChangedCallback:)];
+      [logger logFormat:@"[FBFramebuffer] SimScreen hasRenderable=%d, hasNewCallbacks=%d", hasRenderable, hasNewCallbacks];
+
+      if (hasRenderable) {
+        [logger logFormat:@"[FBFramebuffer] Using SimDeviceScreen screenID=%u via legacy renderable interface", screenID];
+        return [[FBFramebuffer_Legacy alloc] initWithSurface:(id<SimDisplayIOSurfaceRenderable, SimDisplayRenderable>)simScreen logger:logger];
+      }
+
+      if (hasNewCallbacks) {
+        [logger logFormat:@"[FBFramebuffer] Using SimDeviceScreen screenID=%u via new screen callbacks", screenID];
+        return [[FBFramebuffer_Legacy alloc] initWithSurface:(id<SimDisplayIOSurfaceRenderable, SimDisplayRenderable>)simScreen logger:logger];
+      }
+    }
+  } else {
+    [logger logFormat:@"[FBFramebuffer] SimDeviceScreen class not available (pre-Xcode 26.3)"];
+  }
+
   return [[FBSimulatorError
     describeFormat:@"Could not find the Main Screen Surface for Clients %@ in %@", [FBCollectionInformation oneLineDescriptionFromArray:ioClient.ioPorts], ioClient]
     fail:error];
@@ -175,14 +239,48 @@
 
 - (void)registerConsumer:(id<FBFramebufferConsumer>)consumer uuid:(NSUUID *)uuid queue:(dispatch_queue_t)queue
 {
-  void (^ioSurfaceChanged)(IOSurface *) = ^void(IOSurface *surface) {
+  id surface = self.surface;
+
+  // Xcode 26.3+: use registerScreenCallbacksWithUUID: for reliable surface delivery
+  SEL newCallbackSel = @selector(registerScreenCallbacksWithUUID:callbackQueue:frameCallback:surfacesChangedCallback:propertiesChangedCallback:);
+  if ([surface respondsToSelector:newCallbackSel]) {
+    NSLog(@"[FBFramebuffer] Using NEW registerScreenCallbacksWithUUID: for surface %@", surface);
+
+    void (^frameBlock)(void) = ^{
+      [consumer didReceiveDamageRect:CGRectZero];
+    };
+    void (^surfacesBlock)(IOSurface *, IOSurface *) = ^(IOSurface *unmasked, IOSurface *masked) {
+      IOSurface *chosen = unmasked ?: masked;
+      NSLog(@"[FBFramebuffer] surfacesChanged: unmasked=%@, masked=%@, using=%@", unmasked, masked, chosen);
+      if (chosen) {
+        [consumer didChangeIOSurface:chosen];
+      }
+    };
+    void (^propsBlock)(id) = ^(id props) {};
+
+    NSMethodSignature *sig = [surface methodSignatureForSelector:newCallbackSel];
+    NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:sig];
+    [invocation setSelector:newCallbackSel];
+    [invocation setTarget:surface];
+    [invocation setArgument:&uuid atIndex:2];
+    [invocation setArgument:&queue atIndex:3];
+    [invocation setArgument:&frameBlock atIndex:4];
+    [invocation setArgument:&surfacesBlock atIndex:5];
+    [invocation setArgument:&propsBlock atIndex:6];
+    [invocation invoke];
+    return;
+  }
+
+  NSLog(@"[FBFramebuffer] Using LEGACY ioSurfacesChangeCallback for surface %@", surface);
+
+  // Legacy path (Xcode <= 26.2)
+  void (^ioSurfaceChanged)(IOSurface *) = ^void(IOSurface *ioSurface) {
     dispatch_async(queue, ^{
-      [consumer didChangeIOSurface:surface];
+      [consumer didChangeIOSurface:ioSurface];
     });
   };
 
   [self.surface registerCallbackWithUUID:uuid ioSurfacesChangeCallback:ioSurfaceChanged];
-//  [self.surface registerCallbackWithUUID:uuid ioSurfaceChangeCallback:ioSurfaceChanged];
 
   [self.surface registerCallbackWithUUID:uuid damageRectanglesCallback:^(NSArray<NSValue *> *frames) {
     dispatch_async(queue, ^{
@@ -195,9 +293,20 @@
 
 - (void)unregisterConsumer:(id<FBFramebufferConsumer>)consumer uuid:(NSUUID *)uuid
 {
-  [self.surface unregisterIOSurfacesChangeCallbackWithUUID:uuid];
-//  [self.surface unregisterIOSurfaceChangeCallbackWithUUID:uuid];
+  id surface = self.surface;
 
+  SEL unregisterSel = @selector(unregisterScreenCallbacksWithUUID:);
+  if ([surface respondsToSelector:unregisterSel]) {
+    NSMethodSignature *sig = [surface methodSignatureForSelector:unregisterSel];
+    NSInvocation *inv = [NSInvocation invocationWithMethodSignature:sig];
+    [inv setSelector:unregisterSel];
+    [inv setTarget:surface];
+    [inv setArgument:&uuid atIndex:2];
+    [inv invoke];
+    return;
+  }
+
+  [self.surface unregisterIOSurfacesChangeCallbackWithUUID:uuid];
   [self.surface unregisterDamageRectanglesCallbackWithUUID:uuid];
 }
 

@@ -6,7 +6,7 @@
 	<dict>
 		<key>Resources/Info.plist</key>
 		<data>
-		UDskk8lbtPEpvos5JGupBFNbpxg=
+		AkySkNLYMAgiEmwMPeq80zn+/+I=
 		</data>
 	</dict>
 	<key>files2</key>
@@ -15,10 +15,10 @@
 		<dict>
 			<key>cdhash</key>
 			<data>
-			E3wwtp1GWnYaQuDEZNqiCkvKcqs=
+			54UYFYq72tyCH9TezsqS9/Uks6w=
 			</data>
 			<key>requirement</key>
-			<string>cdhash H"137c30b69d465a761a42e0c464daa20a4bca72ab" or cdhash H"f291aebebf55044e672d8cf4690aee26158d7e6c"</string>
+			<string>cdhash H"e78518158abbdadc821fd4dececa92f7f524b3ac" or cdhash H"106b7ef48becee8632dea3c269d0d9842f6351bf"</string>
 		</dict>
 		<key>Headers/FBActivityRecord.h</key>
 		<dict>
@@ -255,7 +255,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			C57Tp0Ypnm6ZVRwkfrGT8OO7HQfYc1Lue+Fu9YXXG8M=
+			+kTR7pDNEDmRs1j0orXv859C0nhWY9P7K0AUuO4sp5M=
 			</data>
 		</dict>
 	</dict>

@@ -233,8 +233,13 @@ static void MinicapCompressorCallback(void *outputCallbackRefCon, void *sourceFr
     }
   }
 
-  CVPixelBufferLockBaseAddress(bufferToWrite, kCVPixelBufferLock_ReadOnly);
-  
+  CVReturn lockStatus = CVPixelBufferLockBaseAddress(bufferToWrite, kCVPixelBufferLock_ReadOnly);
+  if (lockStatus != kCVReturnSuccess) {
+    NSLog(@"[FBSimulatorVideoStream] CVPixelBufferLockBaseAddress failed with status %d (surface may be invalid)", lockStatus);
+    CVPixelBufferRelease(toFree);
+    return NO;
+  }
+
     if ([self.consumer conformsToProtocol:@protocol(RSPixelBufferConsumer)]) {
         id<RSPixelBufferConsumer> pixelConsumer = (id<RSPixelBufferConsumer>)self.consumer;
         [pixelConsumer writeEncodedFrame:bufferToWrite frameNumber:frameNumber timeAtFirstFrame:timeAtFirstFrame error:error];
@@ -560,10 +565,16 @@ static void MinicapCompressorCallback(void *outputCallbackRefCon, void *sourceFr
 
 - (BOOL)mountSurface:(IOSurface *)surface error:(NSError **)error
 {
+  if (!surface) {
+    [self.logger logFormat:@"[FBSimulatorVideoStream] mountSurface called with nil surface, ignoring"];
+    return NO;
+  }
+
   // Remove the old pixel buffer.
   CVPixelBufferRef oldBuffer = self.pixelBuffer;
   if (oldBuffer) {
     CVPixelBufferRelease(oldBuffer);
+    self.pixelBuffer = NULL;
   }
   // Make a Buffer from the Surface
   CVPixelBufferRef buffer = NULL;
