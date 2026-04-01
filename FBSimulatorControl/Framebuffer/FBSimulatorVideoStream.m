@@ -629,7 +629,12 @@ static void MinicapCompressorCallback(void *outputCallbackRefCon, void *sourceFr
   CFTimeInterval timeAtFirstFrame = self.timeAtFirstFrame;
   
   // Push the Frame
-  [framePusher writeEncodedFrame:pixelBufer frameNumber:frameNumber timeAtFirstFrame:timeAtFirstFrame error:nil];
+  CVPixelBufferRetain(pixelBufer);
+  @try {
+    [framePusher writeEncodedFrame:pixelBufer frameNumber:frameNumber timeAtFirstFrame:timeAtFirstFrame error:nil];
+  } @finally {
+    CVPixelBufferRelease(pixelBufer);
+  }
 
   // Increment frame counter
   self.frameNumber = frameNumber + 1;
@@ -745,12 +750,18 @@ static void MinicapCompressorCallback(void *outputCallbackRefCon, void *sourceFr
     return NO;
   }
 
-  self.framePusherThread = [[NSThread alloc] initWithBlock:^{
+  NSThread *framePusherThread = self.framePusherThread;
+  if (framePusherThread != nil && framePusherThread.executing) {
+    return YES;
+  }
+
+  framePusherThread = [[NSThread alloc] initWithBlock:^{
     [self runFramePushLoop];
   }];
+  self.framePusherThread = framePusherThread;
   [[NSThread currentThread] setThreadPriority:1.0]; //highest priority
-  self.framePusherThread.qualityOfService = NSQualityOfServiceUserInteractive;
-  [self.framePusherThread start];
+  framePusherThread.qualityOfService = NSQualityOfServiceUserInteractive;
+  [framePusherThread start];
 
   return YES;
 }
