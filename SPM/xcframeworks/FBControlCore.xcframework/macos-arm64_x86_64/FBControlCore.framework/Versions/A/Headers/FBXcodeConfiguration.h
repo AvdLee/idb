@@ -78,6 +78,11 @@ NS_ASSUME_NONNULL_BEGIN
  */
 + (nullable NSString *)getDeveloperDirectoryIfExists;
 
+/**
+ Overrides the resolved developer directory until cleared with nil.
+ */
++ (void)setInjectedDeveloperDirectory:(nullable NSString *)developerDirectory;
+
 @end
 
 

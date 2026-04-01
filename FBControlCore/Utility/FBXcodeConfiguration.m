@@ -13,6 +13,15 @@
 #import "FBProcessBuilder.h"
 #import "FBXcodeDirectory.h"
 
+static NSString *InjectedDeveloperDirectory = nil;
+static NSString *CachedDeveloperDirectory = nil;
+static NSError *CachedDeveloperDirectoryError = nil;
+static BOOL HasResolvedDeveloperDirectory = NO;
+static NSDecimalNumber *CachedXcodeVersionNumber = nil;
+static NSString *CachedIOSSDKVersion = nil;
+static NSOperatingSystemVersion CachedXcodeVersion;
+static BOOL HasCachedXcodeVersion = NO;
+
 @implementation FBXcodeConfiguration
 
 + (NSString *)developerDirectory
@@ -25,6 +34,19 @@
   return [self findXcodeDeveloperDirectory:nil];
 }
 
++ (void)setInjectedDeveloperDirectory:(nullable NSString *)developerDirectory
+{
+  @synchronized(self) {
+    InjectedDeveloperDirectory = [developerDirectory copy];
+    CachedDeveloperDirectory = nil;
+    CachedDeveloperDirectoryError = nil;
+    HasResolvedDeveloperDirectory = NO;
+    CachedXcodeVersionNumber = nil;
+    CachedIOSSDKVersion = nil;
+    HasCachedXcodeVersion = NO;
+  }
+}
+
 + (NSString *)contentsDirectory
 {
   return [[self developerDirectory] stringByDeletingLastPathComponent];
@@ -32,37 +54,38 @@
 
 + (NSDecimalNumber *)xcodeVersionNumber
 {
-  static dispatch_once_t onceToken;
-  static NSDecimalNumber *versionNumber;
-  dispatch_once(&onceToken, ^{
-    NSString *versionNumberString = [FBXcodeConfiguration
-      readValueForKey:@"CFBundleShortVersionString"
-      fromPlistAtPath:FBXcodeConfiguration.xcodeInfoPlistPath];
-    versionNumber = [NSDecimalNumber decimalNumberWithString:versionNumberString];
-  });
-  return versionNumber;
+  @synchronized(self) {
+    if (!CachedXcodeVersionNumber) {
+      NSString *versionNumberString = [FBXcodeConfiguration
+        readValueForKey:@"CFBundleShortVersionString"
+        fromPlistAtPath:FBXcodeConfiguration.xcodeInfoPlistPath];
+      CachedXcodeVersionNumber = [NSDecimalNumber decimalNumberWithString:versionNumberString];
+    }
+    return CachedXcodeVersionNumber;
+  }
 }
 
 + (NSOperatingSystemVersion)xcodeVersion
 {
-  static dispatch_once_t onceToken;
-  static NSOperatingSystemVersion version;
-  dispatch_once(&onceToken, ^{
-    version = [FBOSVersion operatingSystemVersionFromName:self.xcodeVersionNumber.stringValue];
-  });
-  return version;
+  @synchronized(self) {
+    if (!HasCachedXcodeVersion) {
+      CachedXcodeVersion = [FBOSVersion operatingSystemVersionFromName:self.xcodeVersionNumber.stringValue];
+      HasCachedXcodeVersion = YES;
+    }
+    return CachedXcodeVersion;
+  }
 }
 
 + (NSString *)iosSDKVersion
 {
-  static dispatch_once_t onceToken;
-  static NSString *sdkVersion;
-  dispatch_once(&onceToken, ^{
-    sdkVersion = [FBXcodeConfiguration
-      readValueForKey:@"Version"
-      fromPlistAtPath:FBXcodeConfiguration.iPhoneSimulatorPlatformInfoPlistPath];
-  });
-  return sdkVersion;
+  @synchronized(self) {
+    if (!CachedIOSSDKVersion) {
+      CachedIOSSDKVersion = [FBXcodeConfiguration
+        readValueForKey:@"Version"
+        fromPlistAtPath:FBXcodeConfiguration.iPhoneSimulatorPlatformInfoPlistPath];
+    }
+    return CachedIOSSDKVersion;
+  }
 }
 
 + (NSDecimalNumber *)iosSDKVersionNumber
@@ -150,18 +173,24 @@
 
 + (nullable NSString *)findXcodeDeveloperDirectory:(NSError **)error
 {
-  static dispatch_once_t onceToken;
-  static NSString *directory;
-  static NSError *savedError;
-  dispatch_once(&onceToken, ^{
-    NSError *innerError = nil;
-    directory = [FBXcodeDirectory symlinkedDeveloperDirectoryWithError:&innerError];
-    savedError = innerError;
-  });
-  if (error) {
-    *error = savedError;
+  @synchronized(self) {
+    if (InjectedDeveloperDirectory != nil) {
+      if (error) {
+        *error = nil;
+      }
+      return InjectedDeveloperDirectory;
+    }
+    if (!HasResolvedDeveloperDirectory) {
+      NSError *innerError = nil;
+      CachedDeveloperDirectory = [FBXcodeDirectory symlinkedDeveloperDirectoryWithError:&innerError];
+      CachedDeveloperDirectoryError = innerError;
+      HasResolvedDeveloperDirectory = YES;
+    }
+    if (error) {
+      *error = CachedDeveloperDirectoryError;
+    }
+    return CachedDeveloperDirectory;
   }
-  return directory;
 }
 
 + (nullable id)readValueForKey:(NSString *)key fromPlistAtPath:(NSString *)plistPath

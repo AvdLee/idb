@@ -15,10 +15,10 @@
 		<dict>
 			<key>cdhash</key>
 			<data>
-			aW0z4WujwgWUuED7HgUWW2g9iuM=
+			/tv0zJZo6eV+Xc2JZLBKSHQg0K8=
 			</data>
 			<key>requirement</key>
-			<string>cdhash H"696d33e16ba3c20594b840fb1e05165b683d8ae3" or cdhash H"08c1125b327a04f101e67129d93bbc973ec4f9bf"</string>
+			<string>cdhash H"fedbf4cc9668e9e57e5dcd8964b04a487420d0af" or cdhash H"c73fabd1d4a3ef93de91ba77a3f39a8a92190b97"</string>
 		</dict>
 		<key>Headers/FBActivityRecord.h</key>
 		<dict>
