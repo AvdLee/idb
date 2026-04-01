@@ -32,6 +32,16 @@ NS_ASSUME_NONNULL_BEGIN
  */
 + (nullable instancetype)withConfiguration:(FBSimulatorControlConfiguration *)configuration error:(NSError **)error;
 
+/**
+ Creates and returns a new `FBSimulatorControl` instance using the provided developer directory override.
+
+ @param configuration the Configuration to setup the instance with.
+ @param developerDirectory the developer directory override, or nil to use the default resolution.
+ @param error any error that occurred during instantiation.
+ @return a new FBSimulatorControl instance.
+ */
++ (nullable instancetype)withConfiguration:(FBSimulatorControlConfiguration *)configuration developerDirectory:(nullable NSString *)developerDirectory error:(NSError **)error;
+
 #pragma mark Properties
 
 /**

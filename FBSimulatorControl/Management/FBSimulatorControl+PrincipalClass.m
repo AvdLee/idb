@@ -47,6 +47,12 @@
   return [[FBSimulatorControl alloc] initWithConfiguration:configuration serviceContext:serviceContext set:set logger:configuration.logger];
 }
 
++ (nullable instancetype)withConfiguration:(FBSimulatorControlConfiguration *)configuration developerDirectory:(nullable NSString *)developerDirectory error:(NSError **)error
+{
+  [FBXcodeConfiguration setInjectedDeveloperDirectory:developerDirectory];
+  return [self withConfiguration:configuration error:error];
+}
+
 - (nullable instancetype)initWithConfiguration:(FBSimulatorControlConfiguration *)configuration serviceContext:(nullable FBSimulatorServiceContext *)serviceContext set:(FBSimulatorSet *)set logger:(id<FBControlCoreLogger>)logger
 {
   self = [super init];
