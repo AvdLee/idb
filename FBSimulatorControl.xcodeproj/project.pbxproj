@@ -603,7 +603,6 @@
 		FCAA1D1F28EBEB465A33C8B5 /* FBSimulatorControl.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 90E8C08C831EEB77E4024CF4 /* FBSimulatorControl.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		FD5DEC216ACCFE36602DE36A /* FBiOSTargetCommandForwarder.h in Headers */ = {isa = PBXBuildFile; fileRef = CD82AFE579BBEBB7012A7A84 /* FBiOSTargetCommandForwarder.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		FDF072E8E4CA54F6864B764B /* FBDeviceCrashLogCommands.m in Sources */ = {isa = PBXBuildFile; fileRef = 11A80567F0FB8BA58E513275 /* FBDeviceCrashLogCommands.m */; };
-		FEDE8EF0B82B6D4CE44F519E /* xcschememanagement.plist in Resources */ = {isa = PBXBuildFile; fileRef = 2ECAF05A4C2CD05D4AE13003 /* xcschememanagement.plist */; };
 		FF0A18AFCE45C8696DAD39B8 /* FBDeviceCommands.h in Headers */ = {isa = PBXBuildFile; fileRef = DEBDB5BCD9358E966AAB535D /* FBDeviceCommands.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		FF296AACC2D6270CCC32E2EA /* FBSimulatorXCTestCommands.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A33C6FDF23358BD1FAD7E87 /* FBSimulatorXCTestCommands.m */; };
 		FF2B5A1D3FEF1427441D150A /* FBDeviceDebugSymbolsCommands.h in Headers */ = {isa = PBXBuildFile; fileRef = CEE85E4B48426FDD56A5E5EF /* FBDeviceDebugSymbolsCommands.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -957,7 +956,6 @@
 		2CB07DD4571678AA74DA2CEB /* FBXCTraceRecordCommands.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FBXCTraceRecordCommands.h; sourceTree = "<group>"; };
 		2D261437E5A3DE5D78A11D96 /* FBControlCoreFrameworkLoader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FBControlCoreFrameworkLoader.h; sourceTree = "<group>"; };
 		2D51447D26036D37031EF7E1 /* IOSurface.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOSurface.framework; path = System/Library/Frameworks/IOSurface.framework; sourceTree = SDKROOT; };
-		2ECAF05A4C2CD05D4AE13003 /* xcschememanagement.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = xcschememanagement.plist; sourceTree = "<group>"; };
 		2EEA3193A8718D557761D7E7 /* Atomic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Atomic.swift; sourceTree = "<group>"; };
 		2F1D62B1932D17B49F0793C2 /* FBXCTestLogger.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FBXCTestLogger.h; sourceTree = "<group>"; };
 		2F63FA9442A5B29567DCDB0E /* FBSimulatorBootStrategy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FBSimulatorBootStrategy.h; sourceTree = "<group>"; };
@@ -1832,14 +1830,6 @@
 			path = Utility;
 			sourceTree = "<group>";
 		};
-		1FD3DF7B71A2E4F1CD05E285 /* xcschemes */ = {
-			isa = PBXGroup;
-			children = (
-				2ECAF05A4C2CD05D4AE13003 /* xcschememanagement.plist */,
-			);
-			path = xcschemes;
-			sourceTree = "<group>";
-		};
 		26C66D639B2459218FDB80F0 /* FBDeviceControl */ = {
 			isa = PBXGroup;
 			children = (
@@ -2093,7 +2083,6 @@
 		588124666F8D5BBB7B5253AE /* xcode */ = {
 			isa = PBXGroup;
 			children = (
-				79CAC631027E169EFE6E90F6 /* xcuserdata */,
 				BAB36FE12F01519FD33B0D46 /* package.xcworkspace */,
 			);
 			path = xcode;
@@ -2243,14 +2232,6 @@
 			path = Commands;
 			sourceTree = "<group>";
 		};
-		79CAC631027E169EFE6E90F6 /* xcuserdata */ = {
-			isa = PBXGroup;
-			children = (
-				85E7018993EF46B7C9207451 /* avanderlee.xcuserdatad */,
-			);
-			path = xcuserdata;
-			sourceTree = "<group>";
-		};
 		7B0390B186D986DC69B2C8B1 /* Shimulator */ = {
 			isa = PBXGroup;
 			children = (
@@ -2324,14 +2305,6 @@
 				3FFBDB13A8F78FEBFF4D6E73 /* FBSimulatorSet+Private.h */,
 			);
 			path = Management;
-			sourceTree = "<group>";
-		};
-		85E7018993EF46B7C9207451 /* avanderlee.xcuserdatad */ = {
-			isa = PBXGroup;
-			children = (
-				1FD3DF7B71A2E4F1CD05E285 /* xcschemes */,
-			);
-			path = avanderlee.xcuserdatad;
 			sourceTree = "<group>";
 		};
 		89D2A7C26A856699911E5DE1 /* Configuration */ = {
@@ -3334,7 +3307,6 @@
 			files = (
 				40BC04632454EF42202171D6 /* README.md in Resources */,
 				6B93EF7309F17BC249802641 /* package.xcworkspace in Resources */,
-				FEDE8EF0B82B6D4CE44F519E /* xcschememanagement.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

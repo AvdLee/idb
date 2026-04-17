@@ -6,7 +6,7 @@
 	<dict>
 		<key>Resources/Info.plist</key>
 		<data>
-		UDskk8lbtPEpvos5JGupBFNbpxg=
+		walEZq9q7oOQjOo952wHz9QfORA=
 		</data>
 	</dict>
 	<key>files2</key>
@@ -15,16 +15,16 @@
 		<dict>
 			<key>cdhash</key>
 			<data>
-			UMakgtNPxQZtT5AXhZ3DsPqryaw=
+			kTR6xe5RsN+Zw9rDc885XzDga5Y=
 			</data>
 			<key>requirement</key>
-			<string>cdhash H"50c6a482d34fc5066d4f9017859dc3b0faabc9ac" or cdhash H"dc2c3c9c50dd456b99f3250c51c51d73ec707ddc"</string>
+			<string>cdhash H"91347ac5ee51b0df99c3dac373cf395f30e06b96" or cdhash H"bbdb87883fab4585bdda643a2e114111b60da789"</string>
 		</dict>
 		<key>Resources/Info.plist</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			C57Tp0Ypnm6ZVRwkfrGT8OO7HQfYc1Lue+Fu9YXXG8M=
+			W3Ukvpd70CvMgT4i1t2x7zCgS2QiC67qrpf3Ednsbr0=
 			</data>
 		</dict>
 	</dict>
