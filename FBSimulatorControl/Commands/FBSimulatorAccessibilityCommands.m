@@ -284,22 +284,22 @@ static NSString *const AXPrefix = @"AX";
   return AXExtractTraits(bitmask).allObjects;
 }
 
-+ (NSArray<NSDictionary<NSString *, id> *> *)recursiveDescriptionFromElement:(AXPMacPlatformElement *)element token:(NSString *)token nestedFormat:(BOOL)nestedFormat keys:(NSSet<NSString *> *)keys collector:(nullable FBAccessibilityProfilingCollector *)collector
++ (NSArray<NSDictionary<NSString *, id> *> *)recursiveDescriptionFromElement:(AXPMacPlatformElement *)element token:(NSString *)token nestedFormat:(BOOL)nestedFormat keys:(NSSet<NSString *> *)keys collector:(nullable FBAccessibilityProfilingCollector *)collector maxDepth:(NSUInteger)maxDepth
 {
   element.translation.bridgeDelegateToken = token;
   pid_t frontmostPid = element.translation.pid;
   if (nestedFormat) {
-    return @[[self.class nestedRecursiveDescriptionFromElement:element token:token keys:keys collector:collector frontmostPid:frontmostPid]];
+    return @[[self.class nestedRecursiveDescriptionFromElement:element token:token keys:keys collector:collector frontmostPid:frontmostPid remainingDepth:maxDepth]];
   }
-  return [self.class flatRecursiveDescriptionFromElement:element token:token keys:keys collector:collector frontmostPid:frontmostPid];
+  return [self.class flatRecursiveDescriptionFromElement:element token:token keys:keys collector:collector frontmostPid:frontmostPid remainingDepth:maxDepth];
 }
 
-+ (NSDictionary<NSString *, id> *)formattedDescriptionOfElement:(AXPMacPlatformElement *)element token:(NSString *)token nestedFormat:(BOOL)nestedFormat keys:(NSSet<NSString *> *)keys collector:(nullable FBAccessibilityProfilingCollector *)collector
++ (NSDictionary<NSString *, id> *)formattedDescriptionOfElement:(AXPMacPlatformElement *)element token:(NSString *)token nestedFormat:(BOOL)nestedFormat keys:(NSSet<NSString *> *)keys collector:(nullable FBAccessibilityProfilingCollector *)collector maxDepth:(NSUInteger)maxDepth
 {
   element.translation.bridgeDelegateToken = token;
   pid_t frontmostPid = element.translation.pid;
   if (nestedFormat) {
-    return [self.class nestedRecursiveDescriptionFromElement:element token:token keys:keys collector:collector frontmostPid:frontmostPid];
+    return [self.class nestedRecursiveDescriptionFromElement:element token:token keys:keys collector:collector frontmostPid:frontmostPid remainingDepth:maxDepth];
   }
   return [self.class accessibilityDictionaryForElement:element token:token keys:keys collector:collector frontmostPid:frontmostPid];
 }
@@ -457,25 +457,39 @@ static NSString *const AXPrefix = @"AX";
 
 // This replicates the non-hierarchical system that was previously present in SimulatorBridge.
 // In this case the values of frames must be relative to the root, rather than the parent frame.
-+ (NSArray<NSDictionary<NSString *, id> *> *)flatRecursiveDescriptionFromElement:(AXPMacPlatformElement *)element token:(NSString *)token keys:(NSSet<NSString *> *)keys collector:(nullable FBAccessibilityProfilingCollector *)collector frontmostPid:(pid_t)frontmostPid
+//
+// `remainingDepth` semantics:
+//  - 0 means unlimited recursion (the original behaviour).
+//  - 1 means we're at the deepest allowed level: the merged-children fan-out is skipped,
+//    so this element is serialized as a leaf with no AXChildren / AXTabs / etc. round-trips.
+//  - N >= 2 means recurse into children with `remainingDepth - 1`.
++ (NSArray<NSDictionary<NSString *, id> *> *)flatRecursiveDescriptionFromElement:(AXPMacPlatformElement *)element token:(NSString *)token keys:(NSSet<NSString *> *)keys collector:(nullable FBAccessibilityProfilingCollector *)collector frontmostPid:(pid_t)frontmostPid remainingDepth:(NSUInteger)remainingDepth
 {
   NSMutableArray<NSDictionary<NSString *, id> *> *values = NSMutableArray.array;
   [values addObject:[self accessibilityDictionaryForElement:element token:token keys:keys collector:collector frontmostPid:frontmostPid]];
+  if (remainingDepth == 1) {
+    return values;
+  }
+  NSUInteger childRemainingDepth = (remainingDepth == 0) ? 0 : remainingDepth - 1;
   for (AXPMacPlatformElement *childElement in [self mergedAccessibilityChildrenForElement:element token:token]) {
-    NSArray<NSDictionary<NSString *, id> *> *childValues = [self flatRecursiveDescriptionFromElement:childElement token:token keys:keys collector:collector frontmostPid:frontmostPid];
+    NSArray<NSDictionary<NSString *, id> *> *childValues = [self flatRecursiveDescriptionFromElement:childElement token:token keys:keys collector:collector frontmostPid:frontmostPid remainingDepth:childRemainingDepth];
     [values addObjectsFromArray:childValues];
   }
   return values;
 }
 
-+ (NSDictionary<NSString *, id> *)nestedRecursiveDescriptionFromElement:(AXPMacPlatformElement *)element token:(NSString *)token keys:(NSSet<NSString *> *)keys collector:(nullable FBAccessibilityProfilingCollector *)collector frontmostPid:(pid_t)frontmostPid
++ (NSDictionary<NSString *, id> *)nestedRecursiveDescriptionFromElement:(AXPMacPlatformElement *)element token:(NSString *)token keys:(NSSet<NSString *> *)keys collector:(nullable FBAccessibilityProfilingCollector *)collector frontmostPid:(pid_t)frontmostPid remainingDepth:(NSUInteger)remainingDepth
 {
   NSMutableDictionary<NSString *, id> *values = [[self accessibilityDictionaryForElement:element token:token keys:keys collector:collector frontmostPid:frontmostPid] mutableCopy];
   NSMutableArray<NSDictionary<NSString *, id> *> *childrenValues = NSMutableArray.array;
-  for (AXPMacPlatformElement *childElement in [self mergedAccessibilityChildrenForElement:element token:token]) {
-    NSDictionary<NSString *, id> *childValues = [self nestedRecursiveDescriptionFromElement:childElement token:token keys:keys collector:collector frontmostPid:frontmostPid];
-    [childrenValues addObject:childValues];
+  if (remainingDepth != 1) {
+    NSUInteger childRemainingDepth = (remainingDepth == 0) ? 0 : remainingDepth - 1;
+    for (AXPMacPlatformElement *childElement in [self mergedAccessibilityChildrenForElement:element token:token]) {
+      NSDictionary<NSString *, id> *childValues = [self nestedRecursiveDescriptionFromElement:childElement token:token keys:keys collector:collector frontmostPid:frontmostPid remainingDepth:childRemainingDepth];
+      [childrenValues addObject:childValues];
+    }
   }
+  // Always emit the `children` key so consumers see a stable JSON shape even when depth is exhausted.
   values[@"children"] = childrenValues;
   return values;
 }
@@ -487,6 +501,7 @@ static NSString *const AXPrefix = @"AX";
 @property (nonatomic, assign, readonly) BOOL nestedFormat;
 @property (nonatomic, copy, readonly) NSString *token;
 @property (nonatomic, copy, readonly) NSSet<NSString *> *keys;
+@property (nonatomic, assign, readonly) NSUInteger maxDepth;
 @property (nonatomic, strong, nullable) SimDevice *device;
 @property (nonatomic, strong, nullable) FBAccessibilityProfilingCollector *collector;
 @property (nonatomic, strong, nullable) id<FBControlCoreLogger> logger;
@@ -495,7 +510,7 @@ static NSString *const AXPrefix = @"AX";
 
 @implementation FBAXTranslationRequest
 
-- (instancetype)initWithNestedFormat:(BOOL)nestedFormat keys:(NSSet<NSString *> *)keys
+- (instancetype)initWithNestedFormat:(BOOL)nestedFormat keys:(NSSet<NSString *> *)keys maxDepth:(NSUInteger)maxDepth
 {
   self = [super init];
   if (!self) {
@@ -505,6 +520,7 @@ static NSString *const AXPrefix = @"AX";
   _token = NSUUID.UUID.UUIDString;
   _nestedFormat = nestedFormat;
   _keys = [keys copy];
+  _maxDepth = maxDepth;
 
   return self;
 }
@@ -542,12 +558,12 @@ static NSString *const AXPrefix = @"AX";
 
 - (nullable id)serialize:(AXPMacPlatformElement *)element error:(NSError **)error
 {
-  return [FBSimulatorAccessibilitySerializer recursiveDescriptionFromElement:element token:self.token nestedFormat:self.nestedFormat keys:self.keys collector:self.collector];
+  return [FBSimulatorAccessibilitySerializer recursiveDescriptionFromElement:element token:self.token nestedFormat:self.nestedFormat keys:self.keys collector:self.collector maxDepth:self.maxDepth];
 }
 
 - (instancetype)cloneWithNewToken
 {
-  return [[FBAXTranslationRequest_FrontmostApplication alloc] initWithNestedFormat:self.nestedFormat keys:self.keys];
+  return [[FBAXTranslationRequest_FrontmostApplication alloc] initWithNestedFormat:self.nestedFormat keys:self.keys maxDepth:self.maxDepth];
 }
 
 @end
@@ -614,9 +630,9 @@ static NSString *const AXPrefix = @"AX";
 
 @implementation FBAXTranslationRequest_Point
 
-- (instancetype)initWithNestedFormat:(BOOL)nestedFormat point:(CGPoint)point action:(FBAXTranslationAction *)action keys:(NSSet<NSString *> *)keys
+- (instancetype)initWithNestedFormat:(BOOL)nestedFormat point:(CGPoint)point action:(FBAXTranslationAction *)action keys:(NSSet<NSString *> *)keys maxDepth:(NSUInteger)maxDepth
 {
-  self = [super initWithNestedFormat:nestedFormat keys:keys];
+  self = [super initWithNestedFormat:nestedFormat keys:keys maxDepth:maxDepth];
   if (!self) {
     return nil;
   }
@@ -634,7 +650,7 @@ static NSString *const AXPrefix = @"AX";
 
 - (NSDictionary<NSString *, id> *)serialize:(AXPMacPlatformElement *)element error:(NSError **)error
 {
-  NSDictionary<NSString *, id> *result = [FBSimulatorAccessibilitySerializer formattedDescriptionOfElement:element token:self.token nestedFormat:self.nestedFormat keys:self.keys collector:self.collector];
+  NSDictionary<NSString *, id> *result = [FBSimulatorAccessibilitySerializer formattedDescriptionOfElement:element token:self.token nestedFormat:self.nestedFormat keys:self.keys collector:self.collector maxDepth:self.maxDepth];
   FBAXTranslationAction *action = self.action;
   if (action && [action performActionOnElement:element error:error] == NO) {
     return nil;
@@ -644,7 +660,7 @@ static NSString *const AXPrefix = @"AX";
 
 - (instancetype)cloneWithNewToken
 {
-  return [[FBAXTranslationRequest_Point alloc] initWithNestedFormat:self.nestedFormat point:self.point action:self.action keys:self.keys];
+  return [[FBAXTranslationRequest_Point alloc] initWithNestedFormat:self.nestedFormat point:self.point action:self.action keys:self.keys maxDepth:self.maxDepth];
 }
 
 @end
@@ -878,7 +894,7 @@ static NSString *const CoreSimulatorBridgeServiceName = @"com.apple.CoreSimulato
     return [FBFuture futureWithError:error];
   }
 
-  FBAXTranslationRequest *translationRequest = [[FBAXTranslationRequest_FrontmostApplication alloc] initWithNestedFormat:options.nestedFormat keys:options.keys];
+  FBAXTranslationRequest *translationRequest = [[FBAXTranslationRequest_FrontmostApplication alloc] initWithNestedFormat:options.nestedFormat keys:options.keys maxDepth:options.maxDepth];
   if (options.enableProfiling) {
     translationRequest.collector = [[FBAccessibilityProfilingCollector alloc] init];
   }
@@ -896,7 +912,7 @@ static NSString *const CoreSimulatorBridgeServiceName = @"com.apple.CoreSimulato
     return [FBFuture futureWithError:error];
   }
 
-  FBAXTranslationRequest *translationRequest = [[FBAXTranslationRequest_Point alloc] initWithNestedFormat:options.nestedFormat point:point action:nil keys:options.keys];
+  FBAXTranslationRequest *translationRequest = [[FBAXTranslationRequest_Point alloc] initWithNestedFormat:options.nestedFormat point:point action:nil keys:options.keys maxDepth:options.maxDepth];
   if (options.enableProfiling) {
     translationRequest.collector = [[FBAccessibilityProfilingCollector alloc] init];
   }
@@ -915,7 +931,7 @@ static NSString *const CoreSimulatorBridgeServiceName = @"com.apple.CoreSimulato
   }
 
   FBAXTranslationAction *action = [[FBAXTranslationAction alloc] initWithPerformTap:YES expectedLabel:expectedLabel point:point];
-  FBAXTranslationRequest *translationRequest = [[FBAXTranslationRequest_Point alloc] initWithNestedFormat:YES point:point action:action keys:FBAXKeysDefaultSet()];
+  FBAXTranslationRequest *translationRequest = [[FBAXTranslationRequest_Point alloc] initWithNestedFormat:YES point:point action:action keys:FBAXKeysDefaultSet() maxDepth:0];
   // Extract .elements from the response since this method returns raw dictionary
   return [[FBSimulatorAccessibilityCommands accessibilityElementWithTranslationRequest:translationRequest simulator:simulator remediationPermitted:NO]
     onQueue:simulator.workQueue map:^NSDictionary *(FBAccessibilityElementsResponse *response) {
