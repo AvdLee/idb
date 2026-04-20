@@ -452,7 +452,184 @@ static NSString *const AXPrefix = @"AX";
       addAll((NSArray *)value);
     }
   }
+
+  // RS_AXP_DIAG: when set to "1", dump the full attribute landscape for any
+  // container that ended up with zero children. Lets us confirm whether (a)
+  // the iOS-side AXP server still lists `AXChildren` in the element's
+  // attribute set, (b) any non-standard / private attribute returns a
+  // populated array, and (c) what `error` codes come back per attribute.
+  // Throwaway diagnostic; off in normal builds.
+  if (merged.count == 0) {
+    [self dumpAXPAttributeLandscapeIfDiagnosticEnabled:element token:token];
+  }
+
   return merged;
+}
+
+// Single source of truth for the diagnostic gate. Reads the env var once.
++ (BOOL)isAXPDiagnosticEnabled
+{
+  static BOOL enabled;
+  static dispatch_once_t once;
+  dispatch_once(&once, ^{
+    const char *value = getenv("RS_AXP_DIAG");
+    enabled = (value != NULL && strcmp(value, "1") == 0);
+  });
+  return enabled;
+}
+
++ (void)dumpAXPAttributeLandscapeIfDiagnosticEnabled:(AXPMacPlatformElement *)element token:(NSString *)token
+{
+  if (![self isAXPDiagnosticEnabled]) {
+    return;
+  }
+  if (![element respondsToSelector:@selector(accessibilityAttributeNames)]) {
+    return;
+  }
+
+  // Tag every record with this prefix so it's trivially greppable.
+  static NSString *const prefix = @"[RS_AXP_DIAG]";
+
+  NSString *role = nil;
+  NSString *subrole = nil;
+  NSString *label = nil;
+  NSString *axHelp = nil;
+  CGRect frame = CGRectZero;
+  if ([element respondsToSelector:@selector(accessibilityAttributeValue:)]) {
+    id roleValue = [element accessibilityAttributeValue:NSAccessibilityRoleAttribute];
+    if ([roleValue isKindOfClass:NSString.class]) role = roleValue;
+    id subroleValue = [element accessibilityAttributeValue:NSAccessibilitySubroleAttribute];
+    if ([subroleValue isKindOfClass:NSString.class]) subrole = subroleValue;
+    id labelValue = [element accessibilityAttributeValue:@"AXLabel"];
+    if ([labelValue isKindOfClass:NSString.class]) label = labelValue;
+    id helpValue = [element accessibilityAttributeValue:NSAccessibilityHelpAttribute];
+    if ([helpValue isKindOfClass:NSString.class]) axHelp = helpValue;
+  }
+  if ([element respondsToSelector:@selector(accessibilityFrame)]) {
+    frame = [element accessibilityFrame];
+  }
+
+  fprintf(stderr,
+          "%s container role=%s subrole=%s label=%s frame={{%f,%f},{%f,%f}}\n",
+          prefix.UTF8String,
+          role.UTF8String ?: "(nil)",
+          subrole.UTF8String ?: "(nil)",
+          label.UTF8String ?: "(nil)",
+          frame.origin.x, frame.origin.y, frame.size.width, frame.size.height);
+  (void)axHelp;
+
+  NSArray *attributeNames = nil;
+  @try {
+    attributeNames = [element accessibilityAttributeNames];
+  } @catch (NSException *exception) {
+    fprintf(stderr, "%s   accessibilityAttributeNames threw %s\n", prefix.UTF8String, exception.reason.UTF8String);
+  }
+  fprintf(stderr, "%s   exposed attribute count=%lu\n", prefix.UTF8String, (unsigned long)attributeNames.count);
+
+  for (NSString *attributeName in attributeNames) {
+    if (![attributeName isKindOfClass:NSString.class]) {
+      continue;
+    }
+    id value = nil;
+    @try {
+      value = [element accessibilityAttributeValue:attributeName];
+    } @catch (NSException *exception) {
+      fprintf(stderr, "%s     attr=%s -> threw %s\n", prefix.UTF8String, attributeName.UTF8String, exception.reason.UTF8String);
+      continue;
+    }
+    NSString *valueClass = value ? NSStringFromClass([value class]) : @"(nil)";
+    NSString *summary;
+    if ([value isKindOfClass:NSArray.class]) {
+      summary = [NSString stringWithFormat:@"NSArray count=%lu", (unsigned long)[(NSArray *)value count]];
+    } else if ([value isKindOfClass:NSString.class]) {
+      NSString *string = (NSString *)value;
+      if (string.length > 80) {
+        string = [[string substringToIndex:80] stringByAppendingString:@"..."];
+      }
+      summary = [NSString stringWithFormat:@"\"%@\"", string];
+    } else if ([value isKindOfClass:NSNumber.class]) {
+      summary = [NSString stringWithFormat:@"%@", value];
+    } else if ([value isKindOfClass:NSValue.class]) {
+      summary = [NSString stringWithFormat:@"NSValue(%s)", [(NSValue *)value objCType]];
+    } else if (value == nil || value == [NSNull null]) {
+      summary = @"(null)";
+    } else {
+      summary = [NSString stringWithFormat:@"<%@>", valueClass];
+    }
+    fprintf(stderr, "%s     attr=%s class=%s value=%s\n",
+            prefix.UTF8String,
+            attributeName.UTF8String,
+            valueClass.UTF8String,
+            summary.UTF8String);
+  }
+
+  // Also probe a fixed list of plausible private / non-standard attribute names
+  // that wouldn't necessarily show up in `accessibilityAttributeNames`. If any
+  // of these returns a non-empty array on a container that otherwise reports
+  // zero children, that's our smoking gun for Stage 4.
+  static NSArray<NSString *> *probeAttributeNames;
+  static dispatch_once_t probeOnce;
+  dispatch_once(&probeOnce, ^{
+    probeAttributeNames = @[
+      @"AXLinkedUIElements",
+      @"AXOwns",
+      @"AXSharedFocusElements",
+      @"AXContains",
+      @"AXChildren",
+      @"AXChildrenInNavigationOrder",
+      @"AXTabs",
+      @"AXVisibleChildren",
+      @"AXSelectedChildren",
+      @"AXContents",
+      @"AXSplitters",
+      @"AXRows",
+      @"AXColumns",
+      @"AXVisibleRows",
+      @"AXVisibleColumns",
+      @"AXSections",
+      @"_AXChildren",
+      @"_AXChildElements",
+      @"AXChildElements",
+      @"AXFloatingChildren",
+    ];
+  });
+  fprintf(stderr, "%s   probing %lu non-standard child-attribute names...\n",
+          prefix.UTF8String, (unsigned long)probeAttributeNames.count);
+  for (NSString *attributeName in probeAttributeNames) {
+    if (attributeNames && [attributeNames containsObject:attributeName]) {
+      continue; // already covered above
+    }
+    id value = nil;
+    @try {
+      value = [element accessibilityAttributeValue:attributeName];
+    } @catch (NSException *exception) {
+      fprintf(stderr, "%s     probe=%s -> threw %s\n", prefix.UTF8String, attributeName.UTF8String, exception.reason.UTF8String);
+      continue;
+    }
+    if (value == nil || value == [NSNull null]) {
+      continue;
+    }
+    NSString *summary;
+    if ([value isKindOfClass:NSArray.class]) {
+      summary = [NSString stringWithFormat:@"NSArray count=%lu", (unsigned long)[(NSArray *)value count]];
+    } else {
+      summary = [NSString stringWithFormat:@"<%@>", NSStringFromClass([value class])];
+    }
+    fprintf(stderr, "%s     probe=%s -> %s\n", prefix.UTF8String, attributeName.UTF8String, summary.UTF8String);
+  }
+
+  // Also dump the parameterized attribute names exposed on the element. Some
+  // children APIs are parameterized (e.g. children-in-range), so this informs
+  // whether we're missing an entirely different access mode.
+  if ([element respondsToSelector:@selector(accessibilityParameterizedAttributeNames)]) {
+    NSArray *parameterizedNames = [element accessibilityParameterizedAttributeNames];
+    fprintf(stderr, "%s   parameterized attribute count=%lu names=%s\n",
+            prefix.UTF8String,
+            (unsigned long)parameterizedNames.count,
+            [parameterizedNames componentsJoinedByString:@","].UTF8String);
+  }
+
+  (void)token;
 }
 
 // This replicates the non-hierarchical system that was previously present in SimulatorBridge.
