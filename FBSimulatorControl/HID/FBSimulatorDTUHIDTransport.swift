@@ -67,7 +67,7 @@ actor FBSimulatorDTUHIDTransport: FBSimulatorHIDTransport {
   /// The XPC send barrier only confirms the bytes reached the connection, not that the daemon
   /// consumed them, and `dtuhidd` does not reply to events or barriers — so a bounded wait is the
   /// only signal available. It runs once per gesture (in `flush()`), not after every primitive.
-  private static let drainNanos: UInt64 = 80_000_000 // 80ms
+  private static let drainNanos: UInt64 = 200_000_000 // 200ms
 
   /// The host→guest XPC connection to `dtuhidd`. XPC connections are thread-safe, so it is marked
   /// `nonisolated(unsafe)` to be read from the `nonisolated` `disconnect()` as well as the
@@ -226,17 +226,13 @@ actor FBSimulatorDTUHIDTransport: FBSimulatorHIDTransport {
     return try XPCEncoder().encode(message)
   }
 
-  /// Encodes `payload`, sends it over the connection, and resolves when the XPC send barrier fires.
-  /// The actor serializes calls, so per-gesture state stays consistent. Does not wait for the daemon
-  /// to consume the event — that is `flush()`'s job, run once per gesture rather than per primitive.
+  /// Encodes `payload` and enqueues it on the connection. The actor serializes calls, so per-gesture
+  /// state stays consistent. Do not wait on `xpc_connection_send_barrier`: callbacks for simulator
+  /// endpoint connections do not fire inside sandboxed clients. `flush()` provides the bounded
+  /// daemon-consumption window once per gesture.
   func send(messageType: String, payload: some Encodable) async throws {
     let object = try encode(messageType: messageType, payload: payload)
-    try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
-      xpc_connection_send_message(connection, object)
-      xpc_connection_send_barrier(connection) {
-        continuation.resume()
-      }
-    }
+    xpc_connection_send_message(connection, object)
   }
 
   /// Drains the connection once a gesture's events have all been sent: waits `drainNanos` so

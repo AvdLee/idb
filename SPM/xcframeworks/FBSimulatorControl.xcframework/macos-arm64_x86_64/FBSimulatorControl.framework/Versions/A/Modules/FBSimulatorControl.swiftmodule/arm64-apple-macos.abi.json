@@ -61679,8 +61679,8 @@
       "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Eigen\/idb\/FBSimulatorControl\/HID\/FBSimulatorDTUHIDTransport.swift",
       "kind": "IntegerLiteral",
       "offset": 3287,
-      "length": 10,
-      "value": "80000000"
+      "length": 11,
+      "value": "200000000"
     },
     {
       "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Eigen\/idb\/FBSimulatorControl\/Utility\/FBSimulatorError.swift",
