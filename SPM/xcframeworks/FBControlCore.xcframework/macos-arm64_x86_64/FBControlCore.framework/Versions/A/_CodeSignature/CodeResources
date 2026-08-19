@@ -274,7 +274,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			BPkpm134wTXOtMAw5kpW9/q8eUIZKLQwMNiNog9L8ro=
+			k1EYnQgwky+7gmbr0QRiGcrnNVKEyvOGt9cmdNctxmw=
 			</data>
 		</dict>
 		<key>Modules/FBControlCore.swiftmodule/arm64-apple-macos.private.swiftinterface</key>
@@ -302,14 +302,14 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			p+d2rg9FbHcDE46uSBD8U2syi3VOLy6T5Xjq4Et0AAo=
+			MOshyfWNWd7aP5d/Ty1keB6cmUJPZ1OYbrxxyWdfyLI=
 			</data>
 		</dict>
 		<key>Modules/FBControlCore.swiftmodule/x86_64-apple-macos.abi.json</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			BPkpm134wTXOtMAw5kpW9/q8eUIZKLQwMNiNog9L8ro=
+			k1EYnQgwky+7gmbr0QRiGcrnNVKEyvOGt9cmdNctxmw=
 			</data>
 		</dict>
 		<key>Modules/FBControlCore.swiftmodule/x86_64-apple-macos.private.swiftinterface</key>
@@ -337,7 +337,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			aunf+Ynz/i4p0vjuWm7JNnIoRfRHdlu0Rt9skvdVhMI=
+			QJbRP2nXBEDya32VI4ldkBf3ZWue5kO5xQFg36r69dQ=
 			</data>
 		</dict>
 		<key>Modules/module.modulemap</key>
