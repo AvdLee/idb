@@ -237,10 +237,11 @@ public enum FBAXUIElementAccessibility {
   // AXChildrenInNavigationOrder, AXTabs, AXVisibleChildren, etc. Accessibility Inspector
   // surfaces those tabs because it falls back across these alternate attributes.
   // We mirror that behaviour by collecting children from every standard child-providing
-  // attribute and deduplicating by AXUIElement value (CFEqual-based) while preserving
-  // first-seen order, so kAXChildrenAttribute remains canonical when populated.
-  private static var childProvidingAttributes: [CFString] { [
-    kAXChildrenAttribute as CFString,
+  // attribute, treating kAXChildrenAttribute as canonical, and using the alternate
+  // attributes only to append children the canonical list did not already provide.
+  private static var canonicalChildAttribute: CFString { kAXChildrenAttribute as CFString }
+
+  private static var fallbackChildAttributes: [CFString] { [
     "AXChildrenInNavigationOrder" as CFString,
     kAXTabsAttribute as CFString,
     kAXVisibleChildrenAttribute as CFString,
@@ -249,15 +250,21 @@ public enum FBAXUIElementAccessibility {
   ] }
 
   private static func mergedChildren(of element: AXUIElement) -> [AXUIElement] {
+    // Children of the canonical attribute are kept unconditionally. The AX bridge
+    // has been observed handing out sibling AXUIElement tokens that compare
+    // CFEqual when the underlying iOS elements render identical text, so a
+    // CFEqual-based filter here silently drops real, distinct elements (e.g.
+    // several hidden test-instrumentation `Text("1")` views). Only the alternate
+    // fallback attributes are deduplicated, because their entire purpose is to
+    // re-expose children the canonical list may already contain.
     var merged: [AXUIElement] = []
     let seen = NSMutableSet()
-    for attribute in childProvidingAttributes {
-      var value: CFTypeRef?
-      let err = AXUIElementCopyAttributeValue(element, attribute, &value)
-      guard err == .success, let children = value as? [AXUIElement] else {
-        continue
-      }
-      for child in children {
+    for child in children(of: element, attribute: canonicalChildAttribute) {
+      seen.add(child)
+      merged.append(child)
+    }
+    for attribute in fallbackChildAttributes {
+      for child in children(of: element, attribute: attribute) {
         guard !seen.contains(child) else {
           continue
         }
@@ -266,6 +273,15 @@ public enum FBAXUIElementAccessibility {
       }
     }
     return merged
+  }
+
+  private static func children(of element: AXUIElement, attribute: CFString) -> [AXUIElement] {
+    var value: CFTypeRef?
+    let err = AXUIElementCopyAttributeValue(element, attribute, &value)
+    guard err == .success, let children = value as? [AXUIElement] else {
+      return []
+    }
+    return children
   }
 
   // MARK: - Serialization
