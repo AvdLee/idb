@@ -124,6 +124,10 @@ final class FBAXTranslationDispatcher: NSObject, FBAXRuntimeTranslationDelegate 
     let timeoutSeconds = request.requestTimeoutSeconds
     let callbackQueue = self.callbackQueue
     return { axRequest in
+      guard let axRequest else {
+        logger?.log("Received an empty accessibility request. Returning empty response")
+        return Self.emptyResponse()
+      }
       logger?.log("Sending Accessibility Request \(String(describing: axRequest))")
       let group = DispatchGroup()
       group.enter()

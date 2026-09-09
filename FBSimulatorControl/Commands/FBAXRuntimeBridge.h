@@ -10,7 +10,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-typedef NSObject * _Nullable (^FBAXRuntimeTranslationCallback)(NSObject *request);
+typedef NSObject * _Nullable (^FBAXRuntimeTranslationCallback)(NSObject * _Nullable request);
 typedef void (^FBAXRuntimeResponseHandler)(NSObject * _Nullable response);
 
 /**

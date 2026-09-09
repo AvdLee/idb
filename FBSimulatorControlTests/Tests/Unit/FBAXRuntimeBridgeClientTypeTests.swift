@@ -27,4 +27,12 @@ struct FBAXRuntimeBridgeClientTypeTests {
 
     #expect(!supported)
   }
+
+  @Test
+  func translationCallbackAcceptsMissingRequest() {
+    let dispatcher = FBAXTranslationDispatcher(translator: NSObject(), logger: nil)
+    let callback = dispatcher.accessibilityTranslationDelegateBridgeCallback(withToken: "missing")
+
+    _ = callback(nil)
+  }
 }
