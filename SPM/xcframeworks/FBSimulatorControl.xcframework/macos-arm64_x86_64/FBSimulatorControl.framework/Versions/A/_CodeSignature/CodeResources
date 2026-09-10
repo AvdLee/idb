@@ -6,7 +6,7 @@
 	<dict>
 		<key>Resources/Info.plist</key>
 		<data>
-		LTyiGLDJvr8m2r9JnQ3xpx0rKkM=
+		FcpHElOyCk1nX2bbHSV6nDUEQsc=
 		</data>
 		<key>Resources/README.md</key>
 		<data>
@@ -23,7 +23,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			clc63ajMGtGzQ8P52TvWrmO89jpNf2HuzQDsqjr4MpQ=
+			UbahUjvG1ENHEFGyd6mgEDXgeT3QFf9U0bL79srmeqY=
 			</data>
 		</dict>
 		<key>Headers/FBFramebuffer.h</key>
@@ -79,7 +79,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			WAGR4brmDRHGcY3LusEwOcvsqkI6NGVN2JqTFBNBT9I=
+			n5T+AjiqCZzUOfB99PGL0inx5OlkG8MEC3jH1TrHipE=
 			</data>
 		</dict>
 		<key>Modules/FBSimulatorControl.swiftmodule/arm64-apple-macos.private.swiftinterface</key>
@@ -107,14 +107,14 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			C9cBsr2alKQW8Tj8eIM69FayH+eJuxvFmFRPchT2qH4=
+			5ArSG6rWcNd92wZV6dupHvUovCttKMUWOn79ujHCCTc=
 			</data>
 		</dict>
 		<key>Modules/FBSimulatorControl.swiftmodule/x86_64-apple-macos.abi.json</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			WAGR4brmDRHGcY3LusEwOcvsqkI6NGVN2JqTFBNBT9I=
+			n5T+AjiqCZzUOfB99PGL0inx5OlkG8MEC3jH1TrHipE=
 			</data>
 		</dict>
 		<key>Modules/FBSimulatorControl.swiftmodule/x86_64-apple-macos.private.swiftinterface</key>
@@ -142,7 +142,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			audA5BXmFzzus2hcXzQGlaftq5+V0W8IFaivetErczg=
+			x4wGOI9kzKUSLDnqzy1CXzLbJR8eJm3+YuCQG04kAEE=
 			</data>
 		</dict>
 		<key>Modules/module.modulemap</key>
@@ -156,7 +156,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			H/ZdzUpiCBgw3jcsJxbDHt2YHK2leqSz+9K5q/VxcdQ=
+			zqssEMCZHUxk+CmaMGGhbftQcO9assiBeeSLPmYr9SM=
 			</data>
 		</dict>
 		<key>Resources/README.md</key>
