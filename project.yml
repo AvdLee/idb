@@ -120,6 +120,23 @@ targets:
       - target: XCTestBootstrap
       - sdk: XCTest.framework
 
+  FBSimulatorLaunchdSpawnBridge:
+    type: framework
+    platform: macOS
+    sources:
+      - path: FBSimulatorControl/Commands/FBSimulatorLaunchdSpawnBridge.h
+      - path: FBSimulatorControl/Commands/FBSimulatorLaunchdSpawnBridge.m
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.facebook.FBSimulatorLaunchdSpawnBridge
+        PRODUCT_NAME: FBSimulatorLaunchdSpawnBridge
+        DEFINES_MODULE: YES
+        GENERATE_INFOPLIST_FILE: YES
+        MACH_O_TYPE: staticlib
+        FRAMEWORK_SEARCH_PATHS: $(inherited) $(DEVELOPER_DIR)/Library/PrivateFrameworks
+        OTHER_CFLAGS: $(inherited) -fmodule-map-file=$(SRCROOT)/PrivateHeaders/CoreSimulator/module.modulemap
+        OTHER_LDFLAGS: $(inherited) -weak_library $(SRCROOT)/PrivateHeaders/CoreSimulator/CoreSimulator.tbd
+
   FBSimulatorControl:
     type: framework
     platform: macOS
@@ -131,6 +148,8 @@ targets:
         excludes:
           - "**/*-Info.plist"
           - "**/*.xcconfig"
+          - "Commands/FBSimulatorLaunchdSpawnBridge.h"
+          - "Commands/FBSimulatorLaunchdSpawnBridge.m"
     settings:
       base:
         INFOPLIST_FILE: $(SRCROOT)/FBSimulatorControl/FBSimulatorControl-Info.plist
@@ -153,6 +172,7 @@ targets:
         # framework is accessed exclusively through the Objective-C runtime.
         OTHER_LDFLAGS: $(inherited) -weak_library $(SRCROOT)/PrivateHeaders/CoreSimulator/CoreSimulator.tbd
     dependencies:
+      - target: FBSimulatorLaunchdSpawnBridge
       - target: FBControlCore
         embed: false
       - target: XCTestBootstrap
