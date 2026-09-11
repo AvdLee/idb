@@ -1325,6 +1325,25 @@ static NSDictionary<NSString *, id> *FBAXBridgeDispatchRequest(NSDictionary<NSSt
     return FBAXBridgeSetValue(runtime, request);
   }
 
+  // Automation mode must be applied before resolving the frontmost app. On a
+  // fresh iOS 27 runtime, AXPTranslator's window-server lookup waits forever
+  // while trying to register for pid changes when automation is still off.
+  // The requested mode also decides how much structure the subsequent tree
+  // read sees, so both operations must observe the same state.
+  BOOL automationAsserted = NO;
+  BOOL automationEnabled = [runtime automationModeEnabled];
+  id requestedAutomation = request[kRequestAutomationMode];
+  if ([requestedAutomation isKindOfClass:NSNumber.class]) {
+    const BOOL wanted = [(NSNumber *)requestedAutomation boolValue];
+    // Only write when it would change something. A no-op write is still a preference write, and
+    // reporting `asserted` for one would tell a caller this read altered a device it left alone.
+    if (wanted != automationEnabled) {
+      automationEnabled = [runtime setAutomationModeEnabled:wanted];
+      // True only if the write took; a preference write can be accepted and not apply.
+      automationAsserted = (automationEnabled == wanted);
+    }
+  }
+
   // `describe`: an explicit `pid` names the app directly; with no pid it is a fused frontmost read — the
   // guest resolves the frontmost app in-guest (via the selected method, anchored at `x`/`y`) and reads
   // its tree in this one call, with no separate pid round-trip.
@@ -1371,22 +1390,6 @@ static NSDictionary<NSString *, id> *FBAXBridgeDispatchRequest(NSDictionary<NSSt
     }
     pid = frontmost.processIdentifier;
     frontmostMethod = method;
-  }
-
-  // Asserted before the tree is read, not after: the mode decides how much structure the read sees, so
-  // asking for it afterwards would report a state this read did not benefit from.
-  BOOL automationAsserted = NO;
-  BOOL automationEnabled = [runtime automationModeEnabled];
-  id requestedAutomation = request[kRequestAutomationMode];
-  if ([requestedAutomation isKindOfClass:NSNumber.class]) {
-    const BOOL wanted = [(NSNumber *)requestedAutomation boolValue];
-    // Only write when it would change something. A no-op write is still a preference write, and
-    // reporting `asserted` for one would tell a caller this read altered a device it left alone.
-    if (wanted != automationEnabled) {
-      automationEnabled = [runtime setAutomationModeEnabled:wanted];
-      // True only if the write took; a preference write can be accepted and not apply.
-      automationAsserted = (automationEnabled == wanted);
-    }
   }
 
   id root = [runtime applicationElementForProcessIdentifier:pid];
