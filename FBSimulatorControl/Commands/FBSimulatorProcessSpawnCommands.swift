@@ -99,7 +99,7 @@ public final class FBSimulatorProcessSpawnCommands: NSObject, FBiOSTargetCommand
         completionQueue: simulator.workQueue
       )
     } catch {
-      guard isRuntimeUnavailable(error) else {
+      guard simulator.state == .booted, isRuntimeUnavailable(error) else {
         throw error
       }
       var launchdError: NSError?
