@@ -799,6 +799,15 @@ extension FBSimulator: SettingsCommands {
     try await settingsCommands().runSimulatorFrameworkBridgeAsync(withService: "photos", action: "clear")
   }
 
+  public func runAccessibilityBridge(action: String, arguments: [String]) async throws -> Data {
+    let output = try await settingsCommands().runSimulatorFrameworkBridgeAsync(
+      withService: "accessibility",
+      action: action,
+      arguments: arguments
+    )
+    return Data(output.utf8)
+  }
+
   public func currentAppearance() async throws -> FBSimulatorAppearance {
     try await settingsCommands().currentAppearanceAsync()
   }

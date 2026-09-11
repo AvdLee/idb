@@ -52,6 +52,7 @@ targets:
       # HealthKit, BulletinBoard and SystemConfiguration are dlopen-ed at runtime
       # (private API), so they are intentionally not linked here.
       - sdk: Foundation.framework
+      - sdk: CoreGraphics.framework
       - sdk: Contacts.framework
       - sdk: Photos.framework
       - sdk: CoreData.framework
