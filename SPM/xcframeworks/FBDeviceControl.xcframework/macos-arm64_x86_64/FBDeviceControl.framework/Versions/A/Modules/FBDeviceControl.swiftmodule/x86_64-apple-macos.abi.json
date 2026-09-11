@@ -16933,27 +16933,6 @@
         "conformances": [
           {
             "kind": "Conformance",
-            "name": "FBiOSTarget",
-            "printedName": "FBiOSTarget",
-            "usr": "c:@M@FBControlCore@objc(pl)FBiOSTarget",
-            "mangledName": "$s13FBControlCore11FBiOSTargetP"
-          },
-          {
-            "kind": "Conformance",
-            "name": "FBiOSTargetInfo",
-            "printedName": "FBiOSTargetInfo",
-            "usr": "c:@M@FBControlCore@objc(pl)FBiOSTargetInfo",
-            "mangledName": "$s13FBControlCore15FBiOSTargetInfoP"
-          },
-          {
-            "kind": "Conformance",
-            "name": "FBiOSTargetCommand",
-            "printedName": "FBiOSTargetCommand",
-            "usr": "c:@M@FBControlCore@objc(pl)FBiOSTargetCommand",
-            "mangledName": "$s13FBControlCore18FBiOSTargetCommandP"
-          },
-          {
-            "kind": "Conformance",
             "name": "DebugSymbolsCommands",
             "printedName": "DebugSymbolsCommands",
             "usr": "s:15FBDeviceControl20DebugSymbolsCommandsP",
@@ -17066,17 +17045,17 @@
           },
           {
             "kind": "Conformance",
-            "name": "VideoStreamCommands",
-            "printedName": "VideoStreamCommands",
-            "usr": "s:13FBControlCore19VideoStreamCommandsP",
-            "mangledName": "$s13FBControlCore19VideoStreamCommandsP"
-          },
-          {
-            "kind": "Conformance",
             "name": "VideoRecordingCommands",
             "printedName": "VideoRecordingCommands",
             "usr": "s:13FBControlCore22VideoRecordingCommandsP",
             "mangledName": "$s13FBControlCore22VideoRecordingCommandsP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "VideoStreamCommands",
+            "printedName": "VideoStreamCommands",
+            "usr": "s:13FBControlCore19VideoStreamCommandsP",
+            "mangledName": "$s13FBControlCore19VideoStreamCommandsP"
           },
           {
             "kind": "Conformance",
@@ -17105,6 +17084,27 @@
             "printedName": "XCTraceRecordCommands",
             "usr": "s:13FBControlCore21XCTraceRecordCommandsP",
             "mangledName": "$s13FBControlCore21XCTraceRecordCommandsP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "FBiOSTarget",
+            "printedName": "FBiOSTarget",
+            "usr": "c:@M@FBControlCore@objc(pl)FBiOSTarget",
+            "mangledName": "$s13FBControlCore11FBiOSTargetP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "FBiOSTargetCommand",
+            "printedName": "FBiOSTargetCommand",
+            "usr": "c:@M@FBControlCore@objc(pl)FBiOSTargetCommand",
+            "mangledName": "$s13FBControlCore18FBiOSTargetCommandP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "FBiOSTargetInfo",
+            "printedName": "FBiOSTargetInfo",
+            "usr": "c:@M@FBControlCore@objc(pl)FBiOSTargetInfo",
+            "mangledName": "$s13FBControlCore15FBiOSTargetInfoP"
           },
           {
             "kind": "Conformance",
@@ -17291,378 +17291,378 @@
   },
   "ConstValues": [
     {
-      "filePath": "\/tmp\/idb-main.tx17UX\/FBDeviceControl\/Management\/FBAMDeviceServiceManager.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBDeviceControl\/Management\/FBAMDeviceServiceManager.swift",
       "kind": "StringLiteral",
       "offset": 2172,
       "length": 26,
       "value": "\"house_arrest_\""
     },
     {
-      "filePath": "\/tmp\/idb-main.tx17UX\/FBDeviceControl\/Management\/FBAMDeviceServiceManager.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBDeviceControl\/Management\/FBAMDeviceServiceManager.swift",
       "kind": "StringLiteral",
       "offset": 2197,
       "length": 1,
       "value": "\"\""
     },
     {
-      "filePath": "\/tmp\/idb-main.tx17UX\/FBDeviceControl\/Management\/FBAMDeviceServiceManager.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBDeviceControl\/Management\/FBAMDeviceServiceManager.swift",
       "kind": "BooleanLiteral",
       "offset": 2240,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/tmp\/idb-main.tx17UX\/FBDeviceControl\/Management\/FBAMDeviceServiceManager.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBDeviceControl\/Management\/FBAMDeviceServiceManager.swift",
       "kind": "Dictionary",
       "offset": 2501,
       "length": 3,
       "value": "[]"
     },
     {
-      "filePath": "\/tmp\/idb-main.tx17UX\/FBDeviceControl\/Management\/FBAMDeviceServiceManager.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBDeviceControl\/Management\/FBAMDeviceServiceManager.swift",
       "kind": "Dictionary",
       "offset": 2590,
       "length": 3,
       "value": "[]"
     },
     {
-      "filePath": "\/tmp\/idb-main.tx17UX\/FBDeviceControl\/Commands\/FBDeviceActivationCommands.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBDeviceControl\/Commands\/FBDeviceActivationCommands.swift",
       "kind": "StringLiteral",
       "offset": 334,
       "length": 54,
       "value": "\"https:\/\/albert.apple.com\/deviceservices\/drmHandshake\""
     },
     {
-      "filePath": "\/tmp\/idb-main.tx17UX\/FBDeviceControl\/Commands\/FBDeviceActivationCommands.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBDeviceControl\/Commands\/FBDeviceActivationCommands.swift",
       "kind": "StringLiteral",
       "offset": 430,
       "length": 58,
       "value": "\"https:\/\/albert.apple.com\/deviceservices\/deviceActivation\""
     },
     {
-      "filePath": "\/tmp\/idb-main.tx17UX\/FBDeviceControl\/Utility\/FBDeviceControlError.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBDeviceControl\/Utility\/FBDeviceControlError.swift",
       "kind": "StringLiteral",
       "offset": 250,
       "length": 30,
       "value": "\"com.facebook.FBDeviceControl\""
     },
     {
-      "filePath": "\/tmp\/idb-main.tx17UX\/FBDeviceControl\/Commands\/FBDeviceCrashLogCommands.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBDeviceControl\/Commands\/FBDeviceCrashLogCommands.swift",
       "kind": "StringLiteral",
       "offset": 318,
       "length": 28,
       "value": "\"com.apple.crashreportmover\""
     },
     {
-      "filePath": "\/tmp\/idb-main.tx17UX\/FBDeviceControl\/Commands\/FBDeviceCrashLogCommands.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBDeviceControl\/Commands\/FBDeviceCrashLogCommands.swift",
       "kind": "StringLiteral",
       "offset": 384,
       "length": 33,
       "value": "\"com.apple.crashreportcopymobile\""
     },
     {
-      "filePath": "\/tmp\/idb-main.tx17UX\/FBDeviceControl\/Commands\/FBDeviceCrashLogCommands.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBDeviceControl\/Commands\/FBDeviceCrashLogCommands.swift",
       "kind": "StringLiteral",
       "offset": 444,
       "length": 6,
       "value": "\"ping\""
     },
     {
-      "filePath": "\/tmp\/idb-main.tx17UX\/FBDeviceControl\/Commands\/FBDeviceCrashLogCommands.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBDeviceControl\/Commands\/FBDeviceCrashLogCommands.swift",
       "kind": "BooleanLiteral",
       "offset": 647,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/tmp\/idb-main.tx17UX\/FBDeviceControl\/Management\/FBDeviceDebugServer.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBDeviceControl\/Management\/FBDeviceDebugServer.swift",
       "kind": "IntegerLiteral",
       "offset": 293,
       "length": 4,
       "value": "1024"
     },
     {
-      "filePath": "\/tmp\/idb-main.tx17UX\/FBDeviceControl\/Commands\/FBDeviceDeveloperDiskImageCommands.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBDeviceControl\/Commands\/FBDeviceDeveloperDiskImageCommands.swift",
       "kind": "StringLiteral",
       "offset": 324,
       "length": 11,
       "value": "\"MountPath\""
     },
     {
-      "filePath": "\/tmp\/idb-main.tx17UX\/FBDeviceControl\/Commands\/FBDeviceDeveloperDiskImageCommands.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBDeviceControl\/Commands\/FBDeviceDeveloperDiskImageCommands.swift",
       "kind": "StringLiteral",
       "offset": 363,
       "length": 11,
       "value": "\"ImageType\""
     },
     {
-      "filePath": "\/tmp\/idb-main.tx17UX\/FBDeviceControl\/Commands\/FBDeviceDeveloperDiskImageCommands.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBDeviceControl\/Commands\/FBDeviceDeveloperDiskImageCommands.swift",
       "kind": "StringLiteral",
       "offset": 407,
       "length": 16,
       "value": "\"ImageSignature\""
     },
     {
-      "filePath": "\/tmp\/idb-main.tx17UX\/FBDeviceControl\/Commands\/FBDeviceDeveloperDiskImageCommands.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBDeviceControl\/Commands\/FBDeviceDeveloperDiskImageCommands.swift",
       "kind": "StringLiteral",
       "offset": 449,
       "length": 9,
       "value": "\"Command\""
     },
     {
-      "filePath": "\/tmp\/idb-main.tx17UX\/FBDeviceControl\/Commands\/FBDeviceDeveloperDiskImageCommands.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBDeviceControl\/Commands\/FBDeviceDeveloperDiskImageCommands.swift",
       "kind": "StringLiteral",
       "offset": 497,
       "length": 11,
       "value": "\"Developer\""
     },
     {
-      "filePath": "\/tmp\/idb-main.tx17UX\/FBDeviceControl\/Commands\/FBDeviceDeveloperDiskImageCommands.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBDeviceControl\/Commands\/FBDeviceDeveloperDiskImageCommands.swift",
       "kind": "StringLiteral",
       "offset": 543,
       "length": 39,
       "value": "\"com.apple.mobile.mobile_image_mounter\""
     },
     {
-      "filePath": "\/tmp\/idb-main.tx17UX\/FBDeviceControl\/Commands\/FBDeviceDeveloperDiskImageCommands.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBDeviceControl\/Commands\/FBDeviceDeveloperDiskImageCommands.swift",
       "kind": "IntegerLiteral",
       "offset": 628,
       "length": 10,
       "value": "-402653066"
     },
     {
-      "filePath": "\/tmp\/idb-main.tx17UX\/FBDeviceControl\/Commands\/FBDeviceDiagnosticInformationCommands.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBDeviceControl\/Commands\/FBDeviceDiagnosticInformationCommands.swift",
       "kind": "StringLiteral",
       "offset": 269,
       "length": 36,
       "value": "\"com.apple.mobile.diagnostics_relay\""
     },
     {
-      "filePath": "\/tmp\/idb-main.tx17UX\/FBDeviceControl\/Commands\/FBDeviceEraseCommands.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBDeviceControl\/Commands\/FBDeviceEraseCommands.swift",
       "kind": "IntegerLiteral",
       "offset": 291,
       "length": 3,
       "value": "-10"
     },
     {
-      "filePath": "\/tmp\/idb-main.tx17UX\/FBDeviceControl\/Commands\/FBDeviceEraseCommands.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBDeviceControl\/Commands\/FBDeviceEraseCommands.swift",
       "kind": "IntegerLiteral",
       "offset": 337,
       "length": 2,
       "value": "10"
     },
     {
-      "filePath": "\/tmp\/idb-main.tx17UX\/FBDeviceControl\/Commands\/FBDeviceEraseCommands.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBDeviceControl\/Commands\/FBDeviceEraseCommands.swift",
       "kind": "IntegerLiteral",
       "offset": 387,
       "length": 2,
       "value": "15"
     },
     {
-      "filePath": "\/tmp\/idb-main.tx17UX\/FBDeviceControl\/Commands\/FBDeviceEraseCommands.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBDeviceControl\/Commands\/FBDeviceEraseCommands.swift",
       "kind": "IntegerLiteral",
       "offset": 433,
       "length": 2,
       "value": "20"
     },
     {
-      "filePath": "\/tmp\/idb-main.tx17UX\/FBDeviceControl\/Commands\/FBDeviceEraseCommands.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBDeviceControl\/Commands\/FBDeviceEraseCommands.swift",
       "kind": "IntegerLiteral",
       "offset": 478,
       "length": 3,
       "value": "300"
     },
     {
-      "filePath": "\/tmp\/idb-main.tx17UX\/FBDeviceControl\/Commands\/FBDeviceFileCommands.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBDeviceControl\/Commands\/FBDeviceFileCommands.swift",
       "kind": "StringLiteral",
       "offset": 275,
       "length": 9,
       "value": "\"mounted\""
     },
     {
-      "filePath": "\/tmp\/idb-main.tx17UX\/FBDeviceControl\/Commands\/FBDeviceFileCommands.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBDeviceControl\/Commands\/FBDeviceFileCommands.swift",
       "kind": "StringLiteral",
       "offset": 325,
       "length": 9,
       "value": "\"Symbols\""
     },
     {
-      "filePath": "\/tmp\/idb-main.tx17UX\/FBDeviceControl\/Utility\/FBDeviceLinkClient.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBDeviceControl\/Utility\/FBDeviceLinkClient.swift",
       "kind": "StringLiteral",
       "offset": 276,
       "length": 25,
       "value": "\"DLMessageProcessMessage\""
     },
     {
-      "filePath": "\/tmp\/idb-main.tx17UX\/FBDeviceControl\/Utility\/FBDeviceLinkClient.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBDeviceControl\/Utility\/FBDeviceLinkClient.swift",
       "kind": "StringLiteral",
       "offset": 328,
       "length": 22,
       "value": "\"DLMessageDeviceReady\""
     },
     {
-      "filePath": "\/tmp\/idb-main.tx17UX\/FBDeviceControl\/Commands\/FBDeviceLocationCommands.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBDeviceControl\/Commands\/FBDeviceLocationCommands.swift",
       "kind": "IntegerLiteral",
       "offset": 321,
       "length": 10,
       "value": "0x00000000"
     },
     {
-      "filePath": "\/tmp\/idb-main.tx17UX\/FBDeviceControl\/Commands\/FBDeviceScreenshotCommands.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBDeviceControl\/Commands\/FBDeviceScreenshotCommands.swift",
       "kind": "StringLiteral",
       "offset": 263,
       "length": 16,
       "value": "\"ScreenShotData\""
     },
     {
-      "filePath": "\/tmp\/idb-main.tx17UX\/FBDeviceControl\/Management\/FBDeviceSet.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBDeviceControl\/Management\/FBDeviceSet.swift",
       "kind": "StringLiteral",
       "offset": 2253,
       "length": 78,
       "value": "\"FBDeviceSet: \""
     },
     {
-      "filePath": "\/tmp\/idb-main.tx17UX\/FBDeviceControl\/Management\/FBDeviceSet.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBDeviceControl\/Management\/FBDeviceSet.swift",
       "kind": "StringLiteral",
       "offset": 2330,
       "length": 1,
       "value": "\"\""
     },
     {
-      "filePath": "\/tmp\/idb-main.tx17UX\/FBDeviceControl\/Management\/FBDeviceStorage.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBDeviceControl\/Management\/FBDeviceStorage.swift",
       "kind": "Dictionary",
       "offset": 466,
       "length": 3,
       "value": "[]"
     },
     {
-      "filePath": "\/tmp\/idb-main.tx17UX\/FBDeviceControl\/Video\/FBDeviceVideoStream.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBDeviceControl\/Video\/FBDeviceVideoStream.swift",
       "kind": "BooleanLiteral",
       "offset": 9561,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/tmp\/idb-main.tx17UX\/FBDeviceControl\/Commands\/FBDeviceXCTestCommands.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBDeviceControl\/Commands\/FBDeviceXCTestCommands.swift",
       "kind": "BooleanLiteral",
       "offset": 544,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/tmp\/idb-main.tx17UX\/FBDeviceControl\/Management\/FBManagedConfigClient.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBDeviceControl\/Management\/FBManagedConfigClient.swift",
       "kind": "StringLiteral",
       "offset": 291,
       "length": 28,
       "value": "\"com.apple.mobile.MCInstall\""
     },
     {
-      "filePath": "\/tmp\/idb-main.tx17UX\/FBDeviceControl\/Management\/FBManagedConfigClient.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBDeviceControl\/Management\/FBManagedConfigClient.swift",
       "kind": "StringLiteral",
       "offset": 354,
       "length": 20,
       "value": "\"OrderedIdentifiers\""
     },
     {
-      "filePath": "\/tmp\/idb-main.tx17UX\/FBDeviceControl\/Management\/FBManagedConfigClient.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBDeviceControl\/Management\/FBManagedConfigClient.swift",
       "kind": "StringLiteral",
       "offset": 405,
       "length": 17,
       "value": "\"ProfileMetadata\""
     },
     {
-      "filePath": "\/tmp\/idb-main.tx17UX\/FBDeviceControl\/Management\/FBManagedConfigClient.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBDeviceControl\/Management\/FBManagedConfigClient.swift",
       "kind": "StringLiteral",
       "offset": 449,
       "length": 13,
       "value": "\"PayloadUUID\""
     },
     {
-      "filePath": "\/tmp\/idb-main.tx17UX\/FBDeviceControl\/Management\/FBManagedConfigClient.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBDeviceControl\/Management\/FBManagedConfigClient.swift",
       "kind": "StringLiteral",
       "offset": 492,
       "length": 16,
       "value": "\"PayloadVersion\""
     },
     {
-      "filePath": "\/tmp\/idb-main.tx17UX\/FBDeviceControl\/Management\/FBManagedConfigClient.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBDeviceControl\/Management\/FBManagedConfigClient.swift",
       "kind": "StringLiteral",
       "offset": 1438,
       "length": 28,
       "value": "\"com.apple.mobile.MCInstall\""
     },
     {
-      "filePath": "\/tmp\/idb-main.tx17UX\/FBDeviceControl\/Management\/FBManagedConfigClient.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBDeviceControl\/Management\/FBManagedConfigClient.swift",
       "kind": "IntegerLiteral",
       "offset": 1576,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/idb-main.tx17UX\/FBDeviceControl\/Management\/FBManagedConfigClient.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBDeviceControl\/Management\/FBManagedConfigClient.swift",
       "kind": "IntegerLiteral",
       "offset": 1620,
       "length": 1,
       "value": "1"
     },
     {
-      "filePath": "\/tmp\/idb-main.tx17UX\/FBDeviceControl\/Management\/FBSpringboardServicesClient.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBDeviceControl\/Management\/FBSpringboardServicesClient.swift",
       "kind": "StringLiteral",
       "offset": 509,
       "length": 12,
       "value": "\"homescreen\""
     },
     {
-      "filePath": "\/tmp\/idb-main.tx17UX\/FBDeviceControl\/Management\/FBSpringboardServicesClient.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBDeviceControl\/Management\/FBSpringboardServicesClient.swift",
       "kind": "StringLiteral",
       "offset": 582,
       "length": 12,
       "value": "\"lockscreen\""
     },
     {
-      "filePath": "\/tmp\/idb-main.tx17UX\/FBDeviceControl\/Management\/FBSpringboardServicesClient.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBDeviceControl\/Management\/FBSpringboardServicesClient.swift",
       "kind": "StringLiteral",
       "offset": 645,
       "length": 31,
       "value": "\"com.apple.springboardservices\""
     },
     {
-      "filePath": "\/tmp\/idb-main.tx17UX\/FBDeviceControl\/Management\/FBSpringboardServicesClient.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBDeviceControl\/Management\/FBSpringboardServicesClient.swift",
       "kind": "StringLiteral",
       "offset": 706,
       "length": 13,
       "value": "\"icons.plist\""
     },
     {
-      "filePath": "\/tmp\/idb-main.tx17UX\/FBDeviceControl\/Management\/FBSpringboardServicesClient.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBDeviceControl\/Management\/FBSpringboardServicesClient.swift",
       "kind": "StringLiteral",
       "offset": 747,
       "length": 12,
       "value": "\"icons.json\""
     },
     {
-      "filePath": "\/tmp\/idb-main.tx17UX\/FBDeviceControl\/Management\/FBSpringboardServicesClient.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBDeviceControl\/Management\/FBSpringboardServicesClient.swift",
       "kind": "IntegerLiteral",
       "offset": 795,
       "length": 1,
       "value": "4"
     },
     {
-      "filePath": "\/tmp\/idb-main.tx17UX\/FBDeviceControl\/Management\/FBSpringboardServicesClient.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBDeviceControl\/Management\/FBSpringboardServicesClient.swift",
       "kind": "StringLiteral",
       "offset": 2704,
       "length": 12,
       "value": "\"homescreen\""
     },
     {
-      "filePath": "\/tmp\/idb-main.tx17UX\/FBDeviceControl\/Management\/FBSpringboardServicesClient.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBDeviceControl\/Management\/FBSpringboardServicesClient.swift",
       "kind": "StringLiteral",
       "offset": 2777,
       "length": 12,
       "value": "\"lockscreen\""
     },
     {
-      "filePath": "\/tmp\/idb-main.tx17UX\/FBDeviceControl\/Management\/FBSpringboardServicesClient.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBDeviceControl\/Management\/FBSpringboardServicesClient.swift",
       "kind": "StringLiteral",
       "offset": 2838,
       "length": 31,

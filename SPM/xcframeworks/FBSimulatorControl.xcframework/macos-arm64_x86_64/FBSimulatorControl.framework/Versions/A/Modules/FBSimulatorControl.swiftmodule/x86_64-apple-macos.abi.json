@@ -6,6 +6,2117 @@
     "children": [
       {
         "kind": "Import",
+        "name": "CoreGraphics",
+        "printedName": "CoreGraphics",
+        "declKind": "Import",
+        "moduleName": "FBSimulatorControl",
+        "declAttributes": [
+          "RawDocComment"
+        ]
+      },
+      {
+        "kind": "Import",
+        "name": "FBControlCore",
+        "printedName": "FBControlCore",
+        "declKind": "Import",
+        "moduleName": "FBSimulatorControl"
+      },
+      {
+        "kind": "Import",
+        "name": "Foundation",
+        "printedName": "Foundation",
+        "declKind": "Import",
+        "moduleName": "FBSimulatorControl"
+      },
+      {
+        "kind": "TypeDecl",
+        "name": "AXBridgePlatformElement",
+        "printedName": "AXBridgePlatformElement",
+        "children": [
+          {
+            "kind": "Var",
+            "name": "attributes",
+            "printedName": "attributes",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Dictionary",
+                "printedName": "[Swift.String : Any]",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "String",
+                    "printedName": "Swift.String",
+                    "usr": "s:SS"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "ProtocolComposition",
+                    "printedName": "Any"
+                  }
+                ],
+                "usr": "s:SD"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:18FBSimulatorControl23AXBridgePlatformElementC10attributes33_7E3918D90282815425236C56048E1E82LLSDySSypGvp",
+            "mangledName": "$s18FBSimulatorControl23AXBridgePlatformElementC10attributes33_7E3918D90282815425236C56048E1E82LLSDySSypGvp",
+            "moduleName": "FBSimulatorControl",
+            "isInternal": true,
+            "declAttributes": [
+              "Final",
+              "HasStorage",
+              "AccessControl"
+            ],
+            "fixedbinaryorder": 0,
+            "isLet": true,
+            "hasStorage": true
+          },
+          {
+            "kind": "Var",
+            "name": "childElements",
+            "printedName": "childElements",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Array",
+                "printedName": "[FBSimulatorControl.AXBridgePlatformElement]",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "AXBridgePlatformElement",
+                    "printedName": "FBSimulatorControl.AXBridgePlatformElement",
+                    "usr": "s:18FBSimulatorControl23AXBridgePlatformElementC"
+                  }
+                ],
+                "usr": "s:Sa"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:18FBSimulatorControl23AXBridgePlatformElementC13childElements33_7E3918D90282815425236C56048E1E82LLSayACGvp",
+            "mangledName": "$s18FBSimulatorControl23AXBridgePlatformElementC13childElements33_7E3918D90282815425236C56048E1E82LLSayACGvp",
+            "moduleName": "FBSimulatorControl",
+            "isInternal": true,
+            "declAttributes": [
+              "Final",
+              "HasStorage",
+              "AccessControl"
+            ],
+            "fixedbinaryorder": 1,
+            "isLet": true,
+            "hasStorage": true
+          },
+          {
+            "kind": "Var",
+            "name": "pid",
+            "printedName": "pid",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Int32",
+                "printedName": "Swift.Int32",
+                "usr": "s:s5Int32V"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:18FBSimulatorControl23AXBridgePlatformElementC3pid33_7E3918D90282815425236C56048E1E82LLs5Int32Vvp",
+            "mangledName": "$s18FBSimulatorControl23AXBridgePlatformElementC3pid33_7E3918D90282815425236C56048E1E82LLs5Int32Vvp",
+            "moduleName": "FBSimulatorControl",
+            "isInternal": true,
+            "declAttributes": [
+              "Final",
+              "HasStorage",
+              "AccessControl"
+            ],
+            "fixedbinaryorder": 2,
+            "isLet": true,
+            "hasStorage": true
+          },
+          {
+            "kind": "Constructor",
+            "name": "init",
+            "printedName": "init(attributes:children:pid:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "AXBridgePlatformElement",
+                "printedName": "FBSimulatorControl.AXBridgePlatformElement",
+                "usr": "s:18FBSimulatorControl23AXBridgePlatformElementC"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Dictionary",
+                "printedName": "[Swift.String : Any]",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "String",
+                    "printedName": "Swift.String",
+                    "usr": "s:SS"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "ProtocolComposition",
+                    "printedName": "Any"
+                  }
+                ],
+                "usr": "s:SD"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Array",
+                "printedName": "[FBSimulatorControl.AXBridgePlatformElement]",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "AXBridgePlatformElement",
+                    "printedName": "FBSimulatorControl.AXBridgePlatformElement",
+                    "usr": "s:18FBSimulatorControl23AXBridgePlatformElementC"
+                  }
+                ],
+                "usr": "s:Sa"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Int32",
+                "printedName": "Swift.Int32",
+                "usr": "s:s5Int32V"
+              }
+            ],
+            "declKind": "Constructor",
+            "usr": "s:18FBSimulatorControl23AXBridgePlatformElementC10attributes8children3pidACSDySSypG_SayACGs5Int32Vtcfc",
+            "mangledName": "$s18FBSimulatorControl23AXBridgePlatformElementC10attributes8children3pidACSDySSypG_SayACGs5Int32Vtcfc",
+            "moduleName": "FBSimulatorControl",
+            "init_kind": "Designated"
+          },
+          {
+            "kind": "Function",
+            "name": "tree",
+            "printedName": "tree(from:pid:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "AXBridgePlatformElement",
+                "printedName": "FBSimulatorControl.AXBridgePlatformElement",
+                "usr": "s:18FBSimulatorControl23AXBridgePlatformElementC"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Dictionary",
+                "printedName": "[Swift.String : Any]",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "String",
+                    "printedName": "Swift.String",
+                    "usr": "s:SS"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "ProtocolComposition",
+                    "printedName": "Any"
+                  }
+                ],
+                "usr": "s:SD"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Int32",
+                "printedName": "Swift.Int32",
+                "usr": "s:s5Int32V"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:18FBSimulatorControl23AXBridgePlatformElementC4tree4from3pidACSDySSypG_s5Int32VtFZ",
+            "mangledName": "$s18FBSimulatorControl23AXBridgePlatformElementC4tree4from3pidACSDySSypG_s5Int32VtFZ",
+            "moduleName": "FBSimulatorControl",
+            "static": true,
+            "declAttributes": [
+              "Final"
+            ],
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "axFrame",
+            "printedName": "axFrame()",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "CGRect",
+                "printedName": "CoreFoundation.CGRect",
+                "usr": "c:@S@CGRect"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:18FBSimulatorControl23AXBridgePlatformElementC7axFrameSo6CGRectVyF",
+            "mangledName": "$s18FBSimulatorControl23AXBridgePlatformElementC7axFrameSo6CGRectVyF",
+            "moduleName": "FBSimulatorControl",
+            "declAttributes": [
+              "Final"
+            ],
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "axRole",
+            "printedName": "axRole()",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "Swift.String?",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "String",
+                    "printedName": "Swift.String",
+                    "usr": "s:SS"
+                  }
+                ],
+                "usr": "s:Sq"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:18FBSimulatorControl23AXBridgePlatformElementC6axRoleSSSgyF",
+            "mangledName": "$s18FBSimulatorControl23AXBridgePlatformElementC6axRoleSSSgyF",
+            "moduleName": "FBSimulatorControl",
+            "declAttributes": [
+              "Final"
+            ],
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "axLabel",
+            "printedName": "axLabel()",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "Swift.String?",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "String",
+                    "printedName": "Swift.String",
+                    "usr": "s:SS"
+                  }
+                ],
+                "usr": "s:Sq"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:18FBSimulatorControl23AXBridgePlatformElementC7axLabelSSSgyF",
+            "mangledName": "$s18FBSimulatorControl23AXBridgePlatformElementC7axLabelSSSgyF",
+            "moduleName": "FBSimulatorControl",
+            "declAttributes": [
+              "Final"
+            ],
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "axValue",
+            "printedName": "axValue()",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "Any?",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "ProtocolComposition",
+                    "printedName": "Any"
+                  }
+                ],
+                "usr": "s:Sq"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:18FBSimulatorControl23AXBridgePlatformElementC7axValueypSgyF",
+            "mangledName": "$s18FBSimulatorControl23AXBridgePlatformElementC7axValueypSgyF",
+            "moduleName": "FBSimulatorControl",
+            "declAttributes": [
+              "Final"
+            ],
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "axIdentifier",
+            "printedName": "axIdentifier()",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "Swift.String?",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "String",
+                    "printedName": "Swift.String",
+                    "usr": "s:SS"
+                  }
+                ],
+                "usr": "s:Sq"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:18FBSimulatorControl23AXBridgePlatformElementC12axIdentifierSSSgyF",
+            "mangledName": "$s18FBSimulatorControl23AXBridgePlatformElementC12axIdentifierSSSgyF",
+            "moduleName": "FBSimulatorControl",
+            "declAttributes": [
+              "Final"
+            ],
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "axTitle",
+            "printedName": "axTitle()",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "Swift.String?",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "String",
+                    "printedName": "Swift.String",
+                    "usr": "s:SS"
+                  }
+                ],
+                "usr": "s:Sq"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:18FBSimulatorControl23AXBridgePlatformElementC7axTitleSSSgyF",
+            "mangledName": "$s18FBSimulatorControl23AXBridgePlatformElementC7axTitleSSSgyF",
+            "moduleName": "FBSimulatorControl",
+            "declAttributes": [
+              "Final"
+            ],
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "axHelp",
+            "printedName": "axHelp()",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "Swift.String?",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "String",
+                    "printedName": "Swift.String",
+                    "usr": "s:SS"
+                  }
+                ],
+                "usr": "s:Sq"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:18FBSimulatorControl23AXBridgePlatformElementC6axHelpSSSgyF",
+            "mangledName": "$s18FBSimulatorControl23AXBridgePlatformElementC6axHelpSSSgyF",
+            "moduleName": "FBSimulatorControl",
+            "declAttributes": [
+              "Final"
+            ],
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "axRoleDescription",
+            "printedName": "axRoleDescription()",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "Swift.String?",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "String",
+                    "printedName": "Swift.String",
+                    "usr": "s:SS"
+                  }
+                ],
+                "usr": "s:Sq"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:18FBSimulatorControl23AXBridgePlatformElementC17axRoleDescriptionSSSgyF",
+            "mangledName": "$s18FBSimulatorControl23AXBridgePlatformElementC17axRoleDescriptionSSSgyF",
+            "moduleName": "FBSimulatorControl",
+            "declAttributes": [
+              "Final"
+            ],
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "axSubrole",
+            "printedName": "axSubrole()",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "Swift.String?",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "String",
+                    "printedName": "Swift.String",
+                    "usr": "s:SS"
+                  }
+                ],
+                "usr": "s:Sq"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:18FBSimulatorControl23AXBridgePlatformElementC9axSubroleSSSgyF",
+            "mangledName": "$s18FBSimulatorControl23AXBridgePlatformElementC9axSubroleSSSgyF",
+            "moduleName": "FBSimulatorControl",
+            "declAttributes": [
+              "Final"
+            ],
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "axPlaceholderValue",
+            "printedName": "axPlaceholderValue()",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "Swift.String?",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "String",
+                    "printedName": "Swift.String",
+                    "usr": "s:SS"
+                  }
+                ],
+                "usr": "s:Sq"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:18FBSimulatorControl23AXBridgePlatformElementC18axPlaceholderValueSSSgyF",
+            "mangledName": "$s18FBSimulatorControl23AXBridgePlatformElementC18axPlaceholderValueSSSgyF",
+            "moduleName": "FBSimulatorControl",
+            "declAttributes": [
+              "Final"
+            ],
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "axIsEnabled",
+            "printedName": "axIsEnabled()",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Bool",
+                "printedName": "Swift.Bool",
+                "usr": "s:Sb"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:18FBSimulatorControl23AXBridgePlatformElementC11axIsEnabledSbyF",
+            "mangledName": "$s18FBSimulatorControl23AXBridgePlatformElementC11axIsEnabledSbyF",
+            "moduleName": "FBSimulatorControl",
+            "declAttributes": [
+              "Final",
+              "RawDocComment"
+            ],
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "axIsRequired",
+            "printedName": "axIsRequired()",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Bool",
+                "printedName": "Swift.Bool",
+                "usr": "s:Sb"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:18FBSimulatorControl23AXBridgePlatformElementC12axIsRequiredSbyF",
+            "mangledName": "$s18FBSimulatorControl23AXBridgePlatformElementC12axIsRequiredSbyF",
+            "moduleName": "FBSimulatorControl",
+            "declAttributes": [
+              "Final"
+            ],
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "axIsExpanded",
+            "printedName": "axIsExpanded()",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Bool",
+                "printedName": "Swift.Bool",
+                "usr": "s:Sb"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:18FBSimulatorControl23AXBridgePlatformElementC12axIsExpandedSbyF",
+            "mangledName": "$s18FBSimulatorControl23AXBridgePlatformElementC12axIsExpandedSbyF",
+            "moduleName": "FBSimulatorControl",
+            "declAttributes": [
+              "Final"
+            ],
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "axIsHidden",
+            "printedName": "axIsHidden()",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Bool",
+                "printedName": "Swift.Bool",
+                "usr": "s:Sb"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:18FBSimulatorControl23AXBridgePlatformElementC10axIsHiddenSbyF",
+            "mangledName": "$s18FBSimulatorControl23AXBridgePlatformElementC10axIsHiddenSbyF",
+            "moduleName": "FBSimulatorControl",
+            "declAttributes": [
+              "Final"
+            ],
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "axIsFocused",
+            "printedName": "axIsFocused()",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Bool",
+                "printedName": "Swift.Bool",
+                "usr": "s:Sb"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:18FBSimulatorControl23AXBridgePlatformElementC11axIsFocusedSbyF",
+            "mangledName": "$s18FBSimulatorControl23AXBridgePlatformElementC11axIsFocusedSbyF",
+            "moduleName": "FBSimulatorControl",
+            "declAttributes": [
+              "Final"
+            ],
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "axIsHittable",
+            "printedName": "axIsHittable()",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "Swift.Bool?",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Bool",
+                    "printedName": "Swift.Bool",
+                    "usr": "s:Sb"
+                  }
+                ],
+                "usr": "s:Sq"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:18FBSimulatorControl23AXBridgePlatformElementC12axIsHittableSbSgyF",
+            "mangledName": "$s18FBSimulatorControl23AXBridgePlatformElementC12axIsHittableSbSgyF",
+            "moduleName": "FBSimulatorControl",
+            "declAttributes": [
+              "Final"
+            ],
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "axHittablePoint",
+            "printedName": "axHittablePoint()",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "CoreFoundation.CGPoint?",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "CGPoint",
+                    "printedName": "CoreFoundation.CGPoint",
+                    "usr": "c:@S@CGPoint"
+                  }
+                ],
+                "usr": "s:Sq"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:18FBSimulatorControl23AXBridgePlatformElementC15axHittablePointSo7CGPointVSgyF",
+            "mangledName": "$s18FBSimulatorControl23AXBridgePlatformElementC15axHittablePointSo7CGPointVSgyF",
+            "moduleName": "FBSimulatorControl",
+            "declAttributes": [
+              "Final"
+            ],
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "axCentrePoint",
+            "printedName": "axCentrePoint()",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "CoreFoundation.CGPoint?",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "CGPoint",
+                    "printedName": "CoreFoundation.CGPoint",
+                    "usr": "c:@S@CGPoint"
+                  }
+                ],
+                "usr": "s:Sq"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:18FBSimulatorControl23AXBridgePlatformElementC13axCentrePointSo7CGPointVSgyF",
+            "mangledName": "$s18FBSimulatorControl23AXBridgePlatformElementC13axCentrePointSo7CGPointVSgyF",
+            "moduleName": "FBSimulatorControl",
+            "declAttributes": [
+              "Final"
+            ],
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "axIsUserInteractionEnabled",
+            "printedName": "axIsUserInteractionEnabled()",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "Swift.Bool?",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Bool",
+                    "printedName": "Swift.Bool",
+                    "usr": "s:Sb"
+                  }
+                ],
+                "usr": "s:Sq"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:18FBSimulatorControl23AXBridgePlatformElementC26axIsUserInteractionEnabledSbSgyF",
+            "mangledName": "$s18FBSimulatorControl23AXBridgePlatformElementC26axIsUserInteractionEnabledSbSgyF",
+            "moduleName": "FBSimulatorControl",
+            "declAttributes": [
+              "Final"
+            ],
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "axExplainedBy",
+            "printedName": "axExplainedBy()",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "(any FBSimulatorControl.FBAXPlatformElement)?",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "FBAXPlatformElement",
+                    "printedName": "any FBSimulatorControl.FBAXPlatformElement",
+                    "usr": "s:18FBSimulatorControl19FBAXPlatformElementP"
+                  }
+                ],
+                "usr": "s:Sq"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:18FBSimulatorControl23AXBridgePlatformElementC13axExplainedByAA012FBAXPlatformE0_pSgyF",
+            "mangledName": "$s18FBSimulatorControl23AXBridgePlatformElementC13axExplainedByAA012FBAXPlatformE0_pSgyF",
+            "moduleName": "FBSimulatorControl",
+            "declAttributes": [
+              "Final",
+              "RawDocComment"
+            ],
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "axCustomActionNames",
+            "printedName": "axCustomActionNames()",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Array",
+                "printedName": "[Swift.String]",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "String",
+                    "printedName": "Swift.String",
+                    "usr": "s:SS"
+                  }
+                ],
+                "usr": "s:Sa"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:18FBSimulatorControl23AXBridgePlatformElementC19axCustomActionNamesSaySSGyF",
+            "mangledName": "$s18FBSimulatorControl23AXBridgePlatformElementC19axCustomActionNamesSaySSGyF",
+            "moduleName": "FBSimulatorControl",
+            "declAttributes": [
+              "Final"
+            ],
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "axActionNames",
+            "printedName": "axActionNames()",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Array",
+                "printedName": "[Swift.String]",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "String",
+                    "printedName": "Swift.String",
+                    "usr": "s:SS"
+                  }
+                ],
+                "usr": "s:Sa"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:18FBSimulatorControl23AXBridgePlatformElementC13axActionNamesSaySSGyF",
+            "mangledName": "$s18FBSimulatorControl23AXBridgePlatformElementC13axActionNamesSaySSGyF",
+            "moduleName": "FBSimulatorControl",
+            "declAttributes": [
+              "Final"
+            ],
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "axTraits",
+            "printedName": "axTraits()",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "[Swift.String]?",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Array",
+                    "printedName": "[Swift.String]",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "String",
+                        "printedName": "Swift.String",
+                        "usr": "s:SS"
+                      }
+                    ],
+                    "usr": "s:Sa"
+                  }
+                ],
+                "usr": "s:Sq"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:18FBSimulatorControl23AXBridgePlatformElementC8axTraitsSaySSGSgyF",
+            "mangledName": "$s18FBSimulatorControl23AXBridgePlatformElementC8axTraitsSaySSGSgyF",
+            "moduleName": "FBSimulatorControl",
+            "declAttributes": [
+              "Final"
+            ],
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "axChildren",
+            "printedName": "axChildren()",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Array",
+                "printedName": "[any FBSimulatorControl.FBAXPlatformElement]",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "FBAXPlatformElement",
+                    "printedName": "any FBSimulatorControl.FBAXPlatformElement",
+                    "usr": "s:18FBSimulatorControl19FBAXPlatformElementP"
+                  }
+                ],
+                "usr": "s:Sa"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:18FBSimulatorControl23AXBridgePlatformElementC10axChildrenSayAA012FBAXPlatformE0_pGyF",
+            "mangledName": "$s18FBSimulatorControl23AXBridgePlatformElementC10axChildrenSayAA012FBAXPlatformE0_pGyF",
+            "moduleName": "FBSimulatorControl",
+            "declAttributes": [
+              "Final"
+            ],
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "axPerformPress",
+            "printedName": "axPerformPress()",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Bool",
+                "printedName": "Swift.Bool",
+                "usr": "s:Sb"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:18FBSimulatorControl23AXBridgePlatformElementC14axPerformPressSbyF",
+            "mangledName": "$s18FBSimulatorControl23AXBridgePlatformElementC14axPerformPressSbyF",
+            "moduleName": "FBSimulatorControl",
+            "declAttributes": [
+              "Final"
+            ],
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "axScroll",
+            "printedName": "axScroll(_:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "FBAccessibilityScrollDirection",
+                "printedName": "FBControlCore.FBAccessibilityScrollDirection",
+                "usr": "s:13FBControlCore30FBAccessibilityScrollDirectionO"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:18FBSimulatorControl23AXBridgePlatformElementC8axScrollyy13FBControlCore015FBAccessibilityG9DirectionOF",
+            "mangledName": "$s18FBSimulatorControl23AXBridgePlatformElementC8axScrollyy13FBControlCore015FBAccessibilityG9DirectionOF",
+            "moduleName": "FBSimulatorControl",
+            "declAttributes": [
+              "Final"
+            ],
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "axSetValue",
+            "printedName": "axSetValue(_:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "Any?",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "ProtocolComposition",
+                    "printedName": "Any"
+                  }
+                ],
+                "usr": "s:Sq"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:18FBSimulatorControl23AXBridgePlatformElementC10axSetValueyyypSgF",
+            "mangledName": "$s18FBSimulatorControl23AXBridgePlatformElementC10axSetValueyyypSgF",
+            "moduleName": "FBSimulatorControl",
+            "declAttributes": [
+              "Final"
+            ],
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Var",
+            "name": "axTranslationPid",
+            "printedName": "axTranslationPid",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Int32",
+                "printedName": "Swift.Int32",
+                "usr": "s:s5Int32V"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:18FBSimulatorControl23AXBridgePlatformElementC16axTranslationPids5Int32Vvp",
+            "mangledName": "$s18FBSimulatorControl23AXBridgePlatformElementC16axTranslationPids5Int32Vvp",
+            "moduleName": "FBSimulatorControl",
+            "declAttributes": [
+              "Final"
+            ],
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Int32",
+                    "printedName": "Swift.Int32",
+                    "usr": "s:s5Int32V"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:18FBSimulatorControl23AXBridgePlatformElementC16axTranslationPids5Int32Vvg",
+                "mangledName": "$s18FBSimulatorControl23AXBridgePlatformElementC16axTranslationPids5Int32Vvg",
+                "moduleName": "FBSimulatorControl",
+                "declAttributes": [
+                  "Final"
+                ],
+                "accessorKind": "get"
+              }
+            ]
+          },
+          {
+            "kind": "Function",
+            "name": "axSetBridgeDelegateToken",
+            "printedName": "axSetBridgeDelegateToken(_:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "Swift.String?",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "String",
+                    "printedName": "Swift.String",
+                    "usr": "s:SS"
+                  }
+                ],
+                "usr": "s:Sq"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:18FBSimulatorControl23AXBridgePlatformElementC24axSetBridgeDelegateTokenyySSSgF",
+            "mangledName": "$s18FBSimulatorControl23AXBridgePlatformElementC24axSetBridgeDelegateTokenyySSSgF",
+            "moduleName": "FBSimulatorControl",
+            "declAttributes": [
+              "Final"
+            ],
+            "funcSelfKind": "NonMutating"
+          }
+        ],
+        "declKind": "Class",
+        "usr": "s:18FBSimulatorControl23AXBridgePlatformElementC",
+        "mangledName": "$s18FBSimulatorControl23AXBridgePlatformElementC",
+        "moduleName": "FBSimulatorControl",
+        "declAttributes": [
+          "Final",
+          "RawDocComment"
+        ],
+        "conformances": [
+          {
+            "kind": "Conformance",
+            "name": "FBAXPlatformElement",
+            "printedName": "FBAXPlatformElement",
+            "usr": "s:18FBSimulatorControl19FBAXPlatformElementP",
+            "mangledName": "$s18FBSimulatorControl19FBAXPlatformElementP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Copyable",
+            "printedName": "Copyable",
+            "usr": "s:s8CopyableP",
+            "mangledName": "$ss8CopyableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Escapable",
+            "printedName": "Escapable",
+            "usr": "s:s9EscapableP",
+            "mangledName": "$ss9EscapableP"
+          }
+        ]
+      },
+      {
+        "kind": "Import",
+        "name": "Foundation",
+        "printedName": "Foundation",
+        "declKind": "Import",
+        "moduleName": "FBSimulatorControl",
+        "declAttributes": [
+          "RawDocComment"
+        ]
+      },
+      {
+        "kind": "TypeDecl",
+        "name": "AXRoleVocabulary",
+        "printedName": "AXRoleVocabulary",
+        "children": [
+          {
+            "kind": "Var",
+            "name": "untypedName",
+            "printedName": "untypedName",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "String",
+                "printedName": "Swift.String",
+                "usr": "s:SS"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:18FBSimulatorControl16AXRoleVocabularyO11untypedNameSSvpZ",
+            "mangledName": "$s18FBSimulatorControl16AXRoleVocabularyO11untypedNameSSvpZ",
+            "moduleName": "FBSimulatorControl",
+            "static": true,
+            "declAttributes": [
+              "HasInitialValue",
+              "HasStorage",
+              "RawDocComment"
+            ],
+            "isLet": true,
+            "hasStorage": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "String",
+                    "printedName": "Swift.String",
+                    "usr": "s:SS"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:18FBSimulatorControl16AXRoleVocabularyO11untypedNameSSvgZ",
+                "mangledName": "$s18FBSimulatorControl16AXRoleVocabularyO11untypedNameSSvgZ",
+                "moduleName": "FBSimulatorControl",
+                "static": true,
+                "implicit": true,
+                "declAttributes": [
+                  "Transparent"
+                ],
+                "accessorKind": "get"
+              }
+            ]
+          },
+          {
+            "kind": "Function",
+            "name": "name",
+            "printedName": "name(forElementType:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "Swift.String?",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "String",
+                    "printedName": "Swift.String",
+                    "usr": "s:SS"
+                  }
+                ],
+                "usr": "s:Sq"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Int",
+                "printedName": "Swift.Int",
+                "usr": "s:Si"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:18FBSimulatorControl16AXRoleVocabularyO4name14forElementTypeSSSgSi_tFZ",
+            "mangledName": "$s18FBSimulatorControl16AXRoleVocabularyO4name14forElementTypeSSSgSi_tFZ",
+            "moduleName": "FBSimulatorControl",
+            "static": true,
+            "declAttributes": [
+              "RawDocComment"
+            ],
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "name",
+            "printedName": "name(forTranslatorRole:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "Swift.String?",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "String",
+                    "printedName": "Swift.String",
+                    "usr": "s:SS"
+                  }
+                ],
+                "usr": "s:Sq"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Int",
+                "printedName": "Swift.Int",
+                "usr": "s:Si"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:18FBSimulatorControl16AXRoleVocabularyO4name17forTranslatorRoleSSSgSi_tFZ",
+            "mangledName": "$s18FBSimulatorControl16AXRoleVocabularyO4name17forTranslatorRoleSSSgSi_tFZ",
+            "moduleName": "FBSimulatorControl",
+            "static": true,
+            "declAttributes": [
+              "RawDocComment"
+            ],
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "name",
+            "printedName": "name(forTranslatorSubrole:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "Swift.String?",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "String",
+                    "printedName": "Swift.String",
+                    "usr": "s:SS"
+                  }
+                ],
+                "usr": "s:Sq"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Int",
+                "printedName": "Swift.Int",
+                "usr": "s:Si"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:18FBSimulatorControl16AXRoleVocabularyO4name20forTranslatorSubroleSSSgSi_tFZ",
+            "mangledName": "$s18FBSimulatorControl16AXRoleVocabularyO4name20forTranslatorSubroleSSSgSi_tFZ",
+            "moduleName": "FBSimulatorControl",
+            "static": true,
+            "declAttributes": [
+              "RawDocComment"
+            ],
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "normalizeRole",
+            "printedName": "normalizeRole(_:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "String",
+                "printedName": "Swift.String",
+                "usr": "s:SS"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "String",
+                "printedName": "Swift.String",
+                "usr": "s:SS"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:18FBSimulatorControl16AXRoleVocabularyO13normalizeRoleyS2SFZ",
+            "mangledName": "$s18FBSimulatorControl16AXRoleVocabularyO13normalizeRoleyS2SFZ",
+            "moduleName": "FBSimulatorControl",
+            "static": true,
+            "declAttributes": [
+              "RawDocComment"
+            ],
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "isInteractable",
+            "printedName": "isInteractable(role:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Bool",
+                "printedName": "Swift.Bool",
+                "usr": "s:Sb"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "String",
+                "printedName": "Swift.String",
+                "usr": "s:SS"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:18FBSimulatorControl16AXRoleVocabularyO14isInteractable4roleSbSS_tFZ",
+            "mangledName": "$s18FBSimulatorControl16AXRoleVocabularyO14isInteractable4roleSbSS_tFZ",
+            "moduleName": "FBSimulatorControl",
+            "static": true,
+            "declAttributes": [
+              "RawDocComment"
+            ],
+            "funcSelfKind": "NonMutating"
+          }
+        ],
+        "declKind": "Enum",
+        "usr": "s:18FBSimulatorControl16AXRoleVocabularyO",
+        "mangledName": "$s18FBSimulatorControl16AXRoleVocabularyO",
+        "moduleName": "FBSimulatorControl",
+        "declAttributes": [
+          "RawDocComment"
+        ],
+        "isEnumExhaustive": true,
+        "conformances": [
+          {
+            "kind": "Conformance",
+            "name": "Copyable",
+            "printedName": "Copyable",
+            "usr": "s:s8CopyableP",
+            "mangledName": "$ss8CopyableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Escapable",
+            "printedName": "Escapable",
+            "usr": "s:s9EscapableP",
+            "mangledName": "$ss9EscapableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Sendable",
+            "printedName": "Sendable",
+            "usr": "s:s8SendableP",
+            "mangledName": "$ss8SendableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "BitwiseCopyable",
+            "printedName": "BitwiseCopyable",
+            "usr": "s:s15BitwiseCopyableP",
+            "mangledName": "$ss15BitwiseCopyableP"
+          }
+        ]
+      },
+      {
+        "kind": "TypeDecl",
+        "name": "AXWire",
+        "printedName": "AXWire",
+        "children": [
+          {
+            "kind": "TypeDecl",
+            "name": "Node",
+            "printedName": "Node",
+            "children": [
+              {
+                "kind": "Var",
+                "name": "elementType",
+                "printedName": "elementType",
+                "children": [
+                  {
+                    "kind": "TypeFunc",
+                    "name": "Function",
+                    "printedName": "(FBSimulatorControl.AXWire.Node.Type) -> FBSimulatorControl.AXWire.Node",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Node",
+                        "printedName": "FBSimulatorControl.AXWire.Node",
+                        "usr": "s:18FBSimulatorControl6AXWireO4NodeO"
+                      },
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Metatype",
+                        "printedName": "FBSimulatorControl.AXWire.Node.Type",
+                        "children": [
+                          {
+                            "kind": "TypeNominal",
+                            "name": "Node",
+                            "printedName": "FBSimulatorControl.AXWire.Node",
+                            "usr": "s:18FBSimulatorControl6AXWireO4NodeO"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ],
+                "declKind": "EnumElement",
+                "usr": "s:18FBSimulatorControl6AXWireO4NodeO11elementTypeyA2EmF",
+                "mangledName": "$s18FBSimulatorControl6AXWireO4NodeO11elementTypeyA2EmF",
+                "moduleName": "FBSimulatorControl",
+                "fixedbinaryorder": 0
+              },
+              {
+                "kind": "Var",
+                "name": "label",
+                "printedName": "label",
+                "children": [
+                  {
+                    "kind": "TypeFunc",
+                    "name": "Function",
+                    "printedName": "(FBSimulatorControl.AXWire.Node.Type) -> FBSimulatorControl.AXWire.Node",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Node",
+                        "printedName": "FBSimulatorControl.AXWire.Node",
+                        "usr": "s:18FBSimulatorControl6AXWireO4NodeO"
+                      },
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Metatype",
+                        "printedName": "FBSimulatorControl.AXWire.Node.Type",
+                        "children": [
+                          {
+                            "kind": "TypeNominal",
+                            "name": "Node",
+                            "printedName": "FBSimulatorControl.AXWire.Node",
+                            "usr": "s:18FBSimulatorControl6AXWireO4NodeO"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ],
+                "declKind": "EnumElement",
+                "usr": "s:18FBSimulatorControl6AXWireO4NodeO5labelyA2EmF",
+                "mangledName": "$s18FBSimulatorControl6AXWireO4NodeO5labelyA2EmF",
+                "moduleName": "FBSimulatorControl",
+                "fixedbinaryorder": 1
+              },
+              {
+                "kind": "Var",
+                "name": "value",
+                "printedName": "value",
+                "children": [
+                  {
+                    "kind": "TypeFunc",
+                    "name": "Function",
+                    "printedName": "(FBSimulatorControl.AXWire.Node.Type) -> FBSimulatorControl.AXWire.Node",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Node",
+                        "printedName": "FBSimulatorControl.AXWire.Node",
+                        "usr": "s:18FBSimulatorControl6AXWireO4NodeO"
+                      },
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Metatype",
+                        "printedName": "FBSimulatorControl.AXWire.Node.Type",
+                        "children": [
+                          {
+                            "kind": "TypeNominal",
+                            "name": "Node",
+                            "printedName": "FBSimulatorControl.AXWire.Node",
+                            "usr": "s:18FBSimulatorControl6AXWireO4NodeO"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ],
+                "declKind": "EnumElement",
+                "usr": "s:18FBSimulatorControl6AXWireO4NodeO5valueyA2EmF",
+                "mangledName": "$s18FBSimulatorControl6AXWireO4NodeO5valueyA2EmF",
+                "moduleName": "FBSimulatorControl",
+                "fixedbinaryorder": 2
+              },
+              {
+                "kind": "Var",
+                "name": "identifier",
+                "printedName": "identifier",
+                "children": [
+                  {
+                    "kind": "TypeFunc",
+                    "name": "Function",
+                    "printedName": "(FBSimulatorControl.AXWire.Node.Type) -> FBSimulatorControl.AXWire.Node",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Node",
+                        "printedName": "FBSimulatorControl.AXWire.Node",
+                        "usr": "s:18FBSimulatorControl6AXWireO4NodeO"
+                      },
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Metatype",
+                        "printedName": "FBSimulatorControl.AXWire.Node.Type",
+                        "children": [
+                          {
+                            "kind": "TypeNominal",
+                            "name": "Node",
+                            "printedName": "FBSimulatorControl.AXWire.Node",
+                            "usr": "s:18FBSimulatorControl6AXWireO4NodeO"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ],
+                "declKind": "EnumElement",
+                "usr": "s:18FBSimulatorControl6AXWireO4NodeO10identifieryA2EmF",
+                "mangledName": "$s18FBSimulatorControl6AXWireO4NodeO10identifieryA2EmF",
+                "moduleName": "FBSimulatorControl",
+                "fixedbinaryorder": 3
+              },
+              {
+                "kind": "Var",
+                "name": "frame",
+                "printedName": "frame",
+                "children": [
+                  {
+                    "kind": "TypeFunc",
+                    "name": "Function",
+                    "printedName": "(FBSimulatorControl.AXWire.Node.Type) -> FBSimulatorControl.AXWire.Node",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Node",
+                        "printedName": "FBSimulatorControl.AXWire.Node",
+                        "usr": "s:18FBSimulatorControl6AXWireO4NodeO"
+                      },
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Metatype",
+                        "printedName": "FBSimulatorControl.AXWire.Node.Type",
+                        "children": [
+                          {
+                            "kind": "TypeNominal",
+                            "name": "Node",
+                            "printedName": "FBSimulatorControl.AXWire.Node",
+                            "usr": "s:18FBSimulatorControl6AXWireO4NodeO"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ],
+                "declKind": "EnumElement",
+                "usr": "s:18FBSimulatorControl6AXWireO4NodeO5frameyA2EmF",
+                "mangledName": "$s18FBSimulatorControl6AXWireO4NodeO5frameyA2EmF",
+                "moduleName": "FBSimulatorControl",
+                "fixedbinaryorder": 4
+              },
+              {
+                "kind": "Var",
+                "name": "automationType",
+                "printedName": "automationType",
+                "children": [
+                  {
+                    "kind": "TypeFunc",
+                    "name": "Function",
+                    "printedName": "(FBSimulatorControl.AXWire.Node.Type) -> FBSimulatorControl.AXWire.Node",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Node",
+                        "printedName": "FBSimulatorControl.AXWire.Node",
+                        "usr": "s:18FBSimulatorControl6AXWireO4NodeO"
+                      },
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Metatype",
+                        "printedName": "FBSimulatorControl.AXWire.Node.Type",
+                        "children": [
+                          {
+                            "kind": "TypeNominal",
+                            "name": "Node",
+                            "printedName": "FBSimulatorControl.AXWire.Node",
+                            "usr": "s:18FBSimulatorControl6AXWireO4NodeO"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ],
+                "declKind": "EnumElement",
+                "usr": "s:18FBSimulatorControl6AXWireO4NodeO14automationTypeyA2EmF",
+                "mangledName": "$s18FBSimulatorControl6AXWireO4NodeO14automationTypeyA2EmF",
+                "moduleName": "FBSimulatorControl",
+                "fixedbinaryorder": 5
+              },
+              {
+                "kind": "Var",
+                "name": "children",
+                "printedName": "children",
+                "children": [
+                  {
+                    "kind": "TypeFunc",
+                    "name": "Function",
+                    "printedName": "(FBSimulatorControl.AXWire.Node.Type) -> FBSimulatorControl.AXWire.Node",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Node",
+                        "printedName": "FBSimulatorControl.AXWire.Node",
+                        "usr": "s:18FBSimulatorControl6AXWireO4NodeO"
+                      },
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Metatype",
+                        "printedName": "FBSimulatorControl.AXWire.Node.Type",
+                        "children": [
+                          {
+                            "kind": "TypeNominal",
+                            "name": "Node",
+                            "printedName": "FBSimulatorControl.AXWire.Node",
+                            "usr": "s:18FBSimulatorControl6AXWireO4NodeO"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ],
+                "declKind": "EnumElement",
+                "usr": "s:18FBSimulatorControl6AXWireO4NodeO8childrenyA2EmF",
+                "mangledName": "$s18FBSimulatorControl6AXWireO4NodeO8childrenyA2EmF",
+                "moduleName": "FBSimulatorControl",
+                "fixedbinaryorder": 6
+              },
+              {
+                "kind": "Var",
+                "name": "isVisible",
+                "printedName": "isVisible",
+                "children": [
+                  {
+                    "kind": "TypeFunc",
+                    "name": "Function",
+                    "printedName": "(FBSimulatorControl.AXWire.Node.Type) -> FBSimulatorControl.AXWire.Node",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Node",
+                        "printedName": "FBSimulatorControl.AXWire.Node",
+                        "usr": "s:18FBSimulatorControl6AXWireO4NodeO"
+                      },
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Metatype",
+                        "printedName": "FBSimulatorControl.AXWire.Node.Type",
+                        "children": [
+                          {
+                            "kind": "TypeNominal",
+                            "name": "Node",
+                            "printedName": "FBSimulatorControl.AXWire.Node",
+                            "usr": "s:18FBSimulatorControl6AXWireO4NodeO"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ],
+                "declKind": "EnumElement",
+                "usr": "s:18FBSimulatorControl6AXWireO4NodeO9isVisibleyA2EmF",
+                "mangledName": "$s18FBSimulatorControl6AXWireO4NodeO9isVisibleyA2EmF",
+                "moduleName": "FBSimulatorControl",
+                "fixedbinaryorder": 7
+              },
+              {
+                "kind": "Var",
+                "name": "visiblePoint",
+                "printedName": "visiblePoint",
+                "children": [
+                  {
+                    "kind": "TypeFunc",
+                    "name": "Function",
+                    "printedName": "(FBSimulatorControl.AXWire.Node.Type) -> FBSimulatorControl.AXWire.Node",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Node",
+                        "printedName": "FBSimulatorControl.AXWire.Node",
+                        "usr": "s:18FBSimulatorControl6AXWireO4NodeO"
+                      },
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Metatype",
+                        "printedName": "FBSimulatorControl.AXWire.Node.Type",
+                        "children": [
+                          {
+                            "kind": "TypeNominal",
+                            "name": "Node",
+                            "printedName": "FBSimulatorControl.AXWire.Node",
+                            "usr": "s:18FBSimulatorControl6AXWireO4NodeO"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ],
+                "declKind": "EnumElement",
+                "usr": "s:18FBSimulatorControl6AXWireO4NodeO12visiblePointyA2EmF",
+                "mangledName": "$s18FBSimulatorControl6AXWireO4NodeO12visiblePointyA2EmF",
+                "moduleName": "FBSimulatorControl",
+                "fixedbinaryorder": 8
+              },
+              {
+                "kind": "Var",
+                "name": "centerPoint",
+                "printedName": "centerPoint",
+                "children": [
+                  {
+                    "kind": "TypeFunc",
+                    "name": "Function",
+                    "printedName": "(FBSimulatorControl.AXWire.Node.Type) -> FBSimulatorControl.AXWire.Node",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Node",
+                        "printedName": "FBSimulatorControl.AXWire.Node",
+                        "usr": "s:18FBSimulatorControl6AXWireO4NodeO"
+                      },
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Metatype",
+                        "printedName": "FBSimulatorControl.AXWire.Node.Type",
+                        "children": [
+                          {
+                            "kind": "TypeNominal",
+                            "name": "Node",
+                            "printedName": "FBSimulatorControl.AXWire.Node",
+                            "usr": "s:18FBSimulatorControl6AXWireO4NodeO"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ],
+                "declKind": "EnumElement",
+                "usr": "s:18FBSimulatorControl6AXWireO4NodeO11centerPointyA2EmF",
+                "mangledName": "$s18FBSimulatorControl6AXWireO4NodeO11centerPointyA2EmF",
+                "moduleName": "FBSimulatorControl",
+                "fixedbinaryorder": 9
+              },
+              {
+                "kind": "Var",
+                "name": "userInteractionEnabled",
+                "printedName": "userInteractionEnabled",
+                "children": [
+                  {
+                    "kind": "TypeFunc",
+                    "name": "Function",
+                    "printedName": "(FBSimulatorControl.AXWire.Node.Type) -> FBSimulatorControl.AXWire.Node",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Node",
+                        "printedName": "FBSimulatorControl.AXWire.Node",
+                        "usr": "s:18FBSimulatorControl6AXWireO4NodeO"
+                      },
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Metatype",
+                        "printedName": "FBSimulatorControl.AXWire.Node.Type",
+                        "children": [
+                          {
+                            "kind": "TypeNominal",
+                            "name": "Node",
+                            "printedName": "FBSimulatorControl.AXWire.Node",
+                            "usr": "s:18FBSimulatorControl6AXWireO4NodeO"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ],
+                "declKind": "EnumElement",
+                "usr": "s:18FBSimulatorControl6AXWireO4NodeO22userInteractionEnabledyA2EmF",
+                "mangledName": "$s18FBSimulatorControl6AXWireO4NodeO22userInteractionEnabledyA2EmF",
+                "moduleName": "FBSimulatorControl",
+                "fixedbinaryorder": 10
+              },
+              {
+                "kind": "Var",
+                "name": "explainedBy",
+                "printedName": "explainedBy",
+                "children": [
+                  {
+                    "kind": "TypeFunc",
+                    "name": "Function",
+                    "printedName": "(FBSimulatorControl.AXWire.Node.Type) -> FBSimulatorControl.AXWire.Node",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Node",
+                        "printedName": "FBSimulatorControl.AXWire.Node",
+                        "usr": "s:18FBSimulatorControl6AXWireO4NodeO"
+                      },
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Metatype",
+                        "printedName": "FBSimulatorControl.AXWire.Node.Type",
+                        "children": [
+                          {
+                            "kind": "TypeNominal",
+                            "name": "Node",
+                            "printedName": "FBSimulatorControl.AXWire.Node",
+                            "usr": "s:18FBSimulatorControl6AXWireO4NodeO"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ],
+                "declKind": "EnumElement",
+                "usr": "s:18FBSimulatorControl6AXWireO4NodeO11explainedByyA2EmF",
+                "mangledName": "$s18FBSimulatorControl6AXWireO4NodeO11explainedByyA2EmF",
+                "moduleName": "FBSimulatorControl",
+                "fixedbinaryorder": 11
+              },
+              {
+                "kind": "Var",
+                "name": "isEnabled",
+                "printedName": "isEnabled",
+                "children": [
+                  {
+                    "kind": "TypeFunc",
+                    "name": "Function",
+                    "printedName": "(FBSimulatorControl.AXWire.Node.Type) -> FBSimulatorControl.AXWire.Node",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Node",
+                        "printedName": "FBSimulatorControl.AXWire.Node",
+                        "usr": "s:18FBSimulatorControl6AXWireO4NodeO"
+                      },
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Metatype",
+                        "printedName": "FBSimulatorControl.AXWire.Node.Type",
+                        "children": [
+                          {
+                            "kind": "TypeNominal",
+                            "name": "Node",
+                            "printedName": "FBSimulatorControl.AXWire.Node",
+                            "usr": "s:18FBSimulatorControl6AXWireO4NodeO"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ],
+                "declKind": "EnumElement",
+                "usr": "s:18FBSimulatorControl6AXWireO4NodeO9isEnabledyA2EmF",
+                "mangledName": "$s18FBSimulatorControl6AXWireO4NodeO9isEnabledyA2EmF",
+                "moduleName": "FBSimulatorControl",
+                "fixedbinaryorder": 12
+              },
+              {
+                "kind": "Var",
+                "name": "translatorRole",
+                "printedName": "translatorRole",
+                "children": [
+                  {
+                    "kind": "TypeFunc",
+                    "name": "Function",
+                    "printedName": "(FBSimulatorControl.AXWire.Node.Type) -> FBSimulatorControl.AXWire.Node",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Node",
+                        "printedName": "FBSimulatorControl.AXWire.Node",
+                        "usr": "s:18FBSimulatorControl6AXWireO4NodeO"
+                      },
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Metatype",
+                        "printedName": "FBSimulatorControl.AXWire.Node.Type",
+                        "children": [
+                          {
+                            "kind": "TypeNominal",
+                            "name": "Node",
+                            "printedName": "FBSimulatorControl.AXWire.Node",
+                            "usr": "s:18FBSimulatorControl6AXWireO4NodeO"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ],
+                "declKind": "EnumElement",
+                "usr": "s:18FBSimulatorControl6AXWireO4NodeO14translatorRoleyA2EmF",
+                "mangledName": "$s18FBSimulatorControl6AXWireO4NodeO14translatorRoleyA2EmF",
+                "moduleName": "FBSimulatorControl",
+                "fixedbinaryorder": 13
+              },
+              {
+                "kind": "Var",
+                "name": "translatorSubrole",
+                "printedName": "translatorSubrole",
+                "children": [
+                  {
+                    "kind": "TypeFunc",
+                    "name": "Function",
+                    "printedName": "(FBSimulatorControl.AXWire.Node.Type) -> FBSimulatorControl.AXWire.Node",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Node",
+                        "printedName": "FBSimulatorControl.AXWire.Node",
+                        "usr": "s:18FBSimulatorControl6AXWireO4NodeO"
+                      },
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Metatype",
+                        "printedName": "FBSimulatorControl.AXWire.Node.Type",
+                        "children": [
+                          {
+                            "kind": "TypeNominal",
+                            "name": "Node",
+                            "printedName": "FBSimulatorControl.AXWire.Node",
+                            "usr": "s:18FBSimulatorControl6AXWireO4NodeO"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ],
+                "declKind": "EnumElement",
+                "usr": "s:18FBSimulatorControl6AXWireO4NodeO17translatorSubroleyA2EmF",
+                "mangledName": "$s18FBSimulatorControl6AXWireO4NodeO17translatorSubroleyA2EmF",
+                "moduleName": "FBSimulatorControl",
+                "fixedbinaryorder": 14
+              },
+              {
+                "kind": "Constructor",
+                "name": "init",
+                "printedName": "init(rawValue:)",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Optional",
+                    "printedName": "FBSimulatorControl.AXWire.Node?",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Node",
+                        "printedName": "FBSimulatorControl.AXWire.Node",
+                        "usr": "s:18FBSimulatorControl6AXWireO4NodeO"
+                      }
+                    ],
+                    "usr": "s:Sq"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "String",
+                    "printedName": "Swift.String",
+                    "usr": "s:SS"
+                  }
+                ],
+                "declKind": "Constructor",
+                "usr": "s:18FBSimulatorControl6AXWireO4NodeO8rawValueAESgSS_tcfc",
+                "mangledName": "$s18FBSimulatorControl6AXWireO4NodeO8rawValueAESgSS_tcfc",
+                "moduleName": "FBSimulatorControl",
+                "implicit": true,
+                "init_kind": "Designated"
+              },
+              {
+                "kind": "Var",
+                "name": "rawValue",
+                "printedName": "rawValue",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "String",
+                    "printedName": "Swift.String",
+                    "usr": "s:SS"
+                  }
+                ],
+                "declKind": "Var",
+                "usr": "s:18FBSimulatorControl6AXWireO4NodeO8rawValueSSvp",
+                "mangledName": "$s18FBSimulatorControl6AXWireO4NodeO8rawValueSSvp",
+                "moduleName": "FBSimulatorControl",
+                "implicit": true,
+                "accessors": [
+                  {
+                    "kind": "Accessor",
+                    "name": "Get",
+                    "printedName": "Get()",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "String",
+                        "printedName": "Swift.String",
+                        "usr": "s:SS"
+                      }
+                    ],
+                    "declKind": "Accessor",
+                    "usr": "s:18FBSimulatorControl6AXWireO4NodeO8rawValueSSvg",
+                    "mangledName": "$s18FBSimulatorControl6AXWireO4NodeO8rawValueSSvg",
+                    "moduleName": "FBSimulatorControl",
+                    "implicit": true,
+                    "accessorKind": "get"
+                  }
+                ]
+              }
+            ],
+            "declKind": "Enum",
+            "usr": "s:18FBSimulatorControl6AXWireO4NodeO",
+            "mangledName": "$s18FBSimulatorControl6AXWireO4NodeO",
+            "moduleName": "FBSimulatorControl",
+            "enumRawTypeName": "String",
+            "isEnumExhaustive": true,
+            "conformances": [
+              {
+                "kind": "Conformance",
+                "name": "Copyable",
+                "printedName": "Copyable",
+                "usr": "s:s8CopyableP",
+                "mangledName": "$ss8CopyableP"
+              },
+              {
+                "kind": "Conformance",
+                "name": "Equatable",
+                "printedName": "Equatable",
+                "usr": "s:SQ",
+                "mangledName": "$sSQ"
+              },
+              {
+                "kind": "Conformance",
+                "name": "Escapable",
+                "printedName": "Escapable",
+                "usr": "s:s9EscapableP",
+                "mangledName": "$ss9EscapableP"
+              },
+              {
+                "kind": "Conformance",
+                "name": "Hashable",
+                "printedName": "Hashable",
+                "usr": "s:SH",
+                "mangledName": "$sSH"
+              },
+              {
+                "kind": "Conformance",
+                "name": "RawRepresentable",
+                "printedName": "RawRepresentable",
+                "children": [
+                  {
+                    "kind": "TypeWitness",
+                    "name": "RawValue",
+                    "printedName": "RawValue",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "String",
+                        "printedName": "Swift.String",
+                        "usr": "s:SS"
+                      }
+                    ]
+                  }
+                ],
+                "usr": "s:SY",
+                "mangledName": "$sSY"
+              },
+              {
+                "kind": "Conformance",
+                "name": "Sendable",
+                "printedName": "Sendable",
+                "usr": "s:s8SendableP",
+                "mangledName": "$ss8SendableP"
+              },
+              {
+                "kind": "Conformance",
+                "name": "BitwiseCopyable",
+                "printedName": "BitwiseCopyable",
+                "usr": "s:s15BitwiseCopyableP",
+                "mangledName": "$ss15BitwiseCopyableP"
+              }
+            ]
+          }
+        ],
+        "declKind": "Enum",
+        "usr": "s:18FBSimulatorControl6AXWireO",
+        "mangledName": "$s18FBSimulatorControl6AXWireO",
+        "moduleName": "FBSimulatorControl",
+        "isEnumExhaustive": true,
+        "conformances": [
+          {
+            "kind": "Conformance",
+            "name": "Copyable",
+            "printedName": "Copyable",
+            "usr": "s:s8CopyableP",
+            "mangledName": "$ss8CopyableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Escapable",
+            "printedName": "Escapable",
+            "usr": "s:s9EscapableP",
+            "mangledName": "$ss9EscapableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Sendable",
+            "printedName": "Sendable",
+            "usr": "s:s8SendableP",
+            "mangledName": "$ss8SendableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "BitwiseCopyable",
+            "printedName": "BitwiseCopyable",
+            "usr": "s:s15BitwiseCopyableP",
+            "mangledName": "$ss15BitwiseCopyableP"
+          }
+        ]
+      },
+      {
+        "kind": "Import",
         "name": "FBControlCore",
         "printedName": "FBControlCore",
         "declKind": "Import",
@@ -10396,6 +12507,23 @@
       },
       {
         "kind": "Import",
+        "name": "FBControlCore",
+        "printedName": "FBControlCore",
+        "declKind": "Import",
+        "moduleName": "FBSimulatorControl",
+        "declAttributes": [
+          "RawDocComment"
+        ]
+      },
+      {
+        "kind": "Import",
+        "name": "Foundation",
+        "printedName": "Foundation",
+        "declKind": "Import",
+        "moduleName": "FBSimulatorControl"
+      },
+      {
+        "kind": "Import",
         "name": "CoreSimulator",
         "printedName": "CoreSimulator",
         "declKind": "Import",
@@ -17442,15 +19570,7 @@
             "mangledName": "$s18FBSimulatorControl0A15DTUHIDTransportC15unownedExecutorScevp",
             "moduleName": "FBSimulatorControl",
             "implicit": true,
-            "intro_Macosx": "10.15",
-            "intro_iOS": "13.0",
-            "intro_tvOS": "13.0",
-            "intro_watchOS": "6.0",
             "declAttributes": [
-              "Available",
-              "Available",
-              "Available",
-              "Available",
               "Final",
               "Nonisolated",
               "Semantics"
@@ -28207,15 +30327,7 @@
             "mangledName": "$s18FBSimulatorControl0A18IndigoHIDTransportC15unownedExecutorScevp",
             "moduleName": "FBSimulatorControl",
             "implicit": true,
-            "intro_Macosx": "10.15",
-            "intro_iOS": "13.0",
-            "intro_tvOS": "13.0",
-            "intro_watchOS": "6.0",
             "declAttributes": [
-              "Available",
-              "Available",
-              "Available",
-              "Available",
               "Final",
               "Nonisolated",
               "Semantics"
@@ -56775,6 +58887,85 @@
         "children": [
           {
             "kind": "Function",
+            "name": "accessibilityElementsViaBridge",
+            "printedName": "accessibilityElementsViaBridge(options:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "FBAccessibilityElementsResponse",
+                "printedName": "FBControlCore.FBAccessibilityElementsResponse",
+                "usr": "s:13FBControlCore31FBAccessibilityElementsResponseV"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "FBAccessibilityRequestOptions",
+                "printedName": "FBControlCore.FBAccessibilityRequestOptions",
+                "usr": "s:13FBControlCore29FBAccessibilityRequestOptionsV"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:So11FBSimulatorC0A7ControlE30accessibilityElementsViaBridge7options13FBControlCore015FBAccessibilityD8ResponseVAF0J14RequestOptionsV_tYaKF",
+            "mangledName": "$sSo11FBSimulatorC0A7ControlE30accessibilityElementsViaBridge7options13FBControlCore015FBAccessibilityD8ResponseVAF0J14RequestOptionsV_tYaKF",
+            "moduleName": "FBSimulatorControl",
+            "isOpen": true,
+            "declAttributes": [
+              "AccessControl"
+            ],
+            "isFromExtension": true,
+            "throwing": true,
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "performAccessibilityBridgeTap",
+            "printedName": "performAccessibilityBridgeTap(x:y:expectedLabel:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Double",
+                "printedName": "Swift.Double",
+                "usr": "s:Sd"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Double",
+                "printedName": "Swift.Double",
+                "usr": "s:Sd"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "Swift.String?",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "String",
+                    "printedName": "Swift.String",
+                    "usr": "s:SS"
+                  }
+                ],
+                "usr": "s:Sq"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:So11FBSimulatorC0A7ControlE29performAccessibilityBridgeTap1x1y13expectedLabelySd_SdSSSgtYaKF",
+            "mangledName": "$sSo11FBSimulatorC0A7ControlE29performAccessibilityBridgeTap1x1y13expectedLabelySd_SdSSSgtYaKF",
+            "moduleName": "FBSimulatorControl",
+            "isOpen": true,
+            "declAttributes": [
+              "AccessControl"
+            ],
+            "isFromExtension": true,
+            "throwing": true,
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
             "name": "startXctraceRecord",
             "printedName": "startXctraceRecord(configuration:logger:)",
             "children": [
@@ -60143,6 +62334,50 @@
           },
           {
             "kind": "Function",
+            "name": "runAccessibilityBridge",
+            "printedName": "runAccessibilityBridge(action:arguments:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Data",
+                "printedName": "Foundation.Data",
+                "usr": "s:10Foundation4DataV"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "String",
+                "printedName": "Swift.String",
+                "usr": "s:SS"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Array",
+                "printedName": "[Swift.String]",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "String",
+                    "printedName": "Swift.String",
+                    "usr": "s:SS"
+                  }
+                ],
+                "usr": "s:Sa"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:So11FBSimulatorC0A7ControlE22runAccessibilityBridge6action9arguments10Foundation4DataVSS_SaySSGtYaKF",
+            "mangledName": "$sSo11FBSimulatorC0A7ControlE22runAccessibilityBridge6action9arguments10Foundation4DataVSS_SaySSGtYaKF",
+            "moduleName": "FBSimulatorControl",
+            "isOpen": true,
+            "declAttributes": [
+              "AccessControl"
+            ],
+            "isFromExtension": true,
+            "throwing": true,
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
             "name": "currentAppearance",
             "printedName": "currentAppearance()",
             "children": [
@@ -60932,7 +63167,6 @@
         "declAttributes": [
           "ObjC",
           "SynthesizedProtocol",
-          "Sendable",
           "Dynamic"
         ],
         "superclassUsr": "c:objc(cs)NSObject",
@@ -61250,1365 +63484,1512 @@
   },
   "ConstValues": [
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/HID\/DTUHIDModels.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Commands\/AXRoleVocabulary.swift",
+      "kind": "StringLiteral",
+      "offset": 466,
+      "length": 4,
+      "value": "\"AX\""
+    },
+    {
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Commands\/AXRoleVocabulary.swift",
+      "kind": "StringLiteral",
+      "offset": 798,
+      "length": 5,
+      "value": "\"Any\""
+    },
+    {
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Commands\/AXRoleVocabulary.swift",
+      "kind": "Array",
+      "offset": 2780,
+      "length": 266,
+      "value": "[\"Button\", \"Cell\", \"TextField\", \"SecureTextField\", \"SearchField\", \"Switch\", \"Toggle\", \"Link\", \"MenuItem\", \"Slider\", \"CheckBox\", \"RadioButton\", \"SegmentedControl\", \"Stepper\", \"PopUpButton\", \"Picker\", \"PickerWheel\", \"Tab\", \"Key\", \"DisclosureTriangle\"]"
+    },
+    {
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Commands\/AXRoleVocabulary.swift",
+      "kind": "Dictionary",
+      "offset": 4113,
+      "length": 350,
+      "value": "[(1, \"Application\"), (2, \"Button\"), (3, \"CheckBox\"), (4, \"GenericElement\"), (5, \"Group\"), (6, \"Heading\"), (7, \"Image\"), (8, \"Link\"), (9, \"RadioButton\"), (10, \"ScrollArea\"), (11, \"ScrollBar\"), (12, \"TabGroup\"), (13, \"Slider\"), (14, \"StaticText\"), (15, \"TextField\"), (16, \"WebArea\"), (17, \"TextArea\"), (18, \"Splitter\"), (19, \"PopUpButton\"), (20, \"Sheet\"), (21, \"Grid\")]"
+    },
+    {
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Commands\/AXRoleVocabulary.swift",
+      "kind": "Dictionary",
+      "offset": 5885,
+      "length": 110,
+      "value": "[(1, \"SearchField\"), (2, \"TabButton\"), (3, \"Switch\"), (4, \"MapArea\"), (5, \"SecureTextField\"), (6, \"MapItem\")]"
+    },
+    {
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Commands\/AXRoleVocabulary.swift",
+      "kind": "Dictionary",
+      "offset": 6153,
+      "length": 1444,
+      "value": "[(0, \"Any\"), (1, \"Other\"), (2, \"Application\"), (3, \"Group\"), (4, \"Window\"), (5, \"Sheet\"), (6, \"Drawer\"), (7, \"Alert\"), (8, \"Dialog\"), (9, \"Button\"), (10, \"RadioButton\"), (11, \"RadioGroup\"), (12, \"CheckBox\"), (13, \"DisclosureTriangle\"), (14, \"PopUpButton\"), (15, \"ComboBox\"), (16, \"MenuButton\"), (17, \"ToolbarButton\"), (18, \"Popover\"), (19, \"Keyboard\"), (20, \"Key\"), (21, \"NavigationBar\"), (22, \"TabBar\"), (23, \"TabGroup\"), (24, \"Toolbar\"), (25, \"StatusBar\"), (26, \"Table\"), (27, \"TableRow\"), (28, \"TableColumn\"), (29, \"Outline\"), (30, \"OutlineRow\"), (31, \"Browser\"), (32, \"CollectionView\"), (33, \"Slider\"), (34, \"PageIndicator\"), (35, \"ProgressIndicator\"), (36, \"ActivityIndicator\"), (37, \"SegmentedControl\"), (38, \"Picker\"), (39, \"PickerWheel\"), (40, \"Switch\"), (41, \"Toggle\"), (42, \"Link\"), (43, \"Image\"), (44, \"Icon\"), (45, \"SearchField\"), (46, \"ScrollView\"), (47, \"ScrollBar\"), (48, \"StaticText\"), (49, \"TextField\"), (50, \"SecureTextField\"), (51, \"DatePicker\"), (52, \"TextView\"), (53, \"Menu\"), (54, \"MenuItem\"), (55, \"MenuBar\"), (56, \"MenuBarItem\"), (57, \"Map\"), (58, \"WebView\"), (59, \"IncrementArrow\"), (60, \"DecrementArrow\"), (61, \"Timeline\"), (62, \"RatingIndicator\"), (63, \"ValueIndicator\"), (64, \"SplitGroup\"), (65, \"Splitter\"), (66, \"RelevanceIndicator\"), (67, \"ColorWell\"), (68, \"HelpTag\"), (69, \"Matte\"), (70, \"DockItem\"), (71, \"Ruler\"), (72, \"RulerMarker\"), (73, \"Grid\"), (74, \"LevelIndicator\"), (75, \"Cell\"), (76, \"LayoutArea\"), (77, \"LayoutItem\"), (78, \"Handle\"), (79, \"Stepper\"), (80, \"Tab\"), (81, \"TouchBar\"), (82, \"StatusItem\")]"
+    },
+    {
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Commands\/AXWire.swift",
+      "kind": "StringLiteral",
+      "offset": 59,
+      "length": 30,
+      "value": "\"XC_kAXXCAttributeElementType\""
+    },
+    {
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Commands\/AXWire.swift",
+      "kind": "StringLiteral",
+      "offset": 107,
+      "length": 24,
+      "value": "\"XC_kAXXCAttributeLabel\""
+    },
+    {
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Commands\/AXWire.swift",
+      "kind": "StringLiteral",
+      "offset": 149,
+      "length": 24,
+      "value": "\"XC_kAXXCAttributeValue\""
+    },
+    {
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Commands\/AXWire.swift",
+      "kind": "StringLiteral",
+      "offset": 196,
+      "length": 29,
+      "value": "\"XC_kAXXCAttributeIdentifier\""
+    },
+    {
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Commands\/AXWire.swift",
+      "kind": "StringLiteral",
+      "offset": 243,
+      "length": 24,
+      "value": "\"XC_kAXXCAttributeFrame\""
+    },
+    {
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Commands\/AXWire.swift",
+      "kind": "StringLiteral",
+      "offset": 294,
+      "length": 33,
+      "value": "\"XC_kAXXCAttributeAutomationType\""
+    },
+    {
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Commands\/AXWire.swift",
+      "kind": "StringLiteral",
+      "offset": 348,
+      "length": 27,
+      "value": "\"XC_kAXXCAttributeChildren\""
+    },
+    {
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Commands\/AXWire.swift",
+      "kind": "StringLiteral",
+      "offset": 397,
+      "length": 28,
+      "value": "\"XC_kAXXCAttributeIsVisible\""
+    },
+    {
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Commands\/AXWire.swift",
+      "kind": "StringLiteral",
+      "offset": 450,
+      "length": 31,
+      "value": "\"XC_kAXXCAttributeVisiblePoint\""
+    },
+    {
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Commands\/AXWire.swift",
+      "kind": "StringLiteral",
+      "offset": 505,
+      "length": 30,
+      "value": "\"XC_kAXXCAttributeCenterPoint\""
+    },
+    {
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Commands\/AXWire.swift",
+      "kind": "StringLiteral",
+      "offset": 570,
+      "length": 43,
+      "value": "\"XC_kAXXCAttributeIsUserInteractionEnabled\""
+    },
+    {
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Commands\/AXWire.swift",
+      "kind": "StringLiteral",
+      "offset": 637,
+      "length": 15,
+      "value": "\"FBExplainedBy\""
+    },
+    {
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Commands\/AXWire.swift",
+      "kind": "StringLiteral",
+      "offset": 674,
+      "length": 13,
+      "value": "\"FBIsEnabled\""
+    },
+    {
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Commands\/AXWire.swift",
+      "kind": "StringLiteral",
+      "offset": 714,
+      "length": 18,
+      "value": "\"FBTranslatorRole\""
+    },
+    {
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Commands\/AXWire.swift",
+      "kind": "StringLiteral",
+      "offset": 762,
+      "length": 21,
+      "value": "\"FBTranslatorSubrole\""
+    },
+    {
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/HID\/DTUHIDModels.swift",
       "kind": "BooleanLiteral",
       "offset": 1000,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/HID\/DTUHIDModels.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/HID\/DTUHIDModels.swift",
       "kind": "IntegerLiteral",
       "offset": 1567,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/HID\/DTUHIDModels.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/HID\/DTUHIDModels.swift",
       "kind": "IntegerLiteral",
       "offset": 1587,
       "length": 1,
       "value": "1"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/HID\/DTUHIDModels.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/HID\/DTUHIDModels.swift",
       "kind": "IntegerLiteral",
       "offset": 1602,
       "length": 1,
       "value": "2"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/HID\/DTUHIDModels.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/HID\/DTUHIDModels.swift",
       "kind": "IntegerLiteral",
       "offset": 2299,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/HID\/DTUHIDModels.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/HID\/DTUHIDModels.swift",
       "kind": "IntegerLiteral",
       "offset": 2323,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/HID\/DTUHIDModels.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/HID\/DTUHIDModels.swift",
       "kind": "IntegerLiteral",
       "offset": 2808,
       "length": 1,
       "value": "1"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/HID\/DTUHIDModels.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/HID\/DTUHIDModels.swift",
       "kind": "IntegerLiteral",
       "offset": 2822,
       "length": 1,
       "value": "2"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Commands\/FBAXTranslationDispatcher.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Commands\/FBAXTranslationDispatcher.swift",
       "kind": "IntegerLiteral",
       "offset": 1334,
       "length": 1,
       "value": "2"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Commands\/FBAXTranslationDispatcher.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Commands\/FBAXTranslationDispatcher.swift",
       "kind": "Dictionary",
       "offset": 1559,
       "length": 3,
       "value": "[]"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Commands\/FBAXTranslationRequest.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Commands\/FBAXTranslationRequest.swift",
       "kind": "FloatLiteral",
       "offset": 1558,
       "length": 3,
       "value": "5.0"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Commands\/FBAccessibilityCoverageGrid.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Commands\/FBAccessibilityCoverageGrid.swift",
       "kind": "FloatLiteral",
       "offset": 885,
       "length": 4,
       "value": "10.0"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Commands\/FBAccessibilityElement.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Commands\/FBAccessibilityElement.swift",
       "kind": "BooleanLiteral",
       "offset": 1067,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Commands\/FBAccessibilityProfilingCollector.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Commands\/FBAccessibilityProfilingCollector.swift",
       "kind": "IntegerLiteral",
       "offset": 949,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Commands\/FBAccessibilityProfilingCollector.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Commands\/FBAccessibilityProfilingCollector.swift",
       "kind": "IntegerLiteral",
       "offset": 1008,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Commands\/FBAccessibilityProfilingCollector.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Commands\/FBAccessibilityProfilingCollector.swift",
       "kind": "IntegerLiteral",
       "offset": 1063,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Commands\/FBAccessibilityProfilingCollector.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Commands\/FBAccessibilityProfilingCollector.swift",
       "kind": "IntegerLiteral",
       "offset": 1133,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Commands\/FBAccessibilityProfilingCollector.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Commands\/FBAccessibilityProfilingCollector.swift",
       "kind": "IntegerLiteral",
       "offset": 1179,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Commands\/FBAccessibilityProfilingCollector.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Commands\/FBAccessibilityProfilingCollector.swift",
       "kind": "IntegerLiteral",
       "offset": 1218,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Commands\/FBAccessibilityProfilingCollector.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Commands\/FBAccessibilityProfilingCollector.swift",
       "kind": "IntegerLiteral",
       "offset": 1270,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Strategies\/FBDefaultsModificationStrategy.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Strategies\/FBDefaultsModificationStrategy.swift",
       "kind": "StringLiteral",
       "offset": 7043,
       "length": 21,
       "value": "\"Apple Global Domain\""
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Commands\/FBSimulator+RuntimeTools.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Commands\/FBSimulator+RuntimeTools.swift",
       "kind": "Array",
       "offset": 1968,
       "length": 2,
       "value": "[]"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Commands\/FBSimulator+RuntimeTools.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Commands\/FBSimulator+RuntimeTools.swift",
       "kind": "Dictionary",
       "offset": 2008,
       "length": 3,
       "value": "[]"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Commands\/FBSimulator+RuntimeTools.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Commands\/FBSimulator+RuntimeTools.swift",
       "kind": "Array",
       "offset": 3101,
       "length": 2,
       "value": "[]"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Commands\/FBSimulator+RuntimeTools.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Commands\/FBSimulator+RuntimeTools.swift",
       "kind": "Dictionary",
       "offset": 3141,
       "length": 3,
       "value": "[]"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Commands\/FBSimulatorAccessibilityCommands.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Commands\/FBSimulatorAccessibilityCommands.swift",
       "kind": "StringLiteral",
       "offset": 1836,
       "length": 54,
       "value": "\"The accessibility translation runtime is unavailable\""
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Commands\/FBSimulatorAccessibilityCommands.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Commands\/FBSimulatorAccessibilityCommands.swift",
       "kind": "StringLiteral",
       "offset": 2752,
       "length": 32,
       "value": "\"com.apple.CoreSimulator.bridge\""
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Commands\/FBSimulatorAccessibilityCommands.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Commands\/FBSimulatorAccessibilityCommands.swift",
       "kind": "StringLiteral",
       "offset": 2831,
       "length": 23,
       "value": "\"com.apple.SpringBoard\""
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Commands\/FBSimulatorAccessibilitySerializer.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Commands\/FBSimulatorAccessibilitySerializer.swift",
       "kind": "Array",
       "offset": 520,
       "length": 2,
       "value": "[]"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Commands\/FBSimulatorAccessibilitySerializer.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Commands\/FBSimulatorAccessibilitySerializer.swift",
       "kind": "StringLiteral",
       "offset": 1082,
       "length": 4,
       "value": "\"AX\""
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Commands\/FBSimulatorAccessibilitySerializer.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Commands\/FBSimulatorAccessibilitySerializer.swift",
       "kind": "StringLiteral",
       "offset": 1135,
       "length": 11,
       "value": "\"recursive\""
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Commands\/FBSimulatorAccessibilitySerializer.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Commands\/FBSimulatorAccessibilitySerializer.swift",
       "kind": "StringLiteral",
       "offset": 1195,
       "length": 12,
       "value": "\"point_grid\""
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Commands\/FBSimulatorAccessibilitySerializer.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Commands\/FBSimulatorAccessibilitySerializer.swift",
       "kind": "IntegerLiteral",
       "offset": 2193,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Commands\/FBSimulatorAccessibilitySerializer.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Commands\/FBSimulatorAccessibilitySerializer.swift",
       "kind": "IntegerLiteral",
       "offset": 2939,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Commands\/FBSimulatorAccessibilitySerializer.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Commands\/FBSimulatorAccessibilitySerializer.swift",
       "kind": "IntegerLiteral",
       "offset": 8321,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Commands\/FBSimulatorAccessibilitySerializer.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Commands\/FBSimulatorAccessibilitySerializer.swift",
       "kind": "IntegerLiteral",
       "offset": 8345,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Commands\/FBSimulatorAccessibilitySerializer.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Commands\/FBSimulatorAccessibilitySerializer.swift",
       "kind": "IntegerLiteral",
       "offset": 9306,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Commands\/FBSimulatorAccessibilitySerializer.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Commands\/FBSimulatorAccessibilitySerializer.swift",
       "kind": "IntegerLiteral",
       "offset": 9330,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Commands\/FBSimulatorApplicationCommands.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Commands\/FBSimulatorApplicationCommands.swift",
       "kind": "StringLiteral",
       "offset": 6804,
       "length": 19,
       "value": "\"UIKitApplication:\""
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Commands\/FBSimulatorApplicationCommands.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Commands\/FBSimulatorApplicationCommands.swift",
       "kind": "Array",
       "offset": 6834,
       "length": 2,
       "value": "[]"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Commands\/FBSimulatorApplicationCommands.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Commands\/FBSimulatorApplicationCommands.swift",
       "kind": "StringLiteral",
       "offset": 11113,
       "length": 15,
       "value": "\"DataContainer\""
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Configuration\/FBSimulatorBootConfiguration.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Configuration\/FBSimulatorBootConfiguration.swift",
       "kind": "Dictionary",
       "offset": 623,
       "length": 3,
       "value": "[]"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Configuration\/FBSimulatorBootConfiguration.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Configuration\/FBSimulatorBootConfiguration.swift",
       "kind": "StringLiteral",
       "offset": 1356,
       "length": 34,
       "value": "\"Boot Environment %@ | Options %@\""
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Configuration\/FBSimulatorBootConfiguration.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Configuration\/FBSimulatorBootConfiguration.swift",
       "kind": "StringLiteral",
       "offset": 1665,
       "length": 15,
       "value": "\"Direct Launch\""
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Strategies\/FBSimulatorBootVerificationStrategy.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Strategies\/FBSimulatorBootVerificationStrategy.swift",
       "kind": "FloatLiteral",
       "offset": 640,
       "length": 3,
       "value": "0.5"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Strategies\/FBSimulatorBootVerificationStrategy.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Strategies\/FBSimulatorBootVerificationStrategy.swift",
       "kind": "FloatLiteral",
       "offset": 720,
       "length": 3,
       "value": "1.5"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Configuration\/FBSimulatorConfiguration.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Configuration\/FBSimulatorConfiguration.swift",
       "kind": "StringLiteral",
       "offset": 2835,
       "length": 10,
       "value": "\"iPhone 6\""
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Configuration\/FBSimulatorConfiguration.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Configuration\/FBSimulatorConfiguration.swift",
       "kind": "StringLiteral",
       "offset": 6223,
       "length": 70,
       "value": "\"Device '\""
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Configuration\/FBSimulatorConfiguration.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Configuration\/FBSimulatorConfiguration.swift",
       "kind": "StringLiteral",
       "offset": 6256,
       "length": 16,
       "value": "\"' | OS Version '\""
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Configuration\/FBSimulatorConfiguration.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Configuration\/FBSimulatorConfiguration.swift",
       "kind": "StringLiteral",
       "offset": 6291,
       "length": 2,
       "value": "\"'\""
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Configuration\/FBSimulatorControlConfiguration.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Configuration\/FBSimulatorControlConfiguration.swift",
       "kind": "IntegerLiteral",
       "offset": 1605,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Configuration\/FBSimulatorControlConfiguration.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Configuration\/FBSimulatorControlConfiguration.swift",
       "kind": "StringLiteral",
       "offset": 1867,
       "length": 53,
       "value": "\"Pool Config | Set Path \""
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Configuration\/FBSimulatorControlConfiguration.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Configuration\/FBSimulatorControlConfiguration.swift",
       "kind": "StringLiteral",
       "offset": 1910,
       "length": 8,
       "value": "\"(null)\""
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Configuration\/FBSimulatorControlConfiguration.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Configuration\/FBSimulatorControlConfiguration.swift",
       "kind": "StringLiteral",
       "offset": 1919,
       "length": 1,
       "value": "\"\""
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Configuration\/FBSimulatorControlConfiguration.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Configuration\/FBSimulatorControlConfiguration.swift",
       "kind": "StringLiteral",
       "offset": 2104,
       "length": 14,
       "value": "\"SimDeviceSet\""
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Configuration\/FBSimulatorControlConfiguration.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Configuration\/FBSimulatorControlConfiguration.swift",
       "kind": "StringLiteral",
       "offset": 2154,
       "length": 36,
       "value": "\"Expected SimDeviceSet to be loaded\""
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Configuration\/FBSimulatorControlConfiguration.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Configuration\/FBSimulatorControlConfiguration.swift",
       "kind": "StringLiteral",
       "offset": 2284,
       "length": 16,
       "value": "\"defaultSetPath\""
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Configuration\/FBSimulatorControlConfiguration.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Configuration\/FBSimulatorControlConfiguration.swift",
       "kind": "StringLiteral",
       "offset": 2460,
       "length": 12,
       "value": "\"defaultSet\""
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Configuration\/FBSimulatorControlConfiguration.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Configuration\/FBSimulatorControlConfiguration.swift",
       "kind": "StringLiteral",
       "offset": 2516,
       "length": 9,
       "value": "\"setPath\""
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Commands\/FBSimulatorCrashLogCommands.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Commands\/FBSimulatorCrashLogCommands.swift",
       "kind": "BooleanLiteral",
       "offset": 506,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/HID\/FBSimulatorDTUHIDTransport.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/HID\/FBSimulatorDTUHIDTransport.swift",
       "kind": "BooleanLiteral",
       "offset": 670,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/HID\/FBSimulatorDTUHIDTransport.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/HID\/FBSimulatorDTUHIDTransport.swift",
       "kind": "StringLiteral",
       "offset": 2127,
       "length": 51,
       "value": "\"com.apple.coredevice.feature.remote.hid.digitizer\""
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/HID\/FBSimulatorDTUHIDTransport.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/HID\/FBSimulatorDTUHIDTransport.swift",
       "kind": "IntegerLiteral",
       "offset": 3287,
       "length": 11,
       "value": "200000000"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Utility\/FBSimulatorError.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Utility\/FBSimulatorError.swift",
       "kind": "StringLiteral",
       "offset": 253,
       "length": 33,
       "value": "\"com.facebook.FBSimulatorControl\""
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/HID\/FBSimulatorHID.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/HID\/FBSimulatorHID.swift",
       "kind": "IntegerLiteral",
       "offset": 1555,
       "length": 4,
       "value": "2000"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/HID\/FBSimulatorHIDEvent.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/HID\/FBSimulatorHIDEvent.swift",
       "kind": "FloatLiteral",
       "offset": 292,
       "length": 4,
       "value": "10.0"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/HID\/FBSimulatorHIDEvent.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/HID\/FBSimulatorHIDEvent.swift",
       "kind": "StringLiteral",
       "offset": 336,
       "length": 32,
       "value": "\"com.apple.UIKit.SimulatorShake\""
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/HID\/FBSimulatorHIDEvent.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/HID\/FBSimulatorHIDEvent.swift",
       "kind": "StringLiteral",
       "offset": 411,
       "length": 49,
       "value": "\"com.apple.iphonesimulator.toggleincallstatusbar\""
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/HID\/FBSimulatorHIDSessionCache.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/HID\/FBSimulatorHIDSessionCache.swift",
       "kind": "IntegerLiteral",
       "offset": 351,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
       "kind": "IntegerLiteral",
       "offset": 674,
       "length": 1,
       "value": "1"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
       "kind": "IntegerLiteral",
       "offset": 688,
       "length": 1,
       "value": "2"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
       "kind": "IntegerLiteral",
       "offset": 981,
       "length": 1,
       "value": "1"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
       "kind": "IntegerLiteral",
       "offset": 1003,
       "length": 1,
       "value": "2"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
       "kind": "IntegerLiteral",
       "offset": 1019,
       "length": 1,
       "value": "3"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
       "kind": "IntegerLiteral",
       "offset": 1041,
       "length": 1,
       "value": "4"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
       "kind": "IntegerLiteral",
       "offset": 1057,
       "length": 1,
       "value": "5"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
       "kind": "IntegerLiteral",
       "offset": 1078,
       "length": 1,
       "value": "6"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
       "kind": "IntegerLiteral",
       "offset": 1761,
       "length": 1,
       "value": "1"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
       "kind": "IntegerLiteral",
       "offset": 1777,
       "length": 1,
       "value": "2"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
       "kind": "IntegerLiteral",
       "offset": 1793,
       "length": 1,
       "value": "3"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
       "kind": "IntegerLiteral",
       "offset": 1810,
       "length": 1,
       "value": "4"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
       "kind": "IntegerLiteral",
       "offset": 1828,
       "length": 1,
       "value": "5"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
       "kind": "IntegerLiteral",
       "offset": 1844,
       "length": 1,
       "value": "6"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
       "kind": "IntegerLiteral",
       "offset": 2971,
       "length": 1,
       "value": "1"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
       "kind": "IntegerLiteral",
       "offset": 3001,
       "length": 1,
       "value": "2"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
       "kind": "IntegerLiteral",
       "offset": 3027,
       "length": 1,
       "value": "3"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
       "kind": "IntegerLiteral",
       "offset": 3052,
       "length": 1,
       "value": "4"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/HID\/FBSimulatorIndigoHID.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/HID\/FBSimulatorIndigoHID.swift",
       "kind": "IntegerLiteral",
       "offset": 4450,
       "length": 4,
       "value": "0x16"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/HID\/FBSimulatorIndigoHID.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/HID\/FBSimulatorIndigoHID.swift",
       "kind": "IntegerLiteral",
       "offset": 4817,
       "length": 4,
       "value": "0xC0"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/HID\/FBSimulatorIndigoHID.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/HID\/FBSimulatorIndigoHID.swift",
       "kind": "IntegerLiteral",
       "offset": 5049,
       "length": 4,
       "value": "0xA0"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/HID\/FBSimulatorIndigoHIDClient.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/HID\/FBSimulatorIndigoHIDClient.swift",
       "kind": "StringLiteral",
       "offset": 2097,
       "length": 39,
       "value": "\"SimulatorKit.SimDeviceLegacyHIDClient\""
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/HID\/FBSimulatorIndigoHIDClient.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/HID\/FBSimulatorIndigoHIDClient.swift",
       "kind": "IntegerLiteral",
       "offset": 2481,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/HID\/FBSimulatorIndigoHIDClient.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/HID\/FBSimulatorIndigoHIDClient.swift",
       "kind": "BooleanLiteral",
       "offset": 2519,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/HID\/FBSimulatorIndigoHIDClient.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/HID\/FBSimulatorIndigoHIDClient.swift",
       "kind": "BooleanLiteral",
       "offset": 2562,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Commands\/FBSimulatorLaunchCtlCommands.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Commands\/FBSimulatorLaunchCtlCommands.swift",
       "kind": "StringLiteral",
       "offset": 5227,
       "length": 30,
       "value": "\"UIKitApplication:([^\\[]*).*\""
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Utility\/FBSimulatorLaunchedApplication.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Utility\/FBSimulatorLaunchedApplication.swift",
       "kind": "StringLiteral",
       "offset": 4247,
       "length": 112,
       "value": "\"Application Operation \""
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Utility\/FBSimulatorLaunchedApplication.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Utility\/FBSimulatorLaunchedApplication.swift",
       "kind": "StringLiteral",
       "offset": 4298,
       "length": 1,
       "value": "\" | pid \""
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Utility\/FBSimulatorLaunchedApplication.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Utility\/FBSimulatorLaunchedApplication.swift",
       "kind": "StringLiteral",
       "offset": 4325,
       "length": 1,
       "value": "\" | State \""
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Utility\/FBSimulatorLaunchedApplication.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Utility\/FBSimulatorLaunchedApplication.swift",
       "kind": "StringLiteral",
       "offset": 4358,
       "length": 1,
       "value": "\"\""
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Commands\/FBSimulatorLifecycleCommands.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Commands\/FBSimulatorLifecycleCommands.swift",
       "kind": "IntegerLiteral",
       "offset": 398,
       "length": 1,
       "value": "2"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Commands\/FBSimulatorProcessSpawnCommands.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Commands\/FBSimulatorProcessSpawnCommands.swift",
       "kind": "IntegerLiteral",
       "offset": 4224,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/HID\/FBSimulatorPurpleHID.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/HID\/FBSimulatorPurpleHID.swift",
       "kind": "IntegerLiteral",
       "offset": 993,
       "length": 2,
       "value": "50"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/HID\/FBSimulatorPurpleHID.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/HID\/FBSimulatorPurpleHID.swift",
       "kind": "IntegerLiteral",
       "offset": 1049,
       "length": 4,
       "value": "1014"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/HID\/FBSimulatorPurpleHID.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/HID\/FBSimulatorPurpleHID.swift",
       "kind": "IntegerLiteral",
       "offset": 1101,
       "length": 8,
       "value": "0x20000"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/HID\/FBSimulatorPurpleHID.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/HID\/FBSimulatorPurpleHID.swift",
       "kind": "IntegerLiteral",
       "offset": 1162,
       "length": 4,
       "value": "0x7B"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Management\/FBSimulatorServiceContext.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Management\/FBSimulatorServiceContext.swift",
       "kind": "Dictionary",
       "offset": 892,
       "length": 3,
       "value": "[]"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
       "kind": "IntegerLiteral",
       "offset": 655,
       "length": 14,
       "value": "1"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
       "kind": "IntegerLiteral",
       "offset": 677,
       "length": 16,
       "value": "2"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
       "kind": "IntegerLiteral",
       "offset": 887,
       "length": 1,
       "value": "1"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
       "kind": "IntegerLiteral",
       "offset": 932,
       "length": 1,
       "value": "2"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
       "kind": "IntegerLiteral",
       "offset": 1181,
       "length": 1,
       "value": "1"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
       "kind": "IntegerLiteral",
       "offset": 1198,
       "length": 1,
       "value": "2"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
       "kind": "IntegerLiteral",
       "offset": 1216,
       "length": 1,
       "value": "3"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
       "kind": "IntegerLiteral",
       "offset": 1233,
       "length": 1,
       "value": "4"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
       "kind": "IntegerLiteral",
       "offset": 1255,
       "length": 1,
       "value": "5"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
       "kind": "IntegerLiteral",
       "offset": 1282,
       "length": 1,
       "value": "6"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
       "kind": "IntegerLiteral",
       "offset": 1314,
       "length": 1,
       "value": "7"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
       "kind": "IntegerLiteral",
       "offset": 1345,
       "length": 1,
       "value": "8"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
       "kind": "IntegerLiteral",
       "offset": 1375,
       "length": 1,
       "value": "9"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
       "kind": "IntegerLiteral",
       "offset": 1410,
       "length": 2,
       "value": "10"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
       "kind": "IntegerLiteral",
       "offset": 1451,
       "length": 2,
       "value": "11"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
       "kind": "IntegerLiteral",
       "offset": 1497,
       "length": 2,
       "value": "12"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
       "kind": "StringLiteral",
       "offset": 1544,
       "length": 51,
       "value": "\"com.apple.UIKit.SimulatorSlowMotionAnimationState\""
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
       "kind": "Array",
       "offset": 20942,
       "length": 2,
       "value": "[]"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
       "kind": "StringLiteral",
       "offset": 27031,
       "length": 24,
       "value": "\"kTCCServiceAddressBook\""
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
       "kind": "StringLiteral",
       "offset": 27093,
       "length": 19,
       "value": "\"kTCCServicePhotos\""
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
       "kind": "StringLiteral",
       "offset": 27150,
       "length": 19,
       "value": "\"kTCCServiceCamera\""
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
       "kind": "StringLiteral",
       "offset": 27211,
       "length": 23,
       "value": "\"kTCCServiceMicrophone\""
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
       "kind": "StringLiteral",
       "offset": 27375,
       "length": 25,
       "value": "\"kTCCServiceContactsFull\""
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
       "kind": "StringLiteral",
       "offset": 27438,
       "length": 19,
       "value": "\"kTCCServicePhotos\""
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
       "kind": "StringLiteral",
       "offset": 27495,
       "length": 8,
       "value": "\"camera\""
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
       "kind": "StringLiteral",
       "offset": 27543,
       "length": 22,
       "value": "\"__CoreLocationAlways\""
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
       "kind": "StringLiteral",
       "offset": 27607,
       "length": 23,
       "value": "\"kTCCServiceMicrophone\""
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
       "kind": "StringLiteral",
       "offset": 27772,
       "length": 22,
       "value": "\"__CoreLocationAlways\""
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
       "kind": "Array",
       "offset": 27870,
       "length": 207,
       "value": "[\"AddressBook.sqlitedb\", \"AddressBook.sqlitedb-shm\", \"AddressBook.sqlitedb-wal\", \"AddressBookImages.sqlitedb\", \"AddressBookImages.sqlitedb-shm\", \"AddressBookImages.sqlitedb-wal\"]"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Strategies\/FBSimulatorShutdownStrategy.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Strategies\/FBSimulatorShutdownStrategy.swift",
       "kind": "IntegerLiteral",
       "offset": 1937,
       "length": 3,
       "value": "164"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideo.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideo.swift",
       "kind": "BooleanLiteral",
       "offset": 1400,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideo.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideo.swift",
       "kind": "IntegerLiteral",
       "offset": 1632,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideo.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideo.swift",
       "kind": "IntegerLiteral",
       "offset": 1643,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideo.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideo.swift",
       "kind": "IntegerLiteral",
       "offset": 1652,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideo.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideo.swift",
       "kind": "IntegerLiteral",
       "offset": 1662,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideo.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideo.swift",
       "kind": "BooleanLiteral",
       "offset": 1690,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "IntegerLiteral",
       "offset": 14120,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "BooleanLiteral",
       "offset": 14145,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "BooleanLiteral",
       "offset": 14183,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "FloatLiteral",
       "offset": 14317,
       "length": 3,
       "value": "5.0"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "IntegerLiteral",
       "offset": 34265,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "IntegerLiteral",
       "offset": 34306,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "IntegerLiteral",
       "offset": 34334,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "IntegerLiteral",
       "offset": 34934,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "IntegerLiteral",
       "offset": 34966,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "IntegerLiteral",
       "offset": 36789,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "IntegerLiteral",
       "offset": 36800,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "IntegerLiteral",
       "offset": 36809,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "IntegerLiteral",
       "offset": 36819,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "IntegerLiteral",
       "offset": 37436,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "IntegerLiteral",
       "offset": 37447,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "IntegerLiteral",
       "offset": 37456,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "IntegerLiteral",
       "offset": 37466,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "BooleanLiteral",
       "offset": 70104,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "BooleanLiteral",
       "offset": 73243,
       "length": 4,
       "value": "true"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "IntegerLiteral",
       "offset": 75610,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "IntegerLiteral",
       "offset": 75649,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "IntegerLiteral",
       "offset": 75687,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "FloatLiteral",
       "offset": 75714,
       "length": 3,
       "value": "0.0"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "FloatLiteral",
       "offset": 75773,
       "length": 3,
       "value": "0.0"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Commands\/FBSimulatorXCTestCommands.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Commands\/FBSimulatorXCTestCommands.swift",
       "kind": "IntegerLiteral",
       "offset": 422,
       "length": 1,
       "value": "5"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Commands\/FBSimulatorXCTestCommands.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Commands\/FBSimulatorXCTestCommands.swift",
       "kind": "StringLiteral",
       "offset": 452,
       "length": 23,
       "value": "\"TESTMANAGERD_SIM_SOCK\""
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Commands\/FBSimulatorXCTestCommands.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Commands\/FBSimulatorXCTestCommands.swift",
       "kind": "BooleanLiteral",
       "offset": 674,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Commands\/FBSimulatorXCTestCommands.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Commands\/FBSimulatorXCTestCommands.swift",
       "kind": "StringLiteral",
       "offset": 4231,
       "length": 74,
       "value": "\"Platforms\/iPhoneSimulator.platform\/Developer\/Library\/Xcode\/Agents\/xctest\""
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Framebuffer\/FBSurfaceImageGenerator.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Framebuffer\/FBSurfaceImageGenerator.swift",
       "kind": "IntegerLiteral",
       "offset": 559,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Framebuffer\/FBVideoFileWriter.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Framebuffer\/FBVideoFileWriter.swift",
       "kind": "BooleanLiteral",
       "offset": 2651,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Framebuffer\/FBVideoFileWriter.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Framebuffer\/FBVideoFileWriter.swift",
       "kind": "Array",
       "offset": 2942,
       "length": 2,
       "value": "[]"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Framebuffer\/FBVideoFileWriter.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Framebuffer\/FBVideoFileWriter.swift",
       "kind": "BooleanLiteral",
       "offset": 3133,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayCoordinateTransform.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayCoordinateTransform.swift",
       "kind": "IntegerLiteral",
       "offset": 5608,
       "length": 2,
       "value": "24"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
       "kind": "Array",
       "offset": 2991,
       "length": 2,
       "value": "[]"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
       "kind": "StringLiteral",
       "offset": 3091,
       "length": 37,
       "value": "\"com.facebook.sime2e.overlay-effects\""
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
       "kind": "Dictionary",
       "offset": 3912,
       "length": 3,
       "value": "[]"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
       "kind": "Dictionary",
       "offset": 4148,
       "length": 3,
       "value": "[]"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
       "kind": "Dictionary",
       "offset": 4462,
       "length": 3,
       "value": "[]"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
       "kind": "Dictionary",
       "offset": 4868,
       "length": 3,
       "value": "[]"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
       "kind": "FloatLiteral",
       "offset": 5031,
       "length": 3,
       "value": "1.0"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
       "kind": "IntegerLiteral",
       "offset": 19193,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
       "kind": "IntegerLiteral",
       "offset": 19202,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
       "kind": "FloatLiteral",
       "offset": 19207,
       "length": 5,
       "value": "255.0"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
       "kind": "IntegerLiteral",
       "offset": 19215,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
       "kind": "IntegerLiteral",
       "offset": 19291,
       "length": 1,
       "value": "1"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
       "kind": "IntegerLiteral",
       "offset": 19300,
       "length": 1,
       "value": "1"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
       "kind": "FloatLiteral",
       "offset": 19305,
       "length": 5,
       "value": "255.0"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
       "kind": "IntegerLiteral",
       "offset": 19313,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
       "kind": "IntegerLiteral",
       "offset": 19388,
       "length": 1,
       "value": "2"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
       "kind": "IntegerLiteral",
       "offset": 19397,
       "length": 1,
       "value": "2"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
       "kind": "FloatLiteral",
       "offset": 19402,
       "length": 5,
       "value": "255.0"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
       "kind": "IntegerLiteral",
       "offset": 19410,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/pvc8\/.build\/dependencies\/idb\/FBSimulatorControl\/HID\/XPCEncoder.swift",
+      "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/HID\/XPCEncoder.swift",
       "kind": "Array",
       "offset": 1807,
       "length": 2,

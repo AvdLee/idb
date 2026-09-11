@@ -6,11 +6,15 @@
 	<dict>
 		<key>Resources/Info.plist</key>
 		<data>
-		FcpHElOyCk1nX2bbHSV6nDUEQsc=
+		XJctuFf19ROcFDIuy4dcPC8S5mc=
 		</data>
 		<key>Resources/README.md</key>
 		<data>
 		45vjNNC+ZqiGTAQC00+vbalC5hM=
+		</data>
+		<key>Resources/SimulatorFrameworkBridge</key>
+		<data>
+		zx9oPTr9Dd9nAaj7YbecNJFhgaQ=
 		</data>
 		<key>Resources/package.xcworkspace/contents.xcworkspacedata</key>
 		<data>
@@ -58,7 +62,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			pew9Yan64EZB/18uN86OBb3J2UQePhwGB25Wrkei1bg=
+			RfXSIbhF7hKd0kK4v5SnxV117tpyLA/1tr3/5wOFm2k=
 			</data>
 		</dict>
 		<key>Headers/FBSimulatorControl.h</key>
@@ -79,70 +83,56 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			n5T+AjiqCZzUOfB99PGL0inx5OlkG8MEC3jH1TrHipE=
+			+4991B2vHG66fE51V61LOlS8mpUj8C8nZKmoEig7aM4=
 			</data>
 		</dict>
 		<key>Modules/FBSimulatorControl.swiftmodule/arm64-apple-macos.private.swiftinterface</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			yzH2GXgH3Zq3gSmgPTuZbiKPBnUr4DfeQdZiMQMzoIs=
+			nvmS4+dtb50Lkbv7PQezT9n0VFt3Jz0OdwybBgfufRQ=
 			</data>
 		</dict>
 		<key>Modules/FBSimulatorControl.swiftmodule/arm64-apple-macos.swiftdoc</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			8xJE5B0GmAcoj9n/jCAJGjVbVJgbopk6qzJmdbcW+Tg=
+			LAPhcA2VkbUSehsxzuqHwAJyBSrVWawrxMSHpPyHZ88=
 			</data>
 		</dict>
 		<key>Modules/FBSimulatorControl.swiftmodule/arm64-apple-macos.swiftinterface</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			yzH2GXgH3Zq3gSmgPTuZbiKPBnUr4DfeQdZiMQMzoIs=
-			</data>
-		</dict>
-		<key>Modules/FBSimulatorControl.swiftmodule/arm64-apple-macos.swiftmodule</key>
-		<dict>
-			<key>hash2</key>
-			<data>
-			5ArSG6rWcNd92wZV6dupHvUovCttKMUWOn79ujHCCTc=
+			nvmS4+dtb50Lkbv7PQezT9n0VFt3Jz0OdwybBgfufRQ=
 			</data>
 		</dict>
 		<key>Modules/FBSimulatorControl.swiftmodule/x86_64-apple-macos.abi.json</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			n5T+AjiqCZzUOfB99PGL0inx5OlkG8MEC3jH1TrHipE=
+			+4991B2vHG66fE51V61LOlS8mpUj8C8nZKmoEig7aM4=
 			</data>
 		</dict>
 		<key>Modules/FBSimulatorControl.swiftmodule/x86_64-apple-macos.private.swiftinterface</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			7vC1aqCWLqVlGXJ38VX+RoheiMxasy85s5WZqfYVaaU=
+			H9Dg12+GXwPaTvfJ/mKHPoYn82MSEgx+4DTgPGCXCmw=
 			</data>
 		</dict>
 		<key>Modules/FBSimulatorControl.swiftmodule/x86_64-apple-macos.swiftdoc</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			NqhguWTvxt/ck/vQciKQigFyjKLlW4y34cHaod89s+Y=
+			/rTJFX1XUKRMDvbpspZnioiCgT4t7MekNO8BAG//L/0=
 			</data>
 		</dict>
 		<key>Modules/FBSimulatorControl.swiftmodule/x86_64-apple-macos.swiftinterface</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			7vC1aqCWLqVlGXJ38VX+RoheiMxasy85s5WZqfYVaaU=
-			</data>
-		</dict>
-		<key>Modules/FBSimulatorControl.swiftmodule/x86_64-apple-macos.swiftmodule</key>
-		<dict>
-			<key>hash2</key>
-			<data>
-			x4wGOI9kzKUSLDnqzy1CXzLbJR8eJm3+YuCQG04kAEE=
+			H9Dg12+GXwPaTvfJ/mKHPoYn82MSEgx+4DTgPGCXCmw=
 			</data>
 		</dict>
 		<key>Modules/module.modulemap</key>
@@ -156,7 +146,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			zqssEMCZHUxk+CmaMGGhbftQcO9assiBeeSLPmYr9SM=
+			kmpUPNMLyTI1nLXJ9hSuqHijgUtVGjtU/G7LqvI5Igs=
 			</data>
 		</dict>
 		<key>Resources/README.md</key>
@@ -164,6 +154,13 @@
 			<key>hash2</key>
 			<data>
 			bTXsnixwcGyFdCsFAdh6SZXB4IK5InMP0K6viFoK0Tw=
+			</data>
+		</dict>
+		<key>Resources/SimulatorFrameworkBridge</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			V8MAExlBCYFQhfF1dqGSXg9hAI0x4pDF8V1g/wZRDuk=
 			</data>
 		</dict>
 		<key>Resources/package.xcworkspace/contents.xcworkspacedata</key>
