@@ -10,6 +10,7 @@
 // these types (e.g. FBSimulatorBootOptions).
 #import <FBSimulatorControl/FBFramebuffer.h>
 #import <FBSimulatorControl/FBAXRuntimeBridge.h>
+#import <FBSimulatorControl/FBSimulatorLaunchdSpawnBridge.h>
 #import <FBSimulatorControl/FBPeriodicStatsTimer.h>
 #import <FBSimulatorControl/FBSimulator.h>
 #import <FBSimulatorControl/FBSimulatorBootConfiguration.h>

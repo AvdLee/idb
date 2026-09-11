@@ -33364,16 +33364,6 @@
       },
       {
         "kind": "Import",
-        "name": "FBSimulatorLaunchdSpawnBridge",
-        "printedName": "FBSimulatorLaunchdSpawnBridge",
-        "declKind": "Import",
-        "moduleName": "FBSimulatorControl",
-        "declAttributes": [
-          "ImplementationOnly"
-        ]
-      },
-      {
-        "kind": "Import",
         "name": "FBControlCore",
         "printedName": "FBControlCore",
         "declKind": "Import",
@@ -64343,7 +64333,7 @@
     {
       "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Commands\/FBSimulatorProcessSpawnCommands.swift",
       "kind": "IntegerLiteral",
-      "offset": 5249,
+      "offset": 5191,
       "length": 1,
       "value": "0"
     },
