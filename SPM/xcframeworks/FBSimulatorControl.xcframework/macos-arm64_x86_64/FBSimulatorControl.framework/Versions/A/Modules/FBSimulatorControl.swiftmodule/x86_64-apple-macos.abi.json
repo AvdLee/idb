@@ -3461,6 +3461,116 @@
         "children": [
           {
             "kind": "Function",
+            "name": "notifier",
+            "printedName": "notifier(for:queue:block:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "CoreSimulatorNotifier",
+                "printedName": "FBSimulatorControl.CoreSimulatorNotifier",
+                "usr": "s:18FBSimulatorControl21CoreSimulatorNotifierC"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "SimDevice",
+                "printedName": "CoreSimulator.SimDevice",
+                "usr": "c:objc(cs)SimDevice"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "DispatchQueue",
+                "printedName": "Dispatch.DispatchQueue",
+                "usr": "c:objc(cs)OS_dispatch_queue"
+              },
+              {
+                "kind": "TypeFunc",
+                "name": "Function",
+                "printedName": "([Swift.String : Any]) -> ()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Dictionary",
+                    "printedName": "[Swift.String : Any]",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "String",
+                        "printedName": "Swift.String",
+                        "usr": "s:SS"
+                      },
+                      {
+                        "kind": "TypeNominal",
+                        "name": "ProtocolComposition",
+                        "printedName": "Any"
+                      }
+                    ],
+                    "usr": "s:SD"
+                  }
+                ]
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:18FBSimulatorControl21CoreSimulatorNotifierC8notifier3for5queue5blockACSo9SimDeviceC_So012OS_dispatch_H0CySDySSypGYbctFZ",
+            "mangledName": "$s18FBSimulatorControl21CoreSimulatorNotifierC8notifier3for5queue5blockACSo9SimDeviceC_So012OS_dispatch_H0CySDySSypGYbctFZ",
+            "moduleName": "FBSimulatorControl",
+            "static": true,
+            "declAttributes": [
+              "Final",
+              "AccessControl",
+              "RawDocComment"
+            ],
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "resolveLeavesState",
+            "printedName": "resolveLeavesState(_:for:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "FBFuture",
+                "printedName": "FBControlCore.FBFuture<Foundation.NSNull>",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "NSNull",
+                    "printedName": "Foundation.NSNull",
+                    "usr": "c:objc(cs)NSNull"
+                  }
+                ],
+                "usr": "c:objc(cs)FBFuture"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "FBiOSTargetState",
+                "printedName": "FBControlCore.FBiOSTargetState",
+                "usr": "c:@E@FBiOSTargetState"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "SimDevice",
+                "printedName": "CoreSimulator.SimDevice",
+                "usr": "c:objc(cs)SimDevice"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:18FBSimulatorControl21CoreSimulatorNotifierC18resolveLeavesState_3forSo8FBFutureCySo6NSNullCGSo011FBiOSTargetH0V_So9SimDeviceCtFZ",
+            "mangledName": "$s18FBSimulatorControl21CoreSimulatorNotifierC18resolveLeavesState_3forSo8FBFutureCySo6NSNullCGSo011FBiOSTargetH0V_So9SimDeviceCtFZ",
+            "moduleName": "FBSimulatorControl",
+            "static": true,
+            "declAttributes": [
+              "Final",
+              "AccessControl"
+            ],
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
             "name": "terminate",
             "printedName": "terminate()",
             "children": [
@@ -9301,6 +9411,55 @@
         "children": [
           {
             "kind": "Var",
+            "name": "device",
+            "printedName": "device",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "SimDevice",
+                "printedName": "CoreSimulator.SimDevice",
+                "usr": "c:objc(cs)SimDevice"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:18FBSimulatorControl0A0C6deviceSo9SimDeviceCvp",
+            "mangledName": "$s18FBSimulatorControl0A0C6deviceSo9SimDeviceCvp",
+            "moduleName": "FBSimulatorControl",
+            "declAttributes": [
+              "Final",
+              "HasStorage",
+              "AccessControl",
+              "RawDocComment"
+            ],
+            "isLet": true,
+            "hasStorage": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "SimDevice",
+                    "printedName": "CoreSimulator.SimDevice",
+                    "usr": "c:objc(cs)SimDevice"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:18FBSimulatorControl0A0C6deviceSo9SimDeviceCvg",
+                "mangledName": "$s18FBSimulatorControl0A0C6deviceSo9SimDeviceCvg",
+                "moduleName": "FBSimulatorControl",
+                "implicit": true,
+                "declAttributes": [
+                  "Final"
+                ],
+                "accessorKind": "get"
+              }
+            ]
+          },
+          {
+            "kind": "Var",
             "name": "set",
             "printedName": "set",
             "children": [
@@ -9604,6 +9763,123 @@
                 "accessorKind": "get"
               }
             ]
+          },
+          {
+            "kind": "Function",
+            "name": "fromSimDevice",
+            "printedName": "fromSimDevice(_:configuration:set:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "FBSimulator",
+                "printedName": "FBSimulatorControl.FBSimulator",
+                "usr": "s:18FBSimulatorControl0A0C"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "SimDevice",
+                "printedName": "CoreSimulator.SimDevice",
+                "usr": "c:objc(cs)SimDevice"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "FBSimulatorControl.FBSimulatorConfiguration?",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "FBSimulatorConfiguration",
+                    "printedName": "FBSimulatorControl.FBSimulatorConfiguration",
+                    "usr": "s:18FBSimulatorControl0A13ConfigurationV"
+                  }
+                ],
+                "usr": "s:Sq"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "FBSimulatorSet",
+                "printedName": "FBSimulatorControl.FBSimulatorSet",
+                "usr": "s:18FBSimulatorControl0A3SetC"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:18FBSimulatorControl0A0C13fromSimDevice_13configuration3setACSo0dE0C_AA0A13ConfigurationVSgAA0A3SetCtFZ",
+            "mangledName": "$s18FBSimulatorControl0A0C13fromSimDevice_13configuration3setACSo0dE0C_AA0A13ConfigurationVSgAA0A3SetCtFZ",
+            "moduleName": "FBSimulatorControl",
+            "static": true,
+            "declAttributes": [
+              "Final",
+              "AccessControl",
+              "RawDocComment"
+            ],
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Constructor",
+            "name": "init",
+            "printedName": "init(device:configuration:set:auxillaryDirectory:logger:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "FBSimulator",
+                "printedName": "FBSimulatorControl.FBSimulator",
+                "usr": "s:18FBSimulatorControl0A0C"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "SimDevice",
+                "printedName": "CoreSimulator.SimDevice",
+                "usr": "c:objc(cs)SimDevice"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "FBSimulatorConfiguration",
+                "printedName": "FBSimulatorControl.FBSimulatorConfiguration",
+                "usr": "s:18FBSimulatorControl0A13ConfigurationV"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "FBSimulatorControl.FBSimulatorSet?",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "FBSimulatorSet",
+                    "printedName": "FBSimulatorControl.FBSimulatorSet",
+                    "usr": "s:18FBSimulatorControl0A3SetC"
+                  }
+                ],
+                "usr": "s:Sq"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "String",
+                "printedName": "Swift.String",
+                "usr": "s:SS"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "(any FBControlCore.FBControlCoreLogger)?",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "FBControlCoreLogger",
+                    "printedName": "any FBControlCore.FBControlCoreLogger",
+                    "usr": "c:@M@FBControlCore@objc(pl)FBControlCoreLogger"
+                  }
+                ],
+                "usr": "s:Sq"
+              }
+            ],
+            "declKind": "Constructor",
+            "usr": "s:18FBSimulatorControl0A0C6device13configuration3set18auxillaryDirectory6loggerACSo9SimDeviceC_AA0A13ConfigurationVAA0A3SetCSgSS13FBControlCore0mN6Logger_pSgtcfc",
+            "mangledName": "$s18FBSimulatorControl0A0C6device13configuration3set18auxillaryDirectory6loggerACSo9SimDeviceC_AA0A13ConfigurationVAA0A3SetCSgSS13FBControlCore0mN6Logger_pSgtcfc",
+            "moduleName": "FBSimulatorControl",
+            "declAttributes": [
+              "AccessControl"
+            ],
+            "init_kind": "Designated"
           },
           {
             "kind": "Var",
@@ -12283,7 +12559,6 @@
           "AccessControl",
           "RawDocComment"
         ],
-        "hasMissingDesignatedInitializers": true,
         "conformances": [
           {
             "kind": "Conformance",
@@ -17277,6 +17552,65 @@
                 "accessorKind": "get"
               }
             ]
+          },
+          {
+            "kind": "Function",
+            "name": "inferSimulatorConfiguration",
+            "printedName": "inferSimulatorConfiguration(fromDevice:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "FBSimulatorConfiguration",
+                "printedName": "FBSimulatorControl.FBSimulatorConfiguration",
+                "usr": "s:18FBSimulatorControl0A13ConfigurationV"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "SimDevice",
+                "printedName": "CoreSimulator.SimDevice",
+                "usr": "c:objc(cs)SimDevice"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:18FBSimulatorControl0A13ConfigurationV014inferSimulatorC010fromDeviceACSo03SimG0C_tKFZ",
+            "mangledName": "$s18FBSimulatorControl0A13ConfigurationV014inferSimulatorC010fromDeviceACSo03SimG0C_tKFZ",
+            "moduleName": "FBSimulatorControl",
+            "static": true,
+            "declAttributes": [
+              "AccessControl"
+            ],
+            "isFromExtension": true,
+            "throwing": true,
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "inferSimulatorConfigurationFromDeviceSynthesizingMissing",
+            "printedName": "inferSimulatorConfigurationFromDeviceSynthesizingMissing(_:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "FBSimulatorConfiguration",
+                "printedName": "FBSimulatorControl.FBSimulatorConfiguration",
+                "usr": "s:18FBSimulatorControl0A13ConfigurationV"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "SimDevice",
+                "printedName": "CoreSimulator.SimDevice",
+                "usr": "c:objc(cs)SimDevice"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:18FBSimulatorControl0A13ConfigurationV014inferSimulatorC29FromDeviceSynthesizingMissingyACSo03SimG0CFZ",
+            "mangledName": "$s18FBSimulatorControl0A13ConfigurationV014inferSimulatorC29FromDeviceSynthesizingMissingyACSo03SimG0CFZ",
+            "moduleName": "FBSimulatorControl",
+            "static": true,
+            "declAttributes": [
+              "AccessControl"
+            ],
+            "isFromExtension": true,
+            "funcSelfKind": "NonMutating"
           },
           {
             "kind": "Function",
@@ -38482,6 +38816,66 @@
             ],
             "throwing": true,
             "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "supportedRuntimes",
+            "printedName": "supportedRuntimes()",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Array",
+                "printedName": "[CoreSimulator.SimRuntime]",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "SimRuntime",
+                    "printedName": "CoreSimulator.SimRuntime",
+                    "usr": "c:objc(cs)SimRuntime"
+                  }
+                ],
+                "usr": "s:Sa"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:18FBSimulatorControl23SimulatorServiceContextC17supportedRuntimesSaySo10SimRuntimeCGyF",
+            "mangledName": "$s18FBSimulatorControl23SimulatorServiceContextC17supportedRuntimesSaySo10SimRuntimeCGyF",
+            "moduleName": "FBSimulatorControl",
+            "declAttributes": [
+              "Final",
+              "AccessControl"
+            ],
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "supportedDeviceTypes",
+            "printedName": "supportedDeviceTypes()",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Array",
+                "printedName": "[CoreSimulator.SimDeviceType]",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "SimDeviceType",
+                    "printedName": "CoreSimulator.SimDeviceType",
+                    "usr": "c:objc(cs)SimDeviceType"
+                  }
+                ],
+                "usr": "s:Sa"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:18FBSimulatorControl23SimulatorServiceContextC20supportedDeviceTypesSaySo03SimG4TypeCGyF",
+            "mangledName": "$s18FBSimulatorControl23SimulatorServiceContextC20supportedDeviceTypesSaySo03SimG4TypeCGyF",
+            "moduleName": "FBSimulatorControl",
+            "declAttributes": [
+              "Final",
+              "AccessControl"
+            ],
+            "funcSelfKind": "NonMutating"
           }
         ],
         "declKind": "Class",
@@ -39181,6 +39575,54 @@
           },
           {
             "kind": "Var",
+            "name": "deviceSet",
+            "printedName": "deviceSet",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "SimDeviceSet",
+                "printedName": "CoreSimulator.SimDeviceSet",
+                "usr": "c:objc(cs)SimDeviceSet"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:18FBSimulatorControl0A3SetC06deviceC0So09SimDeviceC0Cvp",
+            "mangledName": "$s18FBSimulatorControl0A3SetC06deviceC0So09SimDeviceC0Cvp",
+            "moduleName": "FBSimulatorControl",
+            "declAttributes": [
+              "Final",
+              "HasStorage",
+              "AccessControl"
+            ],
+            "isLet": true,
+            "hasStorage": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "SimDeviceSet",
+                    "printedName": "CoreSimulator.SimDeviceSet",
+                    "usr": "c:objc(cs)SimDeviceSet"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:18FBSimulatorControl0A3SetC06deviceC0So09SimDeviceC0Cvg",
+                "mangledName": "$s18FBSimulatorControl0A3SetC06deviceC0So09SimDeviceC0Cvg",
+                "moduleName": "FBSimulatorControl",
+                "implicit": true,
+                "declAttributes": [
+                  "Final"
+                ],
+                "accessorKind": "get"
+              }
+            ]
+          },
+          {
+            "kind": "Var",
             "name": "delegate",
             "printedName": "delegate",
             "children": [
@@ -39435,6 +39877,71 @@
                 "accessorKind": "get"
               }
             ]
+          },
+          {
+            "kind": "Function",
+            "name": "set",
+            "printedName": "set(withConfiguration:deviceSet:delegate:logger:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "FBSimulatorSet",
+                "printedName": "FBSimulatorControl.FBSimulatorSet",
+                "usr": "s:18FBSimulatorControl0A3SetC"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "FBSimulatorControlConfiguration",
+                "printedName": "FBSimulatorControl.FBSimulatorControlConfiguration",
+                "usr": "s:18FBSimulatorControl0aB13ConfigurationV"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "SimDeviceSet",
+                "printedName": "CoreSimulator.SimDeviceSet",
+                "usr": "c:objc(cs)SimDeviceSet"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "(any FBControlCore.FBiOSTargetSetDelegate)?",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "FBiOSTargetSetDelegate",
+                    "printedName": "any FBControlCore.FBiOSTargetSetDelegate",
+                    "usr": "s:13FBControlCore22FBiOSTargetSetDelegateP"
+                  }
+                ],
+                "usr": "s:Sq"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "(any FBControlCore.FBControlCoreLogger)?",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "FBControlCoreLogger",
+                    "printedName": "any FBControlCore.FBControlCoreLogger",
+                    "usr": "c:@M@FBControlCore@objc(pl)FBControlCoreLogger"
+                  }
+                ],
+                "usr": "s:Sq"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:18FBSimulatorControl0A3SetC3set17withConfiguration06deviceC08delegate6loggerAcA0abF0V_So09SimDeviceC0C13FBControlCore011FBiOSTargetC8Delegate_pSgAM0lM6Logger_pSgtKFZ",
+            "mangledName": "$s18FBSimulatorControl0A3SetC3set17withConfiguration06deviceC08delegate6loggerAcA0abF0V_So09SimDeviceC0C13FBControlCore011FBiOSTargetC8Delegate_pSgAM0lM6Logger_pSgtKFZ",
+            "moduleName": "FBSimulatorControl",
+            "static": true,
+            "declAttributes": [
+              "Final",
+              "AccessControl",
+              "RawDocComment"
+            ],
+            "throwing": true,
+            "funcSelfKind": "NonMutating"
           },
           {
             "kind": "Function",

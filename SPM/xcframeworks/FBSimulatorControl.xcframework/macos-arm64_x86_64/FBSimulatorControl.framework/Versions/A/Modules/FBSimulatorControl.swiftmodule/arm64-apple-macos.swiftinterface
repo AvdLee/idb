@@ -389,7 +389,7 @@ public enum SimulatorFrameworkBridgeError : Swift::Error, Foundation::LocalizedE
     get
   }
 }
-@_hasMissingDesignatedInitializers final public class FBSimulator : FBControlCore::FBiOSTarget, Swift::Hashable, Swift::CustomStringConvertible, @unchecked Swift::Sendable {
+final public class FBSimulator : FBControlCore::FBiOSTarget, Swift::Hashable, Swift::CustomStringConvertible, @unchecked Swift::Sendable {
   final public var set: FBSimulatorSet? {
     get
   }
