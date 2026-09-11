@@ -69,6 +69,8 @@ build_xcframework() {
     xcodebuild -create-xcframework -framework "$framework_path" -output "$xcframework_path"
 
     if [ "$framework_name" = "FBSimulatorControl" ]; then
+        codesign --force --sign - --timestamp=none \
+            "${xcframework_path}/macos-arm64_x86_64/${framework_name}.framework"
         local bridge_path="${xcframework_path}/macos-arm64_x86_64/${framework_name}.framework/Versions/A/Resources/SimulatorFrameworkBridge"
         if [ ! -x "$bridge_path" ]; then
             echo "error: SimulatorFrameworkBridge was not packaged as an executable resource" >&2
