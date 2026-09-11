@@ -6,7 +6,6 @@
  */
 
 @_implementationOnly import CoreSimulator
-@_implementationOnly import FBSimulatorLaunchdSpawnBridge
 @preconcurrency import FBControlCore
 import Foundation
 
