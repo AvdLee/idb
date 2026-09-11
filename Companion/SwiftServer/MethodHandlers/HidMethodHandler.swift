@@ -15,7 +15,7 @@ struct HidMethodHandler {
 
   let commandExecutor: FBIDBCommandExecutor
 
-  func handle(requestStream: GRPCAsyncRequestStream<Idb_HIDEvent>, context: GRPCAsyncServerCallContext) async throws -> Idb_HIDResponse {
+  func handle(requestStream: RequestStreamReader<Idb_HIDEvent>, context: GRPCAsyncServerCallContext) async throws -> Idb_HIDResponse {
     for try await request in requestStream {
       let event = try fbSimulatorHIDEvent(from: request)
       try await commandExecutor.hid(event)
@@ -84,8 +84,32 @@ struct HidMethodHandler {
       let radius = pinch.radius > 0 ? pinch.radius : 100.0
       return FBSimulatorHIDEvent.pinchAt(x: centerX, y: centerY, scale: scale, duration: duration, radius: radius)
 
+    case let .orientation(orientation):
+      guard let deviceOrientation = fbSimulatorHIDDeviceOrientation(from: orientation.orientation) else {
+        throw GRPCStatus(code: .invalidArgument, message: "Unrecognized orientation type")
+      }
+      return .deviceOrientation(deviceOrientation)
+
+    case .shake:
+      return .shake
+
     case .none:
       throw GRPCStatus(code: .invalidArgument, message: "Unrecognized request.event")
+    }
+  }
+
+  private func fbSimulatorHIDDeviceOrientation(from request: Idb_HIDEvent.HIDOrientationType) -> FBSimulatorHIDDeviceOrientation? {
+    switch request {
+    case .portrait:
+      return .portrait
+    case .portraitUpsideDown:
+      return .portraitUpsideDown
+    case .landscapeLeft:
+      return .landscapeLeft
+    case .landscapeRight:
+      return .landscapeRight
+    case .UNRECOGNIZED:
+      return nil
     }
   }
 

@@ -7,6 +7,17 @@
 set -e
 set -o pipefail
 
+# Everything below is relative to the Source directory, including a `rm -rf Build`
+# and a symlink into it, so establish that we are in it before anything runs.
+# This covers `help` too: exempting it would leave the destructive setup below
+# reachable from an arbitrary directory, and the error already says what to do.
+for manifest in Package.swift Companion/project.yml; do
+  if [ ! -f "$manifest" ]; then
+    echo "error: $manifest not found; build.sh must run from the idb Source directory" >&2
+    exit 1
+  fi
+done
+
 if hash xcpretty 2>/dev/null; then
   HAS_XCPRETTY=true
 fi
@@ -41,7 +52,6 @@ fi
 # XcodeGen Project Generation
 # =============================================================================
 
-GRPC_SWIFT_VERSION="1.23.1"
 GRPC_SWIFT_DIR="$BUILD_DIRECTORY/grpc-swift"
 
 function check_xcodegen() {
@@ -181,7 +191,147 @@ function check_protobuf() {
   fi
 }
 
+# Defined once, in Package.swift. The codegen plugin must be the same version as
+# the runtime it generates against, so derive it rather than restating it here.
+function resolve_grpc_swift_version() {
+  GRPC_SWIFT_VERSION="$(sed -n 's/.*grpc-swift\.git", exact: "\([^"]*\)".*/\1/p' Package.swift)"
+  if [ -z "$GRPC_SWIFT_VERSION" ]; then
+    echo "error: Package.swift does not pin grpc-swift to an exact version" >&2
+    exit 1
+  fi
+}
+
+# Lines inside dependencies: that the extractor below cannot read. SwiftPM
+# accepts a .package(...) split over several lines, and the extractor only sees
+# one written on a single line -- so a split declaration lands in neither
+# listing, not pinned, not unpinned, simply absent. Nothing on such a line names
+# the package, so the line number is what identifies it.
+function package_swift_unreadable_entries() {
+  awk '
+    /^[[:space:]]*\/\// { next }
+    /\.package\(/ && !/\.package\(url: "[^"]*"/ { print FNR }
+  ' Package.swift
+}
+
+# "<package> <version>" per dependency, and nothing at all for one that is not
+# pinned exactly -- which is what makes the two listings below comparable.
+# Commented-out lines go first: they declare nothing, and left in they would be
+# reported as an unpinned dependency that is not there. The comment cannot be
+# stripped to end of line instead, because every url: contains a // of its own.
+function package_swift_pins() {
+  sed -n '/^[[:space:]]*\/\//d; s|.*\.package(url: "[^"]*/\([^"/]*\)\.git", exact: "\([^"]*\)").*|\1 \2|p' Package.swift
+}
+
+function package_swift_packages() {
+  sed -n '/^[[:space:]]*\/\//d; s|.*\.package(url: "[^"]*/\([^"/]*\)\.git".*|\1|p' Package.swift
+}
+
+# The packages: block ends at the first non-blank line that is not indented, and
+# an entry ends at the first line indented less than its own keys, so neither can
+# run on into a sibling. An entry header is a bare key with nothing after the
+# colon; anything else at that indentation is an entry this cannot read, and
+# companion_unreadable_entries below reports it rather than letting it vanish.
+function _companion_packages_awk() {
+  awk -v want_version="$1" '
+    /^packages:[[:space:]]*$/ { in_packages = 1; next }
+    in_packages && NF && !/^[[:space:]]/ { in_packages = 0 }
+    !in_packages { next }
+    /^  [^[:space:]#][^:]*:[[:space:]]*$/ {
+      name = $1
+      sub(/:$/, "", name)
+      if (!want_version) print name
+      next
+    }
+    want_version && name != "" && ($1 == "exactVersion:" || $1 == "version:") {
+      version = $2
+      gsub(/["\047]/, "", version)
+      print name, version
+    }
+  ' Companion/project.yml
+}
+
+function companion_pins() {
+  _companion_packages_awk 1
+}
+
+function companion_packages() {
+  _companion_packages_awk ""
+}
+
+# Entries inside packages: that the parser above cannot read. A package written
+# in flow form (`  swift-nio: {url: ..., from: "1.2.0"}`) matches no entry
+# header, so it lands in neither listing -- not pinned, not unpinned, simply
+# absent. Naming it is the only way the guard can refuse a manifest it cannot
+# read rather than pass one it never checked.
+function companion_unreadable_entries() {
+  awk '
+    /^packages:[[:space:]]*$/ { in_packages = 1; next }
+    in_packages && NF && !/^[[:space:]]/ { in_packages = 0 }
+    !in_packages { next }
+    /^  [^[:space:]#][^:]*:[[:space:]]*$/ { next }
+    /^  [^[:space:]#]/ {
+      name = $1
+      sub(/:$/, "", name)
+      print name
+    }
+  ' Companion/project.yml
+}
+
+# Every dependency of both manifests is pinned exactly, and the ones they share
+# are pinned to the same version. XcodeGen resolves the companion's packages from
+# its own manifest and consults Package.swift for nothing, so agreement between
+# the two can only be asserted, never derived -- and the companion is the manifest
+# that builds the binary which ships.
+function check_package_pins() {
+  local unpinned unreadable
+  local errors=0
+
+  unreadable="$(package_swift_unreadable_entries | tr '\n' ' ')"
+  if [ -n "${unreadable// /}" ]; then
+    echo "error: Package.swift declares dependencies this check cannot read, on lines: ${unreadable% }" >&2
+    errors=1
+  fi
+
+  unreadable="$(companion_unreadable_entries | tr '\n' ' ')"
+  if [ -n "${unreadable// /}" ]; then
+    echo "error: Companion/project.yml declares these in a form this check cannot read: ${unreadable% }" >&2
+    errors=1
+  fi
+
+  unpinned="$(comm -23 <(package_swift_packages | sort) <(package_swift_pins | cut -d' ' -f1 | sort) | tr '\n' ' ')"
+  if [ -n "${unpinned// /}" ]; then
+    echo "error: Package.swift does not pin these to an exact version: ${unpinned% }" >&2
+    errors=1
+  fi
+
+  unpinned="$(comm -23 <(companion_packages | sort) <(companion_pins | cut -d' ' -f1 | sort) | tr '\n' ' ')"
+  if [ -n "${unpinned// /}" ]; then
+    echo "error: Companion/project.yml does not pin these to an exact version: ${unpinned% }" >&2
+    errors=1
+  fi
+
+  # Only the packages both declare can disagree. The companion declares three
+  # that Package.swift picks up transitively, so those have nothing to compare
+  # against and are covered by the exactness check above alone.
+  local name version companion_version
+  while read -r name version; do
+    companion_version="$(companion_pins | awk -v n="$name" '$1 == n { print $2 }')"
+    [ -z "$companion_version" ] && continue
+    if [ "$companion_version" != "$version" ]; then
+      echo "error: $name is pinned to $version in Package.swift but to $companion_version in Companion/project.yml" >&2
+      errors=1
+    fi
+  done < <(package_swift_pins)
+
+  [ "$errors" -eq 0 ] || exit 1
+}
+
 function build_grpc_swift_plugin() {
+  # Checked before the already-built early return below: a warm cache must not
+  # let a drifted pin through.
+  resolve_grpc_swift_version
+  check_package_pins
+
   # Build protoc-gen-grpc-swift from grpc-swift 1.x source
   local plugin_path="$GRPC_SWIFT_DIR/.build/release/protoc-gen-grpc-swift"
 
@@ -233,6 +383,22 @@ function generate_proto() {
   echo "Generated gRPC Swift files in $output_dir"
 }
 
+function generate_companion_project() {
+  # This is where Companion/project.yml is consumed, so it is where the pins it
+  # declares have to agree with Package.swift. Every build and test path reaches
+  # here via regenerate_projects; the codegen path checks separately, because it
+  # can run without generating a project.
+  check_package_pins
+
+  echo "Generating idb_companion project..."
+  generate_xcodeproj "Companion" "idb_companion"
+
+  # xcodegen ignores `embed: false` for a tool target dependency, so strip the
+  # leftover entry here.
+  sed -i '' '/IDBGRPCSwift.framework in Embed Frameworks/d' \
+    Companion/idb_companion.xcodeproj/project.pbxproj
+}
+
 function regenerate_projects() {
   check_xcodegen
 
@@ -244,18 +410,48 @@ function regenerate_projects() {
   generate_xcodeproj "Shims/Repl" "Repl"
   echo "Generating SimulatorFrameworkBridge project..."
   generate_xcodeproj "SimulatorFrameworkBridge" "SimulatorFrameworkBridge"
-  echo "Generating idb_companion project..."
-  generate_xcodeproj "Companion" "idb_companion"
-
-  # xcodegen ignores `embed: false` for a tool target dependency, so strip the
-  # leftover entry here.
-  sed -i '' '/IDBGRPCSwift.framework in Embed Frameworks/d' \
-    Companion/idb_companion.xcodeproj/project.pbxproj
+  echo "Generating ReplHost project..."
+  generate_xcodeproj "REPLHost" "ReplHost"
+  generate_companion_project
 }
 
 # =============================================================================
 # Build Utilities
 # =============================================================================
+
+# The minimum Xcode major version required to build, matching the prerequisite
+# documented in print_usage and README.md: the codebase requires Swift 6.2 and
+# a macOS 15 deployment target, both of which need Xcode 26.
+XCODE_MIN_MAJOR=26
+
+function check_xcode_version() {
+  # Read the version from the selected Xcode's version.plist rather than
+  # invoking xcodebuild: xcodebuild intermittently aborts when it is the
+  # first Xcode process on a fresh CI host, and a version probe should not
+  # be exposed to that. xcode-select and plutil only read on-disk state.
+  local developer_dir
+  if ! developer_dir=$(xcode-select --print-path 2>/dev/null) || [ ! -d "$developer_dir" ]; then
+    echo "error: no Xcode is selected. Install Xcode ${XCODE_MIN_MAJOR}.0 or newer and select it with xcode-select."
+    exit 1
+  fi
+  local version_plist="${developer_dir%/Contents/Developer}/Contents/version.plist"
+  if [ ! -f "$version_plist" ]; then
+    echo "error: a full Xcode ${XCODE_MIN_MAJOR}.0+ installation is required (selected developer directory has no version.plist: ${developer_dir})"
+    exit 1
+  fi
+  local version major
+  version=$(plutil -extract CFBundleShortVersionString raw "$version_plist" 2>/dev/null) || true
+  major=$(printf '%s' "$version" | sed -n 's/^\([0-9][0-9]*\).*/\1/p')
+  if [[ -z $major ]]; then
+    echo "warning: could not read the Xcode version from ${version_plist}; continuing without the version check"
+    return 0
+  fi
+  if (( major < XCODE_MIN_MAJOR )); then
+    echo "error: Xcode ${XCODE_MIN_MAJOR}.0 or newer is required to build idb, found: Xcode ${version}"
+    exit 1
+  fi
+}
+
 
 function invoke_xcodebuild() {
   local symroot="$BUILD_DIRECTORY/Products"
@@ -284,20 +480,17 @@ function build_idb_deps() {
   fi
 }
 
-function strip_framework() {
-  local FRAMEWORK_PATH="$BUILD_DIRECTORY/Products/Release/$1"
+# Only the two remaining .framework products (FBControlCore, XCTestBootstrap)
+# can nest: XCTestBootstrap re-embeds FBControlCore, and the duplicate is
+# deleted here. Pure-Swift targets build as static libraries, which never
+# nest. This last entry goes away with the last ObjC file (which lets those
+# targets become static libraries too).
+function strip_embedded_frameworks() {
+  local FRAMEWORK_PATH="$BUILD_DIRECTORY/Products/Release/XCTestBootstrap.framework/Versions/Current/Frameworks/FBControlCore.framework"
   if [ -d "$FRAMEWORK_PATH" ]; then
     echo "Stripping Framework $FRAMEWORK_PATH"
     rm -r "$FRAMEWORK_PATH"
   fi
-}
-
-function strip_embedded_frameworks() {
-  strip_framework "FBSimulatorControl.framework/Versions/Current/Frameworks/XCTestBootstrap.framework"
-  strip_framework "FBSimulatorControl.framework/Versions/Current/Frameworks/FBControlCore.framework"
-  strip_framework "FBDeviceControl.framework/Versions/Current/Frameworks/XCTestBootstrap.framework"
-  strip_framework "FBDeviceControl.framework/Versions/Current/Frameworks/FBControlCore.framework"
-  strip_framework "XCTestBootstrap.framework/Versions/Current/Frameworks/FBControlCore.framework"
 }
 
 # =============================================================================
@@ -350,17 +543,54 @@ function build_shims() {
   build_shim Repl-macOS macosx Shims/Repl/Repl.xcodeproj
 }
 
+function build_fbsimulatorcontrol_resources() {
+  build_shims
+  build_simulator_framework_bridge iOS iphonesimulator
+  build_simulator_framework_bridge tvOS appletvsimulator
+}
+
 function build_simulator_framework_bridge() {
-  # An iOS-simulator command-line executable, spawned by idb_companion inside the
-  # simulator to drive privacy/services state and the REPL socket.
+  # A command-line executable spawned by idb_companion inside the simulator to drive
+  # privacy/services state and the REPL socket. One per simulator platform, because a
+  # simulator's dyld refuses a guest built for another.
+  local platform="$1"
+  local sdk="$2"
   invoke_xcodebuild \
     ONLY_ACTIVE_ARCH=NO \
     -project SimulatorFrameworkBridge/SimulatorFrameworkBridge.xcodeproj \
-    -scheme SimulatorFrameworkBridge \
+    -scheme "SimulatorFrameworkBridge-$platform" \
+    -sdk "$sdk" \
+    -derivedDataPath "$BUILD_DIRECTORY" \
+    -configuration Release \
+    build
+}
+
+function build_repl_host() {
+  # An empty SwiftUI app bundled into the distribution's Resources/ as
+  # ReplHost.app: the default host app for `idb-repl app` without --bundle-id,
+  # installed on demand by idb_companion (see
+  # FBIDBCommandExecutor.ensureReplHostAppInstalled).
+  invoke_xcodebuild \
+    ONLY_ACTIVE_ARCH=NO \
+    -project REPLHost/ReplHost.xcodeproj \
+    -scheme ReplHost \
     -sdk iphonesimulator \
     -derivedDataPath "$BUILD_DIRECTORY" \
     -configuration Release \
     build
+}
+
+# The companion project links the generated project's products as prebuilt
+# Release archives, listed by the generated Companion/project-deps.yml. Build
+# each one from that list so the two cannot disagree.
+function build_companion_archives() {
+  local product name
+  while IFS= read -r product; do
+    name="${product%.framework}"
+    name="${name#lib}"
+    name="${name%.a}"
+    build_target "$name" Release
+  done < <(sed -n 's|^ *- framework: \.\./Build/Products/Release/||p' Companion/project-deps.yml | sort -u)
 }
 
 function build_idb_companion() {
@@ -370,14 +600,13 @@ function build_idb_companion() {
   if [ ! -f "IDBGRPCSwift/idb.grpc.swift" ] || [ ! -f "IDBGRPCSwift/idb.pb.swift" ]; then
     echo "Proto files not found, generating..."
     generate_proto
+    # XcodeGen resolves source globs at generation time, so a project generated
+    # before the gRPC sources existed (a fresh clone) has an empty IDBGRPCSwift
+    # target and the companion fails with "no such module". Regenerate now that
+    # the sources are on disk.
+    generate_companion_project
   fi
-  # Build frameworks first in Release (idb_companion depends on them and is built in Release)
-  build_target FBControlCore Release
-  build_target XCTestBootstrap Release
-  build_target FBSimulatorControl Release
-  build_target FBDeviceControl Release
-  build_target CompanionLib Release
-  build_target CompanionUtilities Release
+  build_companion_archives
   # Build idb_companion from its own project
   invoke_xcodebuild \
     ONLY_ACTIVE_ARCH=NO \
@@ -397,6 +626,9 @@ function build_idb_repl() {
   if [ ! -f "IDBGRPCSwift/idb.grpc.swift" ] || [ ! -f "IDBGRPCSwift/idb.pb.swift" ]; then
     echo "Proto files not found, generating..."
     generate_proto
+    # See build_idb_companion: the project must be regenerated once the
+    # generated sources exist, or the IDBGRPCSwift target is empty.
+    generate_companion_project
   fi
   # Build the idb-repl CLI from the idb_companion project (shares IDBGRPCSwift).
   invoke_xcodebuild \
@@ -421,11 +653,15 @@ function build_idb_repl() {
 #       libShimulator-macOS.dylib
 #       libRepl-iOS.dylib
 #       libRepl-macOS.dylib
-#       SimulatorFrameworkBridge
+#       SimulatorFrameworkBridge-iOS
+#       SimulatorFrameworkBridge-tvOS
+#       ReplHost.app
+#       IDBAPI.swiftinterface
 #
 function build_distribution() {
   local release="$BUILD_DIRECTORY/Products/Release"
   local sim="$BUILD_DIRECTORY/Products/Release-iphonesimulator"
+  local tvsim="$BUILD_DIRECTORY/Products/Release-appletvsimulator"
   local dist="$BUILD_DIRECTORY/Distribution"
 
   echo "Assembling distribution into $dist"
@@ -438,7 +674,9 @@ function build_distribution() {
     "$release/libShimulator-macOS.dylib"
     "$sim/libRepl-iOS.dylib"
     "$release/libRepl-macOS.dylib"
-    "$sim/SimulatorFrameworkBridge"
+    "$sim/SimulatorFrameworkBridge-iOS"
+    "$tvsim/SimulatorFrameworkBridge-tvOS"
+    "$sim/ReplHost.app"
   )
   local path
   for path in "${required[@]}"; do
@@ -463,20 +701,30 @@ function build_distribution() {
     ditto "$bundle" "$dist/$(basename "$bundle")"
   done
 
-  # Shims + SimulatorFrameworkBridge live under Resources/ next to idb_companion.
+  # Shims + the guest binaries live under Resources/ next to idb_companion.
   cp "$sim/libShimulator-iOS.dylib" "$dist/Resources/"
   cp "$release/libShimulator-macOS.dylib" "$dist/Resources/"
   cp "$sim/libRepl-iOS.dylib" "$dist/Resources/"
   cp "$release/libRepl-macOS.dylib" "$dist/Resources/"
-  cp "$sim/SimulatorFrameworkBridge" "$dist/Resources/"
+  cp "$sim/SimulatorFrameworkBridge-iOS" "$dist/Resources/"
+  cp "$tvsim/SimulatorFrameworkBridge-tvOS" "$dist/Resources/"
+
+  # ReplHost.app: the default host app for `idb-repl app`, installed on demand
+  # by the companion. Already ad-hoc signed at build time (CODE_SIGN_IDENTITY in
+  # REPLHost/project.yml), like the guest binaries and the shim dylibs.
+  ditto "$sim/ReplHost.app" "$dist/Resources/ReplHost.app"
+
+  # The checked-in IDBAPI module interface, reported to the REPL driver so
+  # injected code can auto-import the `IDB` namespace.
+  cp "REPL/IDB/IDBAPI.swiftinterface" "$dist/Resources/"
 
   echo "Distribution ready at $dist"
 }
 
 function build_all() {
   # build_idb_companion already builds frameworks first
-  build_shims
-  build_simulator_framework_bridge
+  build_fbsimulatorcontrol_resources
+  build_repl_host
   build_idb_companion
   build_idb_repl
   build_distribution
@@ -504,19 +752,23 @@ function build() {
         build_shim Repl-iOS iphonesimulator Shims/Repl/Repl.xcodeproj;;
       Repl-macOS)
         build_shim Repl-macOS macosx Shims/Repl/Repl.xcodeproj;;
-      SimulatorFrameworkBridge)
-        build_simulator_framework_bridge;;
+      SimulatorFrameworkBridge-iOS)
+        build_simulator_framework_bridge iOS iphonesimulator;;
+      SimulatorFrameworkBridge-tvOS)
+        build_simulator_framework_bridge tvOS appletvsimulator;;
+      ReplHost)
+        build_repl_host;;
       idb_companion)
         build_idb_companion;;
       idb-repl)
         build_idb_repl;;
       distribution)
         build_distribution;;
-      FBControlCore|XCTestBootstrap|FBSimulatorControl|FBDeviceControl)
+      FBControlCore|XCTestBootstrap|FBSimulatorControl|SimulatorXCTest|FBDeviceControl)
         build_target "$target";;
       *)
         echo "Unknown target: $target"
-        echo "Valid targets: all, frameworks, shims, idb_companion, idb-repl, FBControlCore, XCTestBootstrap, FBSimulatorControl, FBDeviceControl, Shimulator-iOS, Shimulator-macOS, Repl-iOS, Repl-macOS, SimulatorFrameworkBridge, distribution"
+        echo "Valid targets: all, frameworks, shims, idb_companion, idb-repl, FBControlCore, XCTestBootstrap, FBSimulatorControl, SimulatorXCTest, FBDeviceControl, Shimulator-iOS, Shimulator-macOS, Repl-iOS, Repl-macOS, ReplHost, SimulatorFrameworkBridge-iOS, SimulatorFrameworkBridge-tvOS, distribution"
         exit 1;;
     esac
   fi
@@ -528,11 +780,26 @@ function build() {
 
 function test_target() {
   local name=$1
+  # Every FBSimulatorControl test bundle copies the generated shims and the
+  # accessibility bridge into its resources, so they have to exist first —
+  # whether the whole framework scheme is under test or one suite of it.
+  if [[ $name == FBSimulatorControl* ]]; then
+    build_fbsimulatorcontrol_resources
+  fi
+  # Per-test time allowances turn a hung test into a named failure in about a
+  # minute; without them a single hang stalls the suite until the CI job's
+  # 60-minute timeout cancels it with no indication of which test hung. Most
+  # tests run in seconds; the boot-lifecycle tests create and boot a simulator,
+  # which can take minutes on a hosted runner, and raise their own allowance
+  # (up to the maximum here) via `executionTimeAllowance`.
   invoke_xcodebuild \
     -project FBSimulatorControl.xcodeproj \
     -scheme "$name" \
     -sdk macosx \
     -derivedDataPath "$BUILD_DIRECTORY" \
+    -test-timeouts-enabled YES \
+    -default-test-execution-time-allowance 60 \
+    -maximum-test-execution-time-allowance 600 \
     test
 }
 
@@ -555,9 +822,13 @@ function run_tests() {
         test_all;;
       FBControlCore|XCTestBootstrap|FBSimulatorControl|FBDeviceControl)
         test_target "$target";;
+      FBSimulatorControlUnitTests|FBSimulatorControlBootTests|FBSimulatorControlSmokeTests)
+        test_target "$target";;
       *)
         echo "Unknown test target: $target"
-        echo "Valid targets: all, FBControlCore, XCTestBootstrap, FBSimulatorControl, FBDeviceControl"
+        echo "Valid targets: all, FBControlCore, XCTestBootstrap, FBSimulatorControl,"
+        echo "  FBSimulatorControlUnitTests, FBSimulatorControlBootTests,"
+        echo "  FBSimulatorControlSmokeTests, FBDeviceControl"
         exit 1;;
     esac
   fi
@@ -598,11 +869,14 @@ Commands:
       FBControlCore   Build FBControlCore framework
       FBDeviceControl Build FBDeviceControl framework
       FBSimulatorControl Build FBSimulatorControl framework
+      SimulatorXCTest Build the SimulatorXCTest static library
       Repl-iOS        Build Repl-iOS dylib (iOS simulator)
       Repl-macOS      Build Repl-macOS dylib (macOS)
+      ReplHost        Build the ReplHost.app host app (iOS simulator)
       Shimulator-iOS  Build Shimulator-iOS dylib (iOS simulator)
       Shimulator-macOS Build Shimulator-macOS dylib (macOS)
-      SimulatorFrameworkBridge Build SimulatorFrameworkBridge executable (iOS simulator)
+      SimulatorFrameworkBridge-iOS Build the iOS-simulator guest executable
+      SimulatorFrameworkBridge-tvOS Build the tvOS-simulator guest executable
       XCTestBootstrap Build XCTestBootstrap framework
 
   test [<target>]
@@ -612,7 +886,11 @@ Commands:
       all             Run all tests
       FBControlCore   Test FBControlCore
       XCTestBootstrap Test XCTestBootstrap
-      FBSimulatorControl Test FBSimulatorControl
+      FBSimulatorControl Test FBSimulatorControl (every suite)
+      FBSimulatorControlUnitTests   Test the Unit suite: needs no simulator
+      FBSimulatorControlBootTests   Test the Boot suite: creates and boots one
+      FBSimulatorControlSmokeTests  Test the Smoke suite: takes a booted one
+                                    from the environment
       FBDeviceControl Test FBDeviceControl
 
 Examples:
@@ -625,9 +903,10 @@ Examples:
   ./build.sh build FBControlCore      # Build specific framework
   ./build.sh test                     # Run all tests
   ./build.sh test FBSimulatorControl  # Test specific framework
+  ./build.sh test FBSimulatorControlSmokeTests  # Test one suite of it
 
 Prerequisites:
-  - Xcode 14.0+
+  - Xcode 26.0+
   - XcodeGen: brew install xcodegen
   - For idb_companion: brew install protobuf swift-protobuf
 EOF
@@ -659,9 +938,11 @@ case $COMMAND in
   generate-proto)
     generate_proto;;
   build)
+    check_xcode_version
     regenerate_projects
     build "$TARGET_ARG";;
   test)
+    check_xcode_version
     regenerate_projects
     run_tests "$TARGET_ARG";;
   *)

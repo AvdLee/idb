@@ -11,10 +11,8 @@ import Foundation
 import GRPC
 import IDBGRPCSwift
 
-// By design in grpc-swift we should provide interceptor for each method separately.
-// This gives us ability to precicely control which interceptors will be used for concrete method from one side,
-// but make it too explicit from other side.
-final class CompanionServiceInterceptors: Idb_CompanionServiceServerInterceptorFactoryProtocol {
+// grpc-swift requires one factory method per RPC; all of them share `commonInterceptors()`.
+final class CompanionServiceInterceptors: Idb_CompanionServiceServerInterceptorFactoryProtocol, @unchecked Sendable {
 
   private let logger: FBIDBLogger
 
@@ -62,6 +60,10 @@ final class CompanionServiceInterceptors: Idb_CompanionServiceServerInterceptorF
   }
 
   func makeaccessibility_infoInterceptors() -> [ServerInterceptor<Idb_AccessibilityInfoRequest, Idb_AccessibilityInfoResponse>] {
+    commonInterceptors()
+  }
+
+  func makeaccessibility_actionInterceptors() -> [ServerInterceptor<Idb_AccessibilityActionRequest, Idb_AccessibilityActionResponse>] {
     commonInterceptors()
   }
 

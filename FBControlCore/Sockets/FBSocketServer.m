@@ -66,21 +66,10 @@
   return FBFuture.empty;
 }
 
-- (FBFutureContext<NSNull *> *)startListeningContext
-{
-  return [[self
-           startListening]
-          onQueue:self.delegate.queue
-          contextualTeardown:^(NSNull *_, FBFutureState __) {
-            return [self stopListening];
-          }];
-}
-
 #pragma mark Private
 
 - (FBFuture<NSNull *> *)createSocketWithPort:(in_port_t)port
 {
-  // Get the Socket, set some options
   int socketDescriptor = socket(PF_INET6, SOCK_STREAM, IPPROTO_TCP);
   if (socketDescriptor <= 0) {
     return (FBFuture *)[[FBControlCoreError
@@ -90,7 +79,6 @@
   int flagTrue = 1;
   setsockopt(socketDescriptor, SOL_SOCKET, SO_REUSEADDR, &flagTrue, sizeof(flagTrue));
 
-  // Bind the Socket.
   struct sockaddr_in6 address;
   memset(&address, 0, sizeof(address));
   address.sin6_len = sizeof(address);
@@ -104,7 +92,6 @@
                         failFuture];
   }
 
-  // Start Listening
   result = listen(socketDescriptor, 10);
   if (result != 0) {
     return (FBFuture *)[[FBControlCoreError
@@ -112,7 +99,6 @@
                         failFuture];
   }
 
-  // Prepare the Accept Source.
   // Since the Client Queue may be concurrent, we should construct a serial queue to serialize the accept() calls
   // The accept() will update internal state so calls *must* be serialized.
   dispatch_queue_t clientQueue = self.delegate.queue;
@@ -121,18 +107,16 @@
   self.acceptSource = dispatch_source_create(DISPATCH_SOURCE_TYPE_READ, (uintptr_t) socketDescriptor, 0, acceptQueue);
   __weak typeof(self) weakSelf = self;
 
-  // Handle incoming connection events from the accept source.
   dispatch_source_set_event_handler(self.acceptSource, ^{
     [weakSelf accept:socketDescriptor clientQueue:clientQueue error:nil];
   });
   dispatch_source_set_cancel_handler(self.acceptSource, ^{
     close(socketDescriptor);
   });
-  // Start accepting connections.
   self.socketDescriptor = socketDescriptor;
   dispatch_resume(self.acceptSource);
 
-  // Update port
+  // Read back the port the kernel actually bound, since 0 requests an ephemeral one.
   memset(&address, 0, sizeof(address));
   socklen_t addresslen = sizeof(address);
   getsockname(socketDescriptor, (struct sockaddr *)(&address), &addresslen);
@@ -143,7 +127,6 @@
 
 - (BOOL)accept:(int)socketDescriptor clientQueue:(dispatch_queue_t)clientQueue error:(NSError **)error
 {
-  // Accept the Connnection.
   struct sockaddr_in6 address;
   socklen_t addressLength = sizeof(address);
   int acceptDescriptor = accept(socketDescriptor, (struct sockaddr *) &address, &addressLength);
@@ -153,7 +136,6 @@
             failBool:error];
   }
 
-  // Notify the delegate on its preferred queue.
   dispatch_async(clientQueue, ^{
     [self.delegate socketServer:self clientConnected:address.sin6_addr fileDescriptor:acceptDescriptor];
   });

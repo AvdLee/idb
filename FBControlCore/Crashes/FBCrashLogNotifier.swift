@@ -7,23 +7,20 @@
 
 import Foundation
 
-@objc(FBCrashLogNotifier)
-public class FBCrashLogNotifier: NSObject {
+/// The pause between crash-log scans, matching `AsyncPolling`'s default cadence.
+private let CrashLogPollInterval: UInt64 = 100 * NSEC_PER_MSEC
 
-  // MARK: Properties
+public final class FBCrashLogNotifier {
 
-  @objc public let store: FBCrashLogStore
+  public let store: FBCrashLogStore
   internal var sinceDate: Date
-
-  // MARK: Initializers
 
   internal init(logger: any FBControlCoreLogger) {
     self.store = FBCrashLogStore.store(forDirectories: FBCrashLogInfo.diagnosticReportsPaths, logger: logger)
     self.sinceDate = Date()
-    super.init()
   }
 
-  @objc public class var sharedInstance: FBCrashLogNotifier {
+  public class var sharedInstance: FBCrashLogNotifier {
     _sharedInstance
   }
 
@@ -31,31 +28,30 @@ public class FBCrashLogNotifier: NSObject {
     FBCrashLogNotifier(logger: FBControlCoreGlobalConfiguration.defaultLogger)
   }()
 
-  // MARK: Notifications
+  // MARK: - Notifications
 
-  @objc public func startListening(_ onlyNew: Bool) -> Bool {
+  public func startListening(_ onlyNew: Bool) -> Bool {
     sinceDate = onlyNew ? Date() : .distantPast
     return true
   }
 
-  @objc(nextCrashLogForPredicate:)
-  public func nextCrashLog(forPredicate predicate: NSPredicate) -> FBFuture<FBCrashLogInfo> {
+  /// Polls until a crash log matching `predicate` appears; callers impose their own timeouts and task
+  /// cancellation stops the poll. Each pass is a synchronous `concurrentPerform` scan that blocks the
+  /// calling thread, so the sleep between passes is what keeps a cooperative-pool worker from being
+  /// held continuously.
+  public func nextCrashLog(forPredicate predicate: NSPredicate) async throws -> FBCrashLogInfo {
     _ = startListening(true)
-
-    let queue = DispatchQueue(label: "com.facebook.fbcontrolcore.crashlogfetch")
-    let result = FBFuture<AnyObject>.onQueue(
-      queue,
-      resolveUntil: {
-        let crashInfo =
-          (FBCrashLogInfo.crashInfo(afterDate: self.sinceDate, logger: nil) as NSArray)
-          .filtered(using: predicate)
-          .first as? FBCrashLogInfo
-        guard let crashInfo else {
-          return FBControlCoreError.describe("Crash Log Info for \(predicate) could not be obtained").failFuture()
-        }
-        _ = self.store.ingestCrashLog(atPath: crashInfo.crashPath)
-        return FBFuture(result: crashInfo)
-      })
-    return unsafeBitCast(result, to: FBFuture<FBCrashLogInfo>.self)
+    while true {
+      try Task.checkCancellation()
+      let crashInfo =
+        (FBCrashLogInfo.crashInfo(afterDate: sinceDate, logger: nil) as NSArray)
+        .filtered(using: predicate)
+        .first as? FBCrashLogInfo
+      if let crashInfo {
+        _ = store.ingestCrashLog(atPath: crashInfo.crashPath)
+        return crashInfo
+      }
+      try await Task.sleep(nanoseconds: CrashLogPollInterval)
+    }
   }
 }

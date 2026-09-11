@@ -8,61 +8,48 @@
 import FBControlCore
 import Foundation
 
-@objc public final class FBManagedTestRunStrategy: NSObject {
+public enum FBManagedTestRunError: Error, LocalizedError {
+  case frameworkLoadingFailed(underlying: Error)
 
-  @objc public static func runToCompletion(withTarget target: FBiOSTarget, configuration: FBTestLaunchConfiguration, codesign: FBCodesignProvider?, workingDirectory: String, reporter: FBXCTestReporter, logger: FBControlCoreLogger) -> FBFuture<NSNull> {
+  public var errorDescription: String? {
+    switch self {
+    case let .frameworkLoadingFailed(underlying):
+      return underlying.localizedDescription
+    }
+  }
+}
+
+public final class FBManagedTestRunStrategy {
+
+  public static func runToCompletion(withTarget target: any XCTestExtendedTarget, configuration: FBTestLaunchConfiguration, codesign: FBCodesignProvider?, workingDirectory: String, reporter: FBXCTestReporter, logger: FBControlCoreLogger) async throws {
     do {
       try XCTestBootstrapFrameworkLoader.allDependentFrameworks.loadPrivateFrameworks(target.logger)
     } catch {
-      return unsafeBitCast(XCTestBootstrapError.describe(error.localizedDescription).failFuture(), to: FBFuture<NSNull>.self)
+      throw FBManagedTestRunError.frameworkLoadingFailed(underlying: error)
     }
 
-    let applicationLaunchConfiguration = configuration.applicationLaunchConfiguration
-
-    // FBTestRunnerConfiguration.prepareConfiguration is a Swift method that
-    // requires the Async* protocol composition. FBSimulator and FBMacDevice
-    // both conform to these protocols in addition to the legacy ones declared
-    // in this function's signature, so the cast is safe at runtime.
-    // swiftlint:disable:next force_cast
-    let asyncTarget = target as! any FBiOSTarget & ApplicationCommands & XCTestExtendedCommands
-    let prepareFuture: FBFuture<AnyObject> = unsafeBitCast(
-      FBTestRunnerConfiguration.prepareConfiguration(
-        withTarget: asyncTarget,
-        testLaunchConfiguration: configuration,
-        workingDirectory: workingDirectory,
-        codesign: codesign
-      ),
-      to: FBFuture<AnyObject>.self
+    let runnerConfiguration = try await FBTestRunnerConfiguration.prepareConfiguration(
+      withTarget: target,
+      testLaunchConfiguration: configuration,
+      workingDirectory: workingDirectory,
+      codesign: codesign
     )
 
-    return unsafeBitCast(
-      prepareFuture
-        .onQueue(
-          target.workQueue,
-          fmap: { runnerConfigObj -> FBFuture<AnyObject> in
-            let runnerConfiguration = runnerConfigObj as! FBTestRunnerConfiguration
+    let testHostLaunchConfiguration = prepareApplicationLaunchConfiguration(configuration.applicationLaunchConfiguration, withTestRunnerConfiguration: runnerConfiguration)
 
-            let testHostLaunchConfiguration = FBManagedTestRunStrategy.prepareApplicationLaunchConfiguration(applicationLaunchConfiguration, withTestRunnerConfiguration: runnerConfiguration)
+    let context = FBTestManagerContext(
+      sessionIdentifier: runnerConfiguration.sessionIdentifier,
+      timeout: configuration.timeout,
+      testHostLaunchConfiguration: testHostLaunchConfiguration,
+      testedApplicationAdditionalEnvironment: runnerConfiguration.testedApplicationAdditionalEnvironment,
+      testConfiguration: runnerConfiguration.testConfiguration
+    )
 
-            let context = FBTestManagerContext(
-              sessionIdentifier: runnerConfiguration.sessionIdentifier,
-              timeout: configuration.timeout,
-              testHostLaunchConfiguration: testHostLaunchConfiguration,
-              testedApplicationAdditionalEnvironment: runnerConfiguration.testedApplicationAdditionalEnvironment,
-              testConfiguration: runnerConfiguration.testConfiguration
-            )
-
-            return unsafeBitCast(
-              FBTestManagerAPIMediator.connectAndRunUntilCompletion(
-                with: context,
-                target: target,
-                reporter: reporter,
-                logger: logger
-              ),
-              to: FBFuture<AnyObject>.self
-            )
-          }),
-      to: FBFuture<NSNull>.self
+    try await FBTestManagerAPIMediator.connectAndRunUntilCompletion(
+      with: context,
+      target: target,
+      reporter: reporter,
+      logger: logger
     )
   }
 

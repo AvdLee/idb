@@ -7,9 +7,9 @@
 
 import CompanionDiscovery
 import Foundation
-@_implementationOnly import NIOCore
-@_implementationOnly import NIOPosix
-@_implementationOnly import NIOSSL
+internal import NIOCore
+internal import NIOPosix
+internal import NIOSSL
 
 /// Connects to a companion (Unix domain socket or TCP) and runs a `cli` command
 /// over newline-framed JSON-RPC, returning the raw response bytes.
@@ -93,6 +93,9 @@ public enum CompanionClient {
     }
     do {
       var configuration = TLSConfiguration.makeClientConfiguration()
+      // NIOSSL defaults the floor to TLS 1.0; pin it to 1.2 so the deprecated
+      // TLS 1.0/1.1 protocols and their legacy cipher suites are never negotiated.
+      configuration.minimumTLSVersion = .tlsv12
       configuration.certificateVerification = .none
       configuration.certificateChain = try NIOSSLCertificate.fromPEMFile(identity.certificateChainPath).map { .certificate($0) }
       configuration.privateKey = .file(identity.privateKeyPath)

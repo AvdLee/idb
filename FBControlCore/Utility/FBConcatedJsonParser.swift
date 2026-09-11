@@ -7,17 +7,15 @@
 
 import Foundation
 
-@objc(FBConcatedJsonParser)
-public final class FBConcatedJsonParser: NSObject {
+public final class FBConcatedJsonParser {
 
-  @objc(parseConcatenatedJSONFromString:error:)
   public class func parseConcatenatedJSON(from str: String) throws -> [String: Any] {
     var bracketCounter = 0
     var characterEscaped = false
     var inString = false
     var parseError: Error?
 
-    let concatenatedJson = NSMutableDictionary()
+    var concatenatedJson: [String: Any] = [:]
     var json = ""
 
     str.enumerateSubstrings(
@@ -63,7 +61,7 @@ public final class FBConcatedJsonParser: NSObject {
             stop = true
             return
           }
-          concatenatedJson.addEntries(from: dict)
+          concatenatedJson.merge(dict) { _, new in new }
         } catch {
           parseError = error
           stop = true
@@ -76,6 +74,6 @@ public final class FBConcatedJsonParser: NSObject {
       throw error
     }
 
-    return concatenatedJson as! [String: Any]
+    return concatenatedJson
   }
 }

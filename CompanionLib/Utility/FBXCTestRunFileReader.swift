@@ -9,20 +9,39 @@ import FBControlCore
 import Foundation
 import XCTestBootstrap
 
-@objc public final class FBXCTestRunFileReader: NSObject {
+public enum FBXCTestRunFileError: Error {
+  case fileMissing(url: URL)
+  case appStorageMissing(path: String)
+  case fileUnreadable(url: URL)
+}
 
-  @objc public static func readContents(of xctestrunURL: URL, expandPlaceholderWithPath path: String) throws -> [String: Any] {
+extension FBXCTestRunFileError: LocalizedError {
+  public var errorDescription: String? {
+    switch self {
+    case let .fileMissing(url):
+      return "xctestrun file does not exist at expected location: \(url)"
+    case let .appStorageMissing(path):
+      return "IDB app storage folder does not exist at: \(path)"
+    case let .fileUnreadable(url):
+      return "Failed to read xctestrun file at \(url)"
+    }
+  }
+}
+
+public final class FBXCTestRunFileReader {
+
+  public static func readContents(of xctestrunURL: URL, expandPlaceholderWithPath path: String) throws -> [String: Any] {
     let fileManager = FileManager.default
     guard fileManager.fileExists(atPath: xctestrunURL.path) else {
-      throw FBXCTestError.describe("xctestrun file does not exist at expected location: \(xctestrunURL)").build()
+      throw FBXCTestRunFileError.fileMissing(url: xctestrunURL)
     }
     let testRoot = (xctestrunURL.path as NSString).deletingLastPathComponent
     let idbAppStoragePath = (path as NSString).appendingPathComponent(IdbApplicationsFolder)
     guard fileManager.fileExists(atPath: idbAppStoragePath) else {
-      throw FBXCTestError.describe("IDB app storage folder does not exist at: \(idbAppStoragePath)").build()
+      throw FBXCTestRunFileError.appStorageMissing(path: idbAppStoragePath)
     }
     guard let xctestrunContents = try NSDictionary(contentsOf: xctestrunURL, error: ()) as? [String: Any] else {
-      throw FBXCTestError.describe("Failed to read xctestrun file at \(xctestrunURL)").build()
+      throw FBXCTestRunFileError.fileUnreadable(url: xctestrunURL)
     }
     var mutableContents: [String: Any] = [:]
     for contentKey in xctestrunContents.keys {
@@ -33,20 +52,17 @@ import XCTestBootstrap
       guard var testTargetProperties = (xctestrunContents[contentKey] as? [String: Any])?.asMutable() else {
         continue
       }
-      // Expand __TESTROOT__ and __IDB_APPSTORAGE__ in TestHostPath
       if var testHostPath = testTargetProperties["TestHostPath"] as? String {
         testHostPath = testHostPath.replacingOccurrences(of: "__TESTROOT__", with: testRoot)
         testHostPath = testHostPath.replacingOccurrences(of: "__IDB_APPSTORAGE__", with: idbAppStoragePath)
         testTargetProperties["TestHostPath"] = testHostPath
 
-        // Expand __TESTROOT__ and __TESTHOST__ in TestBundlePath
         if var testBundlePath = testTargetProperties["TestBundlePath"] as? String {
           testBundlePath = testBundlePath.replacingOccurrences(of: "__TESTROOT__", with: testRoot)
           testBundlePath = testBundlePath.replacingOccurrences(of: "__TESTHOST__", with: testHostPath)
           testTargetProperties["TestBundlePath"] = testBundlePath
         }
       }
-      // Expand __IDB_APPSTORAGE__ in UITargetAppPath
       if var targetAppPath = testTargetProperties["UITargetAppPath"] as? String {
         targetAppPath = targetAppPath.replacingOccurrences(of: "__IDB_APPSTORAGE__", with: idbAppStoragePath)
         targetAppPath = targetAppPath.replacingOccurrences(of: "__TESTROOT__", with: testRoot)

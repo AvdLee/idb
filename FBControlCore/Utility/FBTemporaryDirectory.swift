@@ -7,61 +7,67 @@
 
 import Foundation
 
-@objc(FBTemporaryDirectory)
-public class FBTemporaryDirectory: NSObject {
+public enum FBTemporaryDirectoryError: Error, LocalizedError {
+  case creationFailed(directory: URL, underlying: Error)
 
-  // MARK: Properties
+  public var errorDescription: String? {
+    switch self {
+    case let .creationFailed(directory, _):
+      return "Failed to create Temp Dir \(directory)"
+    }
+  }
+}
 
-  @objc public let logger: FBControlCoreLogger
-  @objc public let queue: DispatchQueue
+/// A value over the root it manages: two values with the same root are the same directory.
+public struct FBTemporaryDirectory: Equatable {
+
+  // MARK: - Properties
+
+  public let logger: any FBControlCoreLogger
 
   private let rootTemporaryDirectory: URL
 
-  // MARK: Initializers
-
-  @objc(temporaryDirectoryWithLogger:)
-  public class func temporaryDirectory(logger: FBControlCoreLogger) -> Self {
-    let base = ProcessInfo.processInfo.environment["TMPDIR"] ?? NSTemporaryDirectory()
-    let tempPathComponents = [base, "IDB", UUID().uuidString]
-    let temporaryDirectory = NSURL.fileURL(withPathComponents: tempPathComponents)!
-    var error: NSError?
-    let success: Bool
-    do {
-      try FileManager.default.createDirectory(at: temporaryDirectory, withIntermediateDirectories: true, attributes: nil)
-      success = true
-    } catch let err as NSError {
-      error = err
-      success = false
-    }
-    assert(success, "\(error!)")
-    let queue = DispatchQueue(label: "com.facebook.idb.fbtemporarydirectory")
-    return self.init(rootDirectory: temporaryDirectory, queue: queue, logger: logger)
+  public static func == (lhs: FBTemporaryDirectory, rhs: FBTemporaryDirectory) -> Bool {
+    lhs.rootTemporaryDirectory == rhs.rootTemporaryDirectory
   }
 
-  @objc(initWithLogger:)
-  public convenience init(logger: FBControlCoreLogger) {
-    let base = ProcessInfo.processInfo.environment["TMPDIR"] ?? NSTemporaryDirectory()
-    let tempPathComponents = [base, "IDB", UUID().uuidString]
-    let temporaryDirectory = NSURL.fileURL(withPathComponents: tempPathComponents)!
+  // MARK: - Initializers
+
+  public static func temporaryDirectory(logger: any FBControlCoreLogger) -> FBTemporaryDirectory {
+    let temporaryDirectory = uniqueTemporaryDirectoryURL()
+    do {
+      try FileManager.default.createDirectory(at: temporaryDirectory, withIntermediateDirectories: true, attributes: nil)
+    } catch {
+      assertionFailure("Failed to create temporary directory: \(error)")
+    }
+    return FBTemporaryDirectory(rootDirectory: temporaryDirectory, logger: logger)
+  }
+
+  public init(logger: any FBControlCoreLogger) {
+    let temporaryDirectory = FBTemporaryDirectory.uniqueTemporaryDirectoryURL()
     do {
       try FileManager.default.createDirectory(at: temporaryDirectory, withIntermediateDirectories: true, attributes: nil)
     } catch {
       fatalError("Failed to create temporary directory: \(error)")
     }
-    let queue = DispatchQueue(label: "com.facebook.idb.fbtemporarydirectory")
-    self.init(rootDirectory: temporaryDirectory, queue: queue, logger: logger)
+    self.init(rootDirectory: temporaryDirectory, logger: logger)
   }
 
-  required init(rootDirectory: URL, queue: DispatchQueue, logger: FBControlCoreLogger) {
+  private static func uniqueTemporaryDirectoryURL() -> URL {
+    let base = ProcessInfo.processInfo.environment["TMPDIR"] ?? NSTemporaryDirectory()
+    return URL(fileURLWithPath: base)
+      .appendingPathComponent("IDB")
+      .appendingPathComponent(UUID().uuidString)
+  }
+
+  init(rootDirectory: URL, logger: any FBControlCoreLogger) {
     self.rootTemporaryDirectory = rootDirectory
-    self.queue = queue
     self.logger = logger
-    super.init()
   }
 
-  // MARK: Public Methods
+  // MARK: - Public Methods
 
-  @objc public func cleanOnExit() {
+  public func cleanOnExit() {
     do {
       try FileManager.default.removeItem(at: rootTemporaryDirectory)
       logger.debug().log("Successfully removed temporal directory: \(rootTemporaryDirectory)")
@@ -70,87 +76,88 @@ public class FBTemporaryDirectory: NSObject {
     }
   }
 
-  @objc public func ephemeralTemporaryDirectory() -> URL {
+  public func ephemeralTemporaryDirectory() -> URL {
     return rootTemporaryDirectory.appendingPathComponent(UUID().uuidString)
   }
 
-  @objc(withGzipExtractedFromStream:name:)
-  public func withGzipExtracted(fromStream input: FBProcessInput<AnyObject>, name: String) -> FBFutureContext<NSURL> {
-    return withTemporaryFileNamed(name)
-      .onQueue(
-        queue,
-        pend: { result -> FBFuture<AnyObject> in
-          let resultURL = result as URL
-          return FBArchiveOperations.extractGzip(fromStream: input, toPath: resultURL.path, logger: self.logger)
-            .mapReplace(resultURL as NSURL)
-        }) as! FBFutureContext<NSURL>
+  // MARK: - Scoped
+
+  /// Creates a temporary directory that exists for exactly the scope of `body`: deleted when
+  /// `body` returns or throws.
+  public func withTemporaryDirectory<T>(_ body: (URL) async throws -> T) async throws -> T {
+    let tempDirectory = ephemeralTemporaryDirectory()
+    logger.log("Creating Temp Dir \(tempDirectory)")
+    do {
+      try FileManager.default.createDirectory(at: tempDirectory, withIntermediateDirectories: true, attributes: nil)
+    } catch {
+      throw FBTemporaryDirectoryError.creationFailed(directory: tempDirectory, underlying: error)
+    }
+    defer { delete(tempDirectory) }
+    return try await body(tempDirectory)
   }
 
-  @objc(withArchiveExtracted:)
-  public func withArchiveExtracted(_ tarData: Data) -> FBFutureContext<NSURL> {
-    let input = unsafeBitCast(FBProcessInput<NSData>(from: tarData), to: FBProcessInput<AnyObject>.self)
-    return withArchiveExtracted(fromStream: input, compression: .GZIP)
+  /// Extracts the archive in `input` into a temporary directory scoped to `body`.
+  public func withArchiveExtracted<T>(
+    fromStream input: FBProcessInput<AnyObject>,
+    compression: FBCompressionFormat,
+    overrideModificationTime overrideMTime: Bool = false,
+    _ body: (URL) async throws -> T
+  ) async throws -> T {
+    try await withTemporaryDirectory { tempDir in
+      _ = try await bridgeFBFuture(
+        FBArchiveOperations.extractArchive(fromStream: input, toPath: tempDir.path, overrideModificationTime: overrideMTime, logger: logger, compression: compression))
+      return try await body(tempDir)
+    }
   }
 
-  @objc(withArchiveExtractedFromStream:compression:)
-  public func withArchiveExtracted(fromStream input: FBProcessInput<AnyObject>, compression: FBCompressionFormat) -> FBFutureContext<NSURL> {
-    return withArchiveExtracted(fromStream: input, compression: compression, overrideModificationTime: false)
+  /// Extracts the gzipped tar in `tarData` into a temporary directory scoped to `body`.
+  public func withArchiveExtracted<T>(_ tarData: Data, _ body: (URL) async throws -> T) async throws -> T {
+    let input = FBProcessInput<NSData>(from: tarData).retyped(FBProcessInput<AnyObject>.self)
+    return try await withArchiveExtracted(fromStream: input, compression: .GZIP, body)
   }
 
-  @objc(withArchiveExtractedFromStream:compression:overrideModificationTime:)
-  public func withArchiveExtracted(fromStream input: FBProcessInput<AnyObject>, compression: FBCompressionFormat, overrideModificationTime overrideMTime: Bool) -> FBFutureContext<NSURL> {
-    return withTemporaryDirectory()
-      .onQueue(
-        queue,
-        pend: { result -> FBFuture<AnyObject> in
-          let tempDir = result as URL
-          return FBArchiveOperations.extractArchive(fromStream: input, toPath: tempDir.path, overrideModificationTime: overrideMTime, logger: self.logger, compression: compression)
-            .mapReplace(tempDir as NSURL)
-        }) as! FBFutureContext<NSURL>
+  /// Extracts the archive at `filePath` into a temporary directory scoped to `body`.
+  public func withArchiveExtracted<T>(
+    fromFile filePath: String,
+    overrideModificationTime overrideMTime: Bool,
+    _ body: (URL) async throws -> T
+  ) async throws -> T {
+    try await withTemporaryDirectory { tempDir in
+      _ = try await bridgeFBFuture(
+        FBArchiveOperations.extractArchive(atPath: filePath, toPath: tempDir.path, overrideModificationTime: overrideMTime, logger: logger))
+      return try await body(tempDir)
+    }
   }
 
-  @objc(withArchiveExtractedFromFile:)
-  public func withArchiveExtracted(fromFile filePath: String) -> FBFutureContext<NSURL> {
-    return withArchiveExtracted(fromFile: filePath, overrideModificationTime: false)
+  /// Extracts the gzip in `input` to a file named `name` inside a temporary directory scoped to
+  /// `body`; the file goes with the directory when the scope ends.
+  public func withGzipExtracted<T>(fromStream input: FBProcessInput<AnyObject>, name: String, _ body: (URL) async throws -> T) async throws -> T {
+    try await withTemporaryDirectory { directory in
+      let tempFile = directory.appendingPathComponent(name)
+      _ = try await bridgeFBFuture(
+        FBArchiveOperations.extractGzip(fromStream: input, toPath: tempFile.path, logger: logger))
+      return try await body(tempFile)
+    }
   }
 
-  @objc(withArchiveExtractedFromFile:overrideModificationTime:)
-  public func withArchiveExtracted(fromFile filePath: String, overrideModificationTime overrideMTime: Bool) -> FBFutureContext<NSURL> {
-    return withTemporaryDirectory()
-      .onQueue(
-        queue,
-        pend: { result -> FBFuture<AnyObject> in
-          let tempDir = result as URL
-          return FBArchiveOperations.extractArchive(atPath: filePath, toPath: tempDir.path, overrideModificationTime: overrideMTime, logger: self.logger)
-            .mapReplace(tempDir as NSURL)
-        }) as! FBFutureContext<NSURL>
+  /// Returns the unique file inside each immediate subdirectory of `extractionDirectory`.
+  public func files(inSubdirectoriesOf extractionDirectory: URL) throws -> [URL] {
+    let subfolders = try FBStorageUtils.files(inDirectory: extractionDirectory)
+    return try subfolders.map { try FBStorageUtils.findUniqueFile(inDirectory: $0) }
   }
 
-  @objc(filesFromSubdirs:)
-  public func files(fromSubdirs extractionDirContext: FBFutureContext<NSURL>) -> FBFutureContext<NSArray> {
-    return
-      extractionDirContext
-      .onQueue(
-        queue,
-        pend: { result -> FBFuture<AnyObject> in
-          let extractionDir = result as URL
-          do {
-            let subfolders = try FBStorageUtils.files(inDirectory: extractionDir)
-            var filesInTar: [URL] = []
-            for subfolder in subfolders {
-              let file = try FBStorageUtils.findUniqueFile(inDirectory: subfolder)
-              filesInTar.append(file)
-            }
-            return FBFuture<AnyObject>(result: filesInTar as NSArray)
-          } catch {
-            return FBFuture<AnyObject>(error: error as NSError)
-          }
-        }) as! FBFutureContext<NSArray>
+  private func delete(_ url: URL) {
+    do {
+      try FileManager.default.removeItem(at: url)
+      logger.log("Deleted Temp Dir \(url)")
+    } catch {
+      logger.log("Failed to delete Temp Dir \(url): \(error)")
+    }
   }
 
-  // MARK: Temporary Directory
+  // MARK: - Temporary Directory
 
-  @objc public func temporaryDirectory() -> URL {
+  public func temporaryDirectory() -> URL {
     let tempDirectory = ephemeralTemporaryDirectory()
     logger.log("Creating Temp Dir \(tempDirectory)")
     do {
@@ -161,56 +168,4 @@ public class FBTemporaryDirectory: NSObject {
     return tempDirectory
   }
 
-  @objc public func withTemporaryDirectory() -> FBFutureContext<NSURL> {
-    let tempDirectory = ephemeralTemporaryDirectory()
-    logger.log("Creating Temp Dir \(tempDirectory)")
-    do {
-      try FileManager.default.createDirectory(at: tempDirectory, withIntermediateDirectories: true, attributes: nil)
-    } catch {
-      return
-        FBControlCoreError
-        .describe("Failed to create Temp Dir \(tempDirectory)")
-        .caused(by: error as NSError)
-        .failFutureContext() as! FBFutureContext<NSURL>
-    }
-    return FBFuture<NSURL>(result: tempDirectory as NSURL)
-      .onQueue(
-        queue,
-        contextualTeardown: { (result, _) -> FBFuture<NSNull> in
-          let dirURL = result as URL
-          do {
-            try FileManager.default.removeItem(at: dirURL)
-            self.logger.log("Deleted Temp Dir \(dirURL)")
-          } catch {
-            self.logger.log("Failed to delete Temp Dir \(dirURL): \(error)")
-          }
-          return FBFuture<NSNull>.empty()
-        })
-  }
-
-  // MARK: Private
-
-  private func withTemporaryFileNamed(_ name: String) -> FBFutureContext<NSURL> {
-    return withTemporaryDirectory()
-      .onQueue(
-        queue,
-        pend: { result -> FBFuture<AnyObject> in
-          let directory = result as URL
-          let tempFile = directory.appendingPathComponent(name)
-          return FBFuture<AnyObject>(result: tempFile as NSURL)
-        }
-      )
-      .onQueue(
-        queue,
-        contextualTeardown: { (result, _) -> FBFuture<NSNull> in
-          let tempFile = result as! URL
-          do {
-            try FileManager.default.removeItem(at: tempFile)
-            self.logger.log("Deleted Temp File \(tempFile)")
-          } catch {
-            self.logger.log("Failed to delete Temp File \(tempFile): \(error)")
-          }
-          return FBFuture<NSNull>.empty()
-        }) as! FBFutureContext<NSURL>
-  }
 }

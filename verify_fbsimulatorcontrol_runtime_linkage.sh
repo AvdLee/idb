@@ -22,27 +22,30 @@ while IFS= read -r binary; do
   load_commands="$temporary_directory/load-commands-$binary_count.txt"
   undefined_symbols="$temporary_directory/undefined-symbols-$binary_count.txt"
 
-  if ! "$otool_path" -L "$binary" >"$load_commands" 2>&1; then
+  if ! "$otool_path" -l "$binary" >"$load_commands" 2>&1; then
     echo "error: failed to inspect Mach-O load commands: $binary" >&2
     failure_count=$((failure_count + 1))
     continue
   fi
 
-  if /usr/bin/grep -Fq "AccessibilityPlatformTranslation.framework" "$load_commands"; then
-    echo "error: AccessibilityPlatformTranslation load command found: $binary" >&2
-    /usr/bin/grep -F "AccessibilityPlatformTranslation.framework" "$load_commands" >&2
+  if ! /usr/bin/awk '
+    $1 == "cmd" { command = $2 }
+    /AccessibilityPlatformTranslation[.]framework/ && command != "LC_LOAD_WEAK_DYLIB" { exit 1 }
+  ' "$load_commands"; then
+    echo "error: AccessibilityPlatformTranslation is not weak-linked: $binary" >&2
     failure_count=$((failure_count + 1))
   fi
 
-  if ! "$nm_path" -u "$binary" >"$undefined_symbols" 2>&1; then
+  if ! "$nm_path" -m -u "$binary" >"$undefined_symbols" 2>&1; then
     echo "error: failed to inspect undefined symbols: $binary" >&2
     failure_count=$((failure_count + 1))
     continue
   fi
 
-  if /usr/bin/grep -Eq '_OBJC_(CLASS|METACLASS)_\$_AXP[A-Za-z0-9_]+' "$undefined_symbols"; then
-    echo "error: imported AXP Objective-C class symbol found: $binary" >&2
-    /usr/bin/grep -E '_OBJC_(CLASS|METACLASS)_\$_AXP[A-Za-z0-9_]+' "$undefined_symbols" >&2
+  if ! /usr/bin/awk '
+    /_OBJC_(CLASS|METACLASS)_\$_AXP[A-Za-z0-9_]+/ && $0 !~ /weak external/ { exit 1 }
+  ' "$undefined_symbols"; then
+    echo "error: strongly imported AXP Objective-C class symbol found: $binary" >&2
     failure_count=$((failure_count + 1))
   fi
 done < <(/usr/bin/find "$artifact_root" -type f -name FBSimulatorControl -print)
@@ -57,4 +60,4 @@ if [[ "$failure_count" -ne 0 ]]; then
   exit 1
 fi
 
-echo "Verified $binary_count FBSimulatorControl binary slice(s): no AccessibilityPlatformTranslation load command or imported AXP class symbols."
+echo "Verified $binary_count FBSimulatorControl binary slice(s): AccessibilityPlatformTranslation and AXP imports are weak."

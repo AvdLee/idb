@@ -6,6 +6,7 @@
  */
 
 import CompanionLib
+import CoreGraphics
 import FBControlCore
 import FBSimulatorControl
 import Foundation
@@ -31,20 +32,87 @@ enum HostCommandError: Error, CustomStringConvertible {
   }
 }
 
-/// Maps a decoded `ReplCommand` -- sent by injected REPL code while it runs -- to
-/// an `FBIDBCommandExecutor` call.
+/// Per-REPL-session state shared across host commands within one `repl` stream:
+/// where captured screenshots are staged, and the per-run screenshot filename
+/// counter. Screen recordings are *not* held here -- they can outlive the stream,
+/// so `ReplRecordingCoordinator` owns them.
 ///
-/// Each command's logic (`resultValue(for:)`) produces its result as a value --
-/// nothing, a `Codable` value, or a Foundation property-list object -- or throws.
-/// `run` serializes that to the wire payload and turns a thrown error into a
-/// failure, both in one place, so adding a command repeats none of that. Sharing
-/// `ReplCommand` with the client (via `ReplProtocol`) keeps the switch exhaustive.
-struct HostCommandDispatcher {
+/// `@unchecked Sendable`: host commands are serviced one at a time within a
+/// session (each execute is awaited before the next), so these mutable fields are
+/// never accessed concurrently.
+final class ReplHostCommandState: @unchecked Sendable {
+
+  /// The directory captured files are written to (a per-session subdirectory of
+  /// the target's auxillary directory).
+  let stagingDirectory: URL
+
+  /// The path of `stagingDirectory` relative to the AUXILLARY file-container root
+  /// (the target's auxillary directory), used to pull artifacts back over gRPC.
+  let containerRelativeBase: String
+
+  /// Files captured during the current execute, reported to the driver so it can
+  /// retrieve them.
+  private(set) var runArtifacts: [ReplArtifact] = []
+
+  private var runIndex = 0
+  private var screenshotIndex = 0
+
+  init(stagingDirectory: URL, containerRelativeBase: String) {
+    self.stagingDirectory = stagingDirectory
+    self.containerRelativeBase = containerRelativeBase
+  }
+
+  func beginRun(index: Int) {
+    runIndex = index
+    screenshotIndex = 0
+    runArtifacts = []
+  }
+
+  func nextScreenshotPath() -> String {
+    screenshotIndex += 1
+    let name = "screenshot_\(runIndex)_\(screenshotIndex).png"
+    return stagingDirectory.appendingPathComponent(name).path
+  }
+
+  func recordScreenshot(hostPath: String) {
+    let filename = (hostPath as NSString).lastPathComponent
+    runArtifacts.append(ReplArtifact(hostPath: hostPath, containerPath: containerRelativeBase + "/" + filename))
+  }
+
+  /// Records an already-formed artifact (e.g. a recording retrieved from the
+  /// `ReplRecordingCoordinator`, whose container path is not under `stagingDirectory`).
+  func recordArtifact(_ artifact: ReplArtifact) {
+    runArtifacts.append(artifact)
+  }
+}
+
+/// A file captured on the companion during an execute, to be retrieved by the
+/// driver. `hostPath` is absolute (for a same-filesystem move); `containerPath` is
+/// relative to the AUXILLARY container root (for a gRPC pull).
+struct ReplArtifact {
+  let hostPath: String
+  let containerPath: String
+}
+
+/// Maps a decoded `ReplCommand` -- sent by injected REPL code while it runs -- to an
+/// `FBIDBCommandExecutor` call. `resultValue(for:)` produces the value; `run` serializes it and maps
+/// a thrown error to `.failure`.
+struct HostCommandDispatcher: @unchecked Sendable {
 
   let commandExecutor: FBIDBCommandExecutor
+  let state: ReplHostCommandState
+  /// Owns the in-progress screen recording, which can outlive this stream.
+  let recordingCoordinator: ReplRecordingCoordinator
+  /// The bundle id of the app hosting this REPL (app context only), used to drop a
+  /// recording if the app exits before it is stopped. Nil for the test/simulator
+  /// contexts, where the disposable host is dropped at stream teardown instead.
+  let appBundleID: String?
 
   /// The result a command produces, before serialization to the wire.
   private enum ResultValue {
+    /// Already-serialized bytes, returned to injected code verbatim (e.g. an
+    /// encoded image). Avoids re-wrapping the payload in a property list.
+    case raw(Data)
     /// A `Codable` value; encoded as a binary property list.
     case encodable(any Encodable)
     /// A Foundation property-list object (e.g. the accessibility tree), already in
@@ -57,6 +125,8 @@ struct HostCommandDispatcher {
       switch try await resultValue(for: command) {
       case nil:
         return .success(Data())
+      case .raw(let data):
+        return .success(data)
       case .encodable(let value):
         return .success(try Self.propertyListData(encoding: value))
       case .propertyList(let object):
@@ -67,8 +137,6 @@ struct HostCommandDispatcher {
     }
   }
 
-  /// Runs `command`, returning its result value, or nil when it has no return
-  /// value. Throws on failure.
   private func resultValue(for command: ReplCommand) async throws -> ResultValue? {
     switch command {
     case .tap(let point):
@@ -122,12 +190,66 @@ struct HostCommandDispatcher {
       return nil
 
     case .describeAll:
-      let response = try await commandExecutor.accessibility_info_at_point(nil, nestedFormat: true)
-      // Adapt the serializer's tree for the client: drop nulls and render each
-      // node's AXValue as a String (see `replAccessibilityTree`). Only describe_all
-      // needs this.
-      let tree = Self.replAccessibilityTree(from: response.elements) ?? [String: Any]()
+      let response = try await commandExecutor.accessibility_info_at_point(nil, format: .nested)
+      let tree = Self.replAccessibilityTree(from: response.elements.legacyFoundationObject) ?? [String: Any]()
       return .propertyList(tree)
+
+    case .screenshot(let area, let output):
+      let rect = try await cropRect(for: area)
+      switch output {
+      case .data:
+        let data = try await commandExecutor.repl_screenshot(cropRect: rect, asPNG: false)
+        return .raw(data)
+      case .file:
+        let data = try await commandExecutor.repl_screenshot(cropRect: rect, asPNG: true)
+        let path = state.nextScreenshotPath()
+        try data.write(to: URL(fileURLWithPath: path))
+        state.recordScreenshot(hostPath: path)
+        return .raw(Data(path.utf8))
+      }
+
+    case .startRecording:
+      // One recording at a time: an empty result signals "already recording" (false).
+      guard let path = recordingCoordinator.reserveRecordingPath() else {
+        return .raw(Data())
+      }
+      let recording: any FBVideoRecording
+      do {
+        recording = try await commandExecutor.repl_start_recording(toFile: path)
+      } catch {
+        recordingCoordinator.cancelReservation()
+        throw error
+      }
+      let id = recordingCoordinator.activate(recording: recording, hostPath: path)
+      // App context: the recording outlives this stream, so drop it if the app exits before it is stopped.
+      // The watcher is not cancelled on stop; the id check makes a late fire a no-op.
+      if let appBundleID {
+        let coordinator = recordingCoordinator
+        let executor = commandExecutor
+        Task {
+          try? await executor.repl_wait_for_app_termination(bundleID: appBundleID)
+          await coordinator.dropRecording(id: id)
+        }
+      }
+      return .raw(Data(path.utf8))
+
+    case .stopRecording:
+      guard let stopped = try await recordingCoordinator.stopRecording() else {
+        throw HostCommandError.message("stopRecording: no recording is in progress")
+      }
+      state.recordArtifact(ReplArtifact(hostPath: stopped.hostPath, containerPath: stopped.containerPath))
+      return .raw(Data(stopped.hostPath.utf8))
+    }
+  }
+
+  private func cropRect(for area: ScreenshotArea) async throws -> CGRect? {
+    switch area {
+    case .full:
+      return nil
+    case .rect(let rect):
+      return rect
+    case .element(let label):
+      return try await commandExecutor.repl_accessibility_frame(label: label)
     }
   }
 

@@ -12,19 +12,13 @@ public enum AsyncFBFutureBridgeError: Error {
   /// The underlying future signalled completion without yielding a value or an
   /// error. This indicates a bug in the producing FBFuture implementation.
   case continuationFulfilledWithoutValues
-
-  /// The teardown extracted from `FBFutureContext.enter:` was not captured.
-  /// This indicates the context's `enter:` block was never invoked, even though
-  /// the surrounding future resolved successfully.
-  case contextTeardownNotCaptured
 }
 
 // MARK: - FBFuture → async bridge
 
-/// Wraps a non-`Sendable` `FBFuture` so it can be captured by `@Sendable`
-/// closures (the cancellation handler). `FBFuture` is internally serialised by
-/// its own dispatch queue, so this is safe in practice.
-private final class FBFutureBox<T: AnyObject>: @unchecked Sendable {
+/// Wraps a non-`Sendable` `FBFuture` for capture by `@Sendable` closures; `FBFuture` guards its state
+/// with `@synchronized`, so sharing it is safe.
+private final class FutureBox<T: AnyObject>: @unchecked Sendable {
   let future: FBFuture<T>
   init(_ future: FBFuture<T>) {
     self.future = future
@@ -35,7 +29,7 @@ private final class FBFutureBox<T: AnyObject>: @unchecked Sendable {
 /// requiring `T` to conform to `Sendable`. The value originates from a single
 /// dispatch queue and is consumed by exactly one `await`, so unchecked
 /// `Sendable` conformance is safe.
-private final class FBFutureResultBox<T>: @unchecked Sendable {
+private final class FutureResultBox<T>: @unchecked Sendable {
   let value: T
   init(_ value: T) {
     self.value = value
@@ -47,15 +41,13 @@ private final class FBFutureResultBox<T>: @unchecked Sendable {
 /// Cooperative cancellation is honoured: cancelling the surrounding `Task`
 /// also cancels the underlying future via `FBFuture.cancel()`.
 ///
-/// Will be removed once the underlying `FBFuture` types disappear.
-///
 /// `T` is not constrained to `Sendable` because the existing FBFuture-backed
 /// model types are not `Sendable`-annotated; the bridge ferries the value
 /// across the continuation through an internal `@unchecked Sendable` wrapper.
 public func bridgeFBFuture<T: AnyObject>(_ future: FBFuture<T>) async throws -> T {
-  let box = FBFutureBox(future)
+  let box = FutureBox(future)
   let wrapped = try await withTaskCancellationHandler {
-    try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<FBFutureResultBox<T>, Error>) in
+    try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<FutureResultBox<T>, Error>) in
       box.future.onQueue(
         asyncBridgeQueue,
         notifyOfCompletion: { resolved in
@@ -63,12 +55,9 @@ public func bridgeFBFuture<T: AnyObject>(_ future: FBFuture<T>) async throws -> 
             continuation.resume(throwing: error)
           } else if let value = resolved.result {
             // swiftlint:disable:next force_cast
-            continuation.resume(returning: FBFutureResultBox(value as! T))
+            continuation.resume(returning: FutureResultBox(value as! T))
           } else if resolved.state == .cancelled {
-            // A cancelled FBFuture has neither `result` nor `error` set, only
-            // `state == FBFutureStateCancelled`. Surface this as Swift's
-            // standard cancellation error so callers (and logs) see something
-            // actionable instead of the generic "fulfilled without values".
+            // A cancelled FBFuture has neither `result` nor `error`; surface it as `CancellationError`.
             continuation.resume(throwing: CancellationError())
           } else {
             continuation.resume(throwing: AsyncFBFutureBridgeError.continuationFulfilledWithoutValues)
@@ -117,13 +106,13 @@ public func bridgeFBFutureVoid(_ future: FBFuture<AnyObject>) async throws {
 ///
 /// Cancellation of the surrounding `Task` cancels every in-flight future.
 public func bridgeFBFutures<T: AnyObject>(_ futures: [FBFuture<T>]) async throws -> [T] {
-  return try await withThrowingTaskGroup(of: (Int, FBFutureResultBox<T>).self, returning: [T].self) { group in
+  return try await withThrowingTaskGroup(of: (Int, FutureResultBox<T>).self, returning: [T].self) { group in
     var results: [T?] = .init(repeating: nil, count: futures.count)
     for (index, future) in futures.enumerated() {
-      let box = FBFutureBox(future)
+      let box = FutureBox(future)
       group.addTask {
         let value = try await bridgeFBFuture(box.future)
-        return (index, FBFutureResultBox(value))
+        return (index, FutureResultBox(value))
       }
     }
     for try await (index, valueBox) in group {
@@ -151,84 +140,13 @@ public func convertFBMutableFuture<T: AnyObject>(_ mutableFuture: FBMutableFutur
 }
 
 /// Awaits an `FBMutableFuture<T>` and returns its resolved value.
-///
-/// Convenience wrapper around `bridgeFBFuture(convertFBMutableFuture(_:))` that
-/// hides the cast through `FBFuture<T>` from callers.
-public func awaitMutableFuture<T: AnyObject>(_ mutableFuture: FBMutableFuture<T>) async throws -> T {
+func awaitMutableFuture<T: AnyObject>(_ mutableFuture: FBMutableFuture<T>) async throws -> T {
   try await bridgeFBFuture(convertFBMutableFuture(mutableFuture))
 }
 
 /// Awaits an `FBMutableFuture<NSNull>`, discarding the resolved `NSNull`.
-public func awaitMutableFutureVoid(_ mutableFuture: FBMutableFuture<NSNull>) async throws {
+func awaitMutableFutureVoid(_ mutableFuture: FBMutableFuture<NSNull>) async throws {
   try await bridgeFBFutureVoid(convertFBMutableFuture(mutableFuture))
-}
-
-// MARK: - FBFutureContext → async bridge
-
-/// Wraps a non-`Sendable` `FBFutureContext` so it can survive crossing the
-/// `Sendable` boundary of the bridging machinery.
-private final class FBFutureContextBox<T: AnyObject>: @unchecked Sendable {
-  let context: FBFutureContext<T>
-  init(_ context: FBFutureContext<T>) {
-    self.context = context
-  }
-}
-
-/// A box for the context value and its teardown trigger, captured inside the
-/// `enter:` block so they survive across the `await` that follows.
-private final class ContextEnterCapture<T: AnyObject>: @unchecked Sendable {
-  var value: T?
-  var teardown: FBMutableFuture<NSNull>?
-}
-
-/// Acquires the resource produced by an `FBFutureContext`, runs `body`, then
-/// triggers the context's teardown stack.
-///
-/// This is the async counterpart of the `FBFutureContext` LIFO-teardown API
-/// (`pend`/`push`/`pop`/`contextualTeardown`). The resource lifetime is scoped
-/// to the duration of `body`. If `body` throws, the teardown still runs and
-/// the original error is rethrown.
-///
-/// Internally uses `FBFutureContext.enter:` to extract the value and the
-/// teardown trigger; the teardown trigger is resolved after `body` returns
-/// (or throws).
-public func withFBFutureContext<T: AnyObject, R>(
-  _ context: FBFutureContext<T>,
-  body: (T) async throws -> R
-) async throws -> R {
-  let capture = ContextEnterCapture<T>()
-  let contextBox = FBFutureContextBox(context)
-
-  // Use `enter:` to extract both the value and a teardown trigger. We don't
-  // care about the value the block returns (it just feeds the surrounding
-  // future); we only need the side-effect of capturing.
-  let extracted = contextBox.context.onQueue(
-    asyncBridgeQueue,
-    enter: { value, teardown in
-      capture.value = value
-      capture.teardown = teardown
-      return NSNull()
-    })
-
-  // The `enter:`-derived future resolves as soon as the block runs. Awaiting
-  // it ensures the capture has been populated and surfaces any failure that
-  // occurred while acquiring the underlying resource.
-  // swiftlint:disable:next force_cast
-  let extractedTyped = extracted as! FBFuture<NSNull>
-  _ = try await bridgeFBFuture(extractedTyped)
-
-  guard let value = capture.value, let teardown = capture.teardown else {
-    throw AsyncFBFutureBridgeError.contextTeardownNotCaptured
-  }
-
-  do {
-    let result = try await body(value)
-    teardown.resolve(withResult: NSNull())
-    return result
-  } catch {
-    teardown.resolve(withResult: NSNull())
-    throw error
-  }
 }
 
 // MARK: - async → FBFuture bridge
@@ -236,38 +154,23 @@ public func withFBFutureContext<T: AnyObject, R>(
 /// Wraps a non-`Sendable` async closure so it can be captured by the
 /// `@Sendable` operation closure required by `Task.init`. The job runs exactly
 /// once on the spawned task, so unchecked sendability is safe in practice.
-private final class FBFutureJobBox<Success>: @unchecked Sendable {
+private final class FutureJobBox<Success>: @unchecked Sendable {
   let job: () async throws -> Success
   init(_ job: @escaping () async throws -> Success) {
     self.job = job
   }
 }
 
-/// Bridges Swift concurrency back to the `FBFuture` world.
-///
-/// Used by classes that still need to satisfy a legacy `@objc` protocol
-/// returning `FBFuture<T>` while implementing the work natively in
-/// `async`/`await`. Cancellation propagates from the returned future to the
-/// surrounding task.
-///
-/// The `job` closure is *not* required to be `@Sendable`: callers frequently
-/// capture `self` from non-`Sendable` command classes whose internal
-/// serialisation is provided by their work queue. The job runs on exactly one
-/// task, so wrapping it via `@unchecked Sendable` is safe in practice.
-///
-/// `Success` is not constrained to `Sendable` because the existing
-/// FBFuture-backed model types (e.g. `NSData`) are not `Sendable`-annotated.
-/// The job's result is consumed by the future's resolution exactly once, so
-/// unchecked sendability is safe in practice. This is implemented as a free
-/// function rather than a `Task` static member so the surrounding `Task<T,
-/// Error>` type need not satisfy its own `Success: Sendable` constraint.
+/// Bridges an async job back to an `FBFuture`, for callers that must satisfy an `FBFuture`-returning
+/// protocol. Cancelling the returned future cancels the task. Neither `job` nor `Success` is required to
+/// be `Sendable`: the job runs on exactly one task and the result is consumed once by the resolution.
 public func fbFutureFromAsync<Success: AnyObject>(
   job: @escaping () async throws -> Success
 ) -> FBFuture<Success> {
   let mutableFuture = FBMutableFuture<Success>()
-  let resultBox = FBFutureResultBox<FBMutableFuture<Success>>(mutableFuture)
-  let jobBox = FBFutureJobBox(job)
-  let resolverBox = FBFutureResolverBox<Success> { value in
+  let resultBox = FutureResultBox<FBMutableFuture<Success>>(mutableFuture)
+  let jobBox = FutureJobBox(job)
+  let resolverBox = FutureResolverBox<Success> { value in
     resultBox.value.resolve(withResult: value)
   } resolveError: { error in
     resultBox.value.resolveWithError(error)
@@ -293,7 +196,7 @@ public func fbFutureFromAsync<Success: AnyObject>(
 
 /// Captures the resolution callbacks so the spawned `Task` body never needs
 /// to reference the non-`Sendable` `FBMutableFuture` directly.
-private final class FBFutureResolverBox<Success>: @unchecked Sendable {
+private final class FutureResolverBox<Success>: @unchecked Sendable {
   let resolve: (Success) -> Void
   let resolveError: (Error) -> Void
   init(resolve: @escaping (Success) -> Void, resolveError: @escaping (Error) -> Void) {
@@ -301,7 +204,5 @@ private final class FBFutureResolverBox<Success>: @unchecked Sendable {
     self.resolveError = resolveError
   }
 }
-
-// MARK: - Internal
 
 let asyncBridgeQueue = DispatchQueue(label: "com.facebook.fbcontrolcore.async_bridge")

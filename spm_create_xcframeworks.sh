@@ -3,6 +3,10 @@
 set -e
 set -o pipefail
 
+# Temporary-directory generation rewrites nested-worktree paths incorrectly.
+# Generate projects in place for this packaging pipeline.
+export XCODEGEN_STRIP_XATTRS=false
+
 # Fail fast when the working tree is dirty: the artifacts and the
 # recorded provenance must correspond to a committed source revision.
 if [ -n "$(git status --porcelain)" ]; then
@@ -19,7 +23,12 @@ xcode_build="$(DEVELOPER_DIR="$developer_directory" xcodebuild -version | awk '/
 # Ensure Xcode projects are generated (xcodegen).
 ./build.sh generate
 
-#!/bin/bash
+# FBSimulatorControl's framework target copies these generated runtime helpers into
+# its Resources directory. Build them explicitly so an XCFramework build never
+# relies on products left behind by an earlier companion build.
+./build.sh build shims
+./build.sh build SimulatorFrameworkBridge-iOS
+./build.sh build SimulatorFrameworkBridge-tvOS
 
 # Function to archive and create xcframework
 build_xcframework() {
@@ -44,7 +53,14 @@ build_xcframework() {
     # but the distributed xcframeworks must be dynamic so the weak link against the private
     # CoreSimulator tbd stub is bound inside the dylib. A static archive would push those
     # undefined symbols onto consumers, which cannot resolve them.
-    xcodebuild archive -project "$project_name" -archivePath "$archive_path" SKIP_INSTALL=NO BUILD_LIBRARY_FOR_DISTRIBUTION=YES MACH_O_TYPE=mh_dylib OTHER_SWIFT_FLAGS='$(inherited) -Xfrontend -module-interface-preserve-types-as-written' -scheme "$framework_name" -destination generic/platform=macOS
+    local mach_o_setting="MACH_O_TYPE=mh_dylib"
+    if [ "$framework_name" = "FBSimulatorControl" ]; then
+        # Do not turn FBSimulatorControl's static dependency targets into dylibs as well.
+        # Their implicit framework links include SDK-private implementation details that
+        # are not legal direct dependencies of a third-party dylib.
+        mach_o_setting="FBSIMULATORCONTROL_MACH_O_TYPE=mh_dylib"
+    fi
+    xcodebuild archive -project "$project_name" -archivePath "$archive_path" SKIP_INSTALL=NO BUILD_LIBRARY_FOR_DISTRIBUTION=YES "$mach_o_setting" OTHER_SWIFT_FLAGS='$(inherited) -Xfrontend -module-interface-preserve-types-as-written' -scheme "$framework_name" -destination generic/platform=macOS
     
     # The FBSimulatorControl module contains a class also named FBSimulatorControl, so
     # module-qualified names in the emitted swiftinterface ("FBSimulatorControl.FBSimulatorVideo")
@@ -54,18 +70,40 @@ build_xcframework() {
     # so strip the module qualifier from the interfaces before packaging.
     if [ "$framework_name" = "FBSimulatorControl" ]; then
         find "${framework_path}/Modules/${framework_name}.swiftmodule" -name '*.swiftinterface' \
-            -exec sed -i '' -e 's/\([^A-Za-z0-9_.]\)FBSimulatorControl\./\1/g' -e 's/^FBSimulatorControl\.//' {} +
+            -exec sed -i '' -e '/import CoreSimulator/d' -e 's/\([^A-Za-z0-9_.]\)FBSimulatorControl\./\1/g' -e 's/^FBSimulatorControl\.//' -e 's/FBSimulatorControl:://g' {} +
+
+        # The standalone archive does not run the companion's distribution assembly.
+        # Install the guests into the framework bundle so BundledResources can resolve
+        # them when this XCFramework is embedded in another app.
+        mkdir -p "${framework_path}/Versions/A/Resources"
+        cp Build/Products/Release-iphonesimulator/SimulatorFrameworkBridge-iOS \
+            "${framework_path}/Versions/A/Resources/"
+        cp Build/Products/Release-appletvsimulator/SimulatorFrameworkBridge-tvOS \
+            "${framework_path}/Versions/A/Resources/"
+
+        # The archive was signed before the interfaces and resources were updated.
+        codesign --force --sign - --timestamp=none "${framework_path}"
     fi
 
     # Create xcframework
     xcodebuild -create-xcframework -framework "$framework_path" -output "$xcframework_path"
+
+    if [ "$framework_name" = "FBSimulatorControl" ]; then
+        local resources_path="${xcframework_path}/macos-arm64_x86_64/${framework_name}.framework/Versions/A/Resources"
+        for resource in SimulatorFrameworkBridge-iOS SimulatorFrameworkBridge-tvOS; do
+            if [ ! -x "${resources_path}/${resource}" ]; then
+                echo "error: ${resource} was not packaged as an executable FBSimulatorControl resource" >&2
+                exit 1
+            fi
+        done
+    fi
 }
 
-# Call the function with different framework names
-build_xcframework "XCTestBootstrap"
+# XCTestBootstrap's generated target is a static framework whose archive cannot be
+# converted to a dylib independently (its FBControlCore symbols are intentionally
+# resolved by the companion). Keep its checked-in binary artifact unchanged.
 build_xcframework "FBControlCore"
 build_xcframework "FBSimulatorControl"
-build_xcframework "FBDeviceControl"
 
 ./verify_fbsimulatorcontrol_runtime_linkage.sh
 

@@ -19,11 +19,8 @@ struct IdbForward {
 
     let allArguments = Array(CommandLine.arguments.dropFirst())
 
-    // Pull recognized flags out of the argument list; everything else is forwarded
-    // to the companion. `--idb-companion-binary` overrides the default
-    // system-installed companion CompanionDiscovery launches (mirrors idb-repl's
-    // flag). `--companion <host:port>` connects directly to a TCP companion,
-    // bypassing discovery. `--plaintext` forces an unencrypted TCP connection.
+    // Recognized flags are consumed here; everything else is forwarded to the companion
+    // verbatim.
     var udid: String?
     var companionBinary: String?
     var explicitCompanion: String?
@@ -42,14 +39,11 @@ struct IdbForward {
 
     logStderr("Remaining arguments: \(remainingArguments)")
 
-    // Resolve the companion address. With `--companion host:port` we connect to an
-    // explicit (typically remote) TCP companion and skip CompanionDiscovery
-    // entirely. Otherwise we discover a companion, starting one if needed (it exits
-    // after 5 minutes idle); with no udid we use the single running companion or
-    // start one for the only available simulator.
+    // A discovered companion is started if needed and exits after 5 minutes without
+    // gRPC activity.
     let address: CompanionAddress
     if let explicitCompanion {
-      guard let parsed = parseTCPAddress(explicitCompanion) else {
+      guard let parsed = CompanionAddress.parse(tcp: explicitCompanion) else {
         logStderr("Error: --companion expects host:port, e.g. 127.0.0.1:10882 (got '\(explicitCompanion)')")
         exit(1)
       }
@@ -128,19 +122,5 @@ struct IdbForward {
 
   private static func logCompanion(_ companion: CompanionInfo) {
     logStderr("Companion: udid=\(companion.udid) isLocal=\(companion.isLocal) pid=\(companion.pid.map(String.init) ?? "none") address=\(addressDescription(companion.address))")
-  }
-
-  /// Parses a `host:port` (or `[ipv6]:port`) string into a `.tcp` address, or nil
-  /// if malformed. Splits on the last colon so a bracketed IPv6 literal works.
-  private static func parseTCPAddress(_ value: String) -> CompanionAddress? {
-    guard let colon = value.lastIndex(of: ":") else { return nil }
-    var host = String(value[value.startIndex..<colon])
-    let portString = String(value[value.index(after: colon)...])
-    guard let port = Int(portString), (1...65535).contains(port) else { return nil }
-    if host.hasPrefix("[") && host.hasSuffix("]") {
-      host = String(host.dropFirst().dropLast())
-    }
-    guard !host.isEmpty else { return nil }
-    return .tcp(host: host, port: port)
   }
 }

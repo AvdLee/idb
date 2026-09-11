@@ -1,0 +1,55 @@
+/*
+ * Copyright (c) Meta Platforms, Inc. and affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+@_implementationOnly import CoreSimulator
+@preconcurrency import FBControlCore
+import Foundation
+
+public final class AppleSimctlCommandExecutor {
+
+  private let deviceSetPath: String
+  private let deviceUUID: String?
+  private let queue: DispatchQueue
+  private let logger: any FBControlCoreLogger
+
+  public class func executor(for simulator: FBSimulator) -> AppleSimctlCommandExecutor {
+    // simctl addresses a simulator by its device set, so this is only reachable for a
+    // set-managed simulator - which every simulator the companion serves is.
+    guard let set = simulator.set else {
+      preconditionFailure("\(simulator.udid) does not belong to a simulator set, so simctl cannot address it")
+    }
+    return AppleSimctlCommandExecutor(
+      deviceSetPath: set.deviceSet.setPath,
+      deviceUUID: simulator.udid,
+      logger: simulator.logger.withName("simctl"))
+  }
+
+  private init(deviceSetPath: String, deviceUUID: String?, logger: any FBControlCoreLogger) {
+    self.deviceSetPath = deviceSetPath
+    self.deviceUUID = deviceUUID
+    self.logger = logger
+    self.queue = DispatchQueue(label: "com.facebook.fbsimulatorcontrol.simctl_executor")
+  }
+
+  public func taskBuilder(withCommand command: String, arguments: [String]) -> FBProcessBuilder<NSNull, FBControlCoreLogger, FBControlCoreLogger> {
+    var derived: [String] = [
+      "simctl",
+      "--set",
+      deviceSetPath,
+      command,
+    ]
+    if let deviceUUID {
+      derived.append(deviceUUID)
+    }
+    derived.append(contentsOf: arguments)
+
+    return FBProcessBuilder<NSNull, FBControlCoreLogger, FBControlCoreLogger>
+      .withLaunchPath("/usr/bin/xcrun", arguments: derived)
+      .withStdOut(to: logger)
+      .withStdErr(to: logger)
+  }
+}

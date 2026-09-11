@@ -11,16 +11,15 @@ import Foundation
 
 /// A protocol that defines a command class that can be instantiated for a target.
 /// Concrete command classes (e.g. `FBSimulatorApplicationCommands`) adopt this directly.
-@objc public protocol FBiOSTargetCommand: NSObjectProtocol {
+public protocol FBiOSTargetCommand: AnyObject {
   /// Instantiates the Commands instance.
-  @objc(commandsWithTarget:)
   static func commands(with target: any FBiOSTarget) -> Self
 }
 
 // MARK: - FBiOSTargetInfo Protocol
 
 /// A protocol that defines an informational target.
-@objc public protocol FBiOSTargetInfo: NSObjectProtocol {
+public protocol FBiOSTargetInfo: AnyObject {
 
   /// A Unique Identifier that describes this iOS Target.
   var uniqueIdentifier: String { get }
@@ -51,15 +50,104 @@ import Foundation
 
   /// The State of the iOS Target. Currently only applies to Simulators.
   var state: FBiOSTargetState { get }
+
+  /// A Comparison Method for `sortedArrayUsingSelector:`
+  func compare(_ target: any FBiOSTargetInfo) -> ComparisonResult
+}
+
+extension FBiOSTargetInfo {
+
+  public func compare(_ target: any FBiOSTargetInfo) -> ComparisonResult {
+    var comparison = NSNumber(value: targetType.rawValue).compare(NSNumber(value: target.targetType.rawValue))
+    if comparison != .orderedSame {
+      return comparison
+    }
+    comparison = osVersion.number.compare(target.osVersion.number)
+    if comparison != .orderedSame {
+      return comparison
+    }
+    comparison = NSNumber(value: deviceType.family.rawValue).compare(NSNumber(value: target.deviceType.family.rawValue))
+    if comparison != .orderedSame {
+      return comparison
+    }
+    comparison = deviceType.model.rawValue.compare(target.deviceType.model.rawValue)
+    if comparison != .orderedSame {
+      return comparison
+    }
+    comparison = NSNumber(value: state.rawValue).compare(NSNumber(value: target.state.rawValue))
+    if comparison != .orderedSame {
+      return comparison
+    }
+    return udid.compare(target.udid)
+  }
+
+  /// A one-line description of the target.
+  public var targetDescription: String {
+    "\(udid) | \(name) | \(state.stateString.rawValue) | \(deviceType.model.rawValue) | \(osVersion) "
+  }
 }
 
 // MARK: - FBiOSTarget Protocol
 
 /// A protocol that defines an interactible and informational target.
-@objc public protocol FBiOSTarget: NSObjectProtocol, FBiOSTargetInfo, FBiOSTargetCommand {
+public protocol FBiOSTarget: FBiOSTargetInfo, FBiOSTargetCommand {
+
+  // MARK: - Command nouns
+
+  // The target's capabilities, one accessor per capability. A caller reaches an operation through
+  // the noun that owns it — `target.power.shutdown()` — rather than through a verb on the target.
+  //
+  // Each noun is an associated type rather than the capability existential so that a concrete target
+  // keeps the concrete command type: `simulator.lifecycle` is a `SimulatorLifecycleCommands`, with
+  // the simulator-only operations it adds. A caller holding `any FBiOSTarget` sees the capability
+  // upper bound, `any LifecycleCommands`.
+
+  associatedtype Application: ApplicationCommands
+  var application: Application { get }
+
+  associatedtype CrashLog: CrashLogCommands
+  var crashLog: CrashLog { get }
+
+  associatedtype Debugger: DebuggerCommands
+  var debugger: Debugger { get }
+
+  associatedtype Erase: EraseCommands
+  var erase: Erase { get }
+
+  associatedtype File: FileCommands
+  var file: File { get }
+
+  associatedtype Instruments: InstrumentsCommands
+  var instruments: Instruments { get }
+
+  associatedtype Lifecycle: LifecycleCommands
+  var lifecycle: Lifecycle { get }
+
+  associatedtype Location: LocationCommands
+  var location: Location { get }
+
+  associatedtype Log: LogCommands
+  var log: Log { get }
+
+  associatedtype Power: PowerCommands
+  var power: Power { get }
+
+  associatedtype Screenshot: ScreenshotCommands
+  var screenshot: Screenshot { get }
+
+  associatedtype VideoRecording: VideoRecordingCommands
+  var videoRecording: VideoRecording { get }
+
+  associatedtype VideoStream: VideoStreamCommands
+  var videoStream: VideoStream { get }
+
+  associatedtype XCTraceRecord: XCTraceRecordCommands
+  var xctraceRecord: XCTraceRecord { get }
+
+  // MARK: - Target properties
 
   /// The Target's Logger.
-  var logger: (any FBControlCoreLogger)? { get }
+  var logger: any FBControlCoreLogger { get }
 
   /// The path to the custom (non-default) device set if applicable.
   var customDeviceSetPath: String? { get }
@@ -73,10 +161,10 @@ import Foundation
   var auxillaryDirectory: String { get }
 
   /// The root of the "Runtime" where applicable
-  var runtimeRootDirectory: String { get }
+  var runtimeRootDirectory: String { get async }
 
   /// The root of the "Platform" where applicable
-  var platformRootDirectory: String { get }
+  var platformRootDirectory: String { get async }
 
   /// The Screen Info for the Target.
   var screenInfo: FBiOSTargetScreenInfo? { get }
@@ -90,10 +178,6 @@ import Foundation
   /// Examples of these operations are transforming an immutable data structure.
   var asyncQueue: DispatchQueue { get }
 
-  /// A Comparison Method for `sortedArrayUsingSelector:`
-  @objc(compare:)
-  func compare(_ target: any FBiOSTarget) -> ComparisonResult
-
   /// If the target's bundle needs to be codesigned or not.
   func requiresBundlesToBeSigned() -> Bool
 
@@ -104,169 +188,139 @@ import Foundation
   func environmentAdditions() -> [String: String]
 }
 
-// MARK: - C function replacements via @_cdecl
+/// String representations of `FBiOSTargetState`.
+///
+/// The state enum's numeric values are not stable across releases; these strings are, and are what
+/// gets serialised.
+public enum FBiOSTargetStateString: String, Sendable, CaseIterable {
+  case creating = "Creating"
+  case shutdown = "Shutdown"
+  case booting = "Booting"
+  case booted = "Booted"
+  case shuttingDown = "Shutting Down"
+  case DFU = "DFU"
+  case recovery = "Recovery"
+  case restoreOS = "RestoreOS"
+  case unknown = "Unknown"
+}
 
-/// The canonical string representation of the state enum.
-@_cdecl("FBiOSTargetStateStringFromState")
-func FBiOSTargetStateStringFromState(_ state: FBiOSTargetState) -> FBiOSTargetStateString {
-  switch state {
-  case .creating:
-    return .creating
-  case .shutdown:
-    return .shutdown
-  case .booting:
-    return .booting
-  case .booted:
-    return .booted
-  case .shuttingDown:
-    return .shuttingDown
-  case .DFU:
-    return .DFU
-  case .recovery:
-    return .recovery
-  case .restoreOS:
-    return .restoreOS
-  case .unknown:
-    return .unknown
-  @unknown default:
-    return .unknown
+// MARK: - State conversions
+
+extension FBiOSTargetState {
+
+  /// The canonical string representation of the state enum.
+  public var stateString: FBiOSTargetStateString {
+    switch self {
+    case .creating:
+      return .creating
+    case .shutdown:
+      return .shutdown
+    case .booting:
+      return .booting
+    case .booted:
+      return .booted
+    case .shuttingDown:
+      return .shuttingDown
+    case .DFU:
+      return .DFU
+    case .recovery:
+      return .recovery
+    case .restoreOS:
+      return .restoreOS
+    case .unknown:
+      return .unknown
+    @unknown default:
+      return .unknown
+    }
   }
 }
 
-/// The canonical enum representation of the state string.
-@_cdecl("FBiOSTargetStateFromStateString")
-func FBiOSTargetStateFromStateString(_ stateString: FBiOSTargetStateString) -> FBiOSTargetState {
-  let normalized = stateString.rawValue.lowercased().replacingOccurrences(of: "-", with: " ")
-  if normalized == FBiOSTargetStateString.creating.rawValue.lowercased() {
-    return .creating
-  }
-  if normalized == FBiOSTargetStateString.shutdown.rawValue.lowercased() {
-    return .shutdown
-  }
-  if normalized == FBiOSTargetStateString.booting.rawValue.lowercased() {
-    return .booting
-  }
-  if normalized == FBiOSTargetStateString.booted.rawValue.lowercased() {
-    return .booted
-  }
-  if normalized == FBiOSTargetStateString.shuttingDown.rawValue.lowercased() {
-    return .shuttingDown
-  }
-  if normalized == FBiOSTargetStateString.DFU.rawValue.lowercased() {
-    return .DFU
-  }
-  if normalized == FBiOSTargetStateString.recovery.rawValue.lowercased() {
-    return .recovery
-  }
-  if normalized == FBiOSTargetStateString.restoreOS.rawValue.lowercased() {
-    return .restoreOS
-  }
-  return .unknown
-}
+extension FBiOSTargetType {
 
-/// The canonical string representations of the FBiOSTargetType enum.
-@_cdecl("FBiOSTargetTypeStringFromTargetType")
-func FBiOSTargetTypeStringFromTargetType(_ targetType: FBiOSTargetType) -> NSString {
-  if targetType == .device {
-    return "Device"
-  }
-  if targetType == .simulator {
-    return "Simulator"
-  }
-  if targetType == .localMac {
-    return "Mac"
-  }
-  return "Unknown"
-}
-
-/// The canonical string representation of a product family (the device "type":
-/// iphone, ipad, watch, tv, mac), distinct from the simulator/device/mac
-/// distinction carried by FBiOSTargetType.
-public func FBControlCoreProductFamilyString(_ family: FBControlCoreProductFamily) -> String {
-  switch family {
-  case .familyiPhone:
-    return "iphone"
-  case .familyiPad:
-    return "ipad"
-  case .familyAppleWatch:
-    return "watch"
-  case .familyAppleTV:
-    return "tv"
-  case .familyMac:
-    return "mac"
-  case .familyUnknown:
-    return "unknown"
-  @unknown default:
-    return "unknown"
+  /// The canonical string representation of the target type.
+  public var stringRepresentation: String {
+    if self == .device {
+      return "Device"
+    }
+    if self == .simulator {
+      return "Simulator"
+    }
+    if self == .localMac {
+      return "Mac"
+    }
+    return "Unknown"
   }
 }
 
-/// A Default Comparison Function that can be called for different implementations of FBiOSTarget.
-@_cdecl("FBiOSTargetComparison")
-func FBiOSTargetComparison(_ left: FBiOSTarget, _ right: FBiOSTarget) -> ComparisonResult {
-  var comparison = NSNumber(value: left.targetType.rawValue).compare(NSNumber(value: right.targetType.rawValue))
-  if comparison != .orderedSame {
-    return comparison
-  }
-  comparison = left.osVersion.number.compare(right.osVersion.number)
-  if comparison != .orderedSame {
-    return comparison
-  }
-  comparison = NSNumber(value: left.deviceType.family.rawValue).compare(NSNumber(value: right.deviceType.family.rawValue))
-  if comparison != .orderedSame {
-    return comparison
-  }
-  comparison = left.deviceType.model.rawValue.compare(right.deviceType.model.rawValue)
-  if comparison != .orderedSame {
-    return comparison
-  }
-  comparison = NSNumber(value: left.state.rawValue).compare(NSNumber(value: right.state.rawValue))
-  if comparison != .orderedSame {
-    return comparison
-  }
-  return left.udid.compare(right.udid)
-}
+extension FBControlCoreProductFamily {
 
-/// Constructs a string description of the provided target.
-@_cdecl("FBiOSTargetDescribe")
-func FBiOSTargetDescribe(_ target: FBiOSTargetInfo) -> NSString {
-  return "\(target.udid) | \(target.name) | \(FBiOSTargetStateStringFromState(target.state).rawValue) | \(target.deviceType.model.rawValue) | \(target.osVersion) " as NSString
+  /// The canonical string representation of the product family (the device "type": iphone, ipad,
+  /// watch, tv, mac), distinct from the simulator/device/mac distinction of FBiOSTargetType.
+  public var stringRepresentation: String {
+    switch self {
+    case .familyiPhone:
+      return "iphone"
+    case .familyiPad:
+      return "ipad"
+    case .familyAppleWatch:
+      return "watch"
+    case .familyAppleTV:
+      return "tv"
+    case .familyMac:
+      return "mac"
+    case .familyUnknown:
+      return "unknown"
+    @unknown default:
+      return "unknown"
+    }
+  }
 }
 
 /// Constructs an NSPredicate matching the specified UDID.
-@_cdecl("FBiOSTargetPredicateForUDID")
-func FBiOSTargetPredicateForUDID(_ udid: NSString) -> NSPredicate {
-  return FBiOSTargetPredicateForUDIDs([udid as String] as NSArray)
+public func FBiOSTargetPredicateForUDID(_ udid: String) -> NSPredicate {
+  return FBiOSTargetPredicateForUDIDs([udid])
 }
 
 /// Constructs an NSPredicate matching the specified UDIDs.
-@_cdecl("FBiOSTargetPredicateForUDIDs")
-func FBiOSTargetPredicateForUDIDs(_ udids: NSArray) -> NSPredicate {
-  let udidsSet = Set(udids as! [String])
+public func FBiOSTargetPredicateForUDIDs(_ udids: [String]) -> NSPredicate {
+  let udidsSet = Set(udids)
   return NSPredicate { (evaluatedObject, _) -> Bool in
-    guard let candidate = evaluatedObject as? FBiOSTarget else {
+    guard let candidate = evaluatedObject as? FBiOSTargetInfo else {
       return false
     }
     return udidsSet.contains(candidate.udid)
   }
 }
 
-/// Constructs a future that resolves when the target resolves to a provided state.
-@_cdecl("FBiOSTargetResolveState")
-func FBiOSTargetResolveState(_ target: FBiOSTarget, _ state: FBiOSTargetState) -> FBFuture<NSNull> {
-  return FBFuture<AnyObject>.onQueue(
-    target.workQueue,
-    resolveWhen: {
-      target.state == state
-    })
+/// Waits until the target resolves to a provided state.
+///
+/// - Parameter deadline: How long to wait for. Waits indefinitely when `nil`.
+public func FBiOSTargetResolveState(
+  _ target: any FBiOSTarget,
+  _ state: FBiOSTargetState,
+  deadline: PollDeadline? = nil
+) async throws {
+  let box = TargetBox(target)
+  try await pollUntilTrue(on: target.workQueue, deadline: deadline) { box.target.state == state }
 }
 
-/// Constructs a future that resolves when the target leaves a provided state.
-@_cdecl("FBiOSTargetResolveLeavesState")
-func FBiOSTargetResolveLeavesState(_ target: FBiOSTarget, _ state: FBiOSTargetState) -> FBFuture<NSNull> {
-  return FBFuture<AnyObject>.onQueue(
-    target.workQueue,
-    resolveWhen: {
-      target.state != state
-    })
+/// Waits until the target leaves a provided state.
+///
+/// - Parameter deadline: How long to wait for. Waits indefinitely when `nil`.
+public func FBiOSTargetResolveLeavesState(
+  _ target: any FBiOSTarget,
+  _ state: FBiOSTargetState,
+  deadline: PollDeadline? = nil
+) async throws {
+  let box = TargetBox(target)
+  try await pollUntilTrue(on: target.workQueue, deadline: deadline) { box.target.state != state }
+}
+
+/// Carries a target into the `@Sendable` polling closure. The target is read only for its `state`,
+/// and only on its own work queue, which is the serialisation point the protocol documents.
+private final class TargetBox: @unchecked Sendable {
+  let target: any FBiOSTarget
+  init(_ target: any FBiOSTarget) {
+    self.target = target
+  }
 }

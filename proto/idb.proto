@@ -26,6 +26,8 @@ service CompanionService {
   // Interaction
   rpc accessibility_info(AccessibilityInfoRequest)
       returns (AccessibilityInfoResponse) {}
+  rpc accessibility_action(AccessibilityActionRequest)
+      returns (AccessibilityActionResponse) {}
   rpc focus(FocusRequest) returns (FocusResponse) {}
   rpc hid(stream HIDEvent) returns (HIDResponse) {}
   rpc open_url(OpenUrlRequest) returns (OpenUrlRequest) {}
@@ -202,13 +204,14 @@ message InstallRequest {
     BundleType bundle_type = 1;
     string bundle_id = 2;
   }
+  // 5 was `bundle_id`, the form link_dsym_to_bundle replaced.
+  reserved 5;
+  reserved "bundle_id";
   oneof value {
     Destination destination = 1;
     Payload payload = 2;
     string name_hint = 3;
     bool make_debuggable = 4;
-    string bundle_id = 5; //(2022-03-02) REMOVE, For back compatibility only.
-                          // Link dSYM to app bundle_id
     LinkDsymToBundle link_dsym_to_bundle = 6;
     bool override_modification_time = 7;
     bool skip_signing_bundles = 8;
@@ -221,11 +224,77 @@ message InstallResponse {
   double progress = 3;
 }
 
-message ScreenshotRequest {}
+message ScreenshotRequest {
+  enum Format {
+    PNG = 0;
+    JPEG = 1;
+    TIFF = 2;
+  }
+  // The unit that `crop` and `fit` are expressed in. POINTS is the coordinate
+  // space that tap, swipe and describe already use; it is resolved to pixels
+  // on the companion, which is the only side that knows the screen scale.
+  enum Unit {
+    PIXELS = 0;
+    POINTS = 1;
+  }
+  // Top-left origin, matching the tap/swipe coordinate space. A rect that
+  // partially overhangs the screen is clamped; the response reports the
+  // dimensions actually captured.
+  message Rect {
+    double x = 1;
+    double y = 2;
+    double width = 3;
+    double height = 4;
+  }
+  // Bounding box the image is scaled to fit inside. One factor is applied to
+  // both axes and the image is never upscaled, so the aspect ratio is
+  // preserved to within the rounding of each side to a whole pixel -- a few
+  // percent on a very small image. 0 means "unbounded" on that axis; when both
+  // are set, the more restrictive bound wins.
+  message Fit {
+    uint32 max_width = 1;
+    uint32 max_height = 2;
+  }
+
+  Format format = 1;
+  // Lossy formats only; 0 means "server default" (0.8), as in
+  // VideoStreamRequest. Setting this on PNG or TIFF is an INVALID_ARGUMENT
+  // error rather than a no-op.
+  double compression_quality = 2;
+  // Unset captures the full screen.
+  Rect crop = 3;
+  // Transforms are applied crop -> scale -> encode, so the scaler never
+  // touches pixels that are about to be discarded.
+  oneof scale {
+    // In (0, 1].
+    double scale_factor = 4;
+    Fit fit = 5;
+  }
+  Unit unit = 6;
+}
 
 message ScreenshotResponse {
+  // Pixels. A measurement is never legitimately 0, so 0 on either axis is the
+  // companion saying it did not report one rather than an image of no height.
+  message Size {
+    uint32 width = 1;
+    uint32 height = 2;
+  }
+
   bytes image_data = 1;
+  // One of "png", "jpeg" or "tiff". Declared since this message was written
+  // but never populated before the request gained fields. A companion that
+  // leaves this empty predates that change and has silently ignored every
+  // field of ScreenshotRequest.
   string image_format = 2;
+  // Dimensions of image_data, after crop and scale.
+  Size destination = 3;
+  // Dimensions of the native capture, before crop and scale.
+  Size source = 4;
+  // Pixels per point, so a client can convert between the two units itself.
+  // 0 when the target does not report a screen scale, which is also when a
+  // request in POINTS is rejected.
+  double screen_scale = 5;
 }
 
 message FocusRequest {}
@@ -241,14 +310,138 @@ message AccessibilityInfoRequest {
   enum Format {
     LEGACY = 0;
     NESTED = 1;
+    // A consolidated document: the element tree plus the read's provenance
+    // (which backend served it, what was asked, screen bounds, truncation,
+    // any blocking modal). An older server does not recognize this value and
+    // falls back to LEGACY — a caller can detect that by the response shape.
+    COMPLETE = 2;
+  }
+  // Which backend serves the read. UNSPECIFIED preserves the historical
+  // behaviour, so an older client — or one that does not ask — is unaffected;
+  // an older server ignores this field entirely and serves the read as if it
+  // were unset.
+  enum Backend {
+    BACKEND_UNSPECIFIED = 0;
+    AX = 1;
+    AXBRIDGE = 2;
+    AXBRIDGE_PERSISTENT = 3;
   }
   Point point = 2;
   Format format = 3;
+  // Optional: describe a single element by marker (substring match against
+  // match_key, within depth) instead of by point / the whole screen.
+  string marker = 4;
+  AccessibilityActionRequest.SearchableKey match_key = 5;
+  uint32 depth = 6;
+  // Restricts the described accessibility keys to this set; an empty list
+  // returns the default key set.
+  repeated string keys = 7;
+  Backend backend = 8;
+  // Collect element counts and timings for the read. Reported by the COMPLETE
+  // format only; the legacy formats collect but have nowhere to report, so
+  // their output is unchanged.
+  bool profile = 9;
+  // Collect upper-region frame coverage for the read. Reported by the
+  // COMPLETE format only, like profile.
+  bool collect_frame_coverage = 10;
+  // Which elements the read reports. FILTER_ALL is the historical behaviour,
+  // so an older client — or one that does not ask — is unaffected.
+  enum Filter {
+    FILTER_ALL = 0;
+    // Only the elements a caller could actually interact with.
+    FILTER_INTERACTABLE = 1;
+  }
+  // Report only the elements whose match_key value contains this substring;
+  // empty reports every element, which is the historical behaviour. Unlike
+  // marker, which selects the first matching element and only it, match
+  // reports all of them and finding none is an empty result rather than an
+  // error. Setting both marker and match is INVALID_ARGUMENT.
+  string match = 11;
+  // Compare match — and, on a marker read, marker — case-insensitively.
+  bool ignore_case = 12;
+  Filter filter = 13;
 }
 
 message AccessibilityInfoResponse {
   string json = 1;
 }
+
+message AccessibilityActionRequest {
+  enum SearchableKey {
+    LABEL = 0;
+    UNIQUE_ID = 1;
+    VALUE = 2;
+    TITLE = 3;
+    ROLE = 4;
+    ROLE_DESCRIPTION = 5;
+    SUBROLE = 6;
+    HELP = 7;
+    PLACEHOLDER = 8;
+  }
+  // No target means the frontmost application element.
+  oneof target {
+    string marker = 1;
+    Point point = 2;
+  }
+  SearchableKey match_key = 3;
+  uint32 depth = 4;
+  // Compare a marker — the source and, on a drag, the destination —
+  // case-insensitively. Absent on an older client, which matches
+  // case-sensitively as before.
+  bool ignore_case = 9;
+
+  message Tap {
+    bool check_expected_value = 1;
+    string expected_value = 2;
+    SearchableKey expected_key = 3;
+  }
+
+  message Scroll {
+    enum Direction {
+      UP = 0;
+      DOWN = 1;
+      LEFT = 2;
+      RIGHT = 3;
+      VISIBLE = 4;
+    }
+    Direction direction = 1;
+  }
+
+  message SetValue {
+    string value = 1;
+  }
+
+  // Press and hold the request's target, drag to the destination below, and
+  // release. All durations are in seconds; a zero value means the server
+  // default noted against each field.
+  message Drag {
+    // A destination is required; unlike the source, it has no frontmost
+    // default.
+    oneof destination {
+      string marker = 1;
+      Point point = 2;
+    }
+    SearchableKey destination_match_key = 3;
+    uint32 destination_depth = 4;
+    // How long to hold the source before moving. Default 0.5.
+    double press_duration = 5;
+    // How long the movement itself takes. Default 0.5.
+    double duration = 6;
+    // How long to hold the destination before releasing. Default 0.1.
+    double release_duration = 7;
+    // Distance between interpolated touch points, in points. Default 10.
+    double delta = 8;
+  }
+
+  oneof action {
+    Tap tap = 5;
+    Scroll scroll = 6;
+    SetValue set_value = 7;
+    Drag drag = 8;
+  }
+}
+
+message AccessibilityActionResponse {}
 
 message ApproveRequest {
   enum Permission {
@@ -397,11 +590,26 @@ message HIDEvent {
     double radius = 4;
   }
 
+  enum HIDOrientationType {
+    PORTRAIT = 0;
+    PORTRAIT_UPSIDE_DOWN = 1;
+    LANDSCAPE_LEFT = 2;
+    LANDSCAPE_RIGHT = 3;
+  }
+
+  message HIDOrientation {
+    HIDOrientationType orientation = 1;
+  }
+
+  message HIDShake {}
+
   oneof event {
     HIDPress press = 1;
     HIDSwipe swipe = 2;
     HIDDelay delay = 3;
     HIDPinch pinch = 4;
+    HIDOrientation orientation = 5;
+    HIDShake shake = 6;
   }
 }
 
@@ -450,8 +658,34 @@ message LogResponse {
 }
 
 message RecordRequest {
+  // Field names and numbers match VideoStreamRequest.Start, so the two read
+  // identically; 3 is skipped because that is the stream's `format` and a
+  // recording is always H.264 in an mp4. A zero value means the default noted
+  // against each field, since a proto3 scalar cannot distinguish unset from
+  // zero. A companion older than these fields ignores them and records at the
+  // defaults; see RecordResponse.Applied.
   message Start {
+    // 3 is the stream's `format`, deliberately skipped here (see above).
+    // Reserve the tag and name so no future field can silently reuse them and
+    // collide with a wire-compatible client that ever sent a `format` value.
+    reserved 3;
+    reserved "format";
     string file_path = 1;
+    // Capture cadence. Default 30 -- unlike the stream, whose default is the
+    // display's own rate. This is what FBSimulatorVideoRecordingCommands has
+    // always pinned, so an all-zero request records exactly as it did before.
+    uint64 fps = 2;
+    // Inert for H.264 and so not offered by the CLI; here for message
+    // symmetry. Must be in [0, 1], and cannot be combined with avg_bitrate.
+    double compression_quality = 4;
+    // Scale applied before encoding. Only a value in (0, 1) scales; default
+    // unset, which records at full size. Values above 1 are rejected.
+    double scale_factor = 5;
+    // Target average bits per second. Default unset, which lets the encoder
+    // choose.
+    double avg_bitrate = 6;
+    // Maximum seconds between forced key frames. Default 4.
+    double key_frame_rate = 7;
   }
   message Stop {}
   oneof control {
@@ -461,9 +695,25 @@ message RecordRequest {
 }
 
 message RecordResponse {
+  // The encode options the companion resolved for this recording, so a client
+  // can tell that they took effect. Unset fps/scale_factor/key_frame_rate are
+  // reported as the defaults they resolved to. The rate control is reported in
+  // whichever of avg_bitrate/compression_quality the request chose, and both
+  // are 0 when it chose neither and left the rate automatic.
+  message Applied {
+    uint64 fps = 1;
+    double scale_factor = 2;
+    double avg_bitrate = 3;
+    double key_frame_rate = 4;
+    double compression_quality = 5;
+  }
   oneof output {
     bytes log_output = 1;
     Payload payload = 2;
+    // Sent once, before any payload, and only when the request set at least
+    // one encode option. A client that set one and did not receive this is
+    // talking to a companion that silently dropped it.
+    Applied applied = 3;
   }
 }
 
@@ -506,6 +756,7 @@ message LaunchRequest {
     bool foreground_if_running = 4;
     bool wait_for = 5;
     bool wait_for_debugger = 6;
+    bool enable_repl = 7;
   }
   message Stop {}
   oneof control {
@@ -800,8 +1051,22 @@ message ReplRequest {
       APP = 2;
     }
     Context context = 2;
-    // The bundle id to launch (with the REPL injected) for the APP context.
+    // The bundle id to launch (with the REPL injected) for the APP context. If
+    // empty, the companion launches its bundled ReplHost app instead
+    // (installing it first if it is not already installed).
     string app_bundle_id = 3;
+    // APP context only: whether to reuse an already-running REPL for this app
+    // (reattach) instead of forcing a new session (a clean relaunch). idb-repl
+    // sends true by default and false when `--new-session` is passed. Unset --
+    // an older client that predates reattach -- is false, so the companion
+    // relaunches.
+    bool reuse_session = 4;
+    // A path the driver created locally, used to detect whether the companion
+    // shares the driver's filesystem: the companion checks whether this path
+    // exists and reports the result in Ready.shared_filesystem. When they share
+    // a filesystem the driver moves captured artifacts directly; otherwise it
+    // pulls them back over gRPC.
+    string probe_file_path = 5;
   }
   // Sent for each piece of code to run: a compiled dylib and the symbol to
   // call.
@@ -833,11 +1098,41 @@ message ReplResponse {
       string contents = 2;
     }
     repeated GeneratedInterface generated_interfaces = 2;
+    // The OS version of the connected target, e.g. "26.2".
+    string os_version = 4;
+    // The next index the driver should use for numbering a compiled module.
+    uint32 next_run_index = 5;
+    // Whether the companion shares the driver's filesystem, determined from
+    // Start.probe_file_path. When true the driver reads companion-written
+    // artifact paths directly.
+    bool shared_filesystem = 6;
+    // A stable identifier for the REPL host process, sent in every Ready. It
+    // persists across reconnects to a still-running `app` REPL and is
+    // regenerated on relaunch, so the driver can append to the same session
+    // report while a reset (a new session) starts a fresh one.
+    string session_id = 7;
   }
   // The result of executing one Execute message.
   message Result {
     bool success = 1;
     string output = 2;
+    // The next index the driver should use for numbering a compiled module.
+    // A negative value signals the session has ended.
+    int32 next_run_index = 3;
+    // Files captured on the companion during this execute (screenshots saved to
+    // a file, recordings). The driver retrieves each into its session's
+    // artifacts directory -- moving it when the filesystem is shared, otherwise
+    // pulling it over gRPC (the AUXILLARY container) and removing the companion
+    // copy.
+    message Artifact {
+      // The absolute path on the companion host (used for a same-filesystem
+      // move).
+      string host_path = 1;
+      // The path relative to the AUXILLARY file container root (used to pull
+      // the file when the filesystem is not shared).
+      string container_path = 2;
+    }
+    repeated Artifact artifacts = 4;
   }
   // The session has ended.
   message Stopped {

@@ -12,12 +12,12 @@ import IDBGRPCSwift
 
 struct RecordMethodHandler {
 
-  let target: FBiOSTarget
+  let target: any FBiOSTarget
   let targetLogger: FBControlCoreLogger
 
-  func handle(requestStream: GRPCAsyncRequestStream<Idb_RecordRequest>, responseStream: GRPCAsyncResponseStreamWriter<Idb_RecordResponse>, context: GRPCAsyncServerCallContext) async throws {
+  func handle(requestStream: RequestStreamReader<Idb_RecordRequest>, responseStream: GRPCAsyncResponseStreamWriter<Idb_RecordResponse>, context: GRPCAsyncServerCallContext) async throws {
 
-    let request = try await requestStream.requiredNext
+    let request = try await requestStream.requiredNext()
     guard case let .start(start) = request.control
     else { throw GRPCStatus(code: .failedPrecondition, message: "Expect start as initial request frame") }
 
@@ -26,17 +26,33 @@ struct RecordMethodHandler {
       ? URL(fileURLWithPath: target.auxillaryDirectory).appendingPathComponent("idb_encode").appendingPathExtension("mp4").path
       : start.filePath
 
-    guard let asyncTarget = target as? any VideoRecordingCommands else {
-      throw GRPCStatus(code: .failedPrecondition, message: "\(target) does not support VideoRecordingCommands")
+    let recording: any FBVideoRecording
+    if let encodeOptions = try RecordRequestTranslation.encodeOptions(from: start) {
+      try RecordRequestTranslation.requireHonoredConfiguration(target.videoRecording, describing: "\(target)")
+      recording = try await target.videoRecording.startRecording(
+        toFile: filePath,
+        configuration: RecordRequestTranslation.configuration(for: encodeOptions))
+      do {
+        // Ahead of any payload, so a client reading the stream in order learns what it is about to
+        // receive before it receives any of it.
+        try await responseStream.send(RecordRequestTranslation.appliedResponse(encodeOptions))
+      } catch {
+        // The recording is already running and this is the last thing that will reach the client, so
+        // stop it rather than leaving the encoder and its file handle held for the life of the
+        // companion. The original failure is what the caller needs to see.
+        _ = try? await recording.stop()
+        throw error
+      }
+    } else {
+      recording = try await target.videoRecording.startRecording(toFile: filePath)
     }
-    try await asyncTarget.startRecording(toFile: filePath)
 
-    _ = try await requestStream.requiredNext
-    try await asyncTarget.stopRecording()
+    _ = try await requestStream.requiredNext()
+    let outputURL = try await recording.stop()
 
     if start.filePath.isEmpty {
       let gzipTask = try await FBArchiveOperations.createGzipAsync(
-        forPath: filePath,
+        forPath: outputURL.path,
         logger: targetLogger)
 
       try await FileDrainWriter.performDrain(task: gzipTask) { data in

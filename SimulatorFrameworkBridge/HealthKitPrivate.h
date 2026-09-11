@@ -5,13 +5,9 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-// Synthetic header for HealthKit private API.
-//
-// HKAuthorizationStore is a private XPC client of the healthd daemon
-// (mach service com.apple.healthd.server). It is shipped inside the
-// public HealthKit.framework but not exposed in the SDK headers, so
-// we declare only the methods we use here and call them via the ObjC
-// runtime after dlopen-loading HealthKit.framework.
+// Synthetic header for HealthKit private API. HKAuthorizationStore is the XPC client of healthd
+// (com.apple.healthd.server), shipped inside the public HealthKit.framework but absent from the SDK
+// headers. Only the methods used are declared; the framework is dlopen-loaded.
 
 #import <Foundation/Foundation.h>
 
@@ -21,9 +17,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  * XPC client for the healthd daemon. Provides read/write access to
- * per-bundle HealthKit authorisation records. Created via
- * [[NSClassFromString(@"HKAuthorizationStore") alloc] initWithHealthStore:store]
- * after dlopen of HealthKit.framework.
+ * per-bundle HealthKit authorisation records.
  */
 @interface HKAuthorizationStore : NSObject
 
@@ -44,14 +38,39 @@ NS_ASSUME_NONNULL_BEGIN
  * authorisation request entries from its database. The Health-app
  * UI always passes an empty modes dict.
  *
+ * `options` is a bitmask, **not an object** — both runtimes encode it
+ * as `Q`. Zero is what the Health app passes.
+ *
  * Prerequisite: a matching `setRequestedAuthorizationForBundleIdentifier:`
  * call must have created an authorisation request for each (bundleID,
  * type) pair, otherwise the row is silently dropped on the daemon side.
+ *
+ * **This is the iOS 26.x spelling.** iOS 27 renamed it to the
+ * `modeInfos:` variant below. Exactly one of the two is present on any
+ * given runtime, so a caller must ask with `respondsToSelector:` and
+ * send whichever answers — see `HealthSettingsService`.
+ *
+ * Encoding on iOS 26.5 (23F77): `v56@0:8@16@24@32Q40@?48`.
  */
 - (void)setAuthorizationStatuses:(NSDictionary<HKObjectType *, NSNumber *> *)statuses
               authorizationModes:(NSDictionary<HKObjectType *, NSNumber *> *)modes
              forBundleIdentifier:(NSString *)bundleID
-                         options:(nullable NSDictionary *)options
+                         options:(NSUInteger)options
+                      completion:(void (^)(BOOL success, NSError *_Nullable error))completion;
+
+/**
+ * The iOS 27 spelling of the method above, taking an extra `modeInfos:`
+ * dictionary between the modes and the bundle identifier. Passing an
+ * empty dictionary matches what the Health-app UI does, the same way an
+ * empty `modes` does.
+ *
+ * Encoding on iOS 27.0 (24A5390f): `v64@0:8@16@24@32@40Q48@?56`.
+ */
+- (void)setAuthorizationStatuses:(NSDictionary<HKObjectType *, NSNumber *> *)statuses
+              authorizationModes:(NSDictionary<HKObjectType *, NSNumber *> *)modes
+                       modeInfos:(NSDictionary *)modeInfos
+             forBundleIdentifier:(NSString *)bundleID
+                         options:(NSUInteger)options
                       completion:(void (^)(BOOL success, NSError *_Nullable error))completion;
 
 /**
@@ -75,8 +94,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  * Resets every authorisation record for the bundle ID back to
- * "not determined". Useful for returning a target app to a clean
- * pre-approval state between test runs.
+ * "not determined".
  */
 - (void)resetAuthorizationStatusForBundleIdentifier:(NSString *)bundleID
                                          completion:(void (^)(BOOL success, NSError *_Nullable error))completion;

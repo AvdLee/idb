@@ -4,7 +4,6 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-# pyre-strict
 
 import asyncio
 import json
@@ -16,9 +15,7 @@ from dataclasses import asdict, dataclass, field
 from datetime import timedelta
 from enum import Enum
 from io import StringIO
-from typing import IO, List, Optional, Set, Tuple, Union
-
-from python.migrations.py310 import StrEnum310
+from typing import IO, Optional, Union
 
 
 LoggingMetadata = dict[str, Optional[Union[str, list[str], int, float]]]
@@ -42,10 +39,16 @@ class Permission(Enum):
     MICROPHONE = 6
 
 
-class TargetType(StrEnum310):
+class TargetType(str, Enum):
     DEVICE = "device"
     SIMULATOR = "simulator"
     MAC = "mac"
+
+    # enum.StrEnum is python 3.11+, and the client is installed onto older
+    # interpreters. These are the two assignments StrEnum makes over a str
+    # mixin: stringify and format as the value, not as "TargetType.DEVICE".
+    __str__ = str.__str__
+    __format__ = str.__format__
 
 
 @dataclass(frozen=True)
@@ -137,6 +140,160 @@ class ScreenDimensions:
     height_points: int | None
 
 
+# The encoding of a screenshot. Values are the names the companion reports back
+# in the response, so they are the wire contract as well as the CLI's choices.
+class ScreenshotFormat(Enum):
+    PNG = "png"
+    JPEG = "jpeg"
+    TIFF = "tiff"
+
+
+# The unit a crop rect and a fit bound are expressed in. POINTS is the space
+# tap, swipe and describe already use; it is resolved to pixels on the
+# companion, which is the only side that knows the screen scale.
+class ScreenshotUnit(Enum):
+    PIXELS = "pixels"
+    POINTS = "points"
+
+
+# Top-left origin, matching the tap/swipe coordinate space. A rect that
+# partially overhangs the screen is clamped by the companion, which reports the
+# dimensions it actually captured.
+@dataclass(frozen=True)
+class ScreenshotCrop:
+    x: float
+    y: float
+    width: float
+    height: float
+
+
+# Shapes the screenshot request. The defaults are the behaviour every caller got
+# before the request had fields: a full-screen, unscaled PNG.
+#
+# Only what the wire cannot express is rejected here. A scale factor in (0, 1]
+# and a crop that lies on the screen are the companion's to enforce, since a
+# crop can only be judged against the screen that was actually captured, and a
+# second copy of those rules would drift from the first. See __post_init__ for
+# the three that the wire cannot carry as sent.
+@dataclass(frozen=True)
+class ScreenshotOptions:
+    format: ScreenshotFormat = ScreenshotFormat.PNG
+    # Lossy formats only, in (0, 1]; None means the companion's default. The
+    # companion rejects one set on PNG or TIFF rather than ignoring it, so a
+    # caller who believes they are getting a smaller image finds out that they
+    # are not.
+    compression_quality: float | None = None
+    crop: ScreenshotCrop | None = None
+    # A scale factor and a fit bound are alternatives on the wire, so asking for
+    # both cannot be sent. One factor is applied to both axes and the image is
+    # never upscaled, so the aspect ratio is preserved to within the rounding of
+    # each side to a whole pixel; an unset bound is unbounded on that axis.
+    scale_factor: float | None = None
+    max_width: int | None = None
+    max_height: int | None = None
+    unit: ScreenshotUnit = ScreenshotUnit.PIXELS
+
+    # Only the rules the wire cannot carry are checked here; everything the
+    # companion can see for itself is left to it, so there is one copy of each
+    # rule rather than two that drift. A scale factor of 2 or a crop with a
+    # negative width travel intact and come back as INVALID_ARGUMENT. These
+    # three do not travel intact:
+    #
+    # - a factor and a bounding box are alternatives in a proto `oneof`, so
+    #   setting both silently drops one instead of being an error
+    # - 0 is a proto scalar's "unset", so a compression quality of 0 arrives
+    #   indistinguishable from asking for the default, and would come back a
+    #   JPEG at 0.8 reported as a success
+    # - the fit bounds are `uint32`, so a negative one raises out of protobuf
+    #   before any of this runs, and surfaces as a traceback
+    def __post_init__(self) -> None:
+        if self.scale_factor is not None and (
+            self.max_width is not None or self.max_height is not None
+        ):
+            raise ValueError(
+                "A screenshot can be scaled by a factor or fitted to a bounding "
+                "box, not both"
+            )
+        if self.compression_quality is not None and not (
+            0 < self.compression_quality <= 1
+        ):
+            raise ValueError(
+                f"Compression quality {self.compression_quality} is not in the "
+                "range (0, 1]"
+            )
+        for name, bound in (
+            ("max_width", self.max_width),
+            ("max_height", self.max_height),
+        ):
+            if bound is not None and bound < 1:
+                raise ValueError(
+                    f"{name} {bound} is not a positive number of "
+                    f"{self.unit.value}; leave it unset to bound only the other "
+                    "axis"
+                )
+
+
+# Asking for nothing in particular. Named so that it can be a default argument
+# without constructing one per call site, and so that "the caller configured
+# something" is a single comparison.
+DEFAULT_SCREENSHOT_OPTIONS: ScreenshotOptions = ScreenshotOptions()
+
+
+# The bytes of a screenshot, and what the companion says they are.
+#
+# This is a bytes subclass rather than a wrapper because screenshot() returned
+# bare bytes before it could be configured, and its callers write them to files,
+# base64 them and isinstance-check them. The measurements ride along for the
+# callers that want them without breaking any of that.
+#
+# Every measurement is None when the companion did not report one, which is the
+# case for a companion older than the fields on the request.
+class Screenshot(bytes):
+    format: ScreenshotFormat
+    width: int | None
+    height: int | None
+    source_width: int | None
+    source_height: int | None
+    # Pixels per point, so a caller can convert between the two units itself.
+    # None on a target that does not report one, which is also the target that
+    # refuses a request expressed in points.
+    screen_scale: float | None
+
+    def __new__(
+        cls,
+        data: bytes,
+        format: ScreenshotFormat = ScreenshotFormat.PNG,
+        width: int | None = None,
+        height: int | None = None,
+        source_width: int | None = None,
+        source_height: int | None = None,
+        screen_scale: float | None = None,
+    ) -> "Screenshot":
+        screenshot = super().__new__(cls, data)
+        screenshot.format = format
+        screenshot.width = width
+        screenshot.height = height
+        screenshot.source_width = source_width
+        screenshot.source_height = source_height
+        screenshot.screen_scale = screen_scale
+        return screenshot
+
+    def __repr__(self) -> str:
+        # bytes' own repr would print the whole image into a traceback.
+        def size(width: int | None, height: int | None) -> str:
+            # "NonexNone" reads as a measurement rather than the absence of one.
+            return (
+                "unreported" if width is None or height is None else f"{width}x{height}"
+            )
+
+        return (
+            f"Screenshot({len(self)} bytes, format={self.format.value}, "
+            f"size={size(self.width, self.height)}, "
+            f"source_size={size(self.source_width, self.source_height)}, "
+            f"screen_scale={self.screen_scale})"
+        )
+
+
 DeviceDetails = Mapping[str, Union[int, str]]
 
 
@@ -175,6 +332,142 @@ class FileListing:
 @dataclass(frozen=True)
 class AccessibilityInfo:
     json: str
+
+
+class AccessibilitySearchableKey(Enum):
+    LABEL = 0
+    UNIQUE_ID = 1
+    VALUE = 2
+    TITLE = 3
+    ROLE = 4
+    ROLE_DESCRIPTION = 5
+    SUBROLE = 6
+    HELP = 7
+    PLACEHOLDER = 8
+
+
+@dataclass(frozen=True)
+class AccessibilityPoint:
+    x: int
+    y: int
+
+
+@dataclass(frozen=True)
+class AccessibilityMarker:
+    value: str
+    match_key: AccessibilitySearchableKey = AccessibilitySearchableKey.LABEL
+    depth: int = 10
+
+
+# Selects an accessibility element to act on: a point or a marker (or None = the
+# whole screen / frontmost app). This union grows as accessibility commands land.
+AccessibilityTarget = Union[AccessibilityPoint, AccessibilityMarker]
+
+
+@dataclass(frozen=True)
+class AccessibilityDragOptions:
+    """The three drag phase durations, in seconds, and the distance between
+    interpolated touch points, in screen points. None sends the wire's zero,
+    which the companion reads as its own default (0.5s press, 0.5s travel, 0.1s
+    release, 10pt delta) — a proto3 scalar cannot distinguish unset from zero,
+    and none of these are useful at zero."""
+
+    press_duration: float | None = None
+    duration: float | None = None
+    release_duration: float | None = None
+    delta: float | None = None
+
+
+# CLI names (matching the sime2e vocabulary) for the accessibility searchable
+# keys, so the same marker/expected-value flags work across both CLIs.
+ACCESSIBILITY_KEY_BY_NAME: dict[str, AccessibilitySearchableKey] = {
+    "AXLabel": AccessibilitySearchableKey.LABEL,
+    "AXUniqueId": AccessibilitySearchableKey.UNIQUE_ID,
+    "AXValue": AccessibilitySearchableKey.VALUE,
+    "title": AccessibilitySearchableKey.TITLE,
+    "role": AccessibilitySearchableKey.ROLE,
+    "role_description": AccessibilitySearchableKey.ROLE_DESCRIPTION,
+    "subrole": AccessibilitySearchableKey.SUBROLE,
+    "help": AccessibilitySearchableKey.HELP,
+    "placeholder": AccessibilitySearchableKey.PLACEHOLDER,
+}
+
+
+# Which backend serves an accessibility read. Values match the wire protocol;
+# None on the options means "unspecified" — the companion's historical default
+# backend, and the only value an older companion understands.
+class AccessibilityBackend(Enum):
+    AX = 1
+    AXBRIDGE = 2
+    AXBRIDGE_PERSISTENT = 3
+
+
+ACCESSIBILITY_BACKEND_BY_NAME: dict[str, AccessibilityBackend] = {
+    "ax": AccessibilityBackend.AX,
+    "axbridge": AccessibilityBackend.AXBRIDGE_PERSISTENT,
+}
+
+
+# The output format of an accessibility read. Values match the wire protocol;
+# None on the options defers to the deprecated `nested` flag, preserving the
+# historical request shape.
+class AccessibilityOutputFormat(Enum):
+    LEGACY = 0
+    NESTED = 1
+    COMPLETE = 2
+
+
+ACCESSIBILITY_FORMAT_BY_NAME: dict[str, AccessibilityOutputFormat] = {
+    "default": AccessibilityOutputFormat.LEGACY,
+    "nested": AccessibilityOutputFormat.NESTED,
+    "complete": AccessibilityOutputFormat.COMPLETE,
+}
+
+
+# Which elements an accessibility read reports. Values match the wire
+# protocol; ALL is the historical behaviour, so an option left unset — or an
+# older companion, which drops the field — reads as it always has.
+class AccessibilityElementFilter(Enum):
+    ALL = 0
+    INTERACTABLE = 1
+
+
+ACCESSIBILITY_FILTER_BY_NAME: dict[str, AccessibilityElementFilter] = {
+    "all": AccessibilityElementFilter.ALL,
+    "interactable": AccessibilityElementFilter.INTERACTABLE,
+}
+
+
+# Shapes the accessibility_info request: the format, which accessibility
+# keys are reported, which elements are reported, and which backend serves the
+# read. This grows as describe-all gains enrichers.
+@dataclass(frozen=True)
+class AccessibilityInfoOptions:
+    nested: bool = False
+    keys: list[str] | None = None
+    backend: AccessibilityBackend | None = None
+    format: AccessibilityOutputFormat | None = None
+    profile: bool = False
+    collect_frame_coverage: bool = False
+    # Report only the elements whose `match_key` contains this substring.
+    # None (and the empty string) reports every element. Unlike a marker,
+    # which selects the first match and only it, this reports all of them and
+    # no match is an empty result rather than an error.
+    match: str | None = None
+    # Which attribute `match` is compared against. Shared with the marker
+    # read's key on the wire, so a request carries one or the other.
+    match_key: AccessibilitySearchableKey = AccessibilitySearchableKey.LABEL
+    # Compare `match` — and a marker, on a read — case-insensitively.
+    ignore_case: bool = False
+    filter: AccessibilityElementFilter | None = None
+
+
+class AccessibilityScrollDirection(Enum):
+    UP = 0
+    DOWN = 1
+    LEFT = 2
+    RIGHT = 3
+    VISIBLE = 4
 
 
 @dataclass(frozen=True)
@@ -316,7 +609,24 @@ class HIDPinch:
     radius: float
 
 
-HIDEvent = Union[HIDPress, HIDSwipe, HIDDelay, HIDPinch]
+class HIDOrientationType(Enum):
+    PORTRAIT = 0
+    PORTRAIT_UPSIDE_DOWN = 1
+    LANDSCAPE_LEFT = 2
+    LANDSCAPE_RIGHT = 3
+
+
+@dataclass(frozen=True)
+class HIDOrientation:
+    orientation: HIDOrientationType
+
+
+@dataclass(frozen=True)
+class HIDShake:
+    pass
+
+
+HIDEvent = Union[HIDPress, HIDSwipe, HIDDelay, HIDPinch, HIDOrientation, HIDShake]
 
 
 @dataclass(frozen=True)
@@ -452,6 +762,7 @@ class Client(ABC):
         wait_for_debugger: bool = False,
         stop: asyncio.Event | None = None,
         pid_file: str | None = None,
+        enable_repl: bool = False,
     ) -> None:
         pass
 
@@ -559,21 +870,9 @@ class Client(ABC):
         pass
 
     @abstractmethod
-    async def set_hardware_keyboard(self, enabled: bool) -> None:
-        pass
-
-    @abstractmethod
-    async def set_locale(self, locale_identifier: str) -> None:
-        pass
-
-    @abstractmethod
     async def set_preference(
         self, name: str, value: str, value_type: str, domain: str | None
     ) -> None:
-        pass
-
-    @abstractmethod
-    async def get_locale(self) -> str:
         pass
 
     @abstractmethod
@@ -613,7 +912,15 @@ class Client(ABC):
         pass
 
     @abstractmethod
-    async def record_video(self, stop: asyncio.Event, output_file: str) -> None:
+    async def record_video(
+        self,
+        stop: asyncio.Event,
+        output_file: str,
+        fps: int | None = None,
+        scale_factor: float | None = None,
+        bitrate: float | None = None,
+        key_frame_rate: float | None = None,
+    ) -> None:
         pass
 
     @abstractmethod
@@ -629,7 +936,9 @@ class Client(ABC):
         yield
 
     @abstractmethod
-    async def screenshot(self) -> bytes:
+    async def screenshot(
+        self, options: ScreenshotOptions = DEFAULT_SCREENSHOT_OPTIONS
+    ) -> Screenshot:
         pass
 
     @abstractmethod
@@ -651,6 +960,14 @@ class Client(ABC):
     async def button(
         self, button_type: HIDButtonType, duration: float | None = None
     ) -> None:
+        pass
+
+    @abstractmethod
+    async def rotate(self, orientation: HIDOrientationType) -> None:
+        pass
+
+    @abstractmethod
+    async def shake(self) -> None:
         pass
 
     @abstractmethod
@@ -693,8 +1010,48 @@ class Client(ABC):
 
     @abstractmethod
     async def accessibility_info(
-        self, point: tuple[int, int] | None, nested: bool
+        self,
+        target: AccessibilityTarget | None,
+        options: AccessibilityInfoOptions,
     ) -> AccessibilityInfo:
+        pass
+
+    @abstractmethod
+    async def accessibility_tap(
+        self,
+        target: AccessibilityTarget,
+        expected_value: str | None = None,
+        expected_key: AccessibilitySearchableKey = AccessibilitySearchableKey.LABEL,
+        ignore_case: bool = False,
+    ) -> None:
+        pass
+
+    @abstractmethod
+    async def accessibility_scroll(
+        self,
+        target: AccessibilityTarget | None,
+        direction: AccessibilityScrollDirection,
+        ignore_case: bool = False,
+    ) -> None:
+        pass
+
+    @abstractmethod
+    async def accessibility_set_value(
+        self,
+        target: AccessibilityTarget,
+        value: str,
+        ignore_case: bool = False,
+    ) -> None:
+        pass
+
+    @abstractmethod
+    async def accessibility_drag(
+        self,
+        source: AccessibilityTarget,
+        destination: AccessibilityTarget,
+        options: AccessibilityDragOptions,
+        ignore_case: bool = False,
+    ) -> None:
         pass
 
     @abstractmethod

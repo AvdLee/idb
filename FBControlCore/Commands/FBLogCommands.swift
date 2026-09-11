@@ -7,45 +7,36 @@
 
 import Foundation
 
-@objc(FBProcessLogOperation)
-public class FBProcessLogOperation: NSObject, LogOperation {
+public final class FBProcessLogOperation: LogOperation {
 
-  // MARK: Properties
-
-  @objc public let process: FBSubprocess<AnyObject, AnyObject, AnyObject>
-  @objc public let consumer: any FBDataConsumer
+  public let process: FBSubprocess<AnyObject, AnyObject, AnyObject>
+  public let consumer: any FBDataConsumer
   private let queue: DispatchQueue
 
-  // MARK: Initializers
-
-  @objc public init(process: FBSubprocess<AnyObject, AnyObject, AnyObject>, consumer: any FBDataConsumer, queue: DispatchQueue) {
+  public init(process: FBSubprocess<AnyObject, AnyObject, AnyObject>, consumer: any FBDataConsumer, queue: DispatchQueue) {
     self.process = process
     self.consumer = consumer
     self.queue = queue
-    super.init()
   }
 
-  // MARK: LogOperation
+  // MARK: - LogOperation
 
-  @objc public var completed: FBFuture<NSNull> {
+  public var completed: FBFuture<NSNull> {
     let process = self.process
     let result = process.exited(withCodes: Set([NSNumber(value: 0)]))
       .mapReplace(NSNull())
       .onQueue(
         queue,
         respondToCancellation: {
-          unsafeBitCast(process.sendSignal(SIGTERM, backingOffToKillWithTimeout: 5, logger: nil), to: FBFuture<NSNull>.self)
+          process.sendSignal(SIGTERM, backingOffToKillWithTimeout: 5, logger: nil).retyped(FBFuture<NSNull>.self)
         })
-    return unsafeBitCast(result, to: FBFuture<NSNull>.self)
+    return result.retyped(FBFuture<NSNull>.self)
   }
 
   public func waitUntilCompleted() async throws {
     try await bridgeFBFutureVoid(completed)
   }
 
-  // MARK: Class Methods
-
-  @objc(osLogArgumentsInsertStreamIfNeeded:)
   public class func osLogArgumentsInsertStreamIfNeeded(_ arguments: [String]) -> [String] {
     guard let firstArgument = arguments.first else {
       return ["stream"]
@@ -55,8 +46,6 @@ public class FBProcessLogOperation: NSObject, LogOperation {
     }
     return ["stream"] + arguments
   }
-
-  // MARK: Private
 
   private static let osLogSubcommands: Set<String> = {
     Set(["collect", "config", "erase", "show", "stream", "stats"])

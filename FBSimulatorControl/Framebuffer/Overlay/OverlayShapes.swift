@@ -11,7 +11,7 @@ import Foundation
 // MARK: - Shape Model
 
 /// A command containing overlay shapes to render.
-public struct FBOverlayCommand: Decodable {
+public struct OverlayCommand: Decodable {
   public let overlays: [FBOverlayShape]
 
   public init(overlays: [FBOverlayShape]) {
@@ -19,7 +19,7 @@ public struct FBOverlayCommand: Decodable {
   }
 }
 
-/// A tagged union of overlay shapes, matching the jeste2e streamer JSON protocol.
+/// A tagged union of overlay shapes, decoded from the overlay JSON protocol (`{"circle": {...}}` etc.).
 public enum FBOverlayShape: Decodable {
   case circle(Circle)
   case rectangle(Rectangle)

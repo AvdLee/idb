@@ -28,8 +28,6 @@ public final class FBProcessInfo: NSObject, NSCopying {
     super.init()
   }
 
-  // MARK: NSObject
-
   public override var hash: Int {
     Int(processIdentifier) ^ (launchPath as NSString).hash ^ (arguments as NSArray).hash
   }
@@ -44,8 +42,6 @@ public final class FBProcessInfo: NSObject, NSCopying {
   public override var description: String {
     "Process \(processName) | PID \(processIdentifier)"
   }
-
-  // MARK: NSCopying
 
   public func copy(with zone: NSZone? = nil) -> Any {
     self

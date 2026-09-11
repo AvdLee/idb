@@ -12,9 +12,9 @@ import FBSimulatorControl
 import GRPC
 import IDBGRPCSwift
 
-struct LogMethodHandler {
+struct LogMethodHandler: @unchecked Sendable {
 
-  let target: FBiOSTarget
+  let target: any FBiOSTarget
   let commandExecutor: FBIDBCommandExecutor
 
   func handle(request: Idb_LogRequest, responseStream: GRPCAsyncResponseStreamWriter<Idb_LogResponse>, context: GRPCAsyncServerCallContext) async throws {
@@ -39,17 +39,17 @@ struct LogMethodHandler {
     if request.source == .companion {
       operation = try await commandExecutor.tail_companion_logs(consumer)
     } else {
-      guard let asyncTarget = target as? any LogCommands else {
-        throw GRPCStatus(code: .failedPrecondition, message: "\(target) does not support LogCommands")
-      }
-      operation = try await asyncTarget.tailLog(arguments: request.arguments, consumer: consumer)
+      operation = try await target.log.tail(arguments: request.arguments, consumer: consumer)
     }
 
     let observeWritingDone = Task<Void, Error> {
       try await writingDone.value
     }
+    // `operation` is a thread-safe handle but not Sendable; rebind as
+    // nonisolated(unsafe) so the observer Task can capture it.
+    nonisolated(unsafe) let operationToObserve = operation
     let observeOperationCompletion = Task<Void, Error> {
-      try await operation.waitUntilCompleted()
+      try await operationToObserve.waitUntilCompleted()
     }
     try await Task.select(observeWritingDone, observeOperationCompletion).value
     writingDone.resolve(())

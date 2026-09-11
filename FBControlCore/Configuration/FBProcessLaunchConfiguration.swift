@@ -22,8 +22,6 @@ public class FBProcessLaunchConfiguration: NSObject {
     super.init()
   }
 
-  // MARK: NSObject
-
   public override var hash: Int {
     (arguments as NSArray).hash ^ ((environment as NSDictionary).hash & io.hash)
   }

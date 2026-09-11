@@ -9,8 +9,7 @@ import Foundation
 
 extension FBBundleDescriptor {
 
-  @objc(findAppPathFromDirectory:logger:error:)
-  public class func findAppPath(fromDirectory directory: URL, logger: FBControlCoreLogger?) throws -> FBBundleDescriptor {
+  public static func findAppPath(fromDirectory directory: URL, logger: FBControlCoreLogger?) throws -> FBBundleDescriptor {
     let directoryEnumerator = FileManager.default.enumerator(
       at: directory,
       includingPropertiesForKeys: [.isDirectoryKey],
@@ -35,17 +34,11 @@ extension FBBundleDescriptor {
     }
     if applicationPaths.isEmpty {
       let lastComponents = nonApplicationPaths.map { ($0 as NSString).lastPathComponent }
-      throw
-        FBControlCoreError
-        .describe("Could not find an Application in IPA, present files \(FBCollectionInformation.oneLineDescription(from: lastComponents))")
-        .build()
+      throw FBBundleDescriptorError.noApplicationInIPA(presentFiles: lastComponents)
     }
     if applicationPaths.count > 1 {
       let lastComponents = applicationPaths.map { ($0 as NSString).lastPathComponent }
-      throw
-        FBControlCoreError
-        .describe("Expected only one Application in IPA, found \(applicationPaths.count): \(FBCollectionInformation.oneLineDescription(from: lastComponents))")
-        .build()
+      throw FBBundleDescriptorError.multipleApplicationsInIPA(count: applicationPaths.count, found: lastComponents)
     }
     let applicationPath = applicationPaths[0]
     logger?.log("Using Application at path \(applicationPath)")
@@ -54,8 +47,7 @@ extension FBBundleDescriptor {
     return bundle
   }
 
-  @objc(isApplicationAtPath:)
-  public class func isApplication(atPath path: String) -> Bool {
+  public static func isApplication(atPath path: String) -> Bool {
     var isDirectory: ObjCBool = false
     return path.hasSuffix(".app")
       && FileManager.default.fileExists(atPath: path, isDirectory: &isDirectory)

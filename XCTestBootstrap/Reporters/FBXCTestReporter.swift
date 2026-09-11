@@ -45,8 +45,6 @@ import Foundation
   @objc(didCrashDuringTest:)
   func didCrashDuringTest(_ error: Error)
 
-  // MARK: Optional
-
   @objc(testCase:method:willStartActivity:)
   optional func testCase(_ testClass: String, method: String, willStartActivity activity: FBActivityRecord)
 

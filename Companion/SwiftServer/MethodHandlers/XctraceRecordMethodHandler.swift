@@ -16,18 +16,18 @@ struct XctraceRecordMethodHandler {
 
   let logger: FBControlCoreLogger
   let targetLogger: FBControlCoreLogger
-  let target: FBiOSTarget
+  let target: any FBiOSTarget
 
-  func handle(requestStream: GRPCAsyncRequestStream<Idb_XctraceRecordRequest>, responseStream: GRPCAsyncResponseStreamWriter<Idb_XctraceRecordResponse>, context: GRPCAsyncServerCallContext) async throws {
+  func handle(requestStream: RequestStreamReader<Idb_XctraceRecordRequest>, responseStream: GRPCAsyncResponseStreamWriter<Idb_XctraceRecordResponse>, context: GRPCAsyncServerCallContext) async throws {
 
     @Atomic var finishedWriting = false
     defer { _finishedWriting.set(true) }
 
-    guard case let .start(start) = try await requestStream.requiredNext.control
+    guard case let .start(start) = try await requestStream.requiredNext().control
     else { throw GRPCStatus(code: .failedPrecondition, message: "Expected start control") }
     let operation = try await startXCTraceOperation(request: start, responseStream: responseStream, finishedWriting: _finishedWriting)
 
-    guard case let .stop(stop) = try await requestStream.requiredNext.control
+    guard case let .stop(stop) = try await requestStream.requiredNext().control
     else { throw GRPCStatus(code: .failedPrecondition, message: "Expected end control") }
 
     try await stopXCTrace(operation: operation, request: stop, responseStream: responseStream, finishedWriting: _finishedWriting)
@@ -56,10 +56,7 @@ struct XctraceRecordMethodHandler {
         targetLogger,
       ].compactMap({ $0 }))
 
-    guard let asyncTarget = target as? any XCTraceRecordCommands else {
-      throw GRPCStatus(code: .failedPrecondition, message: "\(target) does not support XCTraceRecordCommands")
-    }
-    let operation = try await asyncTarget.startXctraceRecord(configuration: config, logger: logger)
+    let operation = try await target.xctraceRecord.start(configuration: config, logger: logger)
     let response = Idb_XctraceRecordResponse.with {
       $0.state = .running
     }
@@ -76,7 +73,7 @@ struct XctraceRecordMethodHandler {
     }
     try await responseStream.send(response)
 
-    let processed = try await FBInstrumentsOperation.postProcessAsync(
+    let processed = try await FBInstrumentsOperation.postProcess(
       arguments: stop.args,
       traceFile: operation.traceDir,
       queue: BridgeQueues.miscEventReaderQueue,

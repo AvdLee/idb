@@ -1,0 +1,107 @@
+/*
+ * Copyright (c) Meta Platforms, Inc. and affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+import FBControlCore
+import Foundation
+
+/*
+Much of the implementation here comes from:
+ - DTDeviceKitBase which provides implementations of functions for calling AMDevice calls. This is used to establish the 'debugserver' socket, which is then consumed by lldb itself.
+ - DVTFoundation calls out to the DebuggerLLDB.ideplugin plugin, which provides implementations of lldb debugger clients.
+ - DebuggerLLDB.ideplugin is the plugin/framework responsible for calling the underlying debugger, there are different objc class implementations depending on what is being debugged.
+ - These implementations are backed by interfaces to the SBDebugger class (https://lldb.llvm.org/python_api/lldb.SBDebugger.html)
+ - 'LLDBRPCDebugger' is the class responsible for debugging over an RPC interface, this is used for debugging iOS Devices, since it is running against a remote debugserver on the iOS device, forwarded over a socket on the host. This is backed by the lldb_rpc:SBDebugger class within the lldb codebase.
+ - DebuggerLLDB uses a combination of calls to the C++ LLDB API and executing command strings here. The bulk of the implementation is in ` -[DBGLLDBLauncher _doRegularDebugWithTarget:usingDebugServer:errTargetString:outError:]`.
+ - It is possible to trace (using dtrace) the commands that Xcode runs to start a debug session, by observing the 'HandleCommand:' method on the Objc class that wraps SBDebugger.
+  - To trace the stacks of the command strings that are executed: `sudo dtrace -n 'objc$target:*:*HandleCommand*:entry { ustack(); }' -p XCODE_PID``
+  - To trace the command strings that are executed: `sudo dtrace -n 'objc$target:*:*HandleCommand*:entry { printf("HandleCommand = %s\n", copyinstr(arg2)); }' -p XCODE_PID``
+  - To trace stacks of all API calls: `sudo dtrace -n 'objc$target:LLDBRPCDebugger:*:entry { ustack(); }'  -p XCODE_PID`
+ - It is also possible to use lldb's internal logging to see the API calls that it is making. This is done by configuring lldb via adding a line in ~/.lldbinit (e.g `log enable -v -f /tmp/lldb.log lldb api`)
+ */
+
+public enum DeviceDebuggerError: Error {
+  case unsupportedOSVersion(version: String)
+}
+
+extension DeviceDebuggerError: LocalizedError {
+  public var errorDescription: String? {
+    switch self {
+    case let .unsupportedOSVersion(version):
+      return "Debugging is not supported for devices running iOS 17 and higher. Device OS version: \(version)"
+    }
+  }
+}
+
+public struct DeviceDebuggerCommands: DebuggerCommands {
+  private let device: FBDevice
+
+  public static func commands(with device: FBDevice) -> DeviceDebuggerCommands {
+    DeviceDebuggerCommands(device: device)
+  }
+
+  init(device: FBDevice) {
+    self.device = device
+  }
+
+  /// Starts the debug server on the device and hands its service connection to the caller.
+  ///
+  /// The developer disk image is mounted first, because the service does not exist until it is.
+  /// The connection is unscoped: whoever receives it decides when it is invalidated.
+  public func connectToDebugServer() async throws -> FBAMDServiceConnection {
+    let diskImage = try await device.developerDiskImage.ensureMounted()
+    let serviceName =
+      diskImage.xcodeVersion.majorVersion >= 12
+      ? "com.apple.debugserver.DVTSecureSocketProxy"
+      : "com.apple.debugserver"
+    return try await device.openServiceConnection(serviceName)
+  }
+
+  // MARK: - Async
+
+  public func launchDebugServer(forHostApplication application: FBBundleDescriptor, port: in_port_t) async throws -> any FBDebugServer {
+    if device.osVersion.version.majorVersion >= 17 {
+      throw DeviceDebuggerError.unsupportedOSVersion(version: device.osVersion.versionString)
+    }
+    let commands = try await lldbBootstrapCommands(forApplicationAtPath: application.path, port: port)
+    return try await DeviceDebugServer.debugServer(
+      forServiceConnection: connectToDebugServer(),
+      port: port,
+      lldbBootstrapCommands: commands,
+      queue: device.workQueue,
+      logger: device.logger
+    )
+  }
+
+  private func lldbBootstrapCommands(forApplicationAtPath path: String, port: in_port_t) async throws -> [String] {
+    let bundle = try FBBundleDescriptor.bundle(fromPath: path)
+    let platformSelect = try platformSelectCommand()
+    let localTarget = "target create '\(path)'"
+    let remote = try await remoteTarget(forBundleID: bundle.identifier)
+    let processConnect = "process connect connect://localhost:\(port)"
+    return [platformSelect, localTarget, remote, processConnect]
+  }
+
+  private func platformSelectCommand() throws -> String {
+    let platformSelectCommand = "platform select remote-ios"
+    guard let buildVersion = device.buildVersion else {
+      device.logger.log("No build version available for \(device), no symbolication of system libraries will occur.")
+      return platformSelectCommand
+    }
+    do {
+      let developerSymbolsPath = try FBDeveloperDiskImage.pathForDeveloperSymbols(buildVersion, logger: device.logger)
+      return platformSelectCommand + " --sysroot '\(developerSymbolsPath)'"
+    } catch {
+      device.logger.log("Failed to get developer symbols for \(device), no symbolication of system libraries will occur. To fix ensure developer symbols are downloaded from the device using the 'Devices and Simulators' tool within Xcode: \(error)")
+      return platformSelectCommand
+    }
+  }
+
+  private func remoteTarget(forBundleID bundleID: String) async throws -> String {
+    let installedApplication = try await device.application.installed(bundleID: bundleID)
+    return "script lldb.target.modules[0].SetPlatformFileSpec(lldb.SBFileSpec(\"\(installedApplication.bundle.path)\"))"
+  }
+}

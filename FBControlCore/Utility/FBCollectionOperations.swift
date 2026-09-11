@@ -64,8 +64,6 @@ public final class FBCollectionOperations: NSObject {
     return Array(repeating: object, count: Int(count))
   }
 
-  // MARK: Private
-
   private class func jsonSerializableValueOrNil(_ value: Any) -> Any? {
     if value is String || value is NSString {
       return value

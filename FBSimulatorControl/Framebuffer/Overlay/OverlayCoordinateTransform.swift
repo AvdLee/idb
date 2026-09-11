@@ -8,28 +8,17 @@
 import CoreGraphics
 import CoreText
 
-/// Coordinate space callers use when sending overlay shape `y` values to sime2e.
+/// Coordinate space of overlay shape `y` values.
 ///
-/// - `composed`: y=0 is the top of the composed video frame — the top of the reserved
-///   header bar (`scaledBorderTop`) when one is present. Callers must pre-shift their
-///   shapes by the header height to land in the device-image region. This is the
-///   historical contract and the default for backward compatibility.
-/// - `device`: y=0 is the top of the device image (i.e. *below* any reserved header).
-///   The transform adds `scaledBorderTop` internally so callers can send raw
-///   device-frame coordinates without knowing about the header bar's geometry.
+/// - `composed`: y=0 is the top of the composed frame, i.e. the top of any reserved header bar
+///   (`scaledBorderTop`); callers pre-shift shapes by the header height. The default.
+/// - `device`: y=0 is the top of the device image, below any header; the transform adds `scaledBorderTop`.
 public enum FBOverlayCoordSpace: String {
   case composed
   case device
 }
 
-/// Encapsulates all coordinate math for mapping jest_e2e overlay JSON
-/// coordinates to overlay buffer pixel coordinates.
-///
-/// The transform supports two coordinate spaces (`FBOverlayCoordSpace`):
-/// - `.composed` (default): historical semantics — `insetCorrection.y` is zero (or near
-///   zero modulo integer truncation) so overlay y is taken at face value in buffer space.
-/// - `.device`: `insetCorrection.y == scaledBorderTop` so overlay y=0 lands at the top
-///   of the device image and shape geometry no longer needs to know about the header.
+/// Maps overlay shape coordinates to overlay buffer pixel coordinates.
 public struct FBOverlayCoordinateTransform {
   public let bufferWidth: Int
   public let bufferHeight: Int
@@ -43,7 +32,7 @@ public struct FBOverlayCoordinateTransform {
   public let insetCorrection: CGPoint
 
   /// Visible header height in buffer pixels (the `scaledBorderTop` init parameter).
-  public let headerHeight: CGFloat
+  let headerHeight: CGFloat
 
   public init(
     screenPixelWidth: Int,
@@ -57,11 +46,8 @@ public struct FBOverlayCoordinateTransform {
     coordSpace: FBOverlayCoordSpace = .composed
   ) {
     self.bufferWidth = Int(Double(screenPixelWidth) * Double(videoScale))
-    // bufferHeight must include BOTH the top and bottom scaled insets so the overlay buffer
-    // matches the dimensions of the video frame produced by FBSimulatorVideoStream. If the
-    // bottom inset is omitted here the overlay ends up shorter than the frame, and the
-    // compositor shifts the overlay downward by the missing amount — which silently pushes
-    // any top-positioned content (e.g. header textboxes) below where it was placed.
+    // Must include both scaled insets so the overlay buffer matches the video frame; a shorter overlay is
+    // shifted down by the compositor.
     self.bufferHeight =
       Int(Double(screenPixelHeight) * Double(videoScale)) + scaledBorderTop + scaledBorderBottom
     self.overlayScale = videoScale * retinaScale
@@ -73,14 +59,11 @@ public struct FBOverlayCoordinateTransform {
         y: CGFloat(scaledBorderTop) - CGFloat(borderTop) * videoScale * retinaScale
       )
     case .device:
-      // In device-frame mode, overlay y=0 maps to the top of the device image, which sits
-      // immediately below the reserved header. The shift is the full scaledBorderTop, with
-      // no `borderTop * overlayScale` subtraction — callers send unshifted device coords.
       self.insetCorrection = CGPoint(x: 0, y: CGFloat(scaledBorderTop))
     }
   }
 
-  public func bufferPoint(x: CGFloat, y: CGFloat) -> CGPoint {
+  func bufferPoint(x: CGFloat, y: CGFloat) -> CGPoint {
     CGPoint(
       x: x * overlayScale + insetCorrection.x,
       y: y * overlayScale + insetCorrection.y
@@ -91,7 +74,7 @@ public struct FBOverlayCoordinateTransform {
     CGSize(width: width * overlayScale, height: height * overlayScale)
   }
 
-  public func bufferRect(x: CGFloat, y: CGFloat, width: CGFloat, height: CGFloat) -> CGRect {
+  func bufferRect(x: CGFloat, y: CGFloat, width: CGFloat, height: CGFloat) -> CGRect {
     let bx = x * overlayScale + insetCorrection.x
     let by = y * overlayScale + insetCorrection.y
     var bw = width < 0 ? width : width * overlayScale
@@ -101,7 +84,7 @@ public struct FBOverlayCoordinateTransform {
     return CGRect(x: bx, y: by, width: bw, height: bh)
   }
 
-  public func translateTarget(x: CGFloat, y: CGFloat) -> CGPoint {
+  func translateTarget(x: CGFloat, y: CGFloat) -> CGPoint {
     CGPoint(
       x: x * overlayScale + insetCorrection.x,
       y: y * overlayScale + insetCorrection.y
@@ -111,7 +94,7 @@ public struct FBOverlayCoordinateTransform {
   /// Label origin in buffer pixels, vertically centered within the visible header.
   /// The visible header spans y=0 to y=headerHeight in buffer coordinates,
   /// so no `insetCorrection.y` is applied (unlike shapes positioned via `bufferRect`).
-  public func labelOrigin(padding: CGFloat, ascent: CGFloat, descent: CGFloat) -> CGPoint {
+  func labelOrigin(padding: CGFloat, ascent: CGFloat, descent: CGFloat) -> CGPoint {
     let scaledPadding = padding * overlayScale
     let lineHeight = ascent + descent
     let centeredY: CGFloat
@@ -127,24 +110,24 @@ public struct FBOverlayCoordinateTransform {
   }
 
   /// Scale a label font size to buffer pixels.
-  public func labelFontSize(_ baseFontSize: CGFloat) -> CGFloat {
+  func labelFontSize(_ baseFontSize: CGFloat) -> CGFloat {
     baseFontSize * overlayScale
   }
 
   // MARK: - Bars
 
-  /// Default bar height in logical pixels. Matches the runner's `BORDER_TOP` constant.
+  /// Default bar height in logical pixels.
   public static let defaultBarHeight: Int = 24
 
   /// Bar font size in buffer pixels, derived from the bar's logical height.
-  public func barFontSize() -> CGFloat {
+  func barFontSize() -> CGFloat {
     let logicalHeight = CGFloat(Self.defaultBarHeight)
     let padding: CGFloat = 4
     return (logicalHeight - padding * 2) * overlayScale
   }
 
   /// Bar height in buffer pixels.
-  public func barHeight() -> CGFloat {
+  func barHeight() -> CGFloat {
     CGFloat(Self.defaultBarHeight) * overlayScale
   }
 
@@ -154,7 +137,7 @@ public struct FBOverlayCoordinateTransform {
   }
 
   /// Bar Y position in buffer pixels for a given position.
-  public func barY(position: String) -> CGFloat {
+  func barY(position: String) -> CGFloat {
     switch position {
     case "top":
       return 0

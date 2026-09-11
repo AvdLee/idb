@@ -47,7 +47,7 @@ typedef struct {
  The eventMask/range/touch fields carry the digitizer phase. The tvOS Siri Remote trackpad
  (IndigoHIDMessageForTrackpadMoveEvent(point, target); target 0x16 = the dedicated trackpad service,
  NOT the screenID|0x40000000 screen target) builds a Position/touch-down "changed" contact, and its
- phase is expressed by setting these fields (see FBSimulatorIndigoHID.trackpad(point:phase:)). That
+ phase is expressed by setting these fields (see SimulatorIndigoHID.trackpad(point:phase:)). That
  builder emits a two-IndigoPayload message: this contact plus a repeated one in the IndigoPayload at
  the 0xC0 wire offset, the same layout the multi-touch builder uses.
 
@@ -55,7 +55,7 @@ typedef struct {
  observed value is noted inline.
  */
 typedef struct {
-  unsigned int field1; // 0x20 + 0x10 + 0x0 = 0x30  observed 0x400002; FBSimulatorIndigoHID.touchMessage marks the duplicated 2nd contact field1=1
+  unsigned int field1; // 0x20 + 0x10 + 0x0 = 0x30  observed 0x400002; SimulatorIndigoHID.touchMessage marks the duplicated 2nd contact field1=1
   unsigned int field2; // 0x20 + 0x10 + 0x4 = 0x34  observed 0x1; touchMessage marks the duplicated 2nd contact field2=2
   unsigned int eventMask; // 0x20 + 0x10 + 0x8 = 0x38  IOHIDDigitizerEventMask: Range 0x1 | Touch 0x2 | Position 0x4 | Identity 0x20
   double xRatio; // 0x20 + 0x10 + 0xc = 0x3c
@@ -73,7 +73,31 @@ typedef struct {
   double field16; // 0x20 + 0x10 + 0x58 = 0x88
   double field17; // 0x20 + 0x10 + 0x60 = 0x90
   double field18; // 0x20 + 0x10 + 0x68 = 0x98
+  // NB: the SimulatorKit type encoding below ends in one more `I` than this struct declares, so there
+  // is a trailing unsigned int at 0xa0 that is not yet reverse-engineered. Nothing here writes it, and
+  // the hand-built single-touch message copies only sizeof(IndigoTouch) bytes, so it stays zero.
 } IndigoTouch;
+
+/**
+ The edge a digitizer contact originated at, as passed to IndigoHIDMessageForMouseNSEvent. The builder
+ maps it through a five-entry table into the IOHIDDigitizerEventMask bits it ORs into
+ IndigoTouch.eventMask alongside the usual Range|Touch (0x3) or Position (0x4):
+
+   IndigoHIDEdgeNone   (0) -> 0x00000000  (no edge)
+   IndigoHIDEdgeTop    (1) -> 0x02040000  SwipeDown  — a swipe from the top edge travels down
+   IndigoHIDEdgeLeft   (2) -> 0x08040000  SwipeRight — from the left edge, travelling right
+   IndigoHIDEdgeBottom (3) -> 0x01040000  SwipeUp    — from the bottom edge, travelling up
+   IndigoHIDEdgeRight  (4) -> 0x04040000  SwipeLeft  — from the right edge, travelling left
+
+ Out-of-range values map to the bare 0x00040000 "is an edge event" bit with no direction. The guest
+ recognises the system edge gestures (home indicator, Notification Centre, back swipe) from these bits,
+ not from the contact coordinates, so a swipe that merely starts at the edge does not trigger them.
+ */
+#define IndigoHIDEdgeNone 0x0
+#define IndigoHIDEdgeTop 0x1
+#define IndigoHIDEdgeLeft 0x2
+#define IndigoHIDEdgeBottom 0x3
+#define IndigoHIDEdgeRight 0x4
 
 /**
  The Indigo Event for a wheel event.
@@ -99,19 +123,54 @@ typedef struct {
   unsigned int eventSource; // 0x20 + 0x10 + 0x0 = 0x30
   unsigned int eventType; // 0x20 + 0x10 + 0x4 = 0x34.
   unsigned int eventTarget; // 0x20 + 0x10 + 0x8 = 0x38
-  unsigned int keyCode; // 0x20 + 0x10 + 0xc = 0x3c
+  unsigned int keyCode; // 0x20 + 0x10 + 0xc = 0x3c: the HID usage for a ButtonEventSourceHIDArbitrary event.
   unsigned int field5; // 0x20 + 0x10 + 0x10 = 0x40
+  unsigned int usagePage; // 0x20 + 0x10 + 0x14 = 0x44: only written by IndigoHIDMessageForHIDArbitrary.
 } IndigoButton;
 
 #define ButtonEventSourceApplePay 0x1f4
 #define ButtonEventSourceHomeButton 0x0
 #define ButtonEventSourceLock 0x1
 #define ButtonEventSourceKeyboard 0x2710
+/**
+ The source IndigoHIDMessageForHIDArbitrary(target, usagePage, usage, op) writes, one above
+ ButtonEventSourceKeyboard. Instead of naming a specific button it carries a HID usage: the usage in
+ IndigoButton.keyCode and its page in IndigoButton.usagePage. This is how a Consumer-page button that
+ has no dedicated ButtonEventSource — play/pause, volume — reaches the guest over the legacy transport.
+ */
+#define ButtonEventSourceHIDArbitrary 0x2711
 #define ButtonEventSourceSideButton 0xbb8
 #define ButtonEventSourceSiri 0x400002
 
+/**
+ HID Consumer page (0x0C) usages for the hardware buttons, as carried by
+ ButtonEventSourceHIDArbitrary above and by dtuhidd's IndigoButtonEvent.
+
+   0x30  Power          — the lock / side button
+   0x40  Menu           — the home button
+   0xCD  Play/Pause
+   0xCF  Voice Command  — Siri
+   0xE9  Volume Increment
+   0xEA  Volume Decrement
+
+ The volume usages drive the simulated device's real volume, not just its HUD. SpringBoard's
+ SBVolumeControl moves its level by a sixteenth per press and publishes the new value on the
+ com.apple.springboard.volumestate Darwin notification; CoreSimulatorBridge mirrors that into
+ var/run/simulatoraudio/audiosettings.plist, which is what a guest app reads back through
+ AVAudioSession.outputVolume. The host's own output volume is untouched.
+ */
+
 #define ButtonEventTargetHardware 0x33
 #define ButtonEventTargetKeyboard 0x64
+/**
+ The digitizer service, and the target a ButtonEventSourceHIDArbitrary event must be addressed to.
+
+ The guest keeps its registered HID services in a dictionary keyed by this target and routes on it.
+ ButtonEventTargetHardware (0x33) is where the *sourced* button builder sends home and lock, and it is
+ a registered target, so sending a Consumer-page usage there does not fail — the guest simply drops it,
+ with no log line and no error. Only 0x32 reaches the handler that acts on HID usages.
+ */
+#define ButtonEventTargetDigitizer 0x32
 
 /**
  These are Derived from NSEventTypeKeyDown & NSEventTypeKeyUp.
@@ -197,7 +256,7 @@ typedef struct {
  Multi-payload messages built by SimulatorKit (multi-touch, trackpad) append further IndigoPayloads
  at the 0xA0 wire stride — payload 2 at 0xC0, payload 3 at 0x160. That stride is larger than
  sizeof(IndigoPayload) as Swift computes it (0x90, the packed-union under-count), so the hand-built
- single-touch message (FBSimulatorIndigoHID.touchMessage) — which uses the Swift stride — instead
+ single-touch message (SimulatorIndigoHID.touchMessage) — which uses the Swift stride — instead
  places its second payload at 0xB0.
  */
 typedef struct {

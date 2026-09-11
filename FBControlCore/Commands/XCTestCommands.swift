@@ -8,7 +8,7 @@
 import Foundation
 
 /// `reporter` is typed as `AnyObject` to avoid a circular module dependency on `XCTestBootstrap`.
-public protocol XCTestCommands: AnyObject {
+public protocol XCTestCommands {
 
   func runTest(
     launchConfiguration: FBTestLaunchConfiguration,
@@ -31,5 +31,5 @@ public protocol XCTestExtendedCommands: XCTestCommands {
     body: (NSNumber) async throws -> R
   ) async throws -> R
 
-  var xctestPath: String { get }
+  var path: String { get }
 }

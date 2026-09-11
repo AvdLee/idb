@@ -7,18 +7,21 @@
 
 import CompanionLib
 import FBControlCore
+import FBSimulatorControl
 import Foundation
 import GRPC
 import IDBGRPCSwift
 
-struct InstallMethodHandler {
+struct InstallMethodHandler: @unchecked Sendable {
 
   let commandExecutor: FBIDBCommandExecutor
   let targetLogger: FBControlCoreLogger
 
-  func handle(requestStream: GRPCAsyncRequestStream<Idb_InstallRequest>, responseStream: GRPCAsyncResponseStreamWriter<Idb_InstallResponse>, context: GRPCAsyncServerCallContext) async throws {
+  func handle(requestStream: RequestStreamReader<Idb_InstallRequest>, responseStream: GRPCAsyncResponseStreamWriter<Idb_InstallResponse>, context: GRPCAsyncServerCallContext) async throws {
 
-    let artifact = try await install(requestStream: requestStream, responseStream: responseStream)
+    let artifact = try await Self.mapSimulatorInstallErrors {
+      try await install(requestStream: requestStream, responseStream: responseStream)
+    }
 
     let response = Idb_InstallResponse.with {
       $0.name = artifact.name
@@ -27,7 +30,23 @@ struct InstallMethodHandler {
     try await responseStream.send(response)
   }
 
-  private func install(requestStream: GRPCAsyncRequestStream<Idb_InstallRequest>, responseStream: GRPCAsyncResponseStreamWriter<Idb_InstallResponse>) async throws -> FBInstalledArtifact {
+  static func mapSimulatorInstallErrors<T>(_ operation: () async throws -> T) async throws -> T {
+    do {
+      return try await operation()
+    } catch let error as FBSimulatorApplicationInstallError {
+      switch error {
+      case .processSuspended,
+        .processDebuggerAttached,
+        .targetNotBooted,
+        .targetUnavailable:
+        throw GRPCStatus(code: .failedPrecondition, message: error.localizedDescription)
+      default:
+        throw error
+      }
+    }
+  }
+
+  private func install(requestStream: RequestStreamReader<Idb_InstallRequest>, responseStream: GRPCAsyncResponseStreamWriter<Idb_InstallResponse>) async throws -> FBInstalledArtifact {
 
     func extractPayloadFromRequest() throws -> Idb_Payload {
       guard let payload = request.extractPayload() else {
@@ -36,47 +55,40 @@ struct InstallMethodHandler {
       return payload
     }
 
-    var request = try await requestStream.requiredNext
+    var request = try await requestStream.requiredNext()
 
     guard case let .destination(destination) = request.value else {
       throw GRPCStatus(code: .failedPrecondition, message: "Expected destination as first request in stream")
     }
-    request = try await requestStream.requiredNext
+    request = try await requestStream.requiredNext()
 
     var name = UUID().uuidString
     if case let .nameHint(nameHint) = request.value {
       name = nameHint
-      request = try await requestStream.requiredNext
+      request = try await requestStream.requiredNext()
     }
 
     var makeDebuggable = false
     if case let .makeDebuggable(debuggable) = request.value {
       makeDebuggable = debuggable
-      request = try await requestStream.requiredNext
+      request = try await requestStream.requiredNext()
     }
     var overrideModificationTime = false
     if case let .overrideModificationTime(omtime) = request.value {
       overrideModificationTime = omtime
-      request = try await requestStream.requiredNext
+      request = try await requestStream.requiredNext()
     }
 
     var skipSigningBundles = false
     if case let .skipSigningBundles(skip) = request.value {
       skipSigningBundles = skip
-      request = try await requestStream.requiredNext
+      request = try await requestStream.requiredNext()
     }
 
     var linkToBundle: FBDsymInstallLinkToBundle?
-
-    // (2022-03-02) REMOVE! Keeping only for retrocompatibility
-    if case let .bundleID(id) = request.value {
-      linkToBundle = .init(id, bundle_type: .app)
-      request = try await requestStream.requiredNext
-    }
-
     if case let .linkDsymToBundle(link) = request.value {
       linkToBundle = readLinkBundleToDsym(from: link)
-      request = try await requestStream.requiredNext
+      request = try await requestStream.requiredNext()
     }
 
     var payload = try extractPayloadFromRequest()
@@ -84,7 +96,7 @@ struct InstallMethodHandler {
     var compression = FBCompressionFormat.GZIP
     if case let .compression(format) = payload.source {
       compression = readCompressionFormat(from: format)
-      request = try await requestStream.requiredNext
+      request = try await requestStream.requiredNext()
       payload = try extractPayloadFromRequest()
     }
 
@@ -103,7 +115,7 @@ struct InstallMethodHandler {
   private func installData(
     from source: Idb_Payload.OneOf_Source?,
     to destination: Idb_InstallRequest.Destination,
-    requestStream: GRPCAsyncRequestStream<Idb_InstallRequest>,
+    requestStream: RequestStreamReader<Idb_InstallRequest>,
     name: String,
     makeDebuggable: Bool,
     linkToBundle: FBDsymInstallLinkToBundle?,
@@ -131,8 +143,22 @@ struct InstallMethodHandler {
 
     switch source {
     case let .data(data):
-      let dataStream = pipeToInputOutput(initial: data, requestStream: requestStream) as! FBProcessInput<AnyObject>
-      return try await installSource(dataStream: dataStream, skipSigningBundles: skipSigningBundles)
+      if destination == .app && isZipArchive(data) {
+        return try await installZipArchive(
+          initial: data,
+          requestStream: requestStream,
+          makeDebuggable: makeDebuggable,
+          overrideModificationTime: overrideModificationTime)
+      }
+
+      let input = FBProcessInput<OutputStream>.fromStream()
+      let output = input.contents
+      async let writePayload: Void = writePayload(initial: data, requestStream: requestStream, output: output)
+      let artifact = try await installSource(
+        dataStream: input.retyped(FBProcessInput<AnyObject>.self),
+        skipSigningBundles: skipSigningBundles)
+      try await writePayload
+      return artifact
 
     case let .url(urlString):
       guard let url = URL(string: urlString) else {
@@ -164,37 +190,73 @@ struct InstallMethodHandler {
     }
   }
 
-  private func pipeToInputOutput(initial: Data, requestStream: GRPCAsyncRequestStream<Idb_InstallRequest>) -> FBProcessInput<OutputStream> {
-    let input = FBProcessInput<OutputStream>.fromStream()
-    let appStream = input.contents
-    Task {
-      appStream.open()
-      defer { appStream.close() }
+  private func isZipArchive(_ data: Data) -> Bool {
+    data.starts(with: [0x50, 0x4B, 0x03, 0x04])
+  }
 
-      var buffer = [UInt8](initial)
-      appStream.write(&buffer, maxLength: buffer.count)
+  private func installZipArchive(
+    initial: Data,
+    requestStream: RequestStreamReader<Idb_InstallRequest>,
+    makeDebuggable: Bool,
+    overrideModificationTime: Bool
+  ) async throws -> FBInstalledArtifact {
+    let archiveURL = FileManager.default.temporaryDirectory
+      .appendingPathComponent(UUID().uuidString)
+      .appendingPathExtension("ipa")
+    guard FileManager.default.createFile(atPath: archiveURL.path, contents: nil) else {
+      throw GRPCStatus(code: .internalError, message: "Failed to create temporary install archive")
+    }
+    defer { try? FileManager.default.removeItem(at: archiveURL) }
 
-      do {
-        for try await request in requestStream {
-          guard let data = request.extractDataFrame() else {
-            continue
-          }
-
-          var buffer = [UInt8](data)
-          appStream.write(&buffer, maxLength: buffer.count)
+    let file = try FileHandle(forWritingTo: archiveURL)
+    do {
+      try file.write(contentsOf: initial)
+      for try await request in requestStream {
+        guard let data = request.extractDataFrame() else {
+          continue
         }
-      } catch {
-        targetLogger.error().log("Failed to read install payload from request stream: \(error)")
+        try file.write(contentsOf: data)
       }
+      try file.close()
+    } catch {
+      try? file.close()
+      throw error
     }
 
-    return input
+    return try await commandExecutor.install_app_file_path(
+      archiveURL.path,
+      make_debuggable: makeDebuggable,
+      override_modification_time: overrideModificationTime)
+  }
+
+  private func writePayload(
+    initial: Data,
+    requestStream: RequestStreamReader<Idb_InstallRequest>,
+    output: OutputStream
+  ) async throws {
+    output.open()
+    defer { output.close() }
+
+    try write(initial, to: output)
+    for try await request in requestStream {
+      guard let data = request.extractDataFrame() else {
+        continue
+      }
+      try write(data, to: output)
+    }
+  }
+
+  private func write(_ data: Data, to output: OutputStream) throws {
+    var buffer = [UInt8](data)
+    guard output.write(&buffer, maxLength: buffer.count) == buffer.count else {
+      throw output.streamError ?? GRPCStatus(code: .internalError, message: "Failed to write install payload")
+    }
   }
 
   private func readLinkBundleToDsym(from link: Idb_InstallRequest.LinkDsymToBundle) -> FBDsymInstallLinkToBundle {
     return .init(
-      link.bundleID,
-      bundle_type: readDsymBundleType(from: link.bundleType))
+      bundleID: link.bundleID,
+      bundleType: readDsymBundleType(from: link.bundleType))
   }
 
   private func readDsymBundleType(from bundleType: Idb_InstallRequest.LinkDsymToBundle.BundleType) -> FBDsymBundleType {

@@ -44,14 +44,17 @@ targets:
         # TestRepl subclasses XCTestCase (forward-declared in XCTestPrivate.h, not
         # linked). The class is provided by the xctest host this dylib is injected
         # into, so defer the XCTestCase superclass symbol to runtime resolution.
-        OTHER_LDFLAGS: $(inherited) -undefined dynamic_lookup
+        # -headerpad_max_install_names: package managers rewrite the dylib
+        # install ID to their install prefix; leave header slack so the longer
+        # path fits without relinking.
+        OTHER_LDFLAGS: $(inherited) -undefined dynamic_lookup -headerpad_max_install_names
     dependencies:
       - sdk: Foundation.framework
 
   Repl-macOS:
     type: library.dynamic
     platform: macOS
-    deploymentTarget: "12.0"
+    deploymentTarget: "15.0"
     sources:
       - path: .
         excludes:
@@ -70,7 +73,7 @@ targets:
     settings:
       base:
         SDKROOT: macosx
-        MACOSX_DEPLOYMENT_TARGET: "12.0"
+        MACOSX_DEPLOYMENT_TARGET: "15.0"
         PRODUCT_NAME: Repl-macOS
         EXECUTABLE_PREFIX: lib
         CURRENT_PROJECT_VERSION: 1
@@ -82,7 +85,8 @@ targets:
         HEADER_SEARCH_PATHS: $(inherited) $(TARGET_TEMP_DIR)/ReplExecutorHeaders
         GCC_PREPROCESSOR_DEFINITIONS: $(inherited) SENTEST_IGNORE_DEPRECATION_WARNING=1
         OTHER_CFLAGS: $(inherited) -Wno-deprecated-declarations
-        # See Repl-iOS: XCTestCase is provided by the injected xctest host.
-        OTHER_LDFLAGS: $(inherited) -undefined dynamic_lookup
+        # See Repl-iOS: XCTestCase is provided by the injected xctest host, and
+        # the headerpad leaves room for install-name rewriting.
+        OTHER_LDFLAGS: $(inherited) -undefined dynamic_lookup -headerpad_max_install_names
     dependencies:
       - sdk: Foundation.framework

@@ -6,6 +6,7 @@
  */
 
 import CompanionLib
+import CompanionUtilities
 import FBControlCore
 import FBSimulatorControl
 import Foundation
@@ -15,7 +16,7 @@ import XCTestBootstrap
 
 struct XCTestRunMethodHandler {
 
-  let target: FBiOSTarget
+  let target: any FBiOSTarget
   let commandExecutor: FBIDBCommandExecutor
   let reporter: FBEventReporter
   let targetLogger: FBControlCoreLogger

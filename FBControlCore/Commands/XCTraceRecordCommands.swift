@@ -7,9 +7,9 @@
 
 import Foundation
 
-public protocol XCTraceRecordCommands: AnyObject {
+public protocol XCTraceRecordCommands {
 
-  func startXctraceRecord(
+  func start(
     configuration: FBXCTraceRecordConfiguration,
     logger: any FBControlCoreLogger
   ) async throws -> FBXCTraceRecordOperation

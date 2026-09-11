@@ -4,16 +4,12 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-# pyre-strict
 
 from argparse import ArgumentParser, Namespace
 
 from idb.cli import ClientCommand
 from idb.common.command import CommandGroup
 from idb.common.types import Client
-
-_ENABLE = "enable"
-_DISABLE = "disable"
 
 
 class SetPreferenceCommand(ClientCommand):
@@ -52,25 +48,12 @@ class SetPreferenceCommand(ClientCommand):
         super().add_parser_arguments(parser)
 
     async def run_with_client(self, args: Namespace, client: Client) -> None:
-        # special handling for locale and hardware-keyboard preference names
-        # for backwards compatibility
-        if args.name == "locale":
-            await client.set_locale(
-                locale_identifier=args.value,
-            )
-        elif args.name == "hardware-keyboard":
-            if args.value not in [_ENABLE, _DISABLE]:
-                raise Exception(
-                    f"Invalid value for hardware-keyboard. Must be one of {[_ENABLE, _DISABLE]}"
-                )
-            await client.set_hardware_keyboard(args.value == _ENABLE)
-        else:
-            await client.set_preference(
-                name=args.name,
-                value=args.value,
-                value_type=args.type,
-                domain=args.domain,
-            )
+        await client.set_preference(
+            name=args.name,
+            value=args.value,
+            value_type=args.type,
+            domain=args.domain,
+        )
 
 
 class GetPreferenceCommand(ClientCommand):
@@ -97,14 +80,8 @@ class GetPreferenceCommand(ClientCommand):
         super().add_parser_arguments(parser)
 
     async def run_with_client(self, args: Namespace, client: Client) -> None:
-        # special handling for locale reference name
-        # for backwards compatibility
-        if args.name == "locale":
-            locale_identifier = await client.get_locale()
-            print(locale_identifier)
-        else:
-            value = await client.get_preference(name=args.name, domain=args.domain)
-            print(value)
+        value = await client.get_preference(name=args.name, domain=args.domain)
+        print(value)
 
 
 class ListLocaleCommand(ClientCommand):
@@ -122,8 +99,21 @@ class ListLocaleCommand(ClientCommand):
             print(locale_identifier)
 
 
-ListCommand = CommandGroup(
-    name="list",
-    description="Lists values from the target",
-    commands=[ListLocaleCommand()],
-)
+def build_list_command() -> CommandGroup:
+    """A freshly constructed ``list`` group.
+
+    A group is mutable: adding it to a parser records that parser on it and
+    memoises its subcommand lookup. One instance shared between two command
+    graphs would therefore have the second graph's state overwrite the
+    first's, so every graph builds its own.
+    """
+    return CommandGroup(
+        name="list",
+        description="Lists values from the target",
+        commands=[ListLocaleCommand()],
+    )
+
+
+# Kept for callers that already import this name. The command graph builds its
+# own group with the factory above rather than sharing this one.
+ListCommand: CommandGroup = build_list_command()

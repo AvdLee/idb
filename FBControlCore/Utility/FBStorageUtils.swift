@@ -7,12 +7,29 @@
 
 import Foundation
 
-@objc(FBStorageUtils)
-public class FBStorageUtils: NSObject {
+public enum FBStorageUtilsError: Error {
+  case notExactlyOneFileWithExtension(count: Int, fileExtension: String, url: URL)
+  case notExactlyOneFile(found: [URL])
+  case directoryListFailed(directory: URL, underlying: Error)
+}
 
-  // MARK: Finding Files
+extension FBStorageUtilsError: LocalizedError {
+  public var errorDescription: String? {
+    switch self {
+    case let .notExactlyOneFileWithExtension(count, fileExtension, url):
+      return "\(count) files with extension .\(fileExtension) in \(url)"
+    case let .notExactlyOneFile(found):
+      return "Expected one top level file, found \(found.count): \(FBCollectionInformation.oneLineDescription(from: found))"
+    case let .directoryListFailed(directory, _):
+      return "Failed to list files in directory \(directory)"
+    }
+  }
+}
 
-  @objc(bucketFilesWithExtensions:inDirectory:error:)
+public final class FBStorageUtils {
+
+  // MARK: - Finding Files
+
   public class func bucketFiles(withExtensions extensions: Set<String>, inDirectory directory: URL) throws -> [String: Set<URL>] {
     var files: [String: Set<URL>] = [:]
     for ext in extensions {
@@ -35,40 +52,35 @@ public class FBStorageUtils: NSObject {
     return files
   }
 
-  @objc(findFileWithExtension:atURL:error:)
   public class func findFile(withExtension ext: String, at url: URL) throws -> URL {
     let files = try findFiles(withExtension: ext, at: url)
-    if files.count != 1 {
-      throw FBControlCoreError.describe("\(files.count) files with extension .\(ext) in \(url)").build()
+    guard let file = files.first, files.count == 1 else {
+      throw FBStorageUtilsError.notExactlyOneFileWithExtension(count: files.count, fileExtension: ext, url: url)
     }
-    return files.first!
+    return file
   }
 
-  @objc(findFilesWithExtension:atURL:error:)
   public class func findFiles(withExtension ext: String, at url: URL) throws -> Set<URL> {
     let buckets = try bucketFiles(withExtensions: Set([ext]), inDirectory: url)
     return buckets[ext] ?? Set()
   }
 
-  @objc(findUniqueFileInDirectory:error:)
   public class func findUniqueFile(inDirectory directory: URL) throws -> URL {
     let filesInDirectory = try files(inDirectory: directory)
     if filesInDirectory.count != 1 {
-      throw FBControlCoreError.describe("Expected one top level file, found \(filesInDirectory.count): \(FBCollectionInformation.oneLineDescription(from: filesInDirectory))").build()
+      throw FBStorageUtilsError.notExactlyOneFile(found: filesInDirectory)
     }
     return filesInDirectory[0]
   }
 
-  @objc(filesInDirectory:error:)
   public class func files(inDirectory directory: URL) throws -> [URL] {
     do {
       return try FileManager.default.contentsOfDirectory(at: directory, includingPropertiesForKeys: [.isDirectoryKey], options: [])
     } catch {
-      throw FBControlCoreError.describe("Failed to list files in directory \(directory)").caused(by: error as NSError).build()
+      throw FBStorageUtilsError.directoryListFailed(directory: directory, underlying: error)
     }
   }
 
-  @objc(bundleInDirectory:error:)
   public class func bundle(inDirectory directory: URL) throws -> FBBundleDescriptor {
     let uniqueFile = try findUniqueFile(inDirectory: directory)
     return try FBBundleDescriptor.bundle(fromPath: uniqueFile.path)

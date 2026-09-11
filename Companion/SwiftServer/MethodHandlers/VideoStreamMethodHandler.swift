@@ -12,16 +12,29 @@ import FBSimulatorControl
 import GRPC
 import IDBGRPCSwift
 
+private enum VideoStreamMethodHandlerError: Error {
+  case failedToCreateSyncWriter(filePath: String)
+}
+
+extension VideoStreamMethodHandlerError: LocalizedError {
+  var errorDescription: String? {
+    switch self {
+    case .failedToCreateSyncWriter(let filePath):
+      return "Failed to create sync writer for \(filePath)"
+    }
+  }
+}
+
 struct VideoStreamMethodHandler {
 
-  let target: FBiOSTarget
+  let target: any FBiOSTarget
   let targetLogger: FBControlCoreLogger
   let commandExecutor: FBIDBCommandExecutor
 
-  func handle(requestStream: GRPCAsyncRequestStream<Idb_VideoStreamRequest>, responseStream: GRPCAsyncResponseStreamWriter<Idb_VideoStreamResponse>, context: GRPCAsyncServerCallContext) async throws {
+  func handle(requestStream: RequestStreamReader<Idb_VideoStreamRequest>, responseStream: GRPCAsyncResponseStreamWriter<Idb_VideoStreamResponse>, context: GRPCAsyncServerCallContext) async throws {
     @Atomic var finished = false
 
-    guard case let .start(start) = try await requestStream.requiredNext.control
+    guard case let .start(start) = try await requestStream.requiredNext().control
     else { throw GRPCStatus(code: .failedPrecondition, message: "Expected start control") }
 
     let videoStream = try await startVideoStream(
@@ -48,7 +61,7 @@ struct VideoStreamMethodHandler {
 
     try await Task.select(observeClientCancelStreaming, observeVideoStreamStop).value
 
-    try await videoStream.stop()
+    try await videoStream.stopStreaming()
     targetLogger.log("The video stream is terminated")
   }
 
@@ -72,50 +85,12 @@ struct VideoStreamMethodHandler {
     } else {
       var writeError: NSError?
       guard let writer = FBFileWriter.syncWriter(forFilePath: start.filePath, error: &writeError) else {
-        throw writeError ?? NSError(domain: "FBFileWriter", code: -1, userInfo: [NSLocalizedDescriptionKey: "Failed to create sync writer for \(start.filePath)"])
+        throw writeError ?? VideoStreamMethodHandlerError.failedToCreateSyncWriter(filePath: start.filePath)
       }
       consumer = writer
     }
 
-    let framesPerSecond = start.fps > 0 ? NSNumber(value: start.fps) : nil
-    let format = streamFormat(from: start.format)
-
-    let rateControl: FBVideoStreamRateControl?
-    if start.avgBitrate > 0 {
-      rateControl = .bitrate(NSNumber(value: start.avgBitrate))
-    } else if start.compressionQuality > 0 {
-      rateControl = .quality(NSNumber(value: start.compressionQuality))
-    } else {
-      rateControl = nil
-    }
-
-    let config = FBVideoStreamConfiguration(
-      format: format,
-      framesPerSecond: framesPerSecond,
-      rateControl: rateControl,
-      scaleFactor: .init(value: start.scaleFactor),
-      keyFrameRate: .init(value: start.keyFrameRate))
-
-    guard let asyncTarget = target as? any VideoStreamCommands else {
-      throw GRPCStatus(code: .failedPrecondition, message: "\(target) does not support VideoStreamCommands")
-    }
-    let videoStream = try await asyncTarget.createStream(configuration: config, to: consumer)
-
-    return videoStream
-  }
-
-  private func streamFormat(from requestFormat: Idb_VideoStreamRequest.Format) -> FBVideoStreamFormat {
-    switch requestFormat {
-    case .h264:
-      return .compressedVideo(withCodec: .h264, transport: .annexB)
-    case .rbga:
-      return .bgra
-    case .mjpeg:
-      return .mjpeg
-    case .minicap:
-      return .minicap
-    case .i420, .UNRECOGNIZED:
-      return .compressedVideo(withCodec: .h264, transport: .annexB)
-    }
+    return try await target.videoStream.createStream(
+      configuration: VideoStreamRequestTranslation.configuration(from: start), to: consumer)
   }
 }

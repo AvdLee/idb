@@ -12,16 +12,16 @@ import FBSimulatorControl
 import GRPC
 import IDBGRPCSwift
 
-struct DapMethodHandler {
+struct DapMethodHandler: @unchecked Sendable {
 
   let commandExecutor: FBIDBCommandExecutor
   let targetLogger: FBControlCoreLogger
 
-  func handle(requestStream: GRPCAsyncRequestStream<Idb_DapRequest>, responseStream: GRPCAsyncResponseStreamWriter<Idb_DapResponse>, context: GRPCAsyncServerCallContext) async throws {
-    guard case let .start(start) = try await requestStream.requiredNext.control
+  func handle(requestStream: RequestStreamReader<Idb_DapRequest>, responseStream: GRPCAsyncResponseStreamWriter<Idb_DapResponse>, context: GRPCAsyncServerCallContext) async throws {
+    guard case let .start(start) = try await requestStream.requiredNext().control
     else { throw GRPCStatus(code: .failedPrecondition, message: "Dap command expected a Start messaged in the beginning of the Stream") }
 
-    let writer = FBProcessInput<FBDataConsumer>.fromConsumer() as! FBProcessInput<AnyObject>
+    let writer = FBProcessInput<FBDataConsumer>.fromConsumer().retyped(FBProcessInput<AnyObject>.self)
     let dapProcess = try await startDapServer(startRequest: start, processInput: writer, responseStream: responseStream)
 
     let tenHours: UInt64 = 36000 * 1000000000
@@ -59,7 +59,7 @@ struct DapMethodHandler {
     return process
   }
 
-  private func consumeElements(from requestStream: GRPCAsyncRequestStream<Idb_DapRequest>, to writer: FBProcessInput<AnyObject>, dapProcess: FBSubprocess<AnyObject, FBDataConsumer, NSString>) async throws {
+  private func consumeElements(from requestStream: RequestStreamReader<Idb_DapRequest>, to writer: FBProcessInput<AnyObject>, dapProcess: FBSubprocess<AnyObject, FBDataConsumer, NSString>) async throws {
     for try await request in requestStream {
       switch request.control {
       case .start:

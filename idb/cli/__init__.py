@@ -4,9 +4,7 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-# pyre-strict
 
-import json
 import logging
 import os
 from abc import ABCMeta, abstractmethod
@@ -107,14 +105,18 @@ class BaseCommand(Command, metaclass=ABCMeta):
             self.logger.warning(
                 "Setting --log after the command is deprecated, please place it at the start of the invocation"
             )
-        metadata: LoggingMetadata = plugin.resolve_metadata(logger=self.logger)
-        metadata["arguments"] = json.dumps(args.__dict__, default=lambda v: str(v))
+        metadata: LoggingMetadata = plugin.resolve_metadata(
+            logger=self.logger, command=self, args=args
+        )
         if args.reason:
             metadata["reason"] = args.reason[:200]
         async with log_call(
             name=name,
             metadata=metadata,
         ):
+            # Runs inside log_call so a plugin rejection is recorded as a
+            # failed invocation rather than escaping before logging starts.
+            plugin.on_command_parsed(logger=self.logger, command=self, args=args)
             await self._run_impl(args)
 
     @abstractmethod

@@ -16,8 +16,74 @@ struct TestBundleOptions: ParsableArguments {
 
 /// Options that only apply to the `app` context.
 struct AppOptions: ParsableArguments {
-  @Option(name: .long, help: "Bundle id of the installed app to launch and inject the REPL into.")
-  var bundleID: String
+  @Option(name: .long, help: "Bundle id of the installed app to launch and inject the REPL into. If omitted, the companion launches its bundled ReplHost app.")
+  var bundleID: String?
+
+  @Flag(name: .long, help: "Start a new REPL session (a clean relaunch) instead of reattaching to an already-running REPL for this app.")
+  var newSession = false
+
+  var reuseSession: Bool { !newSession }
+}
+
+/// Connection and toolchain options shared by every subcommand: which target or
+/// companion to reach and how to compile injected code. Flattened into each subcommand
+/// via `@OptionGroup`.
+struct ConnectionOptions: ParsableArguments {
+  @Option(
+    name: .long,
+    help: "UDID of the simulator to use for execution. If omitted, the single running companion is used, or one is started for the only available simulator.")
+  var udid: String?
+
+  @Option(name: .long, help: "Path to the Swift toolchain used to compile code. Defaults to the selected Xcode toolchain (xcode-select -p).")
+  var toolchainPath: String?
+
+  @Option(
+    name: .long,
+    help: ArgumentHelp(
+      "Path to the idb_companion binary, overriding the default system installed binary.",
+      visibility: .hidden))
+  var idbCompanionBinary: String?
+
+  @Option(
+    name: .long,
+    help: "Connect directly to a companion at host:port (e.g. 127.0.0.1:10882), bypassing discovery. Use to reach an already-running, typically remote, companion.")
+  var companion: String?
+
+  @Flag(
+    name: .long,
+    help: ArgumentHelp(
+      "Use an unencrypted TCP connection to the companion instead of TLS.",
+      visibility: .hidden))
+  var plaintext = false
+
+  /// Assembles the session config from these connection options, the report options,
+  /// and the global `--reason`.
+  func sessionConfig(report: ReportOptions) -> ReplSessionConfig {
+    ReplSessionConfig(
+      udid: udid,
+      toolchainPath: toolchainPath,
+      idbCompanionBinary: idbCompanionBinary,
+      companion: companion,
+      plaintext: plaintext,
+      reportPath: report.reportPath,
+      reportFailures: report.reportFailures,
+      reason: GlobalOptions.shared.reason)
+  }
+}
+
+/// Report options shared by every subcommand: where to write the session report and
+/// whether to also record runs that fail to compile. Flattened into each subcommand via
+/// `@OptionGroup`.
+struct ReportOptions: ParsableArguments {
+  @Option(
+    name: .long,
+    help: "Write a Markdown report of this session (the code run and its results) to this path. If omitted, no report is written.")
+  var reportPath: String?
+
+  @Flag(
+    name: .long,
+    help: "Also record runs whose code fails to compile in the report. Off by default; successful runs and runtime exceptions are always recorded.")
+  var reportFailures = false
 }
 
 /// @unchecked Sendable: the lazy-creation flag is the only mutable state and is
@@ -46,6 +112,15 @@ final class SessionDirectory: @unchecked Sendable {
     return (path as NSString).appendingPathComponent(name)
   }
 
+  /// The `artifacts/` subdirectory of the session directory, created if needed. Used
+  /// to stage retrieved artifacts when no session report is being written (a report
+  /// stores them next to itself instead).
+  func artifactsDirectory() throws -> String {
+    let directory = try filePath(named: "artifacts")
+    try FileManager.default.createDirectory(atPath: directory, withIntermediateDirectories: true)
+    return directory
+  }
+
   func cleanup() {
     lock.lock()
     defer { lock.unlock() }
@@ -58,109 +133,29 @@ final class SessionDirectory: @unchecked Sendable {
 
 let sessionDirectory = SessionDirectory()
 
-/// The Apple platform to compile injected code for, derived from the device
-/// type the companion reports for its connected target.
-enum Platform {
-  case iOSSimulator
-  case macOS
-  case watchOSSimulator
-  case tvOSSimulator
+/// Session-wide facts learned from the REPL handshake.
+///
+/// @unchecked Sendable: `sharedFilesystem` is guarded by `lock`.
+final class ReplSessionInfo: @unchecked Sendable {
+  private let lock = NSLock()
+  private var sharedFilesystemValue = false
 
-  /// Maps a companion-reported device type to the platform to compile for.
-  init(deviceType: String) throws {
-    switch deviceType {
-    case "iphone", "ipad":
-      self = .iOSSimulator
-    case "mac":
-      self = .macOS
-    case "watch":
-      self = .watchOSSimulator
-    case "tv":
-      self = .tvOSSimulator
-    default:
-      throw ValidationError("Unsupported device type reported by idb_companion: '\(deviceType)'")
+  /// Whether the connected companion shares this driver's filesystem, set once
+  /// from the ready handshake. When true, captured artifacts are moved into the
+  /// session's artifacts directory directly; otherwise they are pulled back over
+  /// gRPC and removed from the companion.
+  var sharedFilesystem: Bool {
+    get {
+      lock.lock()
+      defer { lock.unlock() }
+      return sharedFilesystemValue
     }
-  }
-
-  var sdkName: String {
-    switch self {
-    case .iOSSimulator: return "iphonesimulator"
-    case .macOS: return "macosx"
-    case .watchOSSimulator: return "watchsimulator"
-    case .tvOSSimulator: return "appletvsimulator"
-    }
-  }
-
-  func targetTriple(version: String) -> String {
-    switch self {
-    case .iOSSimulator: return "arm64-apple-ios\(version)-simulator"
-    case .macOS: return "arm64-apple-macosx\(version)"
-    case .watchOSSimulator: return "arm64-apple-watchos\(version)-simulator"
-    case .tvOSSimulator: return "arm64-apple-tvos\(version)-simulator"
+    set {
+      lock.lock()
+      defer { lock.unlock() }
+      sharedFilesystemValue = newValue
     }
   }
 }
 
-func resolveSDKPath(platform: Platform) throws -> String {
-  let process = Process()
-  process.executableURL = URL(fileURLWithPath: "/usr/bin/xcrun")
-  process.arguments = ["--sdk", platform.sdkName, "--show-sdk-path"]
-  let pipe = Pipe()
-  process.standardOutput = pipe
-  try process.run()
-  process.waitUntilExit()
-
-  guard process.terminationStatus == 0,
-    let output = String(data: pipe.fileHandleForReading.readDataToEndOfFile(), encoding: .utf8)
-  else {
-    throw ValidationError("Failed to resolve SDK path")
-  }
-
-  return output.trimmingCharacters(in: .whitespacesAndNewlines)
-}
-
-func resolveTargetTriple(platform: Platform) throws -> String {
-  let process = Process()
-  process.executableURL = URL(fileURLWithPath: "/usr/bin/xcrun")
-  process.arguments = ["--sdk", platform.sdkName, "--show-sdk-platform-version"]
-  let pipe = Pipe()
-  process.standardOutput = pipe
-  try process.run()
-  process.waitUntilExit()
-
-  guard process.terminationStatus == 0,
-    let output = String(data: pipe.fileHandleForReading.readDataToEndOfFile(), encoding: .utf8)
-  else {
-    throw ValidationError("Failed to resolve SDK platform version")
-  }
-
-  let version = output.trimmingCharacters(in: .whitespacesAndNewlines)
-  return platform.targetTriple(version: version)
-}
-
-/// Resolves the Swift toolchain path. Returns `explicit` when given (e.g. the
-/// `test` context derives one from the test target's `[xctoolchain]` sub-target);
-/// otherwise falls back to the locally selected Xcode toolchain via
-/// `xcode-select -p`, matching idb-repl-simulator.sh.
-func resolveToolchainPath(explicit: String?) throws -> String {
-  if let explicit {
-    return explicit
-  }
-
-  let process = Process()
-  process.executableURL = URL(fileURLWithPath: "/usr/bin/xcode-select")
-  process.arguments = ["-p"]
-  let pipe = Pipe()
-  process.standardOutput = pipe
-  try process.run()
-  process.waitUntilExit()
-
-  guard process.terminationStatus == 0,
-    let output = String(data: pipe.fileHandleForReading.readDataToEndOfFile(), encoding: .utf8)
-  else {
-    throw ValidationError("Failed to resolve the selected Xcode toolchain via xcode-select; pass --toolchain-path explicitly")
-  }
-
-  let developerDirectory = output.trimmingCharacters(in: .whitespacesAndNewlines)
-  return (developerDirectory as NSString).appendingPathComponent("Toolchains/XcodeDefault.xctoolchain")
-}
+let replSessionInfo = ReplSessionInfo()

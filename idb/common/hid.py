@@ -4,7 +4,6 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-# pyre-strict
 
 from collections.abc import AsyncIterator, Iterable, Iterator
 from typing import Dict, List, Optional, Tuple
@@ -16,13 +15,24 @@ from idb.common.types import (
     HIDDirection,
     HIDEvent,
     HIDKey,
+    HIDOrientation,
+    HIDOrientationType,
     HIDPinch,
     HIDPress,
     HIDPressAction,
+    HIDShake,
     HIDSwipe,
     HIDTouch,
     Point,
 )
+
+
+def rotate_to_events(orientation: HIDOrientationType) -> list[HIDEvent]:
+    return [HIDOrientation(orientation=orientation)]
+
+
+def shake_to_events() -> list[HIDEvent]:
+    return [HIDShake()]
 
 
 def tap_to_events(x: float, y: float, duration: float | None = None) -> list[HIDEvent]:

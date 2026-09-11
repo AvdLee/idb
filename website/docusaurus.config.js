@@ -5,6 +5,11 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+// Every Docusaurus command loads this config, so generating here covers them
+// all — including `docusaurus deploy`, which builds internally without running
+// the package.json `build` script or its hooks.
+require('./scripts/generate-framework-docs');
+
 module.exports = {
   title: 'idb',
   tagline: 'iOS Development Bridge',
@@ -13,12 +18,16 @@ module.exports = {
   baseUrl: '/',
   organizationName: 'facebook',
   projectName: 'idb',
+  markdown: {
+    mermaid: true,
+  },
+  themes: ['@docusaurus/theme-mermaid'],
   themeConfig: {
     navbar: {
       title: 'idb',
       items: [
-        { to: 'docs/overview', label: 'Getting Started', position: 'right' },
-        { to: 'docs/installation', label: 'Docs', position: 'right' },
+        { to: 'docs/idb/overview', label: 'idb', position: 'right' },
+        { to: 'docs/idb-repl/overview', label: 'idb-repl', position: 'right' },
         { href: 'https://github.com/facebook/idb', label: 'GitHub', position: 'right' },
       ],
     },
@@ -84,6 +93,29 @@ module.exports = {
           path: './docs',
           sidebarPath: require.resolve('./sidebars.js'),
         },
+      },
+    ],
+  ],
+  plugins: [
+    './scripts/validate-mermaid',
+    [
+      '@docusaurus/plugin-client-redirects',
+      {
+        // Preserve the pre-reorganization URLs (docs moved under /docs/idb/).
+        redirects: [
+          { from: '/docs/overview', to: '/docs/idb/overview' },
+          { from: '/docs/installation', to: '/docs/idb/installation' },
+          { from: '/docs/guided-tour', to: '/docs/idb/guided-tour' },
+          { from: '/docs/architecture', to: '/docs/idb/architecture' },
+          { from: '/docs/development', to: '/docs/idb/development' },
+          { from: '/docs/commands', to: '/docs/idb/commands' },
+          { from: '/docs/fbsimulatorcontrol', to: '/docs/idb/fbsimulatorcontrol' },
+          { from: '/docs/fbdevicecontrol', to: '/docs/idb/fbdevicecontrol' },
+          { from: '/docs/video', to: '/docs/idb/video' },
+          { from: '/docs/test-execution', to: '/docs/idb/test-execution' },
+          { from: '/docs/file-containers', to: '/docs/idb/file-containers' },
+          { from: '/docs/accessibility', to: '/docs/idb/accessibility' },
+        ],
       },
     ],
   ],

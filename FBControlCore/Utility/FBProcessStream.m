@@ -7,6 +7,7 @@
 
 #import "FBProcessStream.h"
 
+#import <fcntl.h>
 #import <sys/stat.h>
 #import <sys/types.h>
 
@@ -692,7 +693,6 @@ static NSTimeInterval const ProcessDetachDrainTimeout = 4;
                           ]];
             }
 
-            // FBProcessOuput consumes the read end, the write end is passed out in the attachment.
             self.reader = [FBFileReader readerWithFileDescriptor:self.readEnd closeOnEndOfFile:YES consumer:consumer logger:self.logger];
             return [[[self.reader
                       startReading]
@@ -776,7 +776,7 @@ static NSTimeInterval const ProcessDetachDrainTimeout = 4;
 
 - (id<FBControlCoreLogger>)contents
 {
-  return self.logger;
+  return self.logger ?: [FBControlCoreLoggerFactory systemLoggerWritingToStderr:NO withDebugLogging:NO];
 }
 
 #pragma mark NSObject
@@ -914,7 +914,6 @@ static NSTimeInterval const ProcessDetachDrainTimeout = 4;
 - (NSString *)contents
 {
   NSData *data = self.dataConsumer.data;
-  // Strip newline from the end of the buffer.
   if (data.length) {
     char lastByte = 0;
     NSRange range = NSMakeRange(data.length - 1, 1);
@@ -923,7 +922,7 @@ static NSTimeInterval const ProcessDetachDrainTimeout = 4;
       data = [data subdataWithRange:NSMakeRange(0, data.length - 1)];
     }
   }
-  return [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+  return [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding] ?: @"";
 }
 
 #pragma mark NSObject
@@ -1279,14 +1278,21 @@ static NSTimeInterval const ProcessDetachDrainTimeout = 4;
     return -1;
   }
   self.status = NSStreamStatusWriting;
-  ssize_t result = write(self.fileDescriptor, buffer, len);
-  self.status = NSStreamStatusOpen;
-  if (result == -1) {
-    [self resolveError:[[NSString alloc] initWithCString:strerror(errno) encoding:NSASCIIStringEncoding]];
-    return -1;
+  NSUInteger totalWritten = 0;
+  while (totalWritten < len) {
+    ssize_t result = write(self.fileDescriptor, buffer + totalWritten, len - totalWritten);
+    if (result == -1 && errno == EINTR) {
+      continue;
+    }
+    if (result <= 0) {
+      [self resolveError:[[NSString alloc] initWithCString:strerror(errno) encoding:NSASCIIStringEncoding]];
+      return -1;
+    }
+    totalWritten += (NSUInteger)result;
   }
-  self.bytesWritten += result;
-  return result;
+  self.status = NSStreamStatusOpen;
+  self.bytesWritten += (ssize_t)totalWritten;
+  return (NSInteger)totalWritten;
 }
 
 - (void)open
@@ -1298,6 +1304,10 @@ static NSTimeInterval const ProcessDetachDrainTimeout = 4;
   self.status = NSStreamStatusOpening;
   NSNumber *fileDescriptor = [self.writeFuture block:nil];
   self.fileDescriptor = fileDescriptor.intValue;
+  if (fcntl(self.fileDescriptor, F_SETNOSIGPIPE, 1) == -1) {
+    [self resolveError:[[NSString alloc] initWithCString:strerror(errno) encoding:NSASCIIStringEncoding]];
+    return;
+  }
   self.status = NSStreamStatusOpen;
 }
 

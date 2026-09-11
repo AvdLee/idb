@@ -6,6 +6,7 @@
  */
 
 import CompanionLib
+import CompanionUtilities
 import FBControlCore
 import Foundation
 import GRPC
@@ -15,7 +16,7 @@ struct DescribeMethodHandler {
 
   let reporter: FBEventReporter
   let logger: FBIDBLogger
-  let target: FBiOSTarget
+  let target: any FBiOSTarget
   let commandExecutor: FBIDBCommandExecutor
 
   func handle(request: Idb_TargetDescriptionRequest, context: GRPCAsyncServerCallContext) async throws -> Idb_TargetDescriptionResponse {
@@ -23,8 +24,8 @@ struct DescribeMethodHandler {
       $0.targetDescription = .with {
         $0.udid = target.udid
         $0.name = target.name
-        $0.state = FBiOSTargetStateStringFromState(target.state).rawValue
-        $0.targetType = FBiOSTargetTypeStringFromTargetType(target.targetType).lowercased()
+        $0.state = target.state.stateString.rawValue
+        $0.targetType = target.targetType.stringRepresentation.lowercased()
         $0.osVersion = target.osVersion.name.rawValue
         if let screenInfo = target.screenInfo {
           $0.screenDimensions = .with {
@@ -56,11 +57,5 @@ struct DescribeMethodHandler {
     response.targetDescription.diagnostics = diagnosticInfoData
 
     return response
-  }
-
-  private func populateCompanionInfo(info: inout Idb_CompanionInfo) throws {
-    info.udid = target.udid
-    let data = try JSONSerialization.data(withJSONObject: reporter.metadata, options: [])
-    info.metadata = data
   }
 }

@@ -1,0 +1,392 @@
+name: Release
+on:
+  push:
+    tags:
+      - 'v*'
+  # Dispatching with a version cuts a release without a local tag push: the
+  # run creates the tag and the release itself at the dispatched commit.
+  # Dispatching with the version left empty keeps the existing dry-run, where
+  # only the build legs run.
+  workflow_dispatch:
+    inputs:
+      version:
+        description: >-
+          Release version to cut, e.g. v1.5.0.b8. When set, the run creates
+          the tag and release itself at the dispatched commit; when empty,
+          the build legs run without releasing (the existing dry-run).
+        type: string
+        required: false
+        default: ''
+
+# The token is read-only by default; each job that creates or uploads to the
+# release asks for contents: write itself, and only the companion job reads
+# other runs' artifacts.
+permissions:
+  contents: read
+
+jobs:
+  # The single owner of `gh release create`: with both build jobs creating the
+  # release concurrently, whichever won the race decided the release's title
+  # and notes. Skipped on dry-run dispatches (no version to release); the
+  # build jobs tolerate that skip explicitly below.
+  create-release:
+    name: Create the GitHub release
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    if: ${{ startsWith(github.ref, 'refs/tags/v') || inputs.version != '' }}
+    permissions:
+      contents: write
+    env:
+      # The tag this run releases: the pushed tag, or the dispatched version.
+      # The expression works because && / || short-circuit to their operand
+      # values, and inputs.version is empty both on tag pushes and on dry-run
+      # dispatches.
+      RELEASE_TAG: ${{ startsWith(github.ref, 'refs/tags/v') && github.ref_name || inputs.version }}
+    steps:
+      - name: Create release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          # Tolerate re-runs of the same tag: only create the release if it
+          # does not already exist, and never mask a genuine creation failure.
+          if gh release view "$RELEASE_TAG" --repo "$GITHUB_REPOSITORY" > /dev/null 2>&1; then
+            echo "Release $RELEASE_TAG already exists, leaving it as-is"
+          else
+            # Mark prerelease-suffixed tags (v1.5.0.b3, v1.5.0.rc1) as
+            # prereleases; a plain version tag becomes the repo's latest
+            # release.
+            prerelease=()
+            case "$RELEASE_TAG" in
+              *.a[0-9]*|*.b[0-9]*|*.rc[0-9]*) prerelease=(--prerelease) ;;
+            esac
+            # On a dispatch the tag does not exist yet: --target has
+            # `gh release create` create it at the dispatched commit, under
+            # the Actions bot identity. Tags created with GITHUB_TOKEN do not
+            # trigger workflows, so this cannot start a second Release run.
+            target=()
+            if [ "$GITHUB_EVENT_NAME" = "workflow_dispatch" ]; then
+              target=(--target "$GITHUB_SHA")
+            fi
+            gh release create "$RELEASE_TAG" "${prerelease[@]}" "${target[@]}" --title "$RELEASE_TAG" --generate-notes --repo "$GITHUB_REPOSITORY"
+          fi
+
+  companion:
+    name: Build and publish idb_companion
+    runs-on: macos-26
+    timeout-minutes: 120
+    # `!cancelled()` suppresses the implicit success() so this still runs when
+    # create-release is skipped (dry-run dispatch), while a failed or
+    # cancelled create-release still blocks the upload legs.
+    needs: [create-release]
+    if: ${{ !cancelled() && (needs.create-release.result == 'success' || needs.create-release.result == 'skipped') }}
+    permissions:
+      contents: write
+      actions: read
+    env:
+      XCODEGEN_STRIP_XATTRS: 'false'
+      RELEASE_TAG: ${{ startsWith(github.ref, 'refs/tags/v') && github.ref_name || inputs.version }}
+    steps:
+      - uses: actions/checkout@v5
+      # A release cut at a commit CI has already built ships CI's companion
+      # tarball rather than a rebuild: same tree, same packaging, and the
+      # bytes CI tested are the bytes users get. Keyed on exactly this commit
+      # and a fully successful CI run; anything else builds from scratch, as
+      # does a commit whose CI artifact has expired.
+      - name: Look for this commit's CI companion build
+        id: reuse
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          run_id=$(gh run list -R "$GITHUB_REPOSITORY" --workflow ci.yml --commit "$GITHUB_SHA" --status success --limit 1 --json databaseId --jq '.[0].databaseId // empty')
+          if [ -n "$run_id" ] && gh run download "$run_id" -R "$GITHUB_REPOSITORY" -n idb-companion -D reuse && [ -f reuse/idb-companion.macos-arm64.tar.gz ]; then
+            mv reuse/idb-companion.macos-arm64.tar.gz .
+            echo "reused=true" >> "$GITHUB_OUTPUT"
+            echo "Reusing the companion tarball from CI run $run_id for $GITHUB_SHA"
+          else
+            echo "reused=false" >> "$GITHUB_OUTPUT"
+            echo "No successful CI run with a companion artifact for $GITHUB_SHA; building"
+          fi
+      - name: Install tools
+        if: steps.reuse.outputs.reused != 'true'
+        run: brew install xcodegen protobuf swift-protobuf
+      - name: Cache grpc-swift plugin
+        if: steps.reuse.outputs.reused != 'true'
+        uses: actions/cache@v5
+        with:
+          path: Build/grpc-swift
+          key: grpc-swift-${{ hashFiles('Package.swift') }}-${{ runner.os }}
+      - name: Build everything and assemble the distribution
+        if: steps.reuse.outputs.reused != 'true'
+        run: ./build.sh build all
+      - name: Package
+        if: steps.reuse.outputs.reused != 'true'
+        run: tar -C Build/Distribution -czf idb-companion.macos-arm64.tar.gz .
+      # Digested here whichever way the tarball arrived, so the value the rest
+      # of the run sees is always that of the file being uploaded.
+      - name: Digest
+        id: package
+        run: |
+          shasum -a 256 idb-companion.macos-arm64.tar.gz | tee idb-companion.macos-arm64.tar.gz.sha256
+          echo "sha256=$(cut -d' ' -f1 idb-companion.macos-arm64.tar.gz.sha256)" >> "$GITHUB_OUTPUT"
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v5
+        with:
+          name: idb-companion
+          path: idb-companion.macos-arm64.tar.gz*
+      - name: Upload to release
+        if: ${{ startsWith(github.ref, 'refs/tags/v') || inputs.version != '' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release upload "$RELEASE_TAG" idb-companion.macos-arm64.tar.gz idb-companion.macos-arm64.tar.gz.sha256 --clobber --repo "$GITHUB_REPOSITORY"
+  python-client:
+    name: Build fb-idb distributions
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    # See companion: run on dry-run dispatch (create-release skipped), block
+    # on failure.
+    needs: [create-release]
+    if: ${{ !cancelled() && (needs.create-release.result == 'success' || needs.create-release.result == 'skipped') }}
+    permissions:
+      contents: write
+    env:
+      RELEASE_TAG: ${{ startsWith(github.ref, 'refs/tags/v') && github.ref_name || inputs.version }}
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - name: Build sdist and wheel
+        run: |
+          pip install build
+          # On a dry-run dispatch there is no release tag to derive a valid
+          # PEP 440 version from; use a placeholder so the build legs stay
+          # exercisable without one.
+          case "$RELEASE_TAG" in
+            v*) FB_IDB_VERSION="${RELEASE_TAG#v}" ;;
+            *) FB_IDB_VERSION="0.0.0.dev0" ;;
+          esac
+          FB_IDB_VERSION="$FB_IDB_VERSION" python -m build
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v5
+        with:
+          name: fb-idb-dist
+          path: dist/*
+      - name: Attach to release
+        if: ${{ startsWith(github.ref, 'refs/tags/v') || inputs.version != '' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release upload "$RELEASE_TAG" dist/* --clobber --repo "$GITHUB_REPOSITORY"
+
+  # Bottles idb-cli during the release itself. A bottle is built by installing
+  # its formula, so this job renders idb-cli.rb for this run's own tag and
+  # wheel into a scratch tap and bottles from that; the published tap is not
+  # consulted. The formulae job below renders the final files, bottle block
+  # included, once the bottle exists.
+  #
+  # Only idb-cli is bottled: its source install is the venv-and-pip work a
+  # bottle eliminates, while idb-companion's source install already unpacks a
+  # prebuilt tarball and idb is a tiny metapackage.
+  bottle:
+    name: Build and publish the idb-cli bottle
+    # The runner image decides the bottle's os/arch tag: macos-26 produces
+    # arm64_tahoe bottles only. Users on anything else keep the source install.
+    runs-on: macos-26
+    timeout-minutes: 30
+    # Deliberately not gated on the companion build: the idb-cli formula only
+    # needs the wheel, so bottling runs in parallel with the slow companion
+    # job and adds no wall-clock time to the release.
+    needs: [create-release, python-client]
+    if: ${{ startsWith(github.ref, 'refs/tags/v') || inputs.version != '' }}
+    permissions:
+      contents: write
+    env:
+      RELEASE_TAG: ${{ startsWith(github.ref, 'refs/tags/v') && github.ref_name || inputs.version }}
+    steps:
+      - uses: actions/checkout@v5
+      - uses: Homebrew/actions/setup-homebrew@master
+
+      - name: Download this release's wheel
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release download "$RELEASE_TAG" --pattern 'fb_idb-*-py3-none-any.whl' --repo "$GITHUB_REPOSITORY"
+
+      # Rendered from the template for this run's own tag and wheel, so
+      # tap/release version skew is impossible. Only idb-cli.rb is needed to
+      # bottle idb-cli, and the companion tarball does not exist yet.
+      - name: Render idb-cli.rb into a scratch tap
+        run: |
+          python3 .github/scripts/tap_formulae.py render \
+            --tag "$RELEASE_TAG" \
+            --only idb-cli.rb \
+            --wheel 'fb_idb-*-py3-none-any.whl' \
+            --out tap
+
+      # brew only installs formulae out of its own tap directories, so expose
+      # the scratch tap as facebook/fb.
+      - name: Link the scratch tap as facebook/fb
+        run: |
+          taps="$(brew --repository)/Library/Taps/facebook"
+          mkdir -p "$taps"
+          ln -s "$PWD/tap" "$taps/homebrew-fb"
+          brew trust facebook/fb
+
+      - name: Build the bottle
+        run: |
+          brew install --build-bottle facebook/fb/idb-cli
+          brew bottle --json --no-rebuild \
+            --root-url="https://github.com/$GITHUB_REPOSITORY/releases/download/$RELEASE_TAG" \
+            facebook/fb/idb-cli
+
+      # `brew bottle` writes local files named `name--version.tag.bottle.tar.gz`,
+      # but the URL Homebrew later requests under root_url uses a different
+      # filename. Both spellings are recorded in the bottle JSON, so rename
+      # from one to the other instead of assuming the dash convention.
+      - name: Rename bottles to their download filenames
+        run: |
+          python3 - <<'EOF'
+          import glob
+          import json
+          import os
+
+          for path in sorted(glob.glob("*.bottle.json")):
+              with open(path) as f:
+                  doc = json.load(f)
+              for entry in doc.values():
+                  for tag_info in entry["bottle"]["tags"].values():
+                      local, wanted = tag_info["local_filename"], tag_info["filename"]
+                      if local != wanted:
+                          os.rename(local, wanted)
+                      print(f"{local} -> {wanted}")
+          EOF
+
+      - name: Upload bottles to the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release upload "$RELEASE_TAG" ./*.bottle.tar.gz --clobber --repo "$GITHUB_REPOSITORY"
+
+      # The machine-readable counterpart of the summary below; the formulae
+      # job renders the bottle block from it.
+      - name: Upload the bottle JSON as a run artifact
+        uses: actions/upload-artifact@v5
+        with:
+          name: bottle-json
+          path: '*.bottle.json'
+          if-no-files-found: error
+
+      # Everything in the emitted blocks — root_url, cellar, os/arch tag,
+      # sha256 — is read out of the `brew bottle --json` output, which is
+      # reproduced verbatim below the blocks.
+      - name: Emit the bottle blocks for the tap commit
+        run: |
+          python3 - "$GITHUB_STEP_SUMMARY" <<'EOF'
+          import glob
+          import sys
+
+          sys.path.insert(0, ".github/scripts")
+          import tap_formulae
+
+          blocks = tap_formulae.bottle_blocks_from_dir(".")
+          with open(sys.argv[1], "a") as out:
+              out.write("## Add these `bottle do` blocks to the tap formulae\n\n")
+              out.write(
+                  "All values are taken from the `brew bottle --json` "
+                  "output reproduced below, not inferred.\n\n"
+              )
+              for name, block in blocks.items():
+                  out.write(f"### `{name}`\n\n```ruby\n{block}\n```\n\n")
+              out.write("## Raw `brew bottle --json` output\n\n")
+              for path in sorted(glob.glob("*.bottle.json")):
+                  with open(path) as f:
+                      raw = f.read().strip()
+                  out.write(f"### `{path}`\n\n```json\n{raw}\n```\n\n")
+          EOF
+
+  # The finished tap formulae for this release, rendered from the templates
+  # in .github/formulae/ with the release's asset digests and the bottle
+  # block, plus a manifest recording what they were computed from. Published
+  # twice: as the `tap-formulae` run artifact and as release assets, which
+  # need no token to fetch. A pure function of this run's own outputs.
+  formulae:
+    name: Publish the tap formulae
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: [companion, python-client, bottle]
+    if: ${{ startsWith(github.ref, 'refs/tags/v') || inputs.version != '' }}
+    permissions:
+      contents: write
+    env:
+      RELEASE_TAG: ${{ startsWith(github.ref, 'refs/tags/v') && github.ref_name || inputs.version }}
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/download-artifact@v5
+        with:
+          name: idb-companion
+          path: assets/companion
+      - uses: actions/download-artifact@v5
+        with:
+          name: fb-idb-dist
+          path: assets/dist
+      - uses: actions/download-artifact@v5
+        with:
+          name: bottle-json
+          path: assets/bottles
+
+      - name: Render the formulae for this release
+        run: |
+          python3 .github/scripts/tap_formulae.py render \
+            --tag "$RELEASE_TAG" \
+            --companion 'assets/companion/idb-companion.macos-arm64.tar.gz' \
+            --wheel 'assets/dist/fb_idb-*-py3-none-any.whl' \
+            --bottles assets/bottles \
+            --out tap-formulae
+
+      - name: Upload the formulae as a run artifact
+        uses: actions/upload-artifact@v5
+        with:
+          name: tap-formulae
+          path: tap-formulae/
+          if-no-files-found: error
+
+      # The manifest is renamed on the release so it cannot be mistaken for
+      # anything else's manifest.json; the artifact keeps the plain name.
+      - name: Attach the formulae to the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          cp tap-formulae/manifest.json formulae-manifest.json
+          gh release upload "$RELEASE_TAG" tap-formulae/*.rb formulae-manifest.json --clobber --repo "$GITHUB_REPOSITORY"
+
+      - name: Summarize
+        run: |
+          {
+            echo '## Tap formulae for this release'
+            echo 'Rendered from `.github/formulae/*.rb.in`; the `tap-formulae` artifact and the release assets `idb-companion.rb`, `idb-cli.rb`, `idb.rb` and `formulae-manifest.json` hold the same files.'
+            echo ''
+            echo '```json'
+            cat tap-formulae/manifest.json
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  pypi-publish:
+    name: Publish fb-idb to PyPI
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: [python-client]
+    if: ${{ startsWith(github.ref, 'refs/tags/v') || inputs.version != '' }}
+    environment:
+      name: pypi
+      url: https://pypi.org/p/fb-idb
+    permissions:
+      id-token: write
+    steps:
+      - uses: actions/download-artifact@v5
+        with:
+          name: fb-idb-dist
+          path: dist
+      - name: Publish to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          skip-existing: true

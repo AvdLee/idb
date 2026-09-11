@@ -5,10 +5,11 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+import ReplCompiler
 import Testing
 
-/// Tests the pure parsing/codegen `ReplRunner` performs on user-entered Swift:
-/// extracting imports, detecting async, and generating the wrapped source.
+/// Tests `ReplSourceGenerator`: extracting imports, detecting async, and generating the
+/// wrapped source.
 @Suite
 struct ReplSourceGeneratorTests {
 
@@ -74,7 +75,6 @@ struct ReplSourceGeneratorTests {
 
   @Test
   func wordBoundaryAvoidsFalseAsyncMatch() {
-    // Substrings of identifiers must not be mistaken for the keywords.
     #expect(!ReplSourceGenerator.containsAsync("let awaited = true"))
     #expect(!ReplSourceGenerator.containsAsync("let asynchronously = 1"))
   }
@@ -85,7 +85,6 @@ struct ReplSourceGeneratorTests {
   func reappliesUserImportsAtFileScope() {
     let source = ReplSourceGenerator.generateSource(for: "import Photos; return PHAsset.self", index: 0)
     #expect(source.contains("import Photos"))
-    // The import is lifted out of the body and re-applied; the body still runs.
     #expect(source.contains("return PHAsset.self"))
   }
 

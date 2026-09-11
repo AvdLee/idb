@@ -7,7 +7,7 @@
 
 import Foundation
 
-public protocol CrashLogCommands: AnyObject {
+public protocol CrashLogCommands {
 
   func crashes(matching predicate: NSPredicate, useCache: Bool) async throws -> [FBCrashLogInfo]
 
@@ -15,5 +15,5 @@ public protocol CrashLogCommands: AnyObject {
 
   func pruneCrashes(matching predicate: NSPredicate) async throws -> [FBCrashLogInfo]
 
-  func withCrashLogFiles<R>(body: (any AsyncFileContainer) async throws -> R) async throws -> R
+  func withFiles<R>(body: (any AsyncFileContainer) async throws -> R) async throws -> R
 }

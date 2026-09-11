@@ -12,21 +12,19 @@ import IDBGRPCSwift
 
 struct PushMethodHandler {
 
-  let target: FBiOSTarget
+  let target: any FBiOSTarget
   let commandExecutor: FBIDBCommandExecutor
 
-  func handle(requestStream: GRPCAsyncRequestStream<Idb_PushRequest>, context: GRPCAsyncServerCallContext) async throws -> Idb_PushResponse {
-    let request = try await requestStream.requiredNext
+  func handle(requestStream: RequestStreamReader<Idb_PushRequest>, context: GRPCAsyncServerCallContext) async throws -> Idb_PushResponse {
+    let request = try await requestStream.requiredNext()
 
     guard case let .inner(inner) = request.value
     else { throw GRPCStatus(code: .invalidArgument, message: "Expected inner as first request in stream") }
 
-    let extractedFileURLs =
-      try await MultisourceFileReader
-      .filePathURLs(from: requestStream, temporaryDirectory: commandExecutor.temporaryDirectory, extractFromSubdir: false)
-
     let fileContainer = FileContainerValueTransformer.rawFileContainer(from: inner.container)
-    try await commandExecutor.push_files(extractedFileURLs, to_path: inner.dstPath, containerType: fileContainer)
+    try await MultisourceFileReader.withFilePathURLs(from: requestStream, temporaryDirectory: commandExecutor.temporaryDirectory, extractFromSubdir: false) { extractedFileURLs in
+      try await commandExecutor.push_files(extractedFileURLs, to_path: inner.dstPath, containerType: fileContainer)
+    }
 
     return .init()
   }

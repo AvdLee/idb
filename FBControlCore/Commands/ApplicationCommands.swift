@@ -7,21 +7,24 @@
 
 import Foundation
 
-public protocol ApplicationCommands: AnyObject {
+public protocol ApplicationLaunching {
 
-  func installApplication(atPath path: String) async throws -> FBInstalledApplication
+  func launch(_ configuration: FBApplicationLaunchConfiguration) async throws -> FBLaunchedApplication
+}
 
-  func uninstallApplication(bundleID: String) async throws
+public protocol ApplicationCommands: ApplicationLaunching {
 
-  func launchApplication(_ configuration: FBApplicationLaunchConfiguration) async throws -> FBLaunchedApplication
+  func install(atPath path: String) async throws -> FBInstalledApplication
 
-  func killApplication(bundleID: String) async throws
+  func uninstall(bundleID: String) async throws
 
-  func installedApplications() async throws -> [FBInstalledApplication]
+  func kill(bundleID: String) async throws
 
-  func installedApplication(bundleID: String) async throws -> FBInstalledApplication
+  func installed() async throws -> [FBInstalledApplication]
 
-  func runningApplications() async throws -> [String: pid_t]
+  func installed(bundleID: String) async throws -> FBInstalledApplication
+
+  func running() async throws -> [String: pid_t]
 
   func processID(forBundleID bundleID: String) async throws -> pid_t
 }

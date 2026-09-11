@@ -8,9 +8,9 @@
 import CompanionDiscovery
 import Darwin
 import Foundation
-@_implementationOnly import NIOCore
-@_implementationOnly import NIOPosix
-@_implementationOnly import NIOSSL
+internal import NIOCore
+internal import NIOPosix
+internal import NIOSSL
 
 /// Writes a diagnostic line to stderr. The server keeps stdout free for a host's
 /// own protocol (e.g. idb2's `companion` subcommand prints the socket path on
@@ -38,11 +38,7 @@ public enum CompanionListenTarget: Sendable, Equatable {
 /// A `.domainSocket` server records itself in that version's `CompanionDiscovery`
 /// registry, so a discoverer (e.g. `CompanionManager(version: .v2)`) finds it; a
 /// `.tcp` server is reached by explicit address and is not registered. Incoming
-/// connections are framed as newline-delimited JSON-RPC; for now each received
-/// request is just handed to `onRequest`, which by default prints it.
-///
-/// A `.tcp` listen can enable TLS by supplying a certificate PEM; see
-/// `CompanionListenTarget`.
+/// connections are framed as newline-delimited JSON-RPC and handed to `onRequest`.
 ///
 /// When `idleShutdownTime` is set, the server shuts itself down (closes its
 /// listening channel) after that many seconds without a received request, so a
@@ -153,12 +149,8 @@ public final class CompanionServer: @unchecked Sendable {
   /// `CompanionInfo` describing the bound address.
   @discardableResult
   public func start() async throws -> CompanionInfo {
-    // For a TLS-enabled TCP listen, build the certificate context up front; nil
-    // means plaintext (always the case for a Unix domain socket).
     let sslContext = try makeServerSSLContext()
 
-    // When configured, an idle monitor closes the listening channel after a
-    // quiet period; a received request counts as activity.
     let monitor: IdleShutdownMonitor?
     if let idleShutdownTime {
       monitor = IdleShutdownMonitor(timeout: idleShutdownTime) { [weak self] in self?.handleIdleTimeout() }
@@ -238,7 +230,6 @@ public final class CompanionServer: @unchecked Sendable {
       try registry.add(info)
     }
 
-    // Begin the idle countdown now that the server is listening.
     monitor?.start()
 
     let addressDescription: String
@@ -292,7 +283,7 @@ public final class CompanionServer: @unchecked Sendable {
   /// and private key. TLS is server-auth only: clients are not asked for a cert.
   private func makeServerSSLContext() throws -> NIOSSLContext? {
     guard case let .tcp(_, _, tls) = listen else {
-      return nil // a Unix domain socket is always plaintext
+      return nil
     }
     let identity: CompanionTLSIdentity
     switch tls {
@@ -301,7 +292,6 @@ public final class CompanionServer: @unchecked Sendable {
     case let .certificate(path):
       identity = CompanionTLSIdentity(combinedPEMPath: path)
     case .metaIdentity:
-      // No registered provider → plaintext.
       guard let serverIdentity = CompanionTLS.provider?.serverIdentity() else {
         return nil
       }
@@ -309,18 +299,20 @@ public final class CompanionServer: @unchecked Sendable {
     }
     do {
       let certificates = try NIOSSLCertificate.fromPEMFile(identity.certificateChainPath).map { NIOSSLCertificateSource.certificate($0) }
-      let configuration = TLSConfiguration.makeServerConfiguration(
+      var configuration = TLSConfiguration.makeServerConfiguration(
         certificateChain: certificates,
         privateKey: .file(identity.privateKeyPath))
+      // NIOSSL defaults the floor to TLS 1.0; pin it to 1.2 so the deprecated
+      // TLS 1.0/1.1 protocols and their legacy cipher suites are never negotiated.
+      configuration.minimumTLSVersion = .tlsv12
       return try NIOSSLContext(configuration: configuration)
     } catch {
       throw CompanionServerError.tlsCertificateLoadFailed(path: identity.certificateChainPath, underlying: error)
     }
   }
 
-  /// Ensures the base directory exists and clears a stale socket file, mirroring
-  /// the companion's careful cleanup: only an existing *socket* is unlinked, so a
-  /// real file at the path is never clobbered.
+  /// Ensures the base directory exists and clears a stale socket file: only an
+  /// existing *socket* is unlinked, so a real file at the path is never clobbered.
   private func prepareSocketPath(_ path: String) throws {
     try paths.ensureBaseDirectory()
     var info = stat()

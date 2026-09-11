@@ -14,7 +14,7 @@ struct DebugserverMethodHandler {
 
   let commandExecutor: FBIDBCommandExecutor
 
-  func handle(requestStream: GRPCAsyncRequestStream<Idb_DebugServerRequest>, responseStream: GRPCAsyncResponseStreamWriter<Idb_DebugServerResponse>, context: GRPCAsyncServerCallContext) async throws {
+  func handle(requestStream: RequestStreamReader<Idb_DebugServerRequest>, responseStream: GRPCAsyncResponseStreamWriter<Idb_DebugServerResponse>, context: GRPCAsyncServerCallContext) async throws {
 
     for try await request in requestStream {
       switch request.control {
@@ -24,7 +24,7 @@ struct DebugserverMethodHandler {
         return
 
       case .status:
-        // Replicates old cpp server behaviour. We should return `0` exit code if server not started
+        // Status with no server running is an empty response, not an error.
         if let debugServer = try? commandExecutor.debugserver_status() {
           try await responseStream.send(debugserverStatusToProto(debugServer: debugServer))
         } else {

@@ -1,0 +1,156 @@
+/*
+ * Copyright (c) Meta Platforms, Inc. and affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+@preconcurrency import FBControlCore
+import Foundation
+
+private let EraseCallbackValueGood: Int32 = -10
+private let DetectTimeout: TimeInterval = 10
+private let APICallbackTimeout: TimeInterval = 15
+private let OfflineTimeout: TimeInterval = 20
+private let OnlineTimeout: TimeInterval = 300
+
+// MARK: - DeviceEraseOperation
+
+private final class DeviceEraseOperation: NSObject, FBiOSTargetSetDelegate, @unchecked Sendable {
+
+  private let udid: String
+  private let calls: AMDCalls
+  private let logger: any FBControlCoreLogger
+  private let queue: DispatchQueue
+  private let deviceManager: AMRestorableDeviceManager
+  private let deviceDetected = FBMutableFuture<NSNull>()
+  private let deviceWentAway = FBMutableFuture<NSNull>()
+  private let deviceCameBack = FBMutableFuture<NSNull>()
+  private let eraseCallbackResult = FBMutableFuture<NSNumber>()
+
+  init(device: FBDevice, logger: any FBControlCoreLogger) {
+    let queue = DispatchQueue(label: "com.facebook.fbdeviceerase")
+    self.udid = device.udid
+    self.calls = device.calls
+    self.logger = logger
+    self.queue = queue
+    self.deviceManager = AMRestorableDeviceManager(
+      calls: device.calls,
+      work: queue,
+      asyncQueue: queue,
+      ecidFilter: device.uniqueIdentifier,
+      logger: logger
+    )
+    super.init()
+    self.deviceManager.delegate = self
+  }
+
+  // MARK: - Erase
+
+  func erase() async throws {
+    try deviceManager.startListening()
+    try await awaitEvent(deviceDetected, timeout: DetectTimeout, waitingFor: "Device to be detected the first time")
+    logger.log("Device has been detected, starting erase API Call")
+    let eraseCallbackValue = try await startErase()
+    guard eraseCallbackValue == EraseCallbackValueGood else {
+      throw DeviceEraseError.badEraseCallback(value: eraseCallbackValue, expected: EraseCallbackValueGood)
+    }
+    logger.log("Device API call finished, waiting for device to go offline")
+    try await awaitEvent(deviceWentAway, timeout: OfflineTimeout, waitingFor: "Device to go offline")
+    logger.log("Device has gone offline, waiting for it to come back online")
+    try await awaitEvent(deviceCameBack, timeout: OnlineTimeout, waitingFor: "Device to come back")
+  }
+
+  /// Issues `AMSEraseDevice` on the serial queue and awaits the value delivered by
+  /// the C erase callback (with a timeout).
+  private func startErase() async throws -> Int32 {
+    queue.async { [self] in
+      let selfContext = Unmanaged.passUnretained(self).toOpaque()
+      _ = calls.AMSInitialize?(0)
+      let status =
+        calls.AMSEraseDevice?(
+          udid as CFString,
+          { _, progress, context in
+            guard let context else {
+              return 0
+            }
+            let operation = Unmanaged<DeviceEraseOperation>.fromOpaque(context).takeUnretainedValue()
+            operation.logger.log("Erase Callback is \(progress)")
+            operation.eraseCallbackResult.resolve(withResult: NSNumber(value: progress))
+            return 0
+          },
+          selfContext
+        ) ?? -1
+      logger.log("AMSEraseDevice had status \(status)")
+    }
+    let timed = convertFBMutableFuture(eraseCallbackResult)
+      .timeout(APICallbackTimeout, waitingFor: "Device erase API call to resolve")
+      .retyped(FBFuture<NSNumber>.self)
+    let result = try await bridgeFBFuture(timed)
+    return result.int32Value
+  }
+
+  private func awaitEvent(_ future: FBMutableFuture<NSNull>, timeout: TimeInterval, waitingFor description: String) async throws {
+    let timed = convertFBMutableFuture(future)
+      .timeout(timeout, waitingFor: description)
+      .retyped(FBFuture<NSNull>.self)
+    try await bridgeFBFutureVoid(timed)
+  }
+
+  // MARK: - FBiOSTargetSetDelegate
+
+  func targetAdded(_ targetInfo: any FBiOSTargetInfo, in targetSet: any FBiOSTargetSet) {
+    if deviceDetected.state == .running {
+      logger.log("Got target \(targetInfo) added for the first time")
+      deviceDetected.resolve(withResult: NSNull())
+    } else {
+      logger.log("Got target \(targetInfo) added")
+      deviceCameBack.resolve(withResult: NSNull())
+    }
+  }
+
+  func targetRemoved(_ targetInfo: any FBiOSTargetInfo, in targetSet: any FBiOSTargetSet) {
+    logger.log("Got target \(targetInfo) removed")
+    deviceWentAway.resolve(withResult: NSNull())
+  }
+
+  func targetUpdated(_ targetInfo: any FBiOSTargetInfo, in targetSet: any FBiOSTargetSet) {}
+}
+
+// MARK: - DeviceEraseCommands
+
+public enum DeviceEraseError: Error {
+  case badEraseCallback(value: Int32, expected: Int32)
+}
+
+extension DeviceEraseError: LocalizedError {
+  public var errorDescription: String? {
+    switch self {
+    case let .badEraseCallback(value, expected):
+      return "Erase callback was \(value), not \(expected). Perhaps the device is not activated?"
+    }
+  }
+}
+
+public final class DeviceEraseCommands: EraseCommands {
+
+  private let device: FBDevice
+
+  public static func commands(with device: FBDevice) -> DeviceEraseCommands {
+    DeviceEraseCommands(device: device)
+  }
+
+  init(device: FBDevice) {
+    self.device = device
+  }
+
+  // MARK: - EraseCommands
+
+  public func erase() async throws {
+    let logger = device.logger.withName("erase_\(device.udid)")
+    try await device.activation.activate()
+    let operation = DeviceEraseOperation(device: device, logger: logger)
+    try await operation.erase()
+    logger.log("Device erase finished successfully \(operation)")
+  }
+}

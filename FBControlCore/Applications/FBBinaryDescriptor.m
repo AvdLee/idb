@@ -73,12 +73,11 @@ static inline BOOL IsMagic(uint32_t magic)
 
 static inline uint32_t GetMagic(FILE *file)
 {
-  // Get then read from the current position.
   long position = ftell(file);
   uint32_t magic;
   fread(&magic, sizeof(uint32_t), 1, file);
 
-  // Move back to the previous position now we know the magic.
+  // Peek: callers re-read from the same position.
   fseek(file, position, SEEK_SET);
   return magic;
 }
@@ -92,7 +91,6 @@ static inline uint32_t GetMagic(FILE *file)
 
 static inline struct mach_header ReadHeader32(FILE *file, uint32_t magic)
 {
-  // Read the header from the current location.
   struct mach_header header;
   fread(&header, sizeof(struct mach_header), 1, file);
   if (IsSwap(magic)) {
@@ -103,7 +101,6 @@ static inline struct mach_header ReadHeader32(FILE *file, uint32_t magic)
 
 static inline struct mach_header_64 ReadHeader64(FILE *file, uint32_t magic)
 {
-  // Read the header from the current location.
   struct mach_header_64 header;
   fread(&header, sizeof(header), 1, file);
   if (IsSwap(magic)) {
@@ -114,7 +111,6 @@ static inline struct mach_header_64 ReadHeader64(FILE *file, uint32_t magic)
 
 static inline struct fat_header ReadFatHeader(FILE *file, uint32_t fatMagic)
 {
-  // Get the Fat Header.
   struct fat_header header;
   fread(&header, sizeof(struct fat_header), 1, file);
   if (IsSwap(fatMagic)) {
@@ -125,12 +121,10 @@ static inline struct fat_header ReadFatHeader(FILE *file, uint32_t fatMagic)
 
 static inline id EnumerateFat(FILE *file, uint32_t fatMagic, id (^block)(struct fat_arch fatArch, uint32_t magic))
 {
-  // Get the Fat Header.
   struct fat_header header = ReadFatHeader(file, fatMagic);
 
   long fatArchPosition = sizeof(struct fat_header);
   for (uint32_t index = 0; index < header.nfat_arch; index++) {
-    // Seek-to then get the Fat Arch info
     fseek(file, fatArchPosition, SEEK_SET);
     struct fat_arch fatArch;
     fread(&fatArch, sizeof(struct fat_arch), 1, file);
@@ -139,14 +133,12 @@ static inline id EnumerateFat(FILE *file, uint32_t fatMagic, id (^block)(struct 
     }
 #pragma clang diagnostic pop
 
-    // Seek to the start position of the arch
     fseek(file, fatArch.offset, SEEK_SET);
     uint32_t magic = GetMagic(file);
     if (!IsMagic(magic)) {
       return nil;
     }
 
-    // Call the block
     id value = block(fatArch, magic);
     if (value) {
       return value;
@@ -159,7 +151,7 @@ static inline id EnumerateFat(FILE *file, uint32_t fatMagic, id (^block)(struct 
 static inline id EnumerateLoadCommands64(FILE *file, uint32_t magic, id (^block)(FILE *file, struct load_command command, uint32_t offset) )
 {
   struct mach_header_64 header = ReadHeader64(file, magic);
-  // Offset is relative to header length and position in file. In a fat binary it's not right equal to sizeof(header).
+  // ftell, not sizeof(header): in a fat binary this slice does not start at offset 0.
   uint32_t offset = (uint32_t) ftell(file);
   for (uint32_t i = 0; i < header.ncmds; i++) {
     struct load_command command = {0x0, 0x0};
@@ -178,7 +170,7 @@ static inline id EnumerateLoadCommands64(FILE *file, uint32_t magic, id (^block)
 static inline id EnumerateLoadCommands32(FILE *file, uint32_t magic, id (^block)(FILE *file, struct load_command command, uint32_t offset) )
 {
   struct mach_header header = ReadHeader32(file, magic);
-  // Offset is relative to header length and position in file. In a fat binary it's not right equal to sizeof(header).
+  // ftell, not sizeof(header): in a fat binary this slice does not start at offset 0.
   uint32_t offset = (uint32_t) ftell(file);
   for (uint32_t i = 0; i < header.ncmds; i++) {
     struct load_command command = {0x0, 0x0};
@@ -202,21 +194,18 @@ static inline NSArray<NSString *> *ReadRPathsSpecific(FILE *file, uint32_t magic
       if (command.cmd != LC_RPATH) {
         return nil;
       }
-      // Offset is calculated from the start of the command
       struct rpath_command rpathCommand;
       fseek(file, offset, SEEK_SET);
       fread(&rpathCommand, sizeof(rpathCommand), 1, file);
 
-      // Calculate the offset to the path string
+      // path.offset is relative to the start of the load command.
       const uint32_t pathOffset = offset + rpathCommand.path.offset;
       const uint32_t pathLength = command.cmdsize;
 
-      // Extract the path
       char *path = alloca(command.cmdsize);
       fseek(file, pathOffset, SEEK_SET);
       fread(path, pathLength, 1, file);
 
-      // Create an NSString for the rpaths
       NSString *string = [[NSString alloc] initWithBytes:path length:strlen(path) encoding:NSASCIIStringEncoding];
       [rpaths addObject:string];
 
@@ -261,7 +250,6 @@ static inline NSUUID *ReadUUIDFat(FILE *file, uint32_t fatMagic)
 {
   return EnumerateFat(file,
     fatMagic, ^id (struct fat_arch fatArch, uint32_t magic) {
-      // Get the UUID
       return ReadUUID(file, magic);
     });
 }
@@ -308,7 +296,6 @@ static inline NSArray<FBBinaryArchitecture> *ReadArchsFat(FILE *file, uint32_t f
   NSMutableArray<FBBinaryArchitecture> *array = [NSMutableArray array];
   EnumerateFat(file,
     fatMagic, ^id (struct fat_arch fatArch, uint32_t magic) {
-      // Get the Arch
       NSString *arch = ReadArch(file, magic);
       if (!arch) {
         return nil;
@@ -383,7 +370,6 @@ static inline NSArray<NSString *> *ReadRPaths(FILE *file, uint32_t magic)
     return [[FBControlCoreError describe:[NSString stringWithFormat:@"Could not fopen file at path %@", binaryPath]] fail:error];
   }
 
-  // Seek to and read the magic.
   rewind(file);
   uint32_t magic = GetMagic(file);
 
@@ -398,7 +384,6 @@ static inline NSArray<NSString *> *ReadRPaths(FILE *file, uint32_t magic)
     return [[FBControlCoreError describe:[NSString stringWithFormat:@"Could not read architechtures of magic %@ in file %@", MagicNameForMagic(magic), binaryPath]] fail:error];
   }
 
-  // Rewind to the start of the file
   rewind(file);
   NSUUID *uuid = ReadUUID(file, magic);
 
@@ -455,7 +440,6 @@ static inline NSArray<NSString *> *ReadRPaths(FILE *file, uint32_t magic)
     return [[FBControlCoreError describe:[NSString stringWithFormat:@"Could not fopen file at path %@", self.path]] fail:error];
   }
 
-  // Seek to and read the magic.
   rewind(file);
   uint32_t magic = GetMagic(file);
 

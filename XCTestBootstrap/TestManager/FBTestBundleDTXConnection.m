@@ -7,15 +7,6 @@
 
 #import "FBTestBundleDTXConnection.h"
 
-#import <XCTestPrivate/XCTestDriverInterface-Protocol.h>
-#import <XCTestPrivate/XCTestManager_DaemonConnectionInterface-Protocol.h>
-#import <XCTestPrivate/XCTestManager_IDEInterface-Protocol.h>
-
-// Protocol for RPC with testmanagerd daemon
-#import <XCTestPrivate/XCTMessagingChannel_DaemonToIDE-Protocol.h>
-#import <XCTestPrivate/XCTMessagingChannel_IDEToDaemon-Protocol.h>
-
-// Protocol for RPC with XCTest runner (within the host app process)
 #import <objc/runtime.h>
 
 #import <DTXConnectionServices/DTXConnection.h>
@@ -26,8 +17,13 @@
 #import <XCTestBootstrap/XCTestBootstrap-Swift.h>
 #import <XCTestPrivate/DTXConnection-XCTestAdditions.h>
 #import <XCTestPrivate/DTXProxyChannel-XCTestAdditions.h>
+#import <XCTestPrivate/XCTMessagingChannel_DaemonToIDE-Protocol.h>
+#import <XCTestPrivate/XCTMessagingChannel_IDEToDaemon-Protocol.h>
 #import <XCTestPrivate/XCTMessagingChannel_IDEToRunner-Protocol.h>
 #import <XCTestPrivate/XCTMessagingChannel_RunnerToIDE-Protocol.h>
+#import <XCTestPrivate/XCTestDriverInterface-Protocol.h>
+#import <XCTestPrivate/XCTestManager_DaemonConnectionInterface-Protocol.h>
+#import <XCTestPrivate/XCTestManager_IDEInterface-Protocol.h>
 
 #import "FBTestConfiguration.h"
 #import "XCTestBootstrapError.h"
@@ -46,7 +42,7 @@ static NSTimeInterval const DaemonSessionReadyTimeout = 60; // Time for `_IDE_in
 @interface FBTestBundleDTXConnection () <XCTestManager_IDEInterface, XCTMessagingChannel_DaemonToIDE, XCTMessagingChannel_RunnerToIDE>
 
 @property (nonatomic, readonly, strong) FBTestManagerContext *context;
-@property (nonatomic, readonly, strong) id<FBiOSTarget> target;
+@property (nonatomic, readonly, strong) dispatch_queue_t workQueue;
 @property (nonatomic, readonly, assign) int testManagerdSocket;
 @property (nonatomic, readonly, strong) id<XCTestManager_IDEInterface, XCTMessagingChannel_RunnerToIDE, NSObject> interface;
 @property (nonatomic, readonly, strong) dispatch_queue_t requestQueue;
@@ -87,7 +83,7 @@ static NSTimeInterval const DaemonSessionReadyTimeout = 60; // Time for `_IDE_in
   return _clientProcessDisplayPath;
 }
 
-- (instancetype)initWithContext:(FBTestManagerContext *)context target:(id<FBiOSTarget>)target socket:(int)socket interface:(id)interface requestQueue:(dispatch_queue_t)requestQueue logger:(id<FBControlCoreLogger>)logger
+- (instancetype)initWithContext:(FBTestManagerContext *)context workQueue:(dispatch_queue_t)workQueue socket:(int)socket interface:(id)interface requestQueue:(dispatch_queue_t)requestQueue logger:(id<FBControlCoreLogger>)logger
 {
   self = [super init];
   if (!self) {
@@ -95,7 +91,7 @@ static NSTimeInterval const DaemonSessionReadyTimeout = 60; // Time for `_IDE_in
   }
 
   _context = context;
-  _target = target;
+  _workQueue = workQueue;
   _testManagerdSocket = socket;
   _interface = interface;
   _requestQueue = requestQueue;
@@ -131,32 +127,47 @@ static NSTimeInterval const DaemonSessionReadyTimeout = 60; // Time for `_IDE_in
 
 #pragma mark Connection lifecycle
 
-- (FBFutureContext<FBTestBundleDTXConnection *> *)connect
+- (BOOL)connectWithError:(NSError **)error
 {
   int socket = self.testManagerdSocket;
   id<FBControlCoreLogger> logger = self.logger;
   [logger log:[NSString stringWithFormat:@"Wrapping testmanagerd socket (%d) in DTXTransport and DTXConnection", socket]];
-  DTXTransport *transport = [[objc_lookUpClass("DTXSocketTransport") alloc] initWithConnectedSocket:socket
-                                                                                   disconnectAction:^{
-                                                                                     [logger log:@"Notified that daemon socket disconnected"];
-                                                                                   }];
-  DTXConnection *connection = [[objc_lookUpClass("DTXConnection") alloc] initWithTransport:transport];
+  DTXConnection *connection;
+  // DTX asserts internally on a dead socket; the raise would otherwise cross
+  // Swift frames, where it cannot be caught, and abort the process.
+  @try {
+    DTXTransport *transport = [[objc_lookUpClass("DTXSocketTransport") alloc] initWithConnectedSocket:socket
+                                                                                     disconnectAction:^{
+                                                                                       [logger log:@"Notified that daemon socket disconnected"];
+                                                                                     }];
+    connection = [[objc_lookUpClass("DTXConnection") alloc] initWithTransport:transport];
+  } @catch (NSException *exception) {
+    return [[FBXCTestError
+             describe:[NSString stringWithFormat:@"Failed to wrap testmanagerd socket %d in DTXConnection: %@", socket, exception]]
+            failBool:error];
+  }
   [connection registerDisconnectHandler:^{
     [logger log:@"Notified that testmanagerd connection disconnected"];
     [self.bundleDisconnected resolveWithResult:NSNull.null];
   }];
   self.testManagerdConnection = connection;
   [logger log:[NSString stringWithFormat:@"testmanagerd socket %d wrapped in %@", socket, connection]];
+  return YES;
+}
 
-  return [[FBFuture
-           futureWithResult:self]
-          onQueue:self.requestQueue
-          contextualTeardown:^(id _, FBFutureState __) {
-            [logger log:[NSString stringWithFormat:@"Ending the testmanagerd connection. %@", connection]];
-            [connection suspend];
-            [connection cancel];
-            return FBFuture.empty;
-          }];
+- (void)disconnect
+{
+  DTXConnection *connection = self.testManagerdConnection;
+  if (!connection) {
+    return;
+  }
+  // Synchronous so the connection is down by the time the caller's scope has exited, matching the
+  // awaited teardown this replaces.
+  dispatch_sync(self.requestQueue, ^{
+    [self.logger log:[NSString stringWithFormat:@"Ending the testmanagerd connection. %@", connection]];
+    [connection suspend];
+    [connection cancel];
+  });
 }
 
 - (FBFuture<NSNull *> *)setupAndStartSession
@@ -206,7 +217,7 @@ static NSTimeInterval const DaemonSessionReadyTimeout = 60; // Time for `_IDE_in
    peerInterface:@protocol(XCTMessagingChannel_IDEToRunner)
    handler:^(DTXProxyChannel *channel) {
      [self.logger log:@"Got proxy channel request from test bundle"];
-     [channel setExportedObject:self queue:self.target.workQueue];
+     [channel setExportedObject:self queue:self.workQueue];
      id<XCTestDriverInterface> interface = channel.remoteObjectProxy;
      [future resolveWithResult:interface];
    }];
@@ -223,7 +234,7 @@ static NSTimeInterval const DaemonSessionReadyTimeout = 60; // Time for `_IDE_in
                                    xct_makeProxyChannelWithRemoteInterface:@protocol(XCTMessagingChannel_IDEToDaemon)
                                    exportedInterface:@protocol(XCTMessagingChannel_DaemonToIDE)];
   [proxyChannel xct_setAllowedClassesForTestingProtocols];
-  [proxyChannel setExportedObject:self queue:self.target.workQueue];
+  [proxyChannel setExportedObject:self queue:self.workQueue];
   id<XCTestManager_DaemonConnectionInterface> remoteProxy = (id<XCTestManager_DaemonConnectionInterface>) proxyChannel.remoteObjectProxy;
 
   [self.logger log:[NSString stringWithFormat:@"Starting test session with ID %@", self.context.sessionIdentifier.UUIDString]];

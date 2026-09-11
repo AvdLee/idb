@@ -7,52 +7,30 @@
 
 import CoreGraphics
 import Foundation
+import ImageIO
 @_implementationOnly import ReplProtocol
 
-// The API that injected REPL code calls to drive the connected target while its
-// own code runs. Everything public is nested under the single `IDB` namespace
-// enum, so importing this module adds only the name `IDB` to the caller's scope --
-// no command, type, or helper leaks in unqualified where it could collide with the
-// user's own code or another import. UI-automation commands live under `IDB.ui`,
-// e.g. `IDB.ui.tap(point)`, `IDB.ui.text("...")`, `IDB.ui.describeAll()`.
+// The API injected REPL code calls to drive the connected target. Everything public is
+// nested under the `IDB` namespace enum, so importing this module adds only that one
+// name to the caller's scope.
 //
-// The Swift module is named `IDBAPI`, not `IDB`, so the namespace type and the
-// module do not share a name -- a type sharing its module's name breaks
-// `.swiftinterface` generation (it emits unparseable `IDB.IDB.X` references). The
-// driver auto-imports the module by the name the companion reports, so injected
-// code never writes the import itself.
+// The Swift module is named `IDBAPI`, not `IDB`: a type sharing its module's name breaks
+// `.swiftinterface` generation (it emits unparseable `IDB.IDB.X` references).
 //
-// This module is linked into `libRepl`, which serves the REPL in each context
-// (DYLD-injected into the xctest process for `test`, dlopen'd by
-// SimulatorFrameworkBridge for `simulator`, and DYLD-injected into a launched app
-// for `app`, where libRepl starts itself). Injected code compiles against the
-// matching `IDBAPI.swiftinterface`; at run time its `IDB.*` references resolve to
-// this module's symbols, exported by the loaded `libRepl`. Each call encodes a
-// `ReplCommand` (the shared wire type) and hands it to the host's
-// `FBReplInvokeHostCommand` C entry point, resolved here with `dlsym` (it lives
-// in the same loaded image, so there is no link dependency on libRepl). The only
-// link dependency is `ReplProtocol`, the pure wire types shared with the
-// companion -- so the request contract is one type-checked model on both sides.
+// Commands reach the host through `FBReplInvokeHostCommand`, resolved with `dlsym` from
+// the loaded `libRepl` (same image, so no link dependency); the only link dependency is
+// `ReplProtocol`.
 //
-// The calls do not throw. Losing the connection to the companion ends the session,
-// so instead of surfacing a catchable error on every call it stops the submission
-// outright (see `haltReplExecution`): the disposable test / simulator host exits,
-// while in the app context the app keeps running and only the submission ends. A
-// command that merely did not apply is ignored (best-effort). If a future command's
-// failure is a meaningful result of the call, make that one `throws`.
+// Calls do not throw: a lost connection ends the submission (see `haltReplExecution`),
+// and a command that merely did not apply is ignored.
 //
-// Injected code must not write to stdout/stderr: in the REPL host those file
-// descriptors can alias the control socket, so a stray write corrupts the
-// protocol. That is why failures are silent rather than logged.
+// Injected code must not write to stdout/stderr: in the REPL host those file descriptors
+// can alias the control socket, so a stray write corrupts the protocol. Failures are
+// therefore silent.
 
-/// Encodes `command`, sends it to the companion, and returns the parsed `result`
-/// value on success, or `nil` on failure -- a command that did not apply, or a lost
-/// connection. A lost connection also stops the submission via `haltReplExecution`,
-/// which exits the disposable test / simulator host or simply returns in the app
-/// context (leaving the app running) before this returns `nil`.
-///
-/// Top-level and `private`, so it is neither exported to injected code nor part
-/// of the `IDB` namespace surface; the command methods below call it directly.
+/// Sends `command` to the host and returns its `result`, or `nil` when it did not
+/// apply or the connection was lost (which also halts the submission via
+/// `haltReplExecution`).
 @discardableResult
 private func perform(_ command: ReplCommand) -> Any? {
   typealias InvokeFunction = @convention(c) (UnsafeRawPointer?, Int32, UnsafeMutablePointer<Int32>?) -> UnsafeMutableRawPointer?
@@ -112,6 +90,15 @@ private func hostOutlivesSession() -> Bool {
   return unsafeBitCast(symbol, to: QueryFunction.self)().boolValue
 }
 
+/// Interprets a host command's raw result as a UTF-8 string, or nil when the
+/// result is absent or empty -- a command that did not apply or failed.
+private func stringResult(_ value: Any?) -> String? {
+  guard let data = value as? Data, !data.isEmpty else {
+    return nil
+  }
+  return String(data: data, encoding: .utf8)
+}
+
 /// The idb command namespace. It is a caseless enum used purely to scope the API:
 /// injected code reaches everything through `IDB.` (e.g. `IDB.ui`), and nothing
 /// leaks into the importer's unqualified namespace.
@@ -130,9 +117,8 @@ public enum IDB {
       perform(.tapMarker(marker))
     }
 
-    /// Swipes from one point to another. `duration` is the gesture's length in
-    /// seconds; `delta` is the spacing in points between intermediate touches (0
-    /// uses a default). 0 values let the companion pick sensible behavior.
+    /// Swipes between two points. `duration` is seconds; `delta` is the spacing in
+    /// points between intermediate touches. 0 for either uses the companion's default.
     public func swipe(from: CGPoint, to: CGPoint, duration: Double = 0, delta: Double = 0) {
       perform(.swipe(from: from, to: to, duration: duration, delta: delta))
     }
@@ -190,4 +176,98 @@ public enum IDB {
   /// exported function, resolved like the command methods. `UI` is stateless, so
   /// a fresh value per access costs nothing.
   public static var ui: UI { UI() }
+
+  /// Screenshot commands for the connected target, reached through `IDB.screenshot`.
+  public struct Screenshot {
+
+    /// Captures the full screen to a PNG artifact on the companion and returns its
+    /// path, or nil on failure. The path is on the companion's filesystem, which is
+    /// where other `IDB` commands operate.
+    @discardableResult
+    public func capture() -> String? {
+      fileResult(.full)
+    }
+
+    /// Captures `rect` (in screen points, the same coordinate space as
+    /// `IDB.ui.tap`) to a PNG artifact and returns its path, or nil on failure.
+    @discardableResult
+    public func capture(rect: CGRect) -> String? {
+      fileResult(.rect(rect))
+    }
+
+    /// Captures the frontmost-app accessibility element whose label contains
+    /// `label` (the same lookup as `IDB.ui.tap(marker:)`) to a PNG artifact and
+    /// returns its path, or nil on failure.
+    @discardableResult
+    public func capture(label: String) -> String? {
+      fileResult(.element(label: label))
+    }
+
+    /// Captures the full screen and returns it as a `CGImage` (nothing is written
+    /// to disk), or nil on failure.
+    func captureImage() -> CGImage? {
+      imageResult(.full)
+    }
+
+    /// Captures `rect` (in screen points) and returns it as a `CGImage`, or nil on
+    /// failure.
+    func captureImage(rect: CGRect) -> CGImage? {
+      imageResult(.rect(rect))
+    }
+
+    /// Captures the frontmost-app accessibility element whose label contains
+    /// `label` and returns it as a `CGImage`, or nil on failure.
+    func captureImage(label: String) -> CGImage? {
+      imageResult(.element(label: label))
+    }
+
+    /// Saves the capture as a PNG artifact and returns its companion-side path.
+    private func fileResult(_ area: ScreenshotArea) -> String? {
+      stringResult(perform(.screenshot(area: area, output: .file)))
+    }
+
+    /// Returns the capture as a `CGImage`, decoded from the uncompressed TIFF the
+    /// companion sends back (preserving the screen's color space).
+    private func imageResult(_ area: ScreenshotArea) -> CGImage? {
+      guard let data = perform(.screenshot(area: area, output: .data)) as? Data,
+        !data.isEmpty,
+        let source = CGImageSourceCreateWithData(data as CFData, nil),
+        let image = CGImageSourceCreateImageAtIndex(source, 0, nil)
+      else {
+        return nil
+      }
+      return image
+    }
+  }
+
+  /// The screenshot command namespace, reached as `IDB.screenshot`. Computed for
+  /// the same library-evolution reason as `ui`.
+  public static var screenshot: Screenshot { Screenshot() }
+
+  /// Video-recording commands for the connected target, reached through `IDB.video`.
+  public struct Video {
+
+    /// Starts recording the connected target's screen into an auto-named file in
+    /// the session's temporary directory. Only one recording runs at a time;
+    /// returns false if one is already in progress or recording could not start.
+    @discardableResult
+    public func startRecording() -> Bool {
+      guard let data = perform(.startRecording) as? Data else {
+        return false
+      }
+      return !data.isEmpty
+    }
+
+    /// Stops the in-progress recording and returns the companion-side path to the
+    /// recorded file, or nil if no recording was in progress. The path is on the
+    /// companion's filesystem, which is the correct path for other `IDB` commands.
+    @discardableResult
+    public func stopRecording() -> String? {
+      stringResult(perform(.stopRecording))
+    }
+  }
+
+  /// The video command namespace, reached as `IDB.video`. Computed for the same
+  /// library-evolution reason as `ui`.
+  public static var video: Video { Video() }
 }

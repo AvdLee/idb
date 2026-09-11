@@ -1,0 +1,126 @@
+/*
+ * Copyright (c) Meta Platforms, Inc. and affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+import FBControlCore
+import Foundation
+
+// MARK: - SimulatorDebugServer
+
+private final class SimulatorDebugServer: FBDebugServer {
+
+  let task: FBSubprocess<NSNull, AnyObject, AnyObject>
+  let lldbBootstrapCommands: [String]
+
+  init(debugServerTask: FBSubprocess<NSNull, AnyObject, AnyObject>, lldbBootstrapCommands: [String]) {
+    self.task = debugServerTask
+    self.lldbBootstrapCommands = lldbBootstrapCommands
+  }
+
+  // MARK: - FBDebugServer
+
+  func cancel() async throws {
+    try await bridgeFBFutureVoid(self.completed.cancel())
+  }
+
+  private var completed: FBFuture<NSNull> {
+    let task = self.task
+    let queue = DispatchQueue.global(qos: .userInitiated)
+
+    // Resolve `mutable` when statLoc completes, but observe via
+    // `notifyOfCompletion` instead of `mapReplace`. `mapReplace` wires up an
+    // automatic respondToCancellation that cancels the source future when the
+    // chain is cancelled. That auto-responder races with our SIGTERM responder
+    // below: if it wins, `task.statLoc` becomes cancelled (hasCompleted = YES),
+    // and `task.sendSignal:`'s "skip if dead" guard short-circuits without
+    // calling `kill()`. Net effect: the process is never signaled.
+    let mutable = FBMutableFuture<NSNull>()
+    task.statLoc.onQueue(
+      queue,
+      notifyOfCompletion: { _ in
+        mutable.resolve(withResult: NSNull())
+      })
+
+    return convertFBMutableFuture(mutable).onQueue(
+      queue,
+      respondToCancellation: {
+        // sendSignal returns FBFuture<NSNumber>. Map to NSNull so the
+        // responder's future actually matches its declared return type and
+        // the bridge can read its result safely.
+        task.sendSignal(SIGTERM, backingOffToKillWithTimeout: 1, logger: nil)
+          .mapReplace(NSNull())
+          .retyped(FBFuture<NSNull>.self)
+      }
+    )
+  }
+}
+
+public final class SimulatorDebuggerCommands: DebuggerCommands {
+
+  internal weak var simulator: FBSimulator?
+  internal let debugServerPath: String
+
+  /// How the host application is launched; defaults to the simulator itself.
+  private let applicationLauncher: (any ApplicationLaunching)?
+
+  internal class func resolveDebugServerPath() -> String {
+    (FBXcodeConfiguration.contentsDirectory as NSString)
+      .appendingPathComponent("SharedFrameworks/LLDB.framework/Resources/debugserver")
+  }
+
+  public class func commands(with simulator: FBSimulator) -> SimulatorDebuggerCommands {
+    SimulatorDebuggerCommands(
+      simulator: simulator,
+      debugServerPath: resolveDebugServerPath()
+    )
+  }
+
+  internal init(
+    simulator: FBSimulator,
+    debugServerPath: String,
+    applicationLauncher: (any ApplicationLaunching)? = nil
+  ) {
+    self.simulator = simulator
+    self.debugServerPath = debugServerPath
+    self.applicationLauncher = applicationLauncher
+  }
+
+  public func launchDebugServer(forHostApplication application: FBBundleDescriptor, port: in_port_t) async throws -> any FBDebugServer {
+    guard let simulator = self.simulator else {
+      throw FBWeakTargetError.simulator
+    }
+    let configuration = FBApplicationLaunchConfiguration(
+      bundleID: application.identifier,
+      bundleName: application.name,
+      arguments: [],
+      environment: [:],
+      waitForDebugger: true,
+      io: FBProcessIO<AnyObject, AnyObject, AnyObject>.outputToDevNull(),
+      launchMode: .failIfRunning
+    )
+    let launchedApp = try await (applicationLauncher ?? simulator.application).launch(configuration)
+    let debugTask = try await bridgeFBFuture(debugServerTask(forPort: port, processIdentifier: launchedApp.processIdentifier, simulator: simulator, debugServerPath: debugServerPath))
+    let lldbBootstrapCommands = [
+      "process connect connect://localhost:\(port)"
+    ]
+    return SimulatorDebugServer(
+      debugServerTask: debugTask,
+      lldbBootstrapCommands: lldbBootstrapCommands
+    )
+  }
+
+  private func debugServerTask(forPort port: in_port_t, processIdentifier: pid_t, simulator: FBSimulator, debugServerPath: String) -> FBFuture<FBSubprocess<NSNull, AnyObject, AnyObject>> {
+    let logger = simulator.logger
+    return
+      FBProcessBuilder<NSNull, AnyObject, AnyObject>
+      .withLaunchPath(debugServerPath)
+      .withArguments(["localhost:\(port)", "--attach", "\(processIdentifier)"])
+      .withStdOut(to: logger)
+      .withStdErr(to: logger)
+      .start()
+      .retyped(FBFuture<FBSubprocess<NSNull, AnyObject, AnyObject>>.self)
+  }
+}

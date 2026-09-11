@@ -12,65 +12,63 @@ private let kEnvWaitForDebugger = "XCTOOL_WAIT_FOR_DEBUGGER"
 private let kEnvLLVMProfileFile = "LLVM_PROFILE_FILE"
 private let kEnvLogDirectoryPath = "LOG_DIRECTORY_PATH"
 
-@objc(FBTestRunnerConfiguration)
-public class FBTestRunnerConfiguration: NSObject, NSCopying {
+/// The ways runner-configuration preparation can fail, as data rather than assembled strings.
+public enum FBTestRunnerConfigurationError: Error, LocalizedError {
+  case codesignCheckFailed(bundlePath: String, underlying: Error)
+  case testBundlePreparationFailed(underlying: Error)
+  case testConfigurationPreparationFailed(underlying: Error)
 
-  // MARK: Properties
+  public var errorDescription: String? {
+    switch self {
+    case let .codesignCheckFailed(bundlePath, _):
+      return "Could not determine bundle at path '\(bundlePath)' is codesigned and codesigning is required"
+    case .testBundlePreparationFailed:
+      return "Failed to prepare test bundle"
+    case .testConfigurationPreparationFailed:
+      return "Failed to prepare test configuration"
+    }
+  }
+}
 
-  @objc public let sessionIdentifier: UUID
-  @objc public let testRunner: FBBundleDescriptor
-  @objc public let launchEnvironment: [String: String]
-  @objc public let testedApplicationAdditionalEnvironment: [String: String]
-  @objc public let testConfiguration: FBTestConfiguration
+public struct FBTestRunnerConfiguration {
 
-  @objc public var launchArguments: [String] {
+  // MARK: - Properties
+
+  public let sessionIdentifier: UUID
+  public let testRunner: FBBundleDescriptor
+  public let launchEnvironment: [String: String]
+  public let testedApplicationAdditionalEnvironment: [String: String]
+  public let testConfiguration: FBTestConfiguration
+
+  public var launchArguments: [String] {
     [
       "-NSTreatUnknownArgumentsAsOpen", "NO",
       "-ApplePersistenceIgnoreState", "YES",
     ]
   }
 
-  // MARK: Initializers
-
-  @objc
   public init(sessionIdentifier: UUID, testRunner: FBBundleDescriptor, launchEnvironment: [String: String], testedApplicationAdditionalEnvironment: [String: String], testConfiguration: FBTestConfiguration) {
     self.sessionIdentifier = sessionIdentifier
     self.testRunner = testRunner
     self.launchEnvironment = launchEnvironment
     self.testedApplicationAdditionalEnvironment = testedApplicationAdditionalEnvironment
     self.testConfiguration = testConfiguration
-    super.init()
   }
 
-  // MARK: NSCopying
+  // MARK: - Public
 
-  public func copy(with zone: NSZone? = nil) -> Any {
-    self
-  }
-
-  // MARK: Public
-
-  public class func prepareConfiguration(withTarget target: FBiOSTarget & ApplicationCommands & XCTestExtendedCommands, testLaunchConfiguration: FBTestLaunchConfiguration, workingDirectory: String, codesign: FBCodesignProvider?) -> FBFuture<FBTestRunnerConfiguration> {
+  public static func prepareConfiguration(withTarget target: any XCTestExtendedTarget, testLaunchConfiguration: FBTestLaunchConfiguration, workingDirectory: String, codesign: FBCodesignProvider?) async throws -> FBTestRunnerConfiguration {
     if let codesign {
-      return unsafeBitCast(
-        codesign.cdHashForBundle(atPath: testLaunchConfiguration.testBundle.path)
-          .rephraseFailure("Could not determine bundle at path '\(testLaunchConfiguration.testBundle.path)' is codesigned and codesigning is required")
-          .onQueue(
-            target.asyncQueue,
-            fmap: { (_: AnyObject) -> FBFuture<AnyObject> in
-              unsafeBitCast(
-                self.prepareConfigurationAfterCodesignatureCheck(withTarget: target, testLaunchConfiguration: testLaunchConfiguration, workingDirectory: workingDirectory),
-                to: FBFuture<AnyObject>.self
-              )
-            }),
-        to: FBFuture<FBTestRunnerConfiguration>.self
-      )
+      do {
+        _ = try await codesign.cdHashForBundle(atPath: testLaunchConfiguration.testBundle.path)
+      } catch {
+        throw FBTestRunnerConfigurationError.codesignCheckFailed(bundlePath: testLaunchConfiguration.testBundle.path, underlying: error)
+      }
     }
-    return prepareConfigurationAfterCodesignatureCheck(withTarget: target, testLaunchConfiguration: testLaunchConfiguration, workingDirectory: workingDirectory)
+    return try await prepareConfigurationAfterCodesignatureCheck(withTarget: target, testLaunchConfiguration: testLaunchConfiguration, workingDirectory: workingDirectory)
   }
 
-  @objc(launchEnvironmentWithHostApplication:hostApplicationAdditionalEnvironment:testBundle:testConfigurationPath:frameworkSearchPaths:)
-  public class func launchEnvironment(withHostApplication hostApplication: FBBundleDescriptor, hostApplicationAdditionalEnvironment: [String: String], testBundle: FBBundleDescriptor, testConfigurationPath: String, frameworkSearchPaths: [String]) -> [String: String] {
+  public static func launchEnvironment(withHostApplication hostApplication: FBBundleDescriptor, hostApplicationAdditionalEnvironment: [String: String], testBundle: FBBundleDescriptor, testConfigurationPath: String, frameworkSearchPaths: [String]) -> [String: String] {
     var environmentVariables = hostApplicationAdditionalEnvironment
     let frameworkSearchPath = frameworkSearchPaths.joined(separator: ":")
     environmentVariables["AppTargetLocation"] = hostApplication.binary?.path ?? ""
@@ -83,9 +81,9 @@ public class FBTestRunnerConfiguration: NSObject, NSCopying {
     return addAdditionalEnvironmentVariables(environmentVariables)
   }
 
-  // MARK: Private
+  // MARK: - Private
 
-  private class func addAdditionalEnvironmentVariables(_ currentEnvironmentVariables: [String: String]) -> [String: String] {
+  private static func addAdditionalEnvironmentVariables(_ currentEnvironmentVariables: [String: String]) -> [String: String] {
     let prefix = "CUSTOM_"
     var envs = currentEnvironmentVariables
     for (key, value) in ProcessInfo.processInfo.environment {
@@ -96,14 +94,12 @@ public class FBTestRunnerConfiguration: NSObject, NSCopying {
     return envs
   }
 
-  private class func prepareConfigurationAfterCodesignatureCheck(withTarget target: FBiOSTarget & ApplicationCommands & XCTestExtendedCommands, testLaunchConfiguration: FBTestLaunchConfiguration, workingDirectory: String) -> FBFuture<FBTestRunnerConfiguration> {
-    // Common Paths
-    let runtimeRoot = target.runtimeRootDirectory
-    let platformRoot = target.platformRootDirectory
+  private static func prepareConfigurationAfterCodesignatureCheck(withTarget target: any XCTestExtendedTarget, testLaunchConfiguration: FBTestLaunchConfiguration, workingDirectory: String) async throws -> FBTestRunnerConfiguration {
+    let runtimeRoot = await target.runtimeRootDirectory
+    let platformRoot = await target.platformRootDirectory
 
     // This directory will contain XCTest.framework, built for the target platform.
     let platformDeveloperFrameworksPath = (platformRoot as NSString).appendingPathComponent("Developer/Library/Frameworks")
-    // Container directory for XCTest related Frameworks.
     let developerLibraryPath = (runtimeRoot as NSString).appendingPathComponent("Developer/Library")
     // Contains other frameworks, depended on by XCTest and Instruments
     let xcTestFrameworksPaths = [
@@ -129,22 +125,14 @@ public class FBTestRunnerConfiguration: NSObject, NSCopying {
       testApplicationDependencies = [identifier: path]
     }
 
-    // Prepare XCTest bundle
     let sessionIdentifier = UUID()
     let testBundle: FBBundleDescriptor
     do {
       testBundle = try FBBundleDescriptor.bundle(fromPath: testLaunchConfiguration.testBundle.path)
     } catch {
-      return unsafeBitCast(
-        XCTestBootstrapError
-          .describe("Failed to prepare test bundle")
-          .caused(by: error)
-          .failFuture(),
-        to: FBFuture<FBTestRunnerConfiguration>.self
-      )
+      throw FBTestRunnerConfigurationError.testBundlePreparationFailed(underlying: error)
     }
 
-    // Prepare the test configuration
     let testConfiguration: FBTestConfiguration
     do {
       testConfiguration = try FBTestConfiguration(
@@ -161,74 +149,50 @@ public class FBTestRunnerConfiguration: NSObject, NSCopying {
         reportActivities: testLaunchConfiguration.reportActivities
       )
     } catch {
-      return unsafeBitCast(
-        XCTestBootstrapError
-          .describe("Failed to prepare test configuration")
-          .caused(by: error)
-          .failFuture(),
-        to: FBFuture<FBTestRunnerConfiguration>.self
-      )
+      throw FBTestRunnerConfigurationError.testConfigurationPreparationFailed(underlying: error)
     }
 
-    let installedAppFuture: FBFuture<FBInstalledApplication> = fbFutureFromAsync {
-      try await target.installedApplication(bundleID: testLaunchConfiguration.applicationLaunchConfiguration.bundleID)
+    let hostApplication = try await target.application.installed(bundleID: testLaunchConfiguration.applicationLaunchConfiguration.bundleID)
+    let shimPath = try await target.xctest.extendedTestShim()
+
+    var hostApplicationAdditionalEnvironment: [String: String] = [:]
+    hostApplicationAdditionalEnvironment[kEnvShimStartXCTest] = "1"
+    hostApplicationAdditionalEnvironment["DYLD_INSERT_LIBRARIES"] = shimPath
+    hostApplicationAdditionalEnvironment[kEnvWaitForDebugger] = testLaunchConfiguration.applicationLaunchConfiguration.waitForDebugger ? "YES" : "NO"
+
+    if let coverageDirectoryPath = testLaunchConfiguration.coverageDirectoryPath {
+      let continuousCoverageCollectionMode = testLaunchConfiguration.shouldEnableContinuousCoverageCollection ? "%c" : ""
+      let hostCoverageFile = "coverage_\(hostApplication.bundle.identifier)\(continuousCoverageCollectionMode).profraw"
+      let hostCoveragePath = (coverageDirectoryPath as NSString).appendingPathComponent(hostCoverageFile)
+      hostApplicationAdditionalEnvironment[kEnvLLVMProfileFile] = hostCoveragePath
+
+      if let targetBundle = testLaunchConfiguration.targetApplicationBundle {
+        let targetCoverageFile = "coverage_\(targetBundle.identifier)\(continuousCoverageCollectionMode).profraw"
+        let targetAppCoveragePath = (coverageDirectoryPath as NSString).appendingPathComponent(targetCoverageFile)
+        testedApplicationAdditionalEnvironment[kEnvLLVMProfileFile] = targetAppCoveragePath
+      }
     }
-    let shimFuture: FBFuture<AnyObject> = fbFutureFromAsync {
-      try await target.extendedTestShim() as AnyObject
+
+    if let logDirectoryPath = testLaunchConfiguration.logDirectoryPath {
+      hostApplicationAdditionalEnvironment[kEnvLogDirectoryPath] = logDirectoryPath
     }
-    return unsafeBitCast(
-      FBFuture<AnyObject>.combine([
-        unsafeBitCast(installedAppFuture, to: FBFuture<AnyObject>.self),
-        shimFuture,
-      ])
-      .onQueue(
-        target.asyncQueue,
-        map: { (tupleObj: AnyObject) -> AnyObject in
-          let tuple = tupleObj as! NSArray
-          let hostApplication = tuple[0] as! FBInstalledApplication
-          let shimPath = tuple[1] as! String
 
-          var hostApplicationAdditionalEnvironment: [String: String] = [:]
-          hostApplicationAdditionalEnvironment[kEnvShimStartXCTest] = "1"
-          hostApplicationAdditionalEnvironment["DYLD_INSERT_LIBRARIES"] = shimPath
-          hostApplicationAdditionalEnvironment[kEnvWaitForDebugger] = testLaunchConfiguration.applicationLaunchConfiguration.waitForDebugger ? "YES" : "NO"
+    let frameworkSearchPaths = xcTestFrameworksPaths + [(hostApplication.bundle.path as NSString).appendingPathComponent("Frameworks")]
 
-          if let coverageDirectoryPath = testLaunchConfiguration.coverageDirectoryPath {
-            let continuousCoverageCollectionMode = testLaunchConfiguration.shouldEnableContinuousCoverageCollection ? "%c" : ""
-            let hostCoverageFile = "coverage_\(hostApplication.bundle.identifier)\(continuousCoverageCollectionMode).profraw"
-            let hostCoveragePath = (coverageDirectoryPath as NSString).appendingPathComponent(hostCoverageFile)
-            hostApplicationAdditionalEnvironment[kEnvLLVMProfileFile] = hostCoveragePath
+    let launchEnvironment = FBTestRunnerConfiguration.launchEnvironment(
+      withHostApplication: hostApplication.bundle,
+      hostApplicationAdditionalEnvironment: hostApplicationAdditionalEnvironment,
+      testBundle: testBundle,
+      testConfigurationPath: testConfiguration.path,
+      frameworkSearchPaths: frameworkSearchPaths
+    )
 
-            if let targetBundle = testLaunchConfiguration.targetApplicationBundle {
-              let targetCoverageFile = "coverage_\(targetBundle.identifier)\(continuousCoverageCollectionMode).profraw"
-              let targetAppCoveragePath = (coverageDirectoryPath as NSString).appendingPathComponent(targetCoverageFile)
-              testedApplicationAdditionalEnvironment[kEnvLLVMProfileFile] = targetAppCoveragePath
-            }
-          }
-
-          if let logDirectoryPath = testLaunchConfiguration.logDirectoryPath {
-            hostApplicationAdditionalEnvironment[kEnvLogDirectoryPath] = logDirectoryPath
-          }
-
-          let frameworkSearchPaths = xcTestFrameworksPaths + [(hostApplication.bundle.path as NSString).appendingPathComponent("Frameworks")]
-
-          let launchEnvironment = FBTestRunnerConfiguration.launchEnvironment(
-            withHostApplication: hostApplication.bundle,
-            hostApplicationAdditionalEnvironment: hostApplicationAdditionalEnvironment,
-            testBundle: testBundle,
-            testConfigurationPath: testConfiguration.path,
-            frameworkSearchPaths: frameworkSearchPaths
-          )
-
-          return FBTestRunnerConfiguration(
-            sessionIdentifier: sessionIdentifier,
-            testRunner: hostApplication.bundle,
-            launchEnvironment: launchEnvironment,
-            testedApplicationAdditionalEnvironment: testedApplicationAdditionalEnvironment,
-            testConfiguration: testConfiguration
-          )
-        }),
-      to: FBFuture<FBTestRunnerConfiguration>.self
+    return FBTestRunnerConfiguration(
+      sessionIdentifier: sessionIdentifier,
+      testRunner: hostApplication.bundle,
+      launchEnvironment: launchEnvironment,
+      testedApplicationAdditionalEnvironment: testedApplicationAdditionalEnvironment,
+      testConfiguration: testConfiguration
     )
   }
 }

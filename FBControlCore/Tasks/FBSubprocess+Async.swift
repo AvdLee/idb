@@ -7,7 +7,6 @@
 
 import Foundation
 
-// MARK: - Public API
 //
 // These are written as standalone functions because Swift does not allow
 // extension methods on generic Objective-C classes to access the class's
@@ -29,7 +28,7 @@ public func awaitExitCode<StdIn, StdOut, StdErr>(
 ///
 /// Throws if the process exits with a status not in `codes`, or if it is
 /// signalled. Mirrors `-[FBSubprocess exitedWithCodes:]`.
-public func awaitExit<StdIn, StdOut, StdErr>(
+func awaitExit<StdIn, StdOut, StdErr>(
   of subprocess: FBSubprocess<StdIn, StdOut, StdErr>,
   withCodes codes: Set<Int32>
 ) async throws {

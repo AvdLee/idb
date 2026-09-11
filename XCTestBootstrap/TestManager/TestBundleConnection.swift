@@ -1,0 +1,146 @@
+/*
+ * Copyright (c) Meta Platforms, Inc. and affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+@preconcurrency import FBControlCore
+import Foundation
+
+private let bundleReadyTimeout: TimeInterval = 60
+private let crashCheckWaitLimit: TimeInterval = 120
+
+enum TestBundleConnectionError: Error {
+  case hostRelaunchedByOS(underlying: Error)
+  case hostStalled(processIdentifier: pid_t, stackshot: String)
+  case hostCrashed(crashLog: String)
+  case connectionLost(message: String)
+  case processStillRunning(processIdentifier: pid_t)
+  case unexpectedCrashLookupResult(processIdentifier: pid_t)
+}
+
+extension TestBundleConnectionError: LocalizedError {
+  var errorDescription: String? {
+    switch self {
+    case .hostRelaunchedByOS:
+      return "Error while establishing connection to test bundle: Running test host application pid is different from the pid launched and set up to execute the tests. The host application is likely to have crashed during startup and been relaunched by iOS."
+    case let .hostStalled(processIdentifier, stackshot):
+      return "Could not connect to test bundle, but host application process \(processIdentifier) is still alive and busy/stalled: \(stackshot)"
+    case let .hostCrashed(crashLog):
+      return "Test Bundle/HostApp Crashed: \(crashLog)"
+    case let .connectionLost(message):
+      return message
+    case let .processStillRunning(processIdentifier):
+      return "The Process for \(processIdentifier) is not crashed as it is running"
+    case let .unexpectedCrashLookupResult(processIdentifier):
+      return "Crash log lookup for pid \(processIdentifier) returned an unexpected result"
+    }
+  }
+}
+
+final class TestBundleConnection {
+
+  private let context: FBTestManagerContext
+  private let target: any FBiOSTarget
+  private let socket: Int32
+  private let interface: NSObject
+  private let testHostApplication: FBLaunchedApplication
+  private let requestQueue: DispatchQueue
+  private let logger: FBControlCoreLogger
+
+  init(
+    context: FBTestManagerContext,
+    target: any FBiOSTarget,
+    socket: Int32,
+    interface: NSObject,
+    testHostApplication: FBLaunchedApplication,
+    requestQueue: DispatchQueue,
+    logger: FBControlCoreLogger
+  ) {
+    self.context = context
+    self.target = target
+    self.socket = socket
+    self.interface = interface
+    self.testHostApplication = testHostApplication
+    self.requestQueue = requestQueue
+    self.logger = logger
+  }
+
+  func connectAndRun() async throws {
+    logger.log("Connecting Test Bundle")
+    let core = FBTestBundleDTXConnection(
+      context: context,
+      work: target.workQueue,
+      socket: socket,
+      interface: interface,
+      request: requestQueue,
+      logger: logger
+    )
+    try core.connect()
+    defer { core.disconnect() }
+    do {
+      try await bridgeFBFutureVoid(core.setupAndStartSession())
+      try await bridgeFBFutureVoid(core.waitForBundleReady())
+    } catch {
+      throw await self.diagnosedConnectionError(from: error)
+    }
+    core.startExecutingTestPlan()
+    try await bridgeFBFutureVoid(core.waitForBundleDisconnected())
+    if core.testPlanCompleted {
+      self.logger.log("Bundle disconnected, with the test plan completed. Bundle exited successfully.")
+    } else {
+      self.logger.log("Bundle disconnected, but test plan has not completed. This could mean a crash has occurred")
+      throw await self.crashLogOrNotFoundError(description: "Lost connection to test process, but could not find a crash log")
+    }
+  }
+
+  // MARK: - Diagnosis
+
+  private func diagnosedConnectionError(from error: Error) async -> Error {
+    let bundleID = context.testHostLaunchConfiguration.bundleID
+    let runningPid: pid_t
+    do {
+      runningPid = try await target.application.processID(forBundleID: bundleID)
+    } catch {
+      return await crashLogOrNotFoundError(description: "Error while establishing connection to test bundle: The host application is likely to have crashed during startup, but could not find a crash log.")
+    }
+    let expectedPid = testHostApplication.processIdentifier
+    if runningPid != expectedPid {
+      // iOS sometimes relaunches a host that crashed very early as a vanilla process that idb cannot
+      // drive, so there is no bundle to connect to.
+      return TestBundleConnectionError.hostRelaunchedByOS(underlying: error)
+    }
+    if let stackshot = (try? await bridgeFBFuture(FBProcessFetcher.performSampleStackshot(forProcessIdentifier: expectedPid, queue: target.workQueue))) as? String {
+      return TestBundleConnectionError.hostStalled(processIdentifier: expectedPid, stackshot: stackshot)
+    }
+    return error
+  }
+
+  private func crashLogOrNotFoundError(description notFound: String) async -> Error {
+    if let crashLog = try? await findCrashedProcessLog() {
+      return TestBundleConnectionError.hostCrashed(crashLog: String(describing: crashLog))
+    }
+    return TestBundleConnectionError.connectionLost(message: notFound)
+  }
+
+  private func findCrashedProcessLog() async throws -> FBCrashLog {
+    let bundleID = context.testHostLaunchConfiguration.bundleID
+    if let runningPid = try? await target.application.processID(forBundleID: bundleID) {
+      throw TestBundleConnectionError.processStillRunning(processIdentifier: runningPid)
+    }
+    var crashWaitTimeout = crashCheckWaitLimit
+    if let env = ProcessInfo.processInfo.environment["FBXCTEST_CRASH_WAIT_TIMEOUT"] {
+      crashWaitTimeout = TimeInterval((env as NSString).floatValue)
+    }
+    let pid = testHostApplication.processIdentifier
+    let predicate = FBCrashLogInfo.predicateForCrashLogs(withProcessID: pid)
+    // notifyOfCrash(matching:) has no timeout of its own, so bound it via FBFuture.
+    let future = fbFutureFromAsync { try await self.target.crashLog.notifyOfCrash(matching: predicate) }
+    let timed = future.timeout(crashWaitTimeout, waitingFor: "Getting crash log for process with pid \(pid), bundle ID: \(bundleID)")
+    guard let info = try await bridgeFBFuture(timed) as? FBCrashLogInfo else {
+      throw TestBundleConnectionError.unexpectedCrashLookupResult(processIdentifier: pid)
+    }
+    return try info.obtainCrashLog()
+  }
+}

@@ -8,17 +8,9 @@
 import FBControlCore
 import Foundation
 
-public protocol AccessibilityOperations: AnyObject {
+protocol AccessibilityOperations: AnyObject {
 
-  func accessibilityElement(at point: CGPoint) async throws -> FBAccessibilityElement
-
-  func accessibilityElementForFrontmostApplication() async throws -> FBAccessibilityElement
-
-  func accessibilityElementMatching(
-    value: String,
-    forKey key: FBAXSearchableKey,
-    depth: UInt
-  ) async throws -> FBAccessibilityElement
+  /// Resolves a query to a concrete accessibility element via the point / matching / frontmost
+  /// mechanism. Callers own the returned element and must `close()` it.
+  func resolveElement(for query: FBAccessibilityElementQuery) async throws -> AccessibilityElement
 }
-
-public protocol AccessibilityCommands: AccessibilityOperations {}

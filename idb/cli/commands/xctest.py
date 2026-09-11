@@ -4,7 +4,6 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-# pyre-strict
 
 import json
 import os.path
@@ -430,15 +429,28 @@ class XctestRunLogicCommand(CommonRunXcTestCommand):
         return None
 
 
-XctestRunCommand = CommandGroup(
-    name="run",
-    description=(
-        "Run an installed xctest. Any environment variables of the form IDB_X\n"
-        " will be passed through with the IDB_ prefix removed."
-    ),
-    commands=[
-        XctestRunAppCommand(),
-        XctestRunUICommand(),
-        XctestRunLogicCommand(),
-    ],
-)
+def build_xctest_run_command() -> CommandGroup:
+    """A freshly constructed ``xctest run`` group.
+
+    A group is mutable: adding it to a parser records that parser on it and
+    memoises its subcommand lookup. One instance shared between two command
+    graphs would therefore have the second graph's state overwrite the
+    first's, so every graph builds its own.
+    """
+    return CommandGroup(
+        name="run",
+        description=(
+            "Run an installed xctest. Any environment variables of the form IDB_X\n"
+            " will be passed through with the IDB_ prefix removed."
+        ),
+        commands=[
+            XctestRunAppCommand(),
+            XctestRunUICommand(),
+            XctestRunLogicCommand(),
+        ],
+    )
+
+
+# Kept for callers that already import this name. The command graph builds its
+# own group with the factory above rather than sharing this one.
+XctestRunCommand: CommandGroup = build_xctest_run_command()

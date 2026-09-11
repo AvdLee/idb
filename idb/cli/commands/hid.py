@@ -4,7 +4,6 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-# pyre-strict
 
 from argparse import ArgumentParser, Namespace
 
@@ -13,26 +12,7 @@ from idb.common.hid import (
     iterator_to_async_iterator,
     key_press_with_modifiers_to_events,
 )
-from idb.common.types import Client, HIDButtonType
-
-
-class TapCommand(ClientCommand):
-    @property
-    def description(self) -> str:
-        return "Tap On the Screen"
-
-    @property
-    def name(self) -> str:
-        return "tap"
-
-    def add_parser_arguments(self, parser: ArgumentParser) -> None:
-        parser.add_argument("x", help="The x-coordinate", type=int)
-        parser.add_argument("y", help="The y-coordinate", type=int)
-        parser.add_argument("--duration", help="Press duration", type=float)
-        super().add_parser_arguments(parser)
-
-    async def run_with_client(self, args: Namespace, client: Client) -> None:
-        await client.tap(x=args.x, y=args.y, duration=args.duration)
+from idb.common.types import Client, HIDButtonType, HIDOrientationType
 
 
 class MultiTapCommand(ClientCommand):
@@ -95,6 +75,41 @@ class ButtonCommand(ClientCommand):
         await client.button(
             button_type=HIDButtonType[args.button], duration=args.duration
         )
+
+
+class RotateCommand(ClientCommand):
+    @property
+    def description(self) -> str:
+        return "Rotate the device to an orientation"
+
+    @property
+    def name(self) -> str:
+        return "rotate"
+
+    def add_parser_arguments(self, parser: ArgumentParser) -> None:
+        parser.add_argument(
+            "orientation",
+            help="The device orientation",
+            choices=[orientation.name for orientation in HIDOrientationType],
+            type=str,
+        )
+        super().add_parser_arguments(parser)
+
+    async def run_with_client(self, args: Namespace, client: Client) -> None:
+        await client.rotate(orientation=HIDOrientationType[args.orientation])
+
+
+class ShakeCommand(ClientCommand):
+    @property
+    def description(self) -> str:
+        return "Shake the device"
+
+    @property
+    def name(self) -> str:
+        return "shake"
+
+    async def run_with_client(self, args: Namespace, client: Client) -> None:
+        await client.shake()
 
 
 # Remote action -> USB HID keyboard usage the tvOS focus engine consumes (keyboard-backed; no proto

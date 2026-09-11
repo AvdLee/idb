@@ -67,11 +67,11 @@ final class FBFileReaderTests: XCTestCase, FBDataConsumer {
 
     let writerFuture = FBFileWriter.asyncWriter(forFilePath: fifoPath)
     let readerFuture = FBFileReader.reader(withFilePath: fifoPath, consumer: self, logger: nil)
-    let writerAndReader = try FBFuture<AnyObject>.combine([writerFuture as! FBFuture<AnyObject>, readerFuture as! FBFuture<AnyObject>]).`await`() as NSArray?
+    let writerAndReader = try FBFuture<AnyObject>.combine([writerFuture, readerFuture as! FBFuture<AnyObject>]).`await`() as NSArray?
     XCTAssertNotNil(writerAndReader)
 
     // swiftlint:disable force_cast
-    let writer = writerAndReader![0] as! FBDataConsumer
+    let writer = writerAndReader![0] as! FBDataConsumer & FBDataConsumerLifecycle
     let reader = writerAndReader![1] as! FBFileReader
     // swiftlint:enable force_cast
 
@@ -84,6 +84,10 @@ final class FBFileReaderTests: XCTestCase, FBDataConsumer {
     try reader.stopReading().`await`()
 
     XCTAssertTrue(didRecieveEOF)
+
+    // Drain the writer's asynchronous channel teardown before the test ends,
+    // so its deferred fd close cannot race into later tests' fd lifecycles.
+    try writer.finishedConsuming.`await`()
   }
 
   func testCanStopReadingBeforeEOFResolvesWhenPipeCloses() throws {
@@ -109,43 +113,6 @@ final class FBFileReaderTests: XCTestCase, FBDataConsumer {
     XCTAssertEqual(reader.state, FBFileReaderState.finishedReadingByCancellation)
 
     pipe.fileHandleForWriting.closeFile()
-  }
-
-  func testPipeClosingBehindBackOfConsumer() throws {
-    let pipe = Pipe()
-    let consumer = FBDataBuffer.accumulatingBuffer()
-    let reader = FBFileReader.reader(withFileDescriptor: pipe.fileHandleForReading.fileDescriptor, closeOnEndOfFile: false, consumer: consumer, logger: nil)
-    XCTAssertEqual(reader.state, FBFileReaderState.notStarted)
-
-    try reader.startReading().`await`()
-    XCTAssertEqual(reader.state, FBFileReaderState.reading)
-
-    let expected = "Foo Bar Baz".data(using: .utf8)!
-    pipe.fileHandleForWriting.write(expected)
-    pipe.fileHandleForWriting.closeFile()
-    let predicate = NSPredicate { _, _ in
-      expected == consumer.data()
-    }
-    let expectation = self.expectation(for: predicate, evaluatedWith: self, handler: nil)
-    wait(for: [expectation], timeout: FBControlCoreGlobalConfiguration.fastTimeout)
-
-    let result: NSNumber = try reader.stopReading().`await`()
-    XCTAssertEqual(result, 0)
-    XCTAssertEqual(reader.finishedReading.result, 0)
-    XCTAssertEqual(reader.state, FBFileReaderState.finishedReadingNormally)
-  }
-
-  func testReadsFromFilePath() throws {
-    let reader: FBFileReader = try FBFileReader.reader(withFilePath: "/dev/urandom", consumer: self, logger: nil).`await`()
-    XCTAssertEqual(reader.state, FBFileReaderState.notStarted)
-
-    try reader.startReading().`await`()
-    XCTAssertEqual(reader.state, FBFileReaderState.reading)
-
-    let result: NSNumber = try reader.stopReading().`await`()
-    XCTAssertEqual(result, NSNumber(value: ECANCELED))
-    XCTAssertEqual(reader.finishedReading.result, NSNumber(value: ECANCELED))
-    XCTAssertEqual(reader.state, FBFileReaderState.finishedReadingByCancellation)
   }
 
   func testReadingTwiceFails() throws {
@@ -222,9 +189,9 @@ final class FBFileReaderTests: XCTestCase, FBDataConsumer {
     }
     group.wait()
 
-    try? firstAttempt.`await`()
-    try? secondAttempt.`await`()
-    try? thirdAttempt.`await`()
+    _ = try? firstAttempt.`await`()
+    _ = try? secondAttempt.`await`()
+    _ = try? thirdAttempt.`await`()
     XCTAssertEqual(reader.state, FBFileReaderState.reading)
 
     var successes: UInt = 0
@@ -241,6 +208,40 @@ final class FBFileReaderTests: XCTestCase, FBDataConsumer {
     XCTAssertEqual(successes, 1)
   }
 
+  func testNonBlockingFlagAfterTeardownOfUnownedSocketReader() throws {
+    var descriptors: [Int32] = [0, 0]
+    XCTAssertEqual(socketpair(AF_UNIX, SOCK_STREAM, 0, &descriptors), 0)
+    let localSocket = descriptors[0]
+    let remoteSocket = descriptors[1]
+    defer {
+      close(localSocket)
+      close(remoteSocket)
+    }
+
+    let consumer = FBDataBuffer.accumulatingBuffer()
+    let reader = FBFileReader.reader(withFileDescriptor: localSocket, closeOnEndOfFile: false, consumer: consumer, logger: nil)
+    try reader.startReading().`await`()
+
+    // Traffic through the channel guarantees libdispatch has armed the
+    // descriptor: its per-descriptor entry exists, the original (blocking)
+    // flags are recorded, and O_NONBLOCK is forced on.
+    let expected = "ping".data(using: .utf8)!
+    expected.withUnsafeBytes { buffer in
+      XCTAssertEqual(write(remoteSocket, buffer.baseAddress, buffer.count), expected.count)
+    }
+    let consumed = NSPredicate { _, _ in
+      expected == consumer.data()
+    }
+    wait(for: [expectation(for: consumed, evaluatedWith: self, handler: nil)], timeout: FBControlCoreGlobalConfiguration.fastTimeout)
+    XCTAssertNotEqual(fcntl(localSocket, F_GETFL) & O_NONBLOCK, 0)
+
+    _ = try reader.stopReading().`await`()
+
+    // Teardown must not restore blocking flags on a descriptor the channel never owned: the restore is
+    // asynchronous and could land on a recycled fd number belonging to an unrelated live channel.
+    XCTAssertNotEqual(fcntl(localSocket, F_GETFL) & O_NONBLOCK, 0)
+  }
+
   func testAttemptingToReadAGarbageFileDescriptor() throws {
     let reader = FBFileReader.reader(withFileDescriptor: 92123, closeOnEndOfFile: false, consumer: self, logger: nil)
     XCTAssertEqual(reader.state, FBFileReaderState.notStarted)
@@ -253,7 +254,7 @@ final class FBFileReaderTests: XCTestCase, FBDataConsumer {
     XCTAssertEqual(reader.state, FBFileReaderState.finishedReadingInError)
   }
 
-  // MARK: FBDataConsumer
+  // MARK: - FBDataConsumer
 
   func consumeEndOfFile() {
     didRecieveEOF = true

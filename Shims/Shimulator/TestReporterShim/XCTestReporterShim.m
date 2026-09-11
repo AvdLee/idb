@@ -74,13 +74,11 @@ static char *const kEventQueueLabel = "xctool.events";
                      lineNumber:(NSInteger)line
                     description:(NSString *)format, ...
 {
-  // Format message
   va_list vl;
   va_start(vl, format);
   NSString *msg = [[NSString alloc] initWithFormat:format arguments:vl];
   va_end(vl);
 
-  // Raise exception
   [NSException raise:NSInternalInconsistencyException format:@"*** Assertion failure in %@, %@:%lld: %@", functionName, fileName, (long long)line, msg];
 }
 
@@ -92,7 +90,6 @@ static dispatch_queue_t EventQueue(void)
   static dispatch_once_t onceToken;
 
   dispatch_once(&onceToken, ^{
-    // We'll serialize all events through this queue.
     eventQueue = dispatch_queue_create(kEventQueueLabel, DISPATCH_QUEUE_SERIAL);
   });
 
@@ -238,7 +235,6 @@ static void XCToolLog_testCaseDidStop(XCTestCase *testCase, NSNumber *unexpected
       succeeded = YES;
     }
 
-    // report test results
     NSArray<NSDictionary<NSString *, id> *> *retExceptions = [__testExceptions copy];
     NSDictionary<NSString *, id> *json = EventDictionaryWithNameAndContent(
       kReporter_Events_EndTest,
@@ -340,12 +336,10 @@ static void XCPerformTestWithSuppressedExpectedAssertionFailures(id self, SEL or
     });
     dispatch_resume(source);
 
-    // Call through original implementation
     msgsend(self, origSel, arg1);
 
     dispatch_source_cancel(source);
   } else {
-    // Call through original implementation
     msgsend(self, origSel, arg1);
   }
 
@@ -374,7 +368,6 @@ static void XCWaitForDebuggerIfNeeded(void)
         );
       });
 
-      // Halt process execution until a debugger is attached
       raise(SIGSTOP);
 
       NSString *endMessage = [NSString stringWithFormat:@"Debugger was successfully attached to pid '%d'.", pid];
@@ -400,13 +393,6 @@ static void XCTestCase_performTest(id self, SEL sel, id arg1)
   XCPerformTestWithSuppressedExpectedAssertionFailures(self, originalSelector, arg1);
 }
 
-static void XCTestCaseSuite_performTest(id self, SEL sel, id arg1)
-{
-  SEL originalSelector = @selector(__XCTestCaseSuite_performTest:);
-  XCWaitForDebuggerIfNeeded();
-  XCPerformTestWithSuppressedExpectedAssertionFailures(self, originalSelector, arg1);
-}
-
 static id XCTRunnerDaemonSession_sharedSession(Class cls, SEL cmd)
 {
   return nil;
@@ -422,13 +408,9 @@ static BOOL XCTestCase__enableSymbolication(id self, SEL sel)
 #pragma mark - Interposes
 
 /*
- *  We need to close opened fds so all pipe readers are notified and unblocked.
- *  The not obvious and weird part is that we need to print "\n" before closing.
- *  For some reason `select()`, `poll()` and `dispatch_io_read()` will be stuck
- *  if a test calls `exit()` or `abort()`. The found workaround was to print
- *  anithing to a pipe before closing it. Simply closing a pipe doesn't send EOF
- *  to the pipe reader. Printing "\n" should be safe because reader is skipping
- *  empty lines.
+ * Closing the pipe alone does not deliver EOF to a `select()` / `poll()` / `dispatch_io_read()`
+ * reader when a test calls `exit()` or `abort()`; writing a byte first does. "\n" is safe because
+ * the reader skips empty lines.
  */
 static void PrintNewlineAndCloseFDs(void)
 {
@@ -469,66 +451,31 @@ static void SwizzleXCTestMethodsIfAvailable(void)
 
   static dispatch_once_t onceToken;
   dispatch_once(&onceToken, ^{
-    if ([testLogClass instancesRespondToSelector:@selector(testSuiteWillStart:)]) {
-      // Swizzle methods for Xcode 8.
-      XTSwizzleSelectorForFunction(
-        testLogClass,
-        @selector(testSuiteWillStart:),
-        (IMP)XCTestLog_testSuiteWillStart
-      );
-      XTSwizzleSelectorForFunction(
-        testLogClass,
-        @selector(testSuiteDidFinish:),
-        (IMP)XCTestLog_testSuiteDidFinish
-      );
-      XTSwizzleSelectorForFunction(
-        testLogClass,
-        @selector(testCaseWillStart:),
-        (IMP)XCTestLog_testCaseWillStart
-      );
-      XTSwizzleSelectorForFunction(
-        testLogClass,
-        @selector(testCaseDidFinish:),
-        (IMP)XCTestLog_testCaseDidFinish
-      );
-      XTSwizzleSelectorForFunction(
-        testLogClass,
-        @selector(testCase:didFailWithDescription:inFile:atLine:),
-        (IMP)XCTestLog_testCaseDidFailWithDescription
-      );
-    } else {
-      // Swizzle methods for Xcode 7 and earlier.
-      XTSwizzleSelectorForFunction(
-        testLogClass,
-        @selector(testSuiteDidStart:),
-        (IMP)XCTestLog_testSuiteDidStart
-      );
-      XTSwizzleSelectorForFunction(
-        testLogClass,
-        @selector(testSuiteDidStop:),
-        (IMP)XCTestLog_testSuiteDidStop
-      );
-      XTSwizzleSelectorForFunction(
-        testLogClass,
-        @selector(testCaseDidStart:),
-        (IMP)XCTestLog_testCaseDidStart
-      );
-      XTSwizzleSelectorForFunction(
-        testLogClass,
-        @selector(testCaseDidStop:),
-        (IMP)XCTestLog_testCaseDidStop
-      );
-      XTSwizzleSelectorForFunction(
-        testLogClass,
-        @selector(testCaseDidFail:withDescription:inFile:atLine:),
-        (IMP)XCTestLog_testCaseDidFail
-      );
-      XTSwizzleSelectorForFunction(
-        objc_getClass("XCTestCaseSuite"),
-        @selector(performTest:),
-        (IMP)XCTestCaseSuite_performTest
-      );
-    }
+    XTSwizzleSelectorForFunction(
+      testLogClass,
+      @selector(testSuiteWillStart:),
+      (IMP)XCTestLog_testSuiteWillStart
+    );
+    XTSwizzleSelectorForFunction(
+      testLogClass,
+      @selector(testSuiteDidFinish:),
+      (IMP)XCTestLog_testSuiteDidFinish
+    );
+    XTSwizzleSelectorForFunction(
+      testLogClass,
+      @selector(testCaseWillStart:),
+      (IMP)XCTestLog_testCaseWillStart
+    );
+    XTSwizzleSelectorForFunction(
+      testLogClass,
+      @selector(testCaseDidFinish:),
+      (IMP)XCTestLog_testCaseDidFinish
+    );
+    XTSwizzleSelectorForFunction(
+      testLogClass,
+      @selector(testCase:didFailWithDescription:inFile:atLine:),
+      (IMP)XCTestLog_testCaseDidFailWithDescription
+    );
     XTSwizzleSelectorForFunction(
       objc_getClass("XCTestCase"),
       @selector(performTest:),
@@ -562,21 +509,9 @@ static void listBundle(NSString *testBundlePath, NSString *outputFile)
     exit(TestShimExitCodeMissingExecutable);
   }
 
-  // Make sure the 'XCTest' preference is cleared before we load the
-  // test bundle - otherwise we may accidentally start running tests.
-  //
-  // Instead of seeing the JSON list of test methods, you'll see output like ...
-  //
-  //   Test Suite 'All tests' started at 2013-11-07 23:47:46 +0000
-  //   Test Suite 'All tests' finished at 2013-11-07 23:47:46 +0000.
-  //   Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.001) seconds
-  //
-  // Here's what happens -- As soon as we dlopen() the test bundle, it will also
-  // trigger the linker to load XCTest.framework since those are linked by the test bundle.
-  // And, as soon as the testing framework loads, the class initializer
-  // '+[XCTestSuite initialize]' is triggered.
-  //
-  // By clearing the preference, we can prevent tests from running.
+  // Clear the `XCTest` default before dlopen(): loading the bundle loads XCTest.framework,
+  // whose `+[XCTestSuite initialize]` would otherwise start running tests instead of
+  // letting us list them.
   [NSUserDefaults.standardUserDefaults removeObjectForKey:XCTestFrameworkName];
   [NSUserDefaults.standardUserDefaults synchronize];
 
@@ -597,7 +532,6 @@ static void listBundle(NSString *testBundlePath, NSString *outputFile)
     NSLog(@"Principal Class %@ initialized", principalObject);
   }
 
-  // Ensure that the principal class exists.
   Class testSuiteClass = NSClassFromString(XCTestSuiteClassName);
   NSCAssert(testSuiteClass, @"Should have %@ class", XCTestFrameworkName);
 
@@ -607,7 +541,6 @@ static void listBundle(NSString *testBundlePath, NSString *outputFile)
   XCTestSuite *allTestsSuite = [testSuiteClass performSelector:@selector(allTests)];
   NSCAssert(allTestsSuite, @"Should have gotten a test suite from allTests");
 
-  // Enumerate the test cases, constructing the reported name for them.
   NSArray<XCTestCase *> *allTestCases = TestsFromSuite(allTestsSuite);
   NSMutableArray<NSDictionary<NSString *, NSString *> *> *testsToReport = NSMutableArray.array;
   for (XCTestCase *testCase in allTestCases) {
@@ -625,7 +558,6 @@ static void listBundle(NSString *testBundlePath, NSString *outputFile)
      }];
   }
 
-  // Now write them out after sorting
   [testsToReport sortUsingComparator:^NSComparisonResult (NSDictionary<NSString *, NSString *> *left, NSDictionary<NSString *, NSString *> *right) {
     return [left[kReporter_ListTest_LegacyTestNameKey] compare:right[kReporter_ListTest_LegacyTestNameKey]];
   }];
@@ -700,7 +632,6 @@ static void SwizzleXcodebuildMethods(void)
       exit(1);
     }
     XTSwizzleSelectorForFunction(
-      // @lint-ignore FBOBJCDISCOURAGEDFUNCTION
       objc_getClass("SimServiceContext"),
       @selector(deviceSetWithPath:error:),
       (IMP)SimServiceContext_deviceSetWithPath_error
@@ -730,10 +661,9 @@ __attribute__((constructor)) static void EntryPoint(void)
     sa_abort.sa_handler = &handle_signal;
     sigaction(SIGABRT, &sa_abort, NULL);
 
-    // Let's register to get notified when libraries are initialized
+    // Re-run the swizzle after every bundle load, in case XCTest is loaded later.
     XTSwizzleSelectorForFunction([NSBundle class], @selector(loadAndReturnError:), (IMP)NSBundle_loadAndReturnError);
 
-    // Then Swizzle
     SwizzleXCTestMethodsIfAvailable();
     return;
   }

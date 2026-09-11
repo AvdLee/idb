@@ -1,5 +1,6 @@
 ![idb logo](website/static/img/idb_logo.jpg)
 
+[![CI](https://github.com/facebook/idb/actions/workflows/ci.yml/badge.svg)](https://github.com/facebook/idb/actions/workflows/ci.yml)
 [![Discord](https://img.shields.io/discord/770978552698896394?style=flat-square)](https://discord.gg/SF26Yqw)
 
 The "iOS Development Bridge" or `idb`, is a command line interface for automating iOS Simulators and Devices. It has three main principles:
@@ -8,13 +9,15 @@ The "iOS Development Bridge" or `idb`, is a command line interface for automatin
 * *Simple Primitives*: `idb` exposes granular commands so that sophisticated workflows can be sequenced on top of them. This means you can use `idb` from an IDE or build an automated testing scenario that isn't feasible with default tooling. All of these primitives aim to be consistent across iOS versions and between iOS Simulators and iOS Devices. All the primitives are exposed over a cli, so that it's easy to use for both humans and automation.
 * *Exposing missing functionality*: Xcode has a number of features that aren't available outside its user interface. `idb` leverages many of Private Frameworks that are used by Xcode, so that these features can be in GUI-less automated scenarios.
 
-`idb` is built on top the `FBSimulatorControl` and `FBDeviceControl` macOS Frameworks, contained within this repository. These Frameworks can be used independently of `idb`, however `idb` is likely to provide the simplest install and the most sensible defaults for most users.
+`idb` is built on top of the `FBSimulatorControl` and `FBDeviceControl` macOS Frameworks, contained within this repository. These Frameworks can be used independently of `idb`, however `idb` is likely to provide the simplest install and the most sensible defaults for most users.
 
-We've given a talk about `idb` at F8, so that you can learn more about what `idb` is and why we built it. A [recording of the talk is available here](https://developers.facebook.com/videos/2019/reliable-code-at-scale/).
+`idb` is transitioning to a pure Swift codebase: the companion is written in Swift, and the Frameworks are migrating from Objective-C. [The architecture documentation](https://www.fbidb.io/docs/idb/architecture) describes where the migration stands.
+
+A talk from F8 2019 covers the original motivation for `idb`; a [recording is available here](https://developers.facebook.com/videos/2019/reliable-code-at-scale/).
 
 ## Quick Start
 
-`idb` is made up of 2 major components, each of which needs to be installed separately.
+`idb` is made up of 2 major components, both of which are installed by a single brew formula.
 
 ### `idb` companion
 
@@ -23,8 +26,7 @@ Each target (simulator/device) will have a companion process attached allowing `
 The `idb` companion can be installed via brew or built from [source](https://github.com/facebook/idb)
 
 ```
-brew tap facebook/fb
-brew install idb-companion
+brew install facebook/fb/idb
 ```
 Note: Instructions on how to install brew can be found [here](https://brew.sh)
 
@@ -32,12 +34,12 @@ Note: Instructions on how to install brew can be found [here](https://brew.sh)
 
 A cli tool and python client is provided to interact with `idb`.
 
-It can be installed via pip:
+It is installed alongside the companion by the brew formula above. It can also be installed separately via pip (releases publish to PyPI):
 
 ```
-pip3.6 install fb-idb
+pip3 install fb-idb
 ```
-Note: The idb client requires python 3.6 or greater to be installed.
+Note: The idb client requires python 3.10 or greater to be installed.
 
 Please refer to [fbidb.io](https://www.fbidb.io/) for detailed installation instructions and a guided tour of idb.
 
@@ -46,10 +48,10 @@ Once installed, just run the list-targets command which will show you all the si
 ```
 $ idb list-targets
 ...
-iPhone X | 569C0F94-5D53-40D2-AF8F-F4AA5BAA7D5E | Shutdown | simulator | iOS 12.2 | x86_64 | No Companion Connected
-iPhone Xs | 2A1C6A5A-0C67-46FD-B3F5-3CB42FFB38B5 | Shutdown | simulator | iOS 12.2 | x86_64 | No Companion Connected
-iPhone Xs Max | D3CF178F-EF61-4CD3-BB3B-F5ECAD246310 | Shutdown | simulator | iOS 12.2 | x86_64 | No Companion Connected
-iPhone Xʀ | 74064851-4B98-473A-8110-225202BB86F6 | Shutdown | simulator | iOS 12.2 | x86_64 | No Companion Connected
+iPhone 16 | 569C0F94-5D53-40D2-AF8F-F4AA5BAA7D5E | Shutdown | simulator | iOS 26.0 | arm64 | No Companion Connected
+iPhone 17 | 2A1C6A5A-0C67-46FD-B3F5-3CB42FFB38B5 | Shutdown | simulator | iOS 26.0 | arm64 | No Companion Connected
+iPhone 17 Pro | D3CF178F-EF61-4CD3-BB3B-F5ECAD246310 | Shutdown | simulator | iOS 26.0 | arm64 | No Companion Connected
+iPhone Air | 74064851-4B98-473A-8110-225202BB86F6 | Shutdown | simulator | iOS 26.0 | arm64 | No Companion Connected
 ...
 ```
 
@@ -57,10 +59,10 @@ iPhone Xʀ | 74064851-4B98-473A-8110-225202BB86F6 | Shutdown | simulator | iOS 1
 
 ```
 $ idb list-apps --udid 74064851-4B98-473A-8110-225202BB86F6
-com.apple.Maps | Maps | system | x86_64 | Not running | Not Debuggable
-com.apple.MobileSMS | MobileSMS | system | x86_64 | Not running | Not Debuggable
-com.apple.mobileslideshow | MobileSlideShow | system | x86_64 | Not running | Not Debuggable
-com.apple.mobilesafari | MobileSafari | system | x86_64 | Not running | Not Debuggable
+com.apple.Maps | Maps | system | arm64 | Not running | Not Debuggable
+com.apple.MobileSMS | MobileSMS | system | arm64 | Not running | Not Debuggable
+com.apple.mobileslideshow | MobileSlideShow | system | arm64 | Not running | Not Debuggable
+com.apple.mobilesafari | MobileSafari | system | arm64 | Not running | Not Debuggable
 ```
 
 `launch` will launch an application:
@@ -75,31 +77,27 @@ Head over [to the main documentation](https://www.fbidb.io) for more details on 
 
 ### Prerequisites
 
-- **Xcode 14.0+**
+- **macOS 15+** with **Xcode 26.0+**
 - **XcodeGen**: `brew install xcodegen`
-- **For idb_companion**: protobuf and gRPC Swift plugins
+- **For idb_companion**: the protobuf compiler and its Swift plugin
   ```
-  brew install protobuf swift-protobuf grpc-swift
+  brew install protobuf swift-protobuf
   ```
+  (`build.sh` builds the `protoc-gen-grpc-swift` plugin itself, from a pinned checkout of grpc-swift.)
 
 ### Building
 
 ```bash
-# Build everything: frameworks, shims, SimulatorFrameworkBridge and
-# idb_companion, then assemble the runnable distribution
+# Build everything and assemble the runnable distribution
 ./build.sh build
 
-# Build only the frameworks
+# Or build a subset: frameworks, shims, idb_companion, or a specific framework
 ./build.sh build frameworks
-
-# Build the shim dylibs (Shimulator + Repl, iOS + macOS)
-./build.sh build shims
-
-# Build only idb_companion
 ./build.sh build idb_companion
-
-# Build a specific framework
 ./build.sh build FBControlCore
+
+# All options
+./build.sh help
 ```
 
 The individual build products are written under `Build/Products/Release`. A
@@ -115,7 +113,10 @@ Build/Distribution/
     libShimulator-macOS.dylib
     libRepl-iOS.dylib
     libRepl-macOS.dylib
-    SimulatorFrameworkBridge
+    SimulatorFrameworkBridge-iOS
+    SimulatorFrameworkBridge-tvOS
+    ReplHost.app
+    IDBAPI.swiftinterface
 ```
 
 `idb_companion` discovers the shims and `SimulatorFrameworkBridge` from the
@@ -138,22 +139,6 @@ The Xcode project files are generated from `project.yml` using XcodeGen. To rege
 
 ```bash
 ./build.sh generate
-```
-
-### Build Script Reference
-
-```bash
-./build.sh help                          # Show all options
-./build.sh generate                      # Regenerate Xcode projects
-./build.sh build                         # Build all targets and package the distribution
-./build.sh build distribution            # Assemble Build/Distribution from built products
-./build.sh build frameworks              # Build all frameworks
-./build.sh build idb_companion           # Build idb_companion
-./build.sh build shims                   # Build all shim dylibs (Shimulator + Repl, iOS + macOS)
-./build.sh build SimulatorFrameworkBridge # Build the SimulatorFrameworkBridge helper
-./build.sh build FBControlCore           # Build specific framework
-./build.sh test                          # Run all tests
-./build.sh test FBSimulatorControl       # Test specific framework
 ```
 
 ## Documentation

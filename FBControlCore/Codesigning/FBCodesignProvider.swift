@@ -7,23 +7,32 @@
 
 import Foundation
 
-@objc(FBCodesignProvider)
-public class FBCodesignProvider: NSObject {
+public enum FBCodesignError: Error, LocalizedError {
+  case signingFailed(exitCode: NSNumber, stdOut: String, stdErr: String)
+  case cdHashCheckFailed(exitCode: NSNumber, stdOut: String, stdErr: String)
+  case cdHashNotFound(output: String)
 
-  // MARK: Properties
+  public var errorDescription: String? {
+    switch self {
+    case let .signingFailed(exitCode, stdOut, stdErr):
+      return "Codesigning failed with exit code \(exitCode), \(stdOut)\n\(stdErr)"
+    case let .cdHashCheckFailed(exitCode, stdOut, stdErr):
+      return "Checking CDHash of codesign execution failed \(exitCode), \(stdOut)\n\(stdErr)"
+    case let .cdHashNotFound(output):
+      return "Could not find 'CDHash' in output: \(output)"
+    }
+  }
+}
 
-  @objc public let identityName: String
+public final class FBCodesignProvider {
+
+  public let identityName: String
   private let logger: FBControlCoreLogger?
-  private let queue: DispatchQueue
 
-  // MARK: Initializers
-
-  @objc(codeSignCommandWithIdentityName:logger:)
   public class func codeSignCommand(withIdentityName identityName: String, logger: FBControlCoreLogger?) -> Self {
     self.init(identityName: identityName, logger: logger)
   }
 
-  @objc(codeSignCommandWithAdHocIdentityWithLogger:)
   public class func codeSignCommandWithAdHocIdentity(logger: FBControlCoreLogger?) -> Self {
     self.init(identityName: "-", logger: logger)
   }
@@ -31,16 +40,7 @@ public class FBCodesignProvider: NSObject {
   required init(identityName: String, logger: FBControlCoreLogger?) {
     self.identityName = identityName
     self.logger = logger
-    self.queue = DispatchQueue(label: "com.facebook.fbcontrolcore.codesign", attributes: .concurrent)
-    super.init()
   }
-
-  // MARK: Private
-
-  private static let cdHashRegex: NSRegularExpression = {
-    // swiftlint:disable:next force_try
-    try! NSRegularExpression(pattern: "CDHash=(.+)", options: [])
-  }()
 
   private func makeCodesignatureWritable(_ bundlePath: String) throws {
     let fileManager = FileManager.default
@@ -61,103 +61,40 @@ public class FBCodesignProvider: NSObject {
     }
   }
 
-  // MARK: Public Methods
-
-  @objc(signBundleAtPath:)
-  public func signBundle(atPath bundlePath: String) -> FBFuture<NSNull> {
-    do {
-      try makeCodesignatureWritable(bundlePath)
-    } catch {
-      return FBFuture(error: error as NSError)
-    }
+  func signBundle(atPath bundlePath: String) async throws {
+    try makeCodesignatureWritable(bundlePath)
     logger?.log("Signing bundle \(bundlePath) with identity \(identityName)")
 
-    return unsafeBitCast(
-      FBProcessBuilder<AnyObject, AnyObject, AnyObject>
-        .withLaunchPath("/usr/bin/codesign", arguments: ["-s", identityName, "-f", bundlePath])
-        .withStdOutInMemoryAsString()
-        .withStdErrInMemoryAsString()
-        .withTaskLifecycleLogging(to: logger)
-        .runUntilCompletion(withAcceptableExitCodes: nil)
-        .onQueue(
-          queue,
-          fmap: { [logger] (taskObj: AnyObject) -> FBFuture<AnyObject> in
-            let task = taskObj as! FBSubprocess<NSNull, NSString, NSString>
-            let exitCode = task.exitCode.result
-            if exitCode != 0 {
-              return
-                FBControlCoreError
-                .describe("Codesigning failed with exit code \(exitCode ?? -1), \(task.stdOut ?? "")\n\(task.stdErr ?? "")")
-                .failFuture()
-            }
-            logger?.log("Successfully signed bundle \(task.stdErr ?? "")")
-            return FBFuture<AnyObject>(result: NSNull())
-          }),
-      to: FBFuture<NSNull>.self
+    let result = try await Subprocess(
+      executable: "/usr/bin/codesign",
+      arguments: ["-s", identityName, "-f", bundlePath]
     )
+    .run(exitPolicy: .any, logger: logger)
+    try result.checkExitedCleanly { code in
+      FBCodesignError.signingFailed(exitCode: NSNumber(value: code), stdOut: result.standardOutput, stdErr: result.standardError)
+    }
+    logger?.log("Successfully signed bundle \(result.standardError)")
   }
 
-  @objc(recursivelySignBundleAtPath:)
-  public func recursivelySignBundle(atPath bundlePath: String) -> FBFuture<NSNull> {
-    var pathsToSign = [bundlePath]
-    let fileManager = FileManager.default
-    let frameworksPath = bundlePath + "/Frameworks/"
-    if fileManager.fileExists(atPath: frameworksPath) {
-      do {
-        let frameworkNames = try fileManager.contentsOfDirectory(atPath: frameworksPath)
-        for frameworkPath in frameworkNames {
-          pathsToSign.append(frameworksPath + frameworkPath)
-        }
-      } catch {
-        return unsafeBitCast(
-          FBControlCoreError.failFuture(with: error as NSError),
-          to: FBFuture<NSNull>.self
-        )
-      }
-    }
-    var futures: [FBFuture<AnyObject>] = []
-    for pathToSign in pathsToSign {
-      futures.append(unsafeBitCast(signBundle(atPath: pathToSign), to: FBFuture<AnyObject>.self))
-    }
-    return unsafeBitCast(
-      FBFuture<AnyObject>.combine(futures).mapReplace(NSNull()),
-      to: FBFuture<NSNull>.self
-    )
-  }
-
-  @objc(cdHashForBundleAtPath:)
-  public func cdHashForBundle(atPath bundlePath: String) -> FBFuture<NSString> {
+  public func cdHashForBundle(atPath bundlePath: String) async throws -> String {
     logger?.log("Obtaining CDHash for bundle at path \(bundlePath)")
-    return unsafeBitCast(
-      FBProcessBuilder<AnyObject, AnyObject, AnyObject>
-        .withLaunchPath("/usr/bin/codesign", arguments: ["-dvvvv", bundlePath])
-        .withStdOutInMemoryAsString()
-        .withStdErrInMemoryAsString()
-        .withTaskLifecycleLogging(to: logger)
-        .runUntilCompletion(withAcceptableExitCodes: nil)
-        .onQueue(
-          queue,
-          fmap: { [logger] (taskObj: AnyObject) -> FBFuture<AnyObject> in
-            let task = taskObj as! FBSubprocess<NSNull, NSString, NSString>
-            let exitCode = task.exitCode.result
-            if exitCode != 0 {
-              return
-                FBControlCoreError
-                .describe("Checking CDHash of codesign execution failed \(exitCode ?? -1), \(task.stdOut ?? "")\n\(task.stdErr ?? "")")
-                .failFuture()
-            }
-            let output = (task.stdErr ?? "") as String
-            guard let result = FBCodesignProvider.cdHashRegex.firstMatch(in: output, options: [], range: NSRange(location: 0, length: output.count)) else {
-              return
-                FBControlCoreError
-                .describe("Could not find 'CDHash' in output: \(output)")
-                .failFuture()
-            }
-            let cdHash = (output as NSString).substring(with: result.range(at: 1))
-            logger?.log("Successfully obtained hash \(cdHash) from bundle \(bundlePath)")
-            return FBFuture<AnyObject>(result: cdHash as NSString)
-          }),
-      to: FBFuture<NSString>.self
+
+    let result = try await Subprocess(
+      executable: "/usr/bin/codesign",
+      arguments: ["-dvvvv", bundlePath]
     )
+    .run(exitPolicy: .any, logger: logger)
+    try result.checkExitedCleanly { code in
+      FBCodesignError.cdHashCheckFailed(exitCode: NSNumber(value: code), stdOut: result.standardOutput, stdErr: result.standardError)
+    }
+
+    // `codesign -dvvvv` writes its report, CDHash included, to stderr.
+    let output = result.standardError
+    guard let match = output.firstMatch(of: /CDHash=(.+)/) else {
+      throw FBCodesignError.cdHashNotFound(output: output)
+    }
+    let cdHash = String(match.1)
+    logger?.log("Successfully obtained hash \(cdHash) from bundle \(bundlePath)")
+    return cdHash
   }
 }

@@ -6,45 +6,23 @@
  */
 
 import CompanionLib
+import CompanionUtilities
 @preconcurrency import FBControlCore
 import Foundation
 
-/// Per-RPC telemetry replacement for the legacy `FBLoggingWrapper`.
-///
-/// Applied at the `CompanionServiceProvider` layer. Each RPC method wraps
-/// its handler dispatch in one of `unaryCall`, `clientStreaming`,
-/// `serverStreaming`, or `bidiStreaming`. The resulting log lines and
-/// `FBEventReporter` events are equivalent to what `FBLoggingWrapper`
-/// produced when wrapping `FBIDBCommandExecutor` in the ObjC era:
-///
-/// - `<method> called with: [<args>]` at info on the FBControlCoreLogger
-///   (which routes to stderr and the optional log file).
-/// - `<method> succeeded` at debug on success, or
-///   `<method> failed with: <localizedDescription>` at debug on failure.
-/// - One `FBEventReporterSubject(forSuccessfulCall:duration:size:arguments:)`
-///   on success (or `(forFailingCall:…)` on failure) reported to the
-///   `FBEventReporter`, which routes to scuba via the perfpipe_idb scribe
-///   category.
-///
-/// The arguments list is rendered from the typed gRPC `Request` body via
-/// `Mirror`, with each top-level field rendered as `name=value` and the
-/// value truncated to 100 characters -- the same cap
-/// `FBLoggingWrapper.descriptionForArgumentAtIndex:` enforced on each
-/// stringified ObjC argument.
-///
-/// `size` is always `nil`. The legacy `FBLoggingWrapper` populated it
-/// only when the first ObjC method argument implemented a
-/// `bytesTransferred` selector -- in practice, none of the proto request
-/// types do, so the legacy size was already `nil` for every gRPC method
-/// running through the wrapper. Stream-level byte counting would be a
-/// genuine enhancement on top of the wrapper's behaviour, but is out of
-/// scope for matching it.
+/// Per-RPC telemetry, applied in `CompanionServiceProvider` around each handler dispatch: logs
+/// `<method> called with: [<args>]` and `<method> succeeded in <duration>` / `<method> failed after
+/// <duration>: <message>`, all at info so a failing call stays visible under `-log-level info`, and reports
+/// one success or failure `FBEventReporterSubject` per call. Unary calls may pass `summarize` to append a
+/// result summary to the success line (e.g. `ls succeeded in 12ms (5 entries)`). Arguments are rendered
+/// from the request via `Mirror`, each value middle-truncated to 100 characters (container GUIDs and temp
+/// paths differ at the tail); empty protobuf `unknownFields` are omitted. `size` is always nil; no request
+/// type reports bytes transferred.
 struct CompanionTelemetry {
 
   let logger: FBIDBLogger
   let reporter: FBEventReporter
 
-  /// Match `FBLoggingWrapper.descriptionForArgumentAtIndex:`'s 100-char cap.
   private static let argumentValueLimit = 100
 
   // MARK: - RPC shapes
@@ -53,9 +31,14 @@ struct CompanionTelemetry {
   func unaryCall<Request, Response>(
     _ method: String,
     request: Request,
+    summarize: ((Response) -> String)? = nil,
     body: () async throws -> Response
   ) async throws -> Response {
-    return try await report(method: method, arguments: describeArguments(request), body: body)
+    return try await report(
+      method: method,
+      arguments: describeArguments(request),
+      summarize: summarize,
+      body: body)
   }
 
   @discardableResult
@@ -87,14 +70,18 @@ struct CompanionTelemetry {
   private func report<R>(
     method: String,
     arguments: [String],
+    summarize: ((R) -> String)? = nil,
     body: () async throws -> R
   ) async throws -> R {
-    let start = Date()
+    // Monotonic on purpose: a wall clock can step backwards (NTP) across the
+    // await, producing negative durations.
+    let start = DispatchTime.now()
     logger.info().log("\(method) called with: \(oneLineDescription(arguments))")
     do {
       let result = try await body()
-      let duration = Date().timeIntervalSince(start)
-      logger.debug().log("\(method) succeeded")
+      let duration = Self.secondsSince(start)
+      let summary = summarize.map { " (\($0(result)))" } ?? ""
+      logger.info().log("\(method) succeeded in \(Self.formatDuration(duration))\(summary)")
       reporter.report(
         FBEventReporterSubject(
           forSuccessfulCall: method,
@@ -103,9 +90,9 @@ struct CompanionTelemetry {
           arguments: arguments))
       return result
     } catch {
-      let duration = Date().timeIntervalSince(start)
+      let duration = Self.secondsSince(start)
       let message = (error as NSError).localizedDescription
-      logger.debug().log("\(method) failed with: \(message)")
+      logger.info().log("\(method) failed after \(Self.formatDuration(duration)): \(message)")
       reporter.report(
         FBEventReporterSubject(
           forFailingCall: method,
@@ -117,7 +104,33 @@ struct CompanionTelemetry {
     }
   }
 
-  // MARK: - Argument description (Mirror-based, mirrors FBLoggingWrapper's intent)
+  private static func secondsSince(_ start: DispatchTime) -> TimeInterval {
+    TimeInterval(DispatchTime.now().uptimeNanoseconds - start.uptimeNanoseconds) / 1_000_000_000
+  }
+
+  /// Renders a call duration for the completion line: whole milliseconds
+  /// below one second, two-decimal seconds above it.
+  static func formatDuration(_ duration: TimeInterval) -> String {
+    if duration < 1 {
+      return String(format: "%.0fms", duration * 1000)
+    }
+    return String(format: "%.2fs", duration)
+  }
+
+  /// Truncates over-long values to exactly `limit` characters, keeping the
+  /// head and the tail around an ellipsis. Values at or under the limit
+  /// pass through verbatim.
+  static func truncateMiddle(_ value: String, limit: Int) -> String {
+    guard value.count > limit else {
+      return value
+    }
+    let ellipsis = "..."
+    let headCount = (limit - ellipsis.count) / 2
+    let tailCount = limit - ellipsis.count - headCount
+    return String(value.prefix(headCount)) + ellipsis + String(value.suffix(tailCount))
+  }
+
+  // MARK: - Argument description
 
   private func describeArguments(_ request: Any) -> [String] {
     let mirror = Mirror(reflecting: request)
@@ -129,11 +142,21 @@ struct CompanionTelemetry {
         label = String(label.dropFirst())
       }
       let raw = "\(child.value)"
-      let truncated =
-        raw.count > Self.argumentValueLimit
-        ? String(raw.prefix(Self.argumentValueLimit)) + "..."
-        : raw
-      args.append("\(label)=\(truncated)")
+      // Every protobuf request carries unknownFields; skip the storage when
+      // it is empty so the log line only names fields that say something.
+      // Non-empty storage is kept verbatim for forward-compat debugging.
+      if label == "unknownFields" && raw == "UnknownStorage(data: 0 bytes)" {
+        continue
+      }
+      // Protobuf messages render across lines (e.g. a file container dumps
+      // as `...Container:\nkind: ROOT\n)]`); flatten so one argument stays
+      // on one log line and line-oriented tools keep working.
+      let singleLine =
+        raw
+        .components(separatedBy: .newlines)
+        .filter { !$0.isEmpty }
+        .joined(separator: " ")
+      args.append("\(label)=\(Self.truncateMiddle(singleLine, limit: Self.argumentValueLimit))")
     }
     return args
   }

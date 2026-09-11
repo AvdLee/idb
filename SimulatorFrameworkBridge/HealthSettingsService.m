@@ -11,16 +11,12 @@
 
 #import "HealthKitPrivate.h"
 
-// HKInternalAuthorizationStatus values used on the wire to healthd.
-// Reverse-engineered from `_HKInternalAuthorizationStatusMake` and the
-// daemon validator at `+[HDAuthorizationEntity _insertAuthorizationWith…]`.
-// These are NOT the public HKAuthorizationStatus enum (0..4).
+// HKInternalAuthorizationStatus values, as healthd expects them (from `_HKInternalAuthorizationStatusMake`
+// and `+[HDAuthorizationEntity _insertAuthorizationWith…]`). NOT the public HKAuthorizationStatus 0..4.
 static const NSUInteger kHealthInternalAuthShareAndRead = 101;
 static const NSUInteger kHealthInternalAuthShareAndReadDenied = 104;
 
-// The curated default set of HKQuantity types used by `approve` when
-// the caller does not specify any. Kept small to match the most common
-// HealthKit consumer use-cases in tests.
+// The default HKQuantity types used by `approve` when the caller does not specify any.
 static NSArray<NSString *> *defaultApproveTypeIdentifiers(void)
 {
   static dispatch_once_t onceToken;
@@ -81,13 +77,8 @@ static NSString *jsonStringFromObject(id obj)
 
 static NSDictionary *recordToDictionary(id record)
 {
-  // fetchAuthorizationRecordsForBundleIdentifier: returns HKObjectType
-  // instances (HKQuantityType, HKCategoryType, etc.) — not dedicated
-  // authorization-record objects. The authorization state is exposed as
-  // properties on the type itself.
-  //
-  // Property names confirmed via runtime introspection on iOS 26.2.
-  // respondsToSelector: guards against future runtimes that drop a property.
+  // The records are HKObjectType instances (HKQuantityType etc.), not dedicated record objects; the
+  // authorization state is exposed as properties on the type. Guarded per key in case a runtime drops one.
   static NSArray<NSString *> *probeKeys;
   static dispatch_once_t onceToken;
   dispatch_once(&onceToken, ^{
@@ -118,11 +109,6 @@ static NSDictionary *recordToDictionary(id record)
 
 #pragma mark - HKObjectType resolution
 
-// Resolve an HKQuantityTypeIdentifier* / HKCategoryTypeIdentifier* /
-// HKCharacteristicTypeIdentifier* / HKCorrelationTypeIdentifier* /
-// HKDocumentTypeIdentifier* string into the matching HKObjectType
-// via the runtime. Returns nil for identifiers that aren't known to
-// the iOS runtime version on this simulator (rare, but logged).
 static id resolveHealthKitObjectType(NSString *identifier)
 {
   static NSArray<NSString *> *factoryClasses;
@@ -203,8 +189,8 @@ static int handleSetAction(HKAuthorizationStore *authStore,
     return 1;
   }
 
-  // Step 1: seed the authorisation request rows. Without this, the
-  // daemon silently drops status writes for unseen (bundleID, type) pairs.
+  // Seed the authorisation request rows first: the daemon silently drops
+  // status writes for unseen (bundleID, type) pairs.
   __block BOOL seedOK = NO;
   __block NSError *seedError = nil;
   dispatch_semaphore_t seedSem = dispatch_semaphore_create(0);
@@ -218,7 +204,6 @@ static int handleSetAction(HKAuthorizationStore *authStore,
                                                }];
   dispatch_semaphore_wait(seedSem, dispatch_time(DISPATCH_TIME_NOW, 5 * NSEC_PER_SEC));
 
-  // Step 2: write the requested status for every resolved type.
   NSMutableDictionary *statuses = [NSMutableDictionary dictionary];
   for (id type in resolvedTypes) {
     statuses[type] = @(statusCode);
@@ -226,15 +211,42 @@ static int handleSetAction(HKAuthorizationStore *authStore,
   __block BOOL setOK = NO;
   __block NSError *setError = nil;
   dispatch_semaphore_t setSem = dispatch_semaphore_create(0);
-  [authStore setAuthorizationStatuses:statuses
-                   authorizationModes:@{}
-                  forBundleIdentifier:bundleID
-                              options:nil
-                           completion:^(BOOL ok, NSError *_Nullable err) {
-                             setOK = ok;
-                             setError = err;
-                             dispatch_semaphore_signal(setSem);
-                           }];
+  void (^setCompletion)(BOOL, NSError *_Nullable) = ^(BOOL ok, NSError *_Nullable err) {
+    setOK = ok;
+    setError = err;
+    dispatch_semaphore_signal(setSem);
+  };
+  // The selector was renamed in iOS 27 to take `modeInfos:`. Exactly one spelling is present on any
+  // runtime, so ask rather than assume: sending the wrong one raises out of a service entry point that
+  // has to answer with an exit code. Both are declared in HealthKitPrivate.h, so these are checked sends
+  // rather than casts, and `options` is the integer both runtimes actually take.
+  if ([authStore respondsToSelector:@selector(setAuthorizationStatuses:authorizationModes:modeInfos:forBundleIdentifier:options:completion:)]) {
+    [authStore setAuthorizationStatuses:statuses
+                     authorizationModes:@{}
+                              modeInfos:@{}
+                    forBundleIdentifier:bundleID
+                                options:0
+                             completion:setCompletion];
+  } else if ([authStore respondsToSelector:@selector(setAuthorizationStatuses:authorizationModes:forBundleIdentifier:options:completion:)]) {
+    [authStore setAuthorizationStatuses:statuses
+                     authorizationModes:@{}
+                    forBundleIdentifier:bundleID
+                                options:0
+                             completion:setCompletion];
+  } else {
+    // A runtime with neither spelling is a third rename. Report it as the failure it is, naming what was
+    // looked for, rather than raising or reporting a write that never happened as a success.
+    NSDictionary *output = @{
+      @"action" : actionName,
+      @"bundleID" : bundleID,
+      @"ok" : @NO,
+      @"error" : @"HKAuthorizationStore declares no known setAuthorizationStatuses: spelling",
+      @"resolvedTypes" : resolvedIdentifiers,
+      @"unresolvedTypes" : unresolvedIdentifiers,
+    };
+    printf("%s\n", jsonStringFromObject(output).UTF8String);
+    return 1;
+  }
   dispatch_semaphore_wait(setSem, dispatch_time(DISPATCH_TIME_NOW, 5 * NSEC_PER_SEC));
 
   NSDictionary *output = @{

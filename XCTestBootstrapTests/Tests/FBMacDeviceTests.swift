@@ -7,13 +7,19 @@
 
 import FBControlCore
 import XCTest
-import XCTestBootstrap
+@testable import XCTestBootstrap
 
 final class FBMacDeviceTests: XCTestCase {
 
   var device: FBMacDevice!
   var installedApp: FBInstalledApplication!
   var tempInstallDir: String?
+
+  override func setUpWithError() throws {
+    try XCTSkipIf(
+      ProcessInfo.processInfo.environment["GITHUB_ACTIONS"] == "true",
+      "FBMacDevice install/launch is not supported on hosted CI runners")
+  }
 
   override func setUp() {
     super.setUp()
@@ -43,7 +49,7 @@ final class FBMacDeviceTests: XCTestCase {
     }
 
     do {
-      installedApp = try device.installApplication(withPath: destPath).await(withTimeout: 5)
+      installedApp = try device.installApplication(withPath: destPath)
     } catch {
       preconditionFailure("Failed to install dummy app: \(error)")
     }
@@ -85,10 +91,9 @@ final class FBMacDeviceTests: XCTestCase {
   }
 
   func testInstallNotExistedApplicationAtPath() {
-    let installTask = device.installApplication(withPath: "/not/existed/path")
-    XCTAssertNotNil(
-      installTask.error,
-      "Installing not existed app should fail immidiately"
+    XCTAssertThrowsError(
+      try device.installApplication(withPath: "/not/existed/path"),
+      "Installing an application from a path that does not exist should throw"
     )
   }
 

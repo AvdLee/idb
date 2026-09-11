@@ -18,7 +18,7 @@
 /**
  The return type of the translation callbacks, this will synchronously provide a response by calling out to CoreSimulator.
  */
-typedef AXPTranslatorResponse *(^AXPTranslationCallback)(AXPTranslatorRequest *request);
+typedef AXPTranslatorResponse *(^AXPTranslationCallback)(AXPTranslatorRequest * _Nullable request);
 
 @protocol AXPTranslationDelegateHelper
 
@@ -112,7 +112,7 @@ typedef AXPTranslatorResponse *(^AXPTranslationCallback)(AXPTranslatorRequest *r
 - (void)handleNotification:(unsigned long long)arg1 data:(id)arg2 associatedObject:(id)arg3;
 - (AXPTranslationObject *)frontmostApplicationWithDisplayId:(unsigned int)arg1 bridgeDelegateToken:(NSString *)arg2;
 - (id)_translationApplicationObjectForPidNumber:(NSNumber *)arg1;
-- (id)translationApplicationObjectForPid:(int)arg1;
+- (AXPTranslationObject *)translationApplicationObjectForPid:(int)arg1;
 - (id)translationApplicationObject;
 - (id)init;
 

@@ -6,33 +6,53 @@
  */
 
 import FBControlCore
-@_implementationOnly import FBDeviceControl
+internal import FBDeviceControl
 import FBSimulatorControl
 import Foundation
 import XCTestBootstrap
 
-@objc public final class FBiOSTargetProvider: NSObject {
+public enum FBiOSTargetProviderError: Error {
+  case targetNotUsable(udid: String, targetDescription: String)
+  case targetNotFound(udid: String, targetSetsDescription: String)
+  case multipleTargets(targetsDescription: String)
+  case noTargets(targetSetsDescription: String)
+  case multipleBootedTargets(targetsDescription: String)
+  case noBootedTargets(targetSetsDescription: String)
+}
 
-  @objc public static func target(withUDID udid: String, targetSets: [FBiOSTargetSet], warmUp: Bool, logger: FBControlCoreLogger) -> FBFuture<AnyObject> {
-    let target: FBiOSTarget
-    do {
-      switch udid.lowercased() {
-      case "only":
-        target = try fetchSoleTarget(forTargetSets: targetSets, logger: logger)
-      case "booted":
-        target = try fetchSoleBootedTarget(forTargetSets: targetSets, logger: logger)
-      default:
-        target = try fetchTarget(withUDID: udid, targetSets: targetSets, logger: logger)
-      }
-    } catch {
-      return FBFuture(error: error)
+extension FBiOSTargetProviderError: LocalizedError {
+  public var errorDescription: String? {
+    switch self {
+    case let .targetNotUsable(udid, targetDescription):
+      return "\(udid) exists, but the target is not usable \(targetDescription)"
+    case let .targetNotFound(udid, targetSetsDescription):
+      return "\(udid) could not be resolved to any target in \(targetSetsDescription)"
+    case let .multipleTargets(targetsDescription):
+      return "Cannot get a sole target when multiple found \(targetsDescription)"
+    case let .noTargets(targetSetsDescription):
+      return "Cannot get a sole target when none were found in target sets \(targetSetsDescription)"
+    case let .multipleBootedTargets(targetsDescription):
+      return "Cannot get a sole booted target when multiple are booted \(targetsDescription)"
+    case let .noBootedTargets(targetSetsDescription):
+      return "Cannot get a sole booted target when none are booted in target sets \(targetSetsDescription)"
     }
-    return FBFuture(result: target as AnyObject)
+  }
+}
+
+public final class FBiOSTargetProvider {
+
+  public static func target(withUDID udid: String, targetSets: [FBiOSTargetSet], warmUp: Bool, logger: FBControlCoreLogger) throws -> any FBiOSTarget {
+    switch udid.lowercased() {
+    case "only":
+      return try fetchSoleTarget(forTargetSets: targetSets, logger: logger)
+    case "booted":
+      return try fetchSoleBootedTarget(forTargetSets: targetSets, logger: logger)
+    default:
+      return try fetchTarget(withUDID: udid, targetSets: targetSets, logger: logger)
+    }
   }
 
-  // MARK: - Private
-
-  private static func fetchTarget(withUDID udid: String, targetSets: [FBiOSTargetSet], logger: FBControlCoreLogger) throws -> FBiOSTarget {
+  private static func fetchTarget(withUDID udid: String, targetSets: [FBiOSTargetSet], logger: FBControlCoreLogger) throws -> any FBiOSTarget {
     if udid.lowercased() == "mac" {
       return FBMacDevice(logger: logger)
     }
@@ -40,48 +60,48 @@ import XCTestBootstrap
       guard let targetInfo = targetSet.target(withUDID: udid) else {
         continue
       }
-      guard let target = targetInfo as? FBiOSTarget else {
-        throw FBDeviceControlError.describe("\(udid) exists, but the target is not usable \(targetInfo)").build()
+      guard let target = targetInfo as? any FBiOSTarget else {
+        throw FBiOSTargetProviderError.targetNotUsable(udid: udid, targetDescription: String(describing: targetInfo))
       }
       return target
     }
 
-    throw FBIDBError.describe("\(udid) could not be resolved to any target in \(targetSets)").build()
+    throw FBiOSTargetProviderError.targetNotFound(udid: udid, targetSetsDescription: String(describing: targetSets))
   }
 
-  private static func fetchSoleTarget(forTargetSets targetSets: [FBiOSTargetSet], logger: FBControlCoreLogger) throws -> FBiOSTarget {
-    var targets: [FBiOSTarget] = []
+  private static func fetchSoleTarget(forTargetSets targetSets: [FBiOSTargetSet], logger: FBControlCoreLogger) throws -> any FBiOSTarget {
+    var targets: [any FBiOSTarget] = []
     for targetSet in targetSets {
       for info in targetSet.allTargetInfos {
-        if let target = info as? FBiOSTarget {
+        if let target = info as? any FBiOSTarget {
           targets.append(target)
         }
       }
     }
     if targets.count > 1 {
-      throw FBIDBError.describe("Cannot get a sole target when multiple found \(FBCollectionInformation.oneLineDescription(from: targets))").build()
+      throw FBiOSTargetProviderError.multipleTargets(targetsDescription: FBCollectionInformation.oneLineDescription(from: targets))
     }
     guard let target = targets.first else {
-      throw FBIDBError.describe("Cannot get a sole target when none were found in target sets \(FBCollectionInformation.oneLineDescription(from: targetSets))").build()
+      throw FBiOSTargetProviderError.noTargets(targetSetsDescription: FBCollectionInformation.oneLineDescription(from: targetSets))
     }
     return target
   }
 
-  private static func fetchSoleBootedTarget(forTargetSets targetSets: [FBiOSTargetSet], logger: FBControlCoreLogger) throws -> FBiOSTarget {
-    var bootedTargets: [FBiOSTarget] = []
+  private static func fetchSoleBootedTarget(forTargetSets targetSets: [FBiOSTargetSet], logger: FBControlCoreLogger) throws -> any FBiOSTarget {
+    var bootedTargets: [any FBiOSTarget] = []
     for targetSet in targetSets {
       for info in targetSet.allTargetInfos {
-        guard let target = info as? FBiOSTarget, target.state == .booted else {
+        guard let target = info as? any FBiOSTarget, target.state == .booted else {
           continue
         }
         bootedTargets.append(target)
       }
     }
     if bootedTargets.count > 1 {
-      throw FBIDBError.describe("Cannot get a sole booted target when multiple are booted \(FBCollectionInformation.oneLineDescription(from: bootedTargets))").build()
+      throw FBiOSTargetProviderError.multipleBootedTargets(targetsDescription: FBCollectionInformation.oneLineDescription(from: bootedTargets))
     }
     guard let target = bootedTargets.first else {
-      throw FBIDBError.describe("Cannot get a sole booted target when none are booted in target sets \(FBCollectionInformation.oneLineDescription(from: targetSets))").build()
+      throw FBiOSTargetProviderError.noBootedTargets(targetSetsDescription: FBCollectionInformation.oneLineDescription(from: targetSets))
     }
     return target
   }

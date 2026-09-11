@@ -5,14 +5,12 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import CompanionDiscovery
+@testable import CompanionDiscovery
 import Darwin
 import Foundation
 import Testing
 
-/// Tests the companion launch + startup-handshake logic by pointing
-/// `companionPath` at fake `idb_companion` scripts (the override the public API
-/// exposes for exactly this purpose).
+/// Launch and startup-handshake logic, driven with fake `idb_companion` scripts as `companionPath`.
 @Suite
 struct CompanionSpawnerTests {
   @Test
@@ -32,19 +30,7 @@ struct CompanionSpawnerTests {
 
   @Test
   func passesUDIDAndOnlyFilterToCompanion() async throws {
-    // Records the launched argv next to the socket so we can assert on it.
-    let script = """
-      #!/bin/bash
-      path=""
-      prev=""
-      for arg in "$@"; do
-        if [ "$prev" = "--grpc-domain-sock" ]; then path="$arg"; fi
-        prev="$arg"
-      done
-      echo "$*" > "$path.args"
-      printf '{"grpc_path": "%s"}\\n' "$path"
-      """
-    try await withFakeCompanion(script) { spawner in
+    try await withFakeCompanion(TestSupport.argvRecordingCompanionScript) { spawner in
       let udid = TestSupport.uniqueUDID()
       let socketPath = TestSupport.shortSocketPath()
       let argsPath = socketPath + ".args"
@@ -63,18 +49,7 @@ struct CompanionSpawnerTests {
 
   @Test
   func omitsOnlyFilterWhenNil() async throws {
-    let script = """
-      #!/bin/bash
-      path=""
-      prev=""
-      for arg in "$@"; do
-        if [ "$prev" = "--grpc-domain-sock" ]; then path="$arg"; fi
-        prev="$arg"
-      done
-      echo "$*" > "$path.args"
-      printf '{"grpc_path": "%s"}\\n' "$path"
-      """
-    try await withFakeCompanion(script) { spawner in
+    try await withFakeCompanion(TestSupport.argvRecordingCompanionScript) { spawner in
       let udid = TestSupport.uniqueUDID()
       let socketPath = TestSupport.shortSocketPath()
       let argsPath = socketPath + ".args"
@@ -168,8 +143,6 @@ struct CompanionSpawnerTests {
     #expect(logPath == "/tmp/idb2/logs/\(udid)")
     #expect(FileManager.default.fileExists(atPath: logPath))
   }
-
-  // MARK: - Helpers
 
   private func withFakeCompanion(_ script: String, _ body: (CompanionSpawner) async throws -> Void) async throws {
     let fakePath = try TestSupport.makeExecutableScript(script)

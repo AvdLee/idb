@@ -1,0 +1,54 @@
+---
+title: idb-repl
+sidebar_label: Overview
+---
+
+`idb-repl` is an interactive REPL (Read-Eval-Print-Loop) for running Swift code **inside a live process on an iOS Simulator**. You type (or pipe) Swift code, and it is compiled, injected into a running process, executed, and the result is streamed back to your terminal.
+
+It is built with coding agents in mind: code is a more general tool than any fixed set of commands, and a session can be captured as a report and replayed later, so you can see exactly what an agent did. Everything works the same when driven by hand.
+
+```
+idb-repl app "import UIKit; return UIScreen.main.bounds.size"
+
+Result:
+(414.0, 896.0)
+```
+
+## When to use it
+
+- Inspect the runtime environment with code, e.g. whether the simulator has internet access.
+- Explore or drive a running app: read live state, call into its code, present a deeply nested view controller without navigating to it.
+- Run Swift code inside a test bundle interactively, e.g. probing a function with cases its tests do not cover.
+- Automate a sequence of steps against one long-lived app process, and capture a report to replay later.
+
+## The three contexts
+
+`idb-repl` always runs your code inside *some* process. You pick which with a subcommand:
+
+| Context | Command | Runs your code in… | Good for |
+|---|---|---|---|
+| **App** | `idb-repl app` | An installed app process (or a bundled empty host app) | Driving/inspecting a real app, or quick experiments |
+| **Simulator** | `idb-repl simulator` | A standalone background process on the simulator | Automating what's on screen, without attaching to the foreground app |
+| **Test** | `idb-repl test` | A logic-test (`.xctest`) bundle | Running Swift code against a test bundle's modules |
+
+See [Writing REPL code](writing-repl-code.mdx) for the details of each.
+
+## Quick start
+
+```bash
+# Find a booted simulator.
+idb list-targets
+
+# Run one line of Swift in the bundled empty app (nothing to install).
+idb-repl --reason "trying idb-repl" app --udid <udid> 'return "\(2 * 21)"'
+# -> Result:
+#    42
+
+# Automate the screen: tap a labelled element, then confirm.
+idb-repl --reason "tap settings" simulator --udid <udid> \
+  'IDB.ui.tap(marker: "Settings"); return "tapped"'
+```
+
+## How it works
+
+`idb-repl` is a client: it connects to an **`idb` companion** — the server that manages simulators — which injects and runs your Swift code inside a process and streams the result back. For a local simulator it starts the companion itself; for a remote simulator, run `idb_companion` on the remote host and point `idb-repl` at it with `--companion <host:port>`. [How it works](how-it-works.mdx) has the full picture.

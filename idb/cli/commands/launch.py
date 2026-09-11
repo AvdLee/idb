@@ -4,7 +4,6 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-# pyre-strict
 
 from argparse import ArgumentParser, Namespace, REMAINDER
 
@@ -39,7 +38,7 @@ class LaunchCommand(ClientCommand):
         parser.add_argument(
             "-d",
             "--wait-for-debugger",
-            help="Suspend application right after the launch to facilitate attaching of a debugger (ex, lldb).",
+            help="Suspend application right after the launch to facilitate attaching of a debugger (ex. lldb)",
             action="store_true",
         )
         parser.add_argument(
@@ -57,8 +56,14 @@ class LaunchCommand(ClientCommand):
         parser.add_argument(
             "-p",
             "--pid-file",
-            help="launched app pid will be written into the specified file",
+            help="Launched app pid will be written into the specified file",
             type=str,
+        )
+        parser.add_argument(
+            "--enable-repl",
+            action="store_true",
+            help="Launch app with the REPL enabled so `idb-repl` can attach to this app. "
+            "Simulator targets only; forces app relaunch.",
         )
         super().add_parser_arguments(parser)
 
@@ -71,4 +76,5 @@ class LaunchCommand(ClientCommand):
             wait_for_debugger=args.wait_for_debugger,
             stop=signal_handler_event("launch") if args.wait_for else None,
             pid_file=args.pid_file,
+            enable_repl=args.enable_repl,
         )

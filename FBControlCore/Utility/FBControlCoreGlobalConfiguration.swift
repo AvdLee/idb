@@ -7,66 +7,73 @@
 
 import Foundation
 
+/// Environment variable; when truthy, the default logger mirrors its output to stderr.
 public let FBControlCoreStderrLogging = "FBCONTROLCORE_LOGGING"
+/// Environment variable; when truthy, the default logger emits debug-level output.
 public let FBControlCoreDebugLogging = "FBCONTROLCORE_DEBUG_LOGGING"
 
 private let ConfirmShimsAreSignedEnv = "FBCONTROLCORE_CONFIRM_SIGNED_SHIMS"
 
 @objc(FBControlCoreGlobalConfiguration)
-public class FBControlCoreGlobalConfiguration: NSObject {
+public final class FBControlCoreGlobalConfiguration: NSObject {
 
+  // Guarded by _loggerLock.
   nonisolated(unsafe) private static var _logger: (any FBControlCoreLogger)?
+  private static let _loggerLock = NSLock()
 
-  // MARK: Timeouts
+  // MARK: - Timeouts
 
   @objc public class var fastTimeout: TimeInterval { 10 }
   @objc public class var regularTimeout: TimeInterval { 30 }
   @objc public class var slowTimeout: TimeInterval { 120 }
 
-  // MARK: Logger
+  // MARK: - Logger
 
+  /// The logger used wherever a nullable logger parameter is passed as nil.
+  ///
+  /// By default it writes only to os_log (subsystem `com.facebook.fbcontrolcore`) at info level, so
+  /// in a process without a terminal nothing reaches stderr and diagnostics are only visible via
+  /// `log stream --predicate 'subsystem == "com.facebook.fbcontrolcore"'`.
+  /// `FBCONTROLCORE_LOGGING` mirrors output to stderr; `FBCONTROLCORE_DEBUG_LOGGING` raises the level to debug.
   @objc public class var defaultLogger: any FBControlCoreLogger {
     get {
+      _loggerLock.lock()
+      defer { _loggerLock.unlock() }
       if let existing = _logger { return existing }
       let created = createDefaultLogger()
       _logger = created
       return created
     }
     set {
-      if _logger != nil {
+      _loggerLock.lock()
+      let previous = _logger
+      _logger = newValue
+      _loggerLock.unlock()
+      // Outside the critical section: logging through an arbitrary logger implementation must
+      // not run under the lock.
+      if previous != nil {
         newValue.debug().log("Overriding the Default Logger with \(newValue)")
       }
-      _logger = newValue
     }
   }
-
-  // MARK: Configuration
 
   @objc public class var confirmCodesignaturesAreValid: Bool {
     guard let value = ProcessInfo.processInfo.environment[ConfirmShimsAreSignedEnv] else { return false }
     return (value as NSString).boolValue
   }
 
-  @objc public class var safeSubprocessEnvironment: [String: String] {
-    var modified: [String: String] = [:]
-    for (key, value) in ProcessInfo.processInfo.environment {
-      if key.contains("TERMCAP") { continue }
-      modified[key] = value
-    }
-    return modified
-  }
-
-  // MARK: NSObject
-
   override public class func description() -> String {
-    "Default Logger \(_logger.map(String.init(describing:)) ?? "(nil)")"
+    _loggerLock.lock()
+    let logger = _logger
+    _loggerLock.unlock()
+    // Stringified outside the critical section: an arbitrary logger implementation must not run
+    // under the lock.
+    return "Default Logger \(logger.map(String.init(describing:)) ?? "(nil)")"
   }
 
   public override var description: String {
     Self.description()
   }
-
-  // MARK: Private
 
   private class func createDefaultLogger() -> any FBControlCoreLogger {
     FBControlCoreLoggerFactory.systemLoggerWriting(toStderr: stderrLoggingEnabledByDefault, withDebugLogging: debugLoggingEnabledByDefault)
@@ -80,16 +87,5 @@ public class FBControlCoreGlobalConfiguration: NSObject {
   private class var debugLoggingEnabledByDefault: Bool {
     guard let value = ProcessInfo.processInfo.environment[FBControlCoreDebugLogging] else { return false }
     return (value as NSString).boolValue
-  }
-
-  private class func readValue(forKey key: String, fromPlistAtPath plistPath: String) -> Any? {
-    assert(FileManager.default.fileExists(atPath: plistPath), "plist does not exist at path '\(plistPath)'")
-    guard let infoPlist = NSDictionary(contentsOfFile: plistPath) else {
-      assertionFailure("Could not read plist at '\(plistPath)'")
-      return nil
-    }
-    let value = infoPlist[key]
-    assert(value != nil, "'\(key)' does not exist in plist '\(infoPlist.allKeys)'")
-    return value
   }
 }

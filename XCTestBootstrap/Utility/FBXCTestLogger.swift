@@ -11,10 +11,22 @@ import Foundation
 private let fbxctestOutputLogDirectoryEnv = "FBXCTEST_LOG_DIRECTORY"
 private let xctoolOutputLogDirectoryEnv = "XCTOOL_TEST_ENV_FB_LOG_DIRECTORY"
 
-@objc public final class FBXCTestLogger: NSObject, FBControlCoreLogger {
+public enum FBXCTestLoggerError: Error, LocalizedError {
+  case notADataConsumer(path: String, writer: String)
+
+  public var errorDescription: String? {
+    switch self {
+    case let .notADataConsumer(path, writer):
+      return "Expected a data consumer writing to \(path), got \(writer)"
+    }
+  }
+}
+
+// @unchecked Sendable: all stored state is immutable and FBControlCoreLogger implementations are required to be thread-safe.
+public final class FBXCTestLogger: NSObject, FBControlCoreLogger, @unchecked Sendable {
 
   private let baseLogger: FBControlCoreLogger
-  @objc public let logDirectory: String
+  public let logDirectory: String
 
   private init(baseLogger: FBControlCoreLogger, logDirectory: String) {
     self.baseLogger = baseLogger
@@ -22,7 +34,7 @@ private let xctoolOutputLogDirectoryEnv = "XCTOOL_TEST_ENV_FB_LOG_DIRECTORY"
     super.init()
   }
 
-  // MARK: Factory Methods
+  // MARK: - Factory Methods
 
   private static func defaultLogDirectory() -> String {
     let env = ProcessInfo.processInfo.environment
@@ -43,19 +55,19 @@ private let xctoolOutputLogDirectoryEnv = "XCTOOL_TEST_ENV_FB_LOG_DIRECTORY"
     "\(ProcessInfo.processInfo.globallyUniqueString)_test.log"
   }
 
-  @objc public static func defaultLoggerInDefaultDirectory() -> FBXCTestLogger {
+  public static func defaultLoggerInDefaultDirectory() -> FBXCTestLogger {
     loggerInDefaultDirectory(defaultLogName())
   }
 
-  @objc public static func loggerInDefaultDirectory(_ name: String) -> FBXCTestLogger {
+  public static func loggerInDefaultDirectory(_ name: String) -> FBXCTestLogger {
     logger(inDirectory: defaultLogDirectory(), name: name)
   }
 
-  @objc public static func defaultLogger(inDirectory directory: String) -> FBXCTestLogger {
+  public static func defaultLogger(inDirectory directory: String) -> FBXCTestLogger {
     logger(inDirectory: directory, name: defaultLogName())
   }
 
-  @objc public static func logger(inDirectory directory: String, name: String) -> FBXCTestLogger {
+  public static func logger(inDirectory directory: String, name: String) -> FBXCTestLogger {
     let success = (try? FileManager.default.createDirectory(atPath: directory, withIntermediateDirectories: true, attributes: nil)) != nil
     assert(success, "Expected to create directory at path \(directory)")
 
@@ -65,67 +77,75 @@ private let xctoolOutputLogDirectoryEnv = "XCTOOL_TEST_ENV_FB_LOG_DIRECTORY"
     } catch {
       NSLog("Failed to create log file at path %@: %@", path, error.localizedDescription)
     }
-    let fileHandle = FileHandle(forWritingAtPath: path)!
+    let stderrLogger = FBControlCoreLoggerFactory.systemLoggerWriting(toStderr: true, withDebugLogging: true).withDateFormatEnabled(true)
+    guard let fileHandle = FileHandle(forWritingAtPath: path) else {
+      NSLog("Failed to open the log file at path %@ for writing, logging to stderr only", path)
+      return FBXCTestLogger(baseLogger: stderrLogger, logDirectory: directory)
+    }
 
     let baseLogger = FBControlCoreLoggerFactory.compositeLogger(with: [
-      FBControlCoreLoggerFactory.systemLoggerWriting(toStderr: true, withDebugLogging: true).withDateFormatEnabled(true),
+      stderrLogger,
       FBControlCoreLoggerFactory.logger(toFileDescriptor: fileHandle.fileDescriptor, closeOnEndOfFile: false).withDateFormatEnabled(true),
     ])
 
     return FBXCTestLogger(baseLogger: baseLogger, logDirectory: directory)
   }
 
-  // MARK: FBControlCoreLogger
+  // MARK: - FBControlCoreLogger
 
   @discardableResult
-  @objc public func log(_ string: String) -> FBControlCoreLogger {
+  public func log(_ string: String) -> FBControlCoreLogger {
     baseLogger.log(string)
     return self
   }
 
-  @objc public func info() -> FBControlCoreLogger {
+  public func info() -> FBControlCoreLogger {
     FBXCTestLogger(baseLogger: baseLogger.info(), logDirectory: logDirectory)
   }
 
-  @objc public func debug() -> FBControlCoreLogger {
+  public func debug() -> FBControlCoreLogger {
     FBXCTestLogger(baseLogger: baseLogger.debug(), logDirectory: logDirectory)
   }
 
-  @objc public func error() -> FBControlCoreLogger {
+  public func error() -> FBControlCoreLogger {
     FBXCTestLogger(baseLogger: baseLogger.error(), logDirectory: logDirectory)
   }
 
-  @objc public func withName(_ prefix: String) -> FBControlCoreLogger {
+  public func withName(_ prefix: String) -> FBControlCoreLogger {
     FBXCTestLogger(baseLogger: baseLogger.withName(prefix), logDirectory: logDirectory)
   }
 
-  @objc public func withDateFormatEnabled(_ enabled: Bool) -> FBControlCoreLogger {
+  public func withDateFormatEnabled(_ enabled: Bool) -> FBControlCoreLogger {
     FBXCTestLogger(baseLogger: baseLogger.withDateFormatEnabled(enabled), logDirectory: logDirectory)
   }
 
-  @objc public var name: String? {
+  public var name: String? {
     baseLogger.name
   }
 
-  @objc public var level: FBControlCoreLogLevel {
+  public var level: FBControlCoreLogLevel {
     baseLogger.level
   }
 
-  // MARK: Log Consumption
+  // MARK: - Log Consumption
 
-  @objc public func logConsumption(of consumer: FBDataConsumer, toFileNamed fileName: String, logger: FBControlCoreLogger) -> FBFuture<AnyObject> {
+  public func logConsumption(of consumer: FBDataConsumer, toFileNamed fileName: String, logger: FBControlCoreLogger) -> FBFuture<AnyObject> {
     let queue = DispatchQueue.global(qos: .userInitiated)
     let filePath = (logDirectory as NSString).appendingPathComponent(fileName)
 
     return FBFileWriter.asyncWriter(forFilePath: filePath).onQueue(
       queue,
-      map: { writer -> AnyObject in
+      fmap: { writer -> FBFuture<AnyObject> in
+        guard let writer = writer as? FBDataConsumer else {
+          return FBFuture(error: FBXCTestLoggerError.notADataConsumer(path: filePath, writer: String(describing: writer)))
+        }
         logger.info().log("Mirroring output to \(filePath)")
-        return FBCompositeDataConsumer(consumers: [
-          consumer,
-          writer as! FBDataConsumer,
-          FBLoggingDataConsumer(logger: logger),
-        ])
+        return FBFuture<AnyObject>(
+          result: FBCompositeDataConsumer(consumers: [
+            consumer,
+            writer,
+            FBLoggingDataConsumer(logger: logger),
+          ]))
       })
   }
 }

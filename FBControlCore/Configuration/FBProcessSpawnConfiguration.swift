@@ -15,7 +15,7 @@ public enum FBProcessSpawnMode: UInt {
 }
 
 @objc(FBProcessSpawnConfiguration)
-public class FBProcessSpawnConfiguration: FBProcessLaunchConfiguration {
+public final class FBProcessSpawnConfiguration: FBProcessLaunchConfiguration {
 
   @objc public let launchPath: String
   @objc public let mode: FBProcessSpawnMode
@@ -30,8 +30,6 @@ public class FBProcessSpawnConfiguration: FBProcessLaunchConfiguration {
     self.mode = mode
     super.init(arguments: arguments, environment: environment, io: io)
   }
-
-  // MARK: NSObject
 
   public override var hash: Int {
     super.hash | (launchPath as NSString).hash | Int(mode.rawValue)

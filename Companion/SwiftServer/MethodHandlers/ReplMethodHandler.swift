@@ -17,39 +17,72 @@ struct ReplMethodHandler {
 
   let commandExecutor: FBIDBCommandExecutor
   let targetLogger: FBControlCoreLogger
+  /// Owns the in-progress screen recording, which can outlive a single `repl`
+  /// stream (in the app context). Shared across streams for one target.
+  let recordingCoordinator: ReplRecordingCoordinator
 
-  func handle(requestStream: GRPCAsyncRequestStream<Idb_ReplRequest>, responseStream: GRPCAsyncResponseStreamWriter<Idb_ReplResponse>, context: GRPCAsyncServerCallContext) async throws {
-    guard case let .start(start) = try await requestStream.requiredNext.control
+  func handle(requestStream: RequestStreamReader<Idb_ReplRequest>, responseStream: GRPCAsyncResponseStreamWriter<Idb_ReplResponse>, context: GRPCAsyncServerCallContext) async throws {
+    guard case let .start(start) = try await requestStream.requiredNext().control
     else { throw GRPCStatus(code: .failedPrecondition, message: "repl expected a Start message at the beginning of the stream") }
 
     targetLogger.debug().log("REPL session context: \(start.context)")
 
     let session: ReplSession
+    // Only the app context has an app whose exit should end a recording; the
+    // test/simulator hosts are disposable and drop any recording at teardown. For
+    // the app context an empty bundle id means "use the companion's bundled
+    // ReplHost app": resolve (and install) it once here, then thread the resolved
+    // id onward so the socket path and the app-exit/recording watcher key off a
+    // real id rather than "".
+    let appBundleID: String?
     switch start.context {
     case .test:
       session = try await commandExecutor.repl_start_test(bundlePath: start.testBundlePath)
+      appBundleID = nil
     case .app:
-      session = try await commandExecutor.repl_start_app(bundleID: start.appBundleID)
+      let bundleID =
+        start.appBundleID.isEmpty
+        ? try await commandExecutor.ensureReplHostAppInstalled()
+        : start.appBundleID
+      session = try await commandExecutor.repl_start_app(bundleID: bundleID, reuseSession: start.reuseSession)
+      appBundleID = bundleID
     case .simulator, .UNRECOGNIZED:
       session = try await commandExecutor.repl_start_simulator()
+      appBundleID = nil
     }
 
-    try await serve(session: session, requestStream: requestStream, responseStream: responseStream)
+    // Detect whether we share the driver's filesystem: the driver sends a path it
+    // created locally; if we can see it, captured artifacts can be moved rather
+    // than pulled back over gRPC.
+    let sharedFilesystem = !start.probeFilePath.isEmpty && FileManager.default.fileExists(atPath: start.probeFilePath)
+
+    try await serve(session: session, sharedFilesystem: sharedFilesystem, context: start.context, appBundleID: appBundleID, requestStream: requestStream, responseStream: responseStream)
   }
 
   /// Bridges the gRPC repl stream to a launched session's control socket:
   /// connects to the socket, reports `ready`, forwards each `Execute` (a dylib
   /// plus a symbol) to the socket and streams back the result, and on stop/EOF
   /// closes the socket (which ends the served process) and reports `stopped`.
-  private func serve(session: ReplSession, requestStream: GRPCAsyncRequestStream<Idb_ReplRequest>, responseStream: GRPCAsyncResponseStreamWriter<Idb_ReplResponse>) async throws {
+  private func serve(session: ReplSession, sharedFilesystem: Bool, context: Idb_ReplRequest.Start.Context, appBundleID: String?, requestStream: RequestStreamReader<Idb_ReplRequest>, responseStream: GRPCAsyncResponseStreamWriter<Idb_ReplResponse>) async throws {
     // Per-session scratch directory for the dylibs received over the wire. It
     // lives on the host filesystem, which the simulator process can read.
     let scratchDirectory = (NSTemporaryDirectory() as NSString).appendingPathComponent("idb_repl_\(UUID().uuidString)")
     try FileManager.default.createDirectory(atPath: scratchDirectory, withIntermediateDirectories: true)
     defer { try? FileManager.default.removeItem(atPath: scratchDirectory) }
 
-    // Connect to the control socket. It appears once the launched process binds
-    // it, so retry for a while.
+    // Per-session directory for captured artifacts (screenshots, recordings). It
+    // lives under the target's auxillary directory -- a real companion-host path
+    // that is also the pull-able AUXILLARY container -- and is removed at the end
+    // of the session.
+    let artifactsSessionID = UUID().uuidString
+    let artifactsContainerBase = "idb-repl-artifacts/" + artifactsSessionID
+    let artifactsDirectory = URL(fileURLWithPath: commandExecutor.auxillaryDirectory)
+      .appendingPathComponent("idb-repl-artifacts")
+      .appendingPathComponent(artifactsSessionID)
+    try FileManager.default.createDirectory(at: artifactsDirectory, withIntermediateDirectories: true)
+    defer { try? FileManager.default.removeItem(at: artifactsDirectory) }
+    let hostState = ReplHostCommandState(stagingDirectory: artifactsDirectory, containerRelativeBase: artifactsContainerBase)
+
     let client = try await ReplSocketClient.connect(path: session.socketPath, timeout: 120)
     defer { client.close() }
 
@@ -58,7 +91,8 @@ struct ReplMethodHandler {
     // interfaces (the `IDB` module's). We read each file's contents here and
     // forward those (not the paths) to the driver, which may not share a
     // filesystem with the companion; the driver materializes them locally.
-    let interfacePaths = try await client.readGreeting() + session.extraInterfacePaths
+    let greeting = try await client.readGreeting()
+    let interfacePaths = greeting.interfaces + session.extraInterfacePaths
     let generatedInterfaces: [Idb_ReplResponse.Ready.GeneratedInterface] = interfacePaths.compactMap { path in
       guard let contents = try? String(contentsOfFile: path, encoding: .utf8) else {
         targetLogger.error().log("Failed to read generated interface at \(path); skipping")
@@ -77,13 +111,17 @@ struct ReplMethodHandler {
         $0.event = .ready(
           .with {
             $0.deviceType = commandExecutor.replDeviceType
+            $0.osVersion = commandExecutor.replOSVersion
             $0.generatedInterfaces = generatedInterfaces
+            $0.nextRunIndex = greeting.nextRunIndex
+            $0.sharedFilesystem = sharedFilesystem
+            $0.sessionID = greeting.sessionID
           })
       })
 
     // Services nested `host_command`s the served process sends back while an
     // execute is running (e.g. `IDB.tap`), mapping them to FBIDBCommandExecutor.
-    let dispatcher = HostCommandDispatcher(commandExecutor: commandExecutor)
+    let dispatcher = HostCommandDispatcher(commandExecutor: commandExecutor, state: hostState, recordingCoordinator: recordingCoordinator, appBundleID: appBundleID)
 
     var runIndex = 0
     bridge: for try await request in requestStream {
@@ -96,6 +134,10 @@ struct ReplMethodHandler {
         runIndex += 1
         try execute.dylib.write(to: URL(fileURLWithPath: dylibPath))
 
+        // Artifacts captured during this execute are named with the REPL run index
+        // the driver assigned (the `idb_repl_<n>` entry-point symbol).
+        hostState.beginRun(index: Self.replRunIndex(fromSymbol: execute.symbol) ?? runIndex)
+
         let result = try await client.execute(
           dylibPath: dylibPath,
           symbol: execute.symbol,
@@ -105,18 +147,37 @@ struct ReplMethodHandler {
             }
             return await dispatcher.run(command)
           })
+        let artifacts = hostState.runArtifacts.map { artifact in
+          Idb_ReplResponse.Result.Artifact.with {
+            $0.hostPath = artifact.hostPath
+            $0.containerPath = artifact.containerPath
+          }
+        }
         try await responseStream.send(
           .with {
             $0.event = .result(
               .with {
                 $0.success = result.success
                 $0.output = result.output
+                $0.nextRunIndex = result.nextRunIndex
+                $0.artifacts = artifacts
               })
           })
 
       case .stop, .none:
         break bridge
       }
+    }
+
+    // The app context's app (and any recording it started) outlives this stream, so
+    // leave the recording running -- a reconnect can still stop it, and the app-exit
+    // watcher drops it otherwise. The test/simulator hosts are disposable, so a
+    // still-running recording is dropped now.
+    switch context {
+    case .app:
+      break
+    case .test, .simulator, .UNRECOGNIZED:
+      await recordingCoordinator.dropActiveRecording()
     }
 
     // Closing the socket ends the served process's accept loop, so it exits;
@@ -128,5 +189,14 @@ struct ReplMethodHandler {
       try await bridgeFBFutureVoid(session.run)
     }
     try await responseStream.send(.with { $0.event = .stopped(.with { $0.desc = "REPL session ended" }) })
+  }
+
+  /// Extracts the REPL run index the driver encoded in an execute's entry-point
+  /// symbol (`idb_repl_<index>`), or nil if it is not in that form.
+  private static func replRunIndex(fromSymbol symbol: String) -> Int? {
+    guard let suffix = symbol.split(separator: "_").last else {
+      return nil
+    }
+    return Int(suffix)
   }
 }

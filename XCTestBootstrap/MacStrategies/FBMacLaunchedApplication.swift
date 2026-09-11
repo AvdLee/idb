@@ -8,23 +8,33 @@
 import FBControlCore
 import Foundation
 
-@objc public final class FBMacLaunchedApplication: NSObject, FBLaunchedApplication {
+public enum FBMacLaunchedApplicationError: Error, LocalizedError {
+  case awaitingTerminationUnsupported
 
-  @objc public let bundleID: String
-  @objc public let processIdentifier: pid_t
+  public var errorDescription: String? {
+    switch self {
+    case .awaitingTerminationUnsupported:
+      return "Awaiting termination is not supported for macOS applications"
+    }
+  }
+}
+
+public final class FBMacLaunchedApplication: FBLaunchedApplication {
+
+  public let bundleID: String
+  public let processIdentifier: pid_t
   private weak var device: FBMacDevice?
   private let queue: DispatchQueue
 
-  @objc public init(bundleID: String, processIdentifier: pid_t, device: FBMacDevice, queue: DispatchQueue) {
+  public init(bundleID: String, processIdentifier: pid_t, device: FBMacDevice, queue: DispatchQueue) {
     self.bundleID = bundleID
     self.processIdentifier = processIdentifier
     self.device = device
     self.queue = queue
-    super.init()
   }
 
   public func waitForTermination() async throws {
-    throw FBControlCoreError.describe("Awaiting termination is not supported for macOS applications").build()
+    throw FBMacLaunchedApplicationError.awaitingTerminationUnsupported
   }
 
   public func terminate() async throws {

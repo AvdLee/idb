@@ -10,6 +10,14 @@ import XCTest
 
 final class FBFileWriterTests: XCTestCase {
 
+  override func setUpWithError() throws {
+    // dispatch_io descriptor teardown is unreliable on hosted GitHub Actions runners.
+    try XCTSkipIf(
+      ProcessInfo.processInfo.environment["GITHUB_ACTIONS"] == "true",
+      "dispatch_io teardown classes are covered by internal continuous runs")
+    try super.setUpWithError()
+  }
+
   func testNonBlockingCloseOfPipe() throws {
     let pipe = Pipe()
     var writeError: NSError?
@@ -45,31 +53,104 @@ final class FBFileWriterTests: XCTestCase {
     writer.consumeEndOfFile()
   }
 
-  func testOpeningAFifoAtBothEndsAsynchronously() throws {
-    let consumer = FBDataBuffer.accumulatingBuffer()
+  func testNonBlockingFlagAfterTeardownOfDuplicatedSocketWriter() throws {
+    var descriptors: [Int32] = [0, 0]
+    XCTAssertEqual(socketpair(AF_UNIX, SOCK_STREAM, 0, &descriptors), 0)
+    let localSocket = descriptors[0]
+    let remoteSocket = descriptors[1]
+    defer {
+      close(localSocket)
+      close(remoteSocket)
+    }
 
-    let fifoPath = (NSTemporaryDirectory() as NSString).appendingPathComponent(UUID().uuidString)
-    let status = mkfifo(fifoPath, S_IWUSR | S_IRUSR)
-    XCTAssertEqual(status, 0)
+    // The two descriptors share one open file description, so file status
+    // flags set through either are visible through both.
+    let writerDescriptor = dup(localSocket)
+    XCTAssertGreaterThanOrEqual(writerDescriptor, 0)
+    var writeError: NSError?
+    guard let writer = FBFileWriter.asyncWriter(withFileDescriptor: writerDescriptor, closeOnEndOfFile: true, error: &writeError) else {
+      throw writeError!
+    }
 
-    let writerFuture = FBFileWriter.asyncWriter(forFilePath: fifoPath)
-    let readerFuture = FBFileReader.reader(withFilePath: fifoPath, consumer: consumer, logger: nil)
-    let results = try FBFuture<AnyObject>.combine([writerFuture as! FBFuture<AnyObject>, readerFuture as! FBFuture<AnyObject>]).`await`() as NSArray?
-    XCTAssertNotNil(results)
-
-    // swiftlint:disable force_cast
-    let writer = results![0] as! FBDataConsumer
-    let reader = results![1] as! FBFileReader
-    // swiftlint:enable force_cast
-
-    try reader.startReading().`await`()
-
-    writer.consumeData("HELLO\n".data(using: .utf8)!)
-    writer.consumeData("THERE\n".data(using: .utf8)!)
+    // A write arms the channel: libdispatch records the description's
+    // original (blocking) flags and forces O_NONBLOCK onto it.
+    writer.consumeData("ping".data(using: .utf8)!)
     writer.consumeEndOfFile()
+    _ = try writer.finishedConsuming.`await`(withTimeout: 10)
 
-    try reader.stopReading().`await`()
+    var buffer = [UInt8](repeating: 0, count: 4)
+    XCTAssertEqual(recv(remoteSocket, &buffer, 4, MSG_DONTWAIT), 4)
 
-    try consumer.finishedConsuming.`await`()
+    // Winding down must not restore the duplicate's original blocking flags
+    // onto the shared open file description: localSocket keeps O_NONBLOCK, so
+    // a reader channel armed on it can never wedge in a blocking read(2).
+    XCTAssertNotEqual(fcntl(localSocket, F_GETFL) & O_NONBLOCK, 0)
+  }
+
+  func testNonBlockingFlagAfterTeardownOfUnownedSocketWriter() throws {
+    var descriptors: [Int32] = [0, 0]
+    XCTAssertEqual(socketpair(AF_UNIX, SOCK_STREAM, 0, &descriptors), 0)
+    let localSocket = descriptors[0]
+    let remoteSocket = descriptors[1]
+    defer {
+      close(localSocket)
+      close(remoteSocket)
+    }
+
+    var writeError: NSError?
+    guard let writer = FBFileWriter.asyncWriter(withFileDescriptor: localSocket, closeOnEndOfFile: false, error: &writeError) else {
+      throw writeError!
+    }
+
+    // A write arms the channel: libdispatch records the descriptor's
+    // original (blocking) flags and forces O_NONBLOCK onto it.
+    writer.consumeData("ping".data(using: .utf8)!)
+    writer.consumeEndOfFile()
+    _ = try writer.finishedConsuming.`await`(withTimeout: 10)
+
+    var buffer = [UInt8](repeating: 0, count: 4)
+    XCTAssertEqual(recv(remoteSocket, &buffer, 4, MSG_DONTWAIT), 4)
+
+    // Teardown must not restore blocking flags on a descriptor the channel never owned: the restore is
+    // asynchronous and could land on a recycled fd number belonging to an unrelated live channel.
+    XCTAssertNotEqual(fcntl(localSocket, F_GETFL) & O_NONBLOCK, 0)
+  }
+
+  func testStopThenCloseTeardownOfSocketReaderAndDuplicatedWriter() throws {
+    var descriptors: [Int32] = [0, 0]
+    XCTAssertEqual(socketpair(AF_UNIX, SOCK_STREAM, 0, &descriptors), 0)
+    let localSocket = descriptors[0]
+    let remoteSocket = descriptors[1]
+
+    // The writer gets its own duplicate of the socket, owned and closed by its
+    // channel. Two dispatch io channels must not share one descriptor: they
+    // share a per-descriptor entry inside libdispatch, and one channel's
+    // cleanup is deferred behind the other's outstanding operations — a writer
+    // ended while a reader is still armed on the same descriptor never
+    // delivers its cleanup, wedging teardown.
+    let writerDescriptor = dup(localSocket)
+    XCTAssertGreaterThanOrEqual(writerDescriptor, 0)
+    var writeError: NSError?
+    guard let writer = FBFileWriter.asyncWriter(withFileDescriptor: writerDescriptor, closeOnEndOfFile: true, error: &writeError) else {
+      throw writeError!
+    }
+    let reader = FBFileReader.reader(withFileDescriptor: localSocket, closeOnEndOfFile: false, consumer: FBFileWriter.nullWriter, logger: nil)
+    _ = try reader.startReading().`await`(withTimeout: 10)
+
+    // Traffic in both directions, so teardown runs against live channels.
+    writer.consumeData("ping".data(using: .utf8)!)
+    let pong = "pong".data(using: .utf8)!
+    pong.withUnsafeBytes { buffer in
+      XCTAssertEqual(write(remoteSocket, buffer.baseAddress, buffer.count), pong.count)
+    }
+
+    // All waits are bounded so a teardown wedge fails this test alone rather than timing out the whole target.
+    writer.consumeEndOfFile()
+    _ = try writer.finishedConsuming.`await`(withTimeout: 10)
+    XCTAssertEqual(fcntl(writerDescriptor, F_GETFD), -1)
+    _ = try reader.finishedReading(withTimeout: 4).`await`(withTimeout: 10)
+
+    XCTAssertEqual(close(localSocket), 0)
+    XCTAssertEqual(close(remoteSocket), 0)
   }
 }

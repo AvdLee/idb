@@ -23,7 +23,6 @@ static BOOL AddOutputFileActions(posix_spawn_file_actions_t *fileActions, FBProc
     return YES;
   }
   NSCParameterAssert(attachment.mode == FBProcessStreamAttachmentModeOutput);
-  // dup the write end of the pipe to the target file descriptor i.e. stdout
   // Files do not need to be closed in the launched process as POSIX_SPAWN_CLOEXEC_DEFAULT does this for us.
   int sourceFileDescriptor = attachment.fileDescriptor;
   int status = posix_spawn_file_actions_adddup2(fileActions, sourceFileDescriptor, targetFileDescriptor);
@@ -41,7 +40,6 @@ static BOOL AddInputFileActions(posix_spawn_file_actions_t *fileActions, FBProce
     return YES;
   }
   NSCParameterAssert(attachment.mode == FBProcessStreamAttachmentModeInput);
-  // dup the read end of the pipe to the target file descriptor i.e. stdin
   // Files do not need to be closed in the launched process as POSIX_SPAWN_CLOEXEC_DEFAULT does this for us.
   int sourceFileDescriptor = attachment.fileDescriptor;
   int status = posix_spawn_file_actions_adddup2(fileActions, sourceFileDescriptor, targetFileDescriptor);
@@ -93,7 +91,6 @@ static BOOL AddInputFileActions(posix_spawn_file_actions_t *fileActions, FBProce
            attach]
           onQueue:queue
           fmap:^(FBProcessIOAttachment *attachment) {
-            // Everything is setup, launch the process now.
             NSError *error = nil;
             FBSubprocess *process = [FBSubprocess processWithConfiguration:configuration attachment:attachment queue:queue logger:logger error:&error];
             if (!process) {
@@ -120,7 +117,6 @@ static BOOL AddInputFileActions(posix_spawn_file_actions_t *fileActions, FBProce
   return [[FBFuture
            onQueue:self.queue
            resolve:^{
-             // Do not kill if the process is already dead.
              if (self.statLoc.hasCompleted) {
                return self.statLoc;
              }
@@ -164,7 +160,6 @@ static BOOL AddInputFileActions(posix_spawn_file_actions_t *fileActions, FBProce
 
 + (FBFuture<NSNull *> *)confirmExitCode:(int)exitCode isAcceptable:(NSSet<NSNumber *> *)acceptableExitCodes
 {
-  // If exit codes are defined, check them.
   if (acceptableExitCodes == nil) {
     return FBFuture.empty;
   }
@@ -178,16 +173,14 @@ static BOOL AddInputFileActions(posix_spawn_file_actions_t *fileActions, FBProce
 
 + (FBSubprocess *)processWithConfiguration:(FBProcessSpawnConfiguration *)configuration attachment:(FBProcessIOAttachment *)attachment queue:(dispatch_queue_t)queue logger:(id<FBControlCoreLogger>)logger error:(NSError **)error
 {
-  // Convert the arguments to the argv expected by posix_spawn
   NSArray<NSString *> *arguments = configuration.arguments;
   char *argv[arguments.count + 2]; // 0th arg is launch path, last arg is NULL
   argv[0] = (char *) configuration.launchPath.UTF8String;
   argv[arguments.count + 1] = NULL;
   for (NSUInteger index = 0; index < arguments.count; index++) {
-    argv[index + 1] = (char *) arguments[index].UTF8String; // Offset by the launch path arg.
+    argv[index + 1] = (char *) arguments[index].UTF8String;
   }
 
-  // Convert the environment to the envp expected by posix_spawn
   NSDictionary<NSString *, NSString *> *environment = configuration.environment;
   NSArray<NSString *> *environmentNames = environment.allKeys;
   char *envp[environment.count + 1];
@@ -198,7 +191,6 @@ static BOOL AddInputFileActions(posix_spawn_file_actions_t *fileActions, FBProce
     envp[index] = (char *) value.UTF8String;
   }
 
-  // Convert the file descriptors
   posix_spawn_file_actions_t fileActions;
   posix_spawn_file_actions_init(&fileActions);
 
@@ -212,7 +204,6 @@ static BOOL AddInputFileActions(posix_spawn_file_actions_t *fileActions, FBProce
     return nil;
   }
 
-  // Make the spawn attributes
   posix_spawnattr_t spawnAttributes;
   posix_spawnattr_init(&spawnAttributes);
 

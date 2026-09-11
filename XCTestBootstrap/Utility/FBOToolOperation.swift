@@ -8,34 +8,35 @@
 import FBControlCore
 import Foundation
 
-@objc public final class FBOToolOperation: NSObject {
+public enum FBOToolError: Error {
+  case bundleInaccessible(path: String)
+  case bundleMissingExecutable(path: String)
+}
 
-  @objc public static func listSanitiserDylibsRequired(byBundle testBundlePath: String, onQueue queue: DispatchQueue) -> FBFuture<NSArray> {
+extension FBOToolError: LocalizedError {
+  public var errorDescription: String? {
+    switch self {
+    case let .bundleInaccessible(path):
+      return "Bundle '\(path)' does not identify an accessible bundle directory."
+    case let .bundleMissingExecutable(path):
+      return "The bundle at \(path) does not contain an executable."
+    }
+  }
+}
+
+public final class FBOToolOperation {
+
+  public static func listSanitiserDylibsRequired(byBundle testBundlePath: String) async throws -> [String] {
     guard let bundle = Bundle(path: testBundlePath) else {
-      let message = "Bundle '\(testBundlePath)' does not identify an accessible bundle directory."
-      return FBFuture(error: XCTestBootstrapError.describe(message).build())
+      throw FBOToolError.bundleInaccessible(path: testBundlePath)
     }
     guard let executablePath = bundle.executablePath else {
-      let message = "The bundle at \(testBundlePath) does not contain an executable."
-      return FBFuture(error: XCTestBootstrapError.describe(message).build())
+      throw FBOToolError.bundleMissingExecutable(path: testBundlePath)
     }
 
-    let base = FBProcessBuilder<NSNull, NSData, NSData>.withLaunchPath("/usr/bin/otool", arguments: ["-L", executablePath])
-    let withStdOut = base.withStdOutInMemoryAsString()
-    let configured = withStdOut.withStdErrInMemoryAsString()
-    return unsafeBitCast(
-      unsafeBitCast(
-        configured.runUntilCompletion(withAcceptableExitCodes: [0]),
-        to: FBFuture<AnyObject>.self
-      )
-      .onQueue(
-        queue,
-        map: { task -> AnyObject in
-          let subprocess = task as! FBSubprocess<AnyObject, NSString, NSString>
-          return FBOToolOperation.extractSanitiserDylibs(fromOtoolOutput: subprocess.stdOut! as String) as NSArray
-        }),
-      to: FBFuture<NSArray>.self
-    )
+    let result = try await Subprocess(executable: "/usr/bin/otool", arguments: ["-L", executablePath])
+      .run()
+    return extractSanitiserDylibs(fromOtoolOutput: result.standardOutput)
   }
 
   private static func extractSanitiserDylibs(fromOtoolOutput otoolOutput: String) -> [String] {

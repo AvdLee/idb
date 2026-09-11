@@ -24,8 +24,28 @@ private func stateString(from state: FBFileReaderState) -> String {
   }
 }
 
+public enum FBFileReaderError: Error, LocalizedError {
+  case openFailed(path: String, message: String)
+  case wrongStateToStart(targeting: String, state: String)
+  case ioChannelCreationFailed(description: String)
+  case notStartedReading(targeting: String)
+
+  public var errorDescription: String? {
+    switch self {
+    case let .openFailed(path, message):
+      return "open of \(path) returned an error '\(message)'"
+    case let .wrongStateToStart(targeting, state):
+      return "Could not start reading read of \(targeting) when it is in state \(state)"
+    case let .ioChannelCreationFailed(description):
+      return "A IO Channel could not be created for \(description)"
+    case let .notStartedReading(targeting):
+      return "File reader has not started reading \(targeting), you should call 'startReading' first"
+    }
+  }
+}
+
 @objc(FBFileReader)
-public class FBFileReader: NSObject, FBFileReaderProtocol {
+public final class FBFileReader: NSObject, FBFileReaderProtocol {
 
   // MARK: - Private Properties
 
@@ -57,29 +77,24 @@ public class FBFileReader: NSObject, FBFileReaderProtocol {
 
   @objc public static func reader(withFilePath filePath: String, consumer: FBDataConsumer, logger: FBControlCoreLogger?) -> FBFuture<FBFileReader> {
     let queue = createQueue()
-    return unsafeBitCast(
-      FBFuture<AnyObject>.onQueue(
-        queue,
-        resolve: {
-          let fd = open(filePath, O_RDONLY)
-          if fd == -1 {
-            return
-              FBControlCoreError
-              .describe("open of \(filePath) returned an error '\(String(cString: strerror(errno)))'")
-              .failFuture()
-          }
-          return FBFuture(
-            result: FBFileReader(
-              fileDescriptor: fd,
-              closeOnEndOfFile: true,
-              consumer: FBDataConsumerAdaptor.dispatchDataConsumer(for: consumer),
-              targeting: filePath,
-              queue: queue,
-              logger: logger
-            ))
-        }),
-      to: FBFuture<FBFileReader>.self
-    )
+    return FBFuture<AnyObject>.onQueue(
+      queue,
+      resolve: {
+        let fd = open(filePath, O_RDONLY)
+        if fd == -1 {
+          return FBFuture(error: FBFileReaderError.openFailed(path: filePath, message: String(cString: strerror(errno))))
+        }
+        return FBFuture(
+          result: FBFileReader(
+            fileDescriptor: fd,
+            closeOnEndOfFile: true,
+            consumer: FBDataConsumerAdaptor.dispatchDataConsumer(for: consumer),
+            targeting: filePath,
+            queue: queue,
+            logger: logger
+          ))
+      }
+    ).retyped(FBFuture<FBFileReader>.self)
   }
 
   required init(fileDescriptor: Int32, closeOnEndOfFile: Bool, consumer: FBDispatchDataConsumer, targeting: String, queue: DispatchQueue, logger: FBControlCoreLogger?) {
@@ -94,8 +109,6 @@ public class FBFileReader: NSObject, FBFileReaderProtocol {
     super.init()
   }
 
-  // MARK: - NSObject
-
   public override var description: String {
     "Reader for \(targeting) with state \(stateString(from: state))"
   }
@@ -103,66 +116,63 @@ public class FBFileReader: NSObject, FBFileReaderProtocol {
   // MARK: - Public Methods
 
   @objc public func startReading() -> FBFuture<NSNull> {
-    return unsafeBitCast(
-      FBFuture<AnyObject>.onQueue(
-        readQueue,
-        resolve: {
-          self.startReadingNow()
-        }),
-      to: FBFuture<NSNull>.self
-    )
+    return FBFuture<AnyObject>.onQueue(
+      readQueue,
+      resolve: {
+        self.startReadingNow()
+      }
+    ).retyped(FBFuture<NSNull>.self)
   }
 
   @objc public func stopReading() -> FBFuture<NSNumber> {
-    return unsafeBitCast(
-      FBFuture<AnyObject>.onQueue(
-        readQueue,
-        resolve: {
-          self.stopReadingNow()
-        }),
-      to: FBFuture<NSNumber>.self
-    )
+    return FBFuture<AnyObject>.onQueue(
+      readQueue,
+      resolve: {
+        self.stopReadingNow()
+      }
+    ).retyped(FBFuture<NSNumber>.self)
   }
 
   @objc public func finishedReading(withTimeout timeout: TimeInterval) -> FBFuture<NSNumber> {
-    return unsafeBitCast(
+    return
       finishedReading
-        .onQueue(readQueue, timeout: timeout) {
-          self.stopReadingNow()
-        },
-      to: FBFuture<NSNumber>.self
-    )
+      .onQueue(readQueue, timeout: timeout) {
+        self.stopReadingNow()
+      }
+      .retyped(FBFuture<NSNumber>.self)
   }
 
   @objc public var finishedReading: FBFuture<NSNumber> {
-    // We don't re-alias ioChannelFinishedReadOperation as if it's externally cancelled, we want the ioChannelFinishedReadOperation to resolve normally
+    // A fresh future, so cancelling the returned future does not cancel `ioChannelRelinquishedControl`.
     let future: FBMutableFuture<AnyObject> = FBMutableFuture(name: "Finished reading of \(targeting)")
     future.resolve(from: ioChannelRelinquishedControl)
-    return unsafeBitCast(
+    return
       (future as FBFuture<AnyObject>)
-        .onQueue(
-          readQueue,
-          respondToCancellation: {
-            unsafeBitCast(self.stopReadingNow(), to: FBFuture<NSNull>.self)
-          }),
-      to: FBFuture<NSNumber>.self
-    )
+      .onQueue(
+        readQueue,
+        respondToCancellation: {
+          self.stopReadingNow().retyped(FBFuture<NSNull>.self)
+        }
+      )
+      .retyped(FBFuture<NSNumber>.self)
   }
 
   // MARK: - Private
 
   private func startReadingNow() -> FBFuture<AnyObject> {
     if state != .notStarted {
-      return
-        FBControlCoreError
-        .describe("Could not start reading read of \(targeting) when it is in state \(stateString(from: state))")
-        .failFuture()
+      return FBFuture(error: FBFileReaderError.wrongStateToStart(targeting: targeting, state: stateString(from: state)))
     }
     assert(io == nil, "IO Channel should not exist when not started")
 
-    // Get locals to be captured by the read, rather than self.
     let consumer = self.consumer
     var readErrorCode: Int32 = 0
+
+    // Set O_NONBLOCK before DispatchIO snapshots the descriptor flags: libdispatch restores that
+    // snapshot asynchronously on teardown through the shared open file description (or a recycled
+    // descriptor number), and a snapshot without O_NONBLOCK would wedge an unrelated live channel in
+    // a blocking read(2).
+    _ = fcntl(fileDescriptor, F_SETFL, fcntl(fileDescriptor, F_GETFL) | O_NONBLOCK)
 
     // If there is an error creating the IO Object, the errorCode will be delivered asynchronously.
     // The self-capture is intentional - we need to keep it alive until the IO channel is done.
@@ -170,10 +180,7 @@ public class FBFileReader: NSObject, FBFileReaderProtocol {
       self.ioChannelHasRelinquishedControl(withErrorCode: createErrorCode != 0 ? createErrorCode : readErrorCode)
     }
     guard let io else {
-      return
-        FBControlCoreError
-        .describe("A IO Channel could not be created for \(self.description)")
-        .failFuture()
+      return FBFuture(error: FBFileReaderError.ioChannelCreationFailed(description: self.description))
     }
 
     // Report partial results with as little as 1 byte read.
@@ -188,18 +195,13 @@ public class FBFileReader: NSObject, FBFileReaderProtocol {
       }
     }
     state = .reading
-    return unsafeBitCast(FBFuture<NSNull>.empty(), to: FBFuture<AnyObject>.self)
+    return FBFuture<NSNull>.empty().retyped(FBFuture<AnyObject>.self)
   }
 
   private func stopReadingNow() -> FBFuture<AnyObject> {
-    // The only error condition is that we haven't yet started reading
     if state == .notStarted {
-      return
-        FBControlCoreError
-        .describe("File reader has not started reading \(targeting), you should call 'startReading' first")
-        .failFuture()
+      return FBFuture(error: FBFileReaderError.notStartedReading(targeting: targeting))
     }
-    // All states other than reading mean that we don't need to close the channel.
     if state != .reading {
       return ioChannelRelinquishedControl
     }
@@ -210,7 +212,6 @@ public class FBFileReader: NSObject, FBFileReaderProtocol {
   }
 
   private func ioChannelReadOperationDone(_ errorCode: Int32) {
-    // First, update internal state that the read operation is over.
     ioChannelReadOperationStateFinalize(errorCode)
 
     // Closing is necessary when a read has finished, since a "Read Operation" terminating *does not* mean
@@ -223,13 +224,10 @@ public class FBFileReader: NSObject, FBFileReaderProtocol {
     // In the case of a bad file descriptor (EBADF) this can be called before dispatch_io_read.
     ioChannelReadOperationStateFinalize(errorCode)
 
-    // Signal that the file descriptor reading has now fully finished.
     ioChannelRelinquishedControl.resolve(withResult: NSNumber(value: errorCode))
 
-    // Now that the IO channel is done for good, remove the reference to it.
     guard io != nil else { return }
     io = nil
-    // Close the file descriptor if requested
     if closeOnEndOfFile {
       close(fileDescriptor)
     }

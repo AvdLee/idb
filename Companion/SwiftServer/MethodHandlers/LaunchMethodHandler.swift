@@ -12,14 +12,14 @@ import Foundation
 import GRPC
 import IDBGRPCSwift
 
-struct LaunchMethodHandler {
+struct LaunchMethodHandler: @unchecked Sendable {
 
   let commandExecutor: FBIDBCommandExecutor
 
-  func handle(requestStream: GRPCAsyncRequestStream<Idb_LaunchRequest>, responseStream: GRPCAsyncResponseStreamWriter<Idb_LaunchResponse>, context: GRPCAsyncServerCallContext) async throws {
+  func handle(requestStream: RequestStreamReader<Idb_LaunchRequest>, responseStream: GRPCAsyncResponseStreamWriter<Idb_LaunchResponse>, context: GRPCAsyncServerCallContext) async throws {
     var consumers: [any FBDataConsumerLifecycle] = []
 
-    var request = try await requestStream.requiredNext
+    var request = try await requestStream.requiredNext()
     guard case let .start(start) = request.control else {
       throw GRPCStatus(code: .failedPrecondition, message: "Application not started yet")
     }
@@ -37,14 +37,31 @@ struct LaunchMethodHandler {
       stdErr = FBProcessOutput<AnyObject>(for: stdErrConsumer)
     }
     let io = FBProcessIO<AnyObject, AnyObject, AnyObject>(stdIn: nil, stdOut: stdOut, stdErr: stdErr)
+
+    var environment = start.env
+    var launchMode: FBApplicationLaunchMode = start.foregroundIfRunning ? .foregroundIfRunning : .failIfRunning
+    if start.enableRepl {
+      // Setup the launch for the REPL (inject libRepl + the IDB_REPL_* vars) and
+      // force a relaunch so an already-running, un-injected app picks up the dylib.
+      let replEnvironment = try await commandExecutor.replAppLaunchEnvironment(bundleID: start.bundleID)
+      for (key, value) in replEnvironment {
+        if key == "DYLD_INSERT_LIBRARIES", let existing = environment[key], !existing.isEmpty {
+          environment[key] = "\(existing):\(value)"
+        } else {
+          environment[key] = value
+        }
+      }
+      launchMode = .relaunchIfRunning
+    }
+
     let config = FBApplicationLaunchConfiguration(
       bundleID: start.bundleID,
       bundleName: nil,
       arguments: start.appArgs,
-      environment: start.env,
+      environment: environment,
       waitForDebugger: start.waitForDebugger,
       io: io,
-      launchMode: start.foregroundIfRunning ? .foregroundIfRunning : .failIfRunning)
+      launchMode: launchMode)
     let launchedApp = try await commandExecutor.launch_app(config)
     let response = Idb_LaunchResponse.with {
       $0.debugger.pid = UInt64(launchedApp.processIdentifier)
@@ -53,7 +70,7 @@ struct LaunchMethodHandler {
 
     guard start.waitFor else { return }
 
-    request = try await requestStream.requiredNext
+    request = try await requestStream.requiredNext()
     guard case .stop = request.control else {
       throw GRPCStatus(code: .failedPrecondition, message: "Application has already started")
     }
@@ -62,8 +79,9 @@ struct LaunchMethodHandler {
 
     try await withThrowingTaskGroup(of: Void.self) { group in
       for consumer in consumers {
+        nonisolated(unsafe) let consumer = consumer
         group.addTask {
-          try await consumer.awaitFinishedConsumingAsync()
+          try await consumer.awaitFinishedConsuming()
         }
       }
       try await group.waitForAll()
@@ -71,7 +89,7 @@ struct LaunchMethodHandler {
   }
 
   private func processOutputForNullDevice() -> FBProcessOutput<AnyObject> {
-    return FBProcessOutput<AnyObject>.forNullDevice() as! FBProcessOutput<AnyObject>
+    return FBProcessOutput<AnyObject>.forNullDevice().retyped(FBProcessOutput<AnyObject>.self)
   }
 
   private func pipeOutput(interface: Idb_ProcessOutput.Interface, responseWriter: FIFOStreamWriter<GRPCAsyncResponseStreamWriter<Idb_LaunchResponse>>) -> (FBDataConsumer & FBDataConsumerLifecycle) {

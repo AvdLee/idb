@@ -25,6 +25,15 @@
 
 // Added in Xcode 9 as -[SimDeviceIOClient attachConsumer:] methods have been removed.
 - (void)unregisterDamageRectanglesCallbackWithUUID:(NSUUID *)arg1;
-- (void)registerCallbackWithUUID:(NSUUID *)arg1 damageRectanglesCallback:(void (^)(NSArray *))arg2;
+/**
+ Historically named for per-region "damage" geometry, this is in practice a per-frame change
+ signal only. Apple's render server brands it the "old-style damageRect callback"; on modern
+ CoreSimulator the server is a whole-frame compositor that computes no changed regions and always
+ invokes the block with an empty array (the array type is a reverse-engineered `NSArray<NSValue *>`
+ convention over an untyped `NSArray`, so any element must still be decoded defensively). Treat an
+ invocation as "a new frame was rendered", not as geometry. Retained as a fallback; prefer the
+ new-style per-present callback where available.
+ */
+- (void)registerCallbackWithUUID:(NSUUID *)arg1 damageRectanglesCallback:(void (^)(NSArray<NSValue *> *))arg2;
 
 @end

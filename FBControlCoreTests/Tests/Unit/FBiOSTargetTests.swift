@@ -58,67 +58,42 @@ final class FBiOSTargetTests: XCTestCase {
     let first = FBiOSTargetDouble()
     first.targetType = .device
     first.state = .booted
-    first.deviceType = FBiOSTargetConfiguration.nameToDevice[.modeliPhone6S]
-    first.osVersion = FBiOSTargetConfiguration.nameToOSVersion[.nameiOS_10_0]
+    first.deviceType = FBiOSTargetConfiguration.nameToDevice[.modeliPhone6S]!
+    first.osVersion = FBiOSTargetConfiguration.nameToOSVersion[.nameiOS_10_0]!
 
     let second = FBiOSTargetDouble()
     second.targetType = .simulator
     second.state = .booted
-    second.deviceType = FBiOSTargetConfiguration.nameToDevice[.modeliPhone6S]
-    second.osVersion = FBiOSTargetConfiguration.nameToOSVersion[.nameiOS_10_0]
+    second.deviceType = FBiOSTargetConfiguration.nameToDevice[.modeliPhone6S]!
+    second.osVersion = FBiOSTargetConfiguration.nameToOSVersion[.nameiOS_10_0]!
 
-    XCTAssertEqual(FBiOSTargetComparison(first, second), .orderedDescending)
+    XCTAssertEqual(first.compare(second), .orderedDescending)
   }
 
   func testOSVersionOrdering() {
     let first = FBiOSTargetDouble()
     first.targetType = .device
     first.state = .booted
-    first.deviceType = FBiOSTargetConfiguration.nameToDevice[.modeliPhone6S]
-    first.osVersion = FBiOSTargetConfiguration.nameToOSVersion[.nameiOS_10_0]
+    first.deviceType = FBiOSTargetConfiguration.nameToDevice[.modeliPhone6S]!
+    first.osVersion = FBiOSTargetConfiguration.nameToOSVersion[.nameiOS_10_0]!
 
     let second = FBiOSTargetDouble()
     second.targetType = .device
-    second.deviceType = FBiOSTargetConfiguration.nameToDevice[.modeliPhone6S]
-    second.osVersion = FBiOSTargetConfiguration.nameToOSVersion[.nameiOS_10_1]
+    second.deviceType = FBiOSTargetConfiguration.nameToDevice[.modeliPhone6S]!
+    second.osVersion = FBiOSTargetConfiguration.nameToOSVersion[.nameiOS_10_1]!
 
-    XCTAssertEqual(FBiOSTargetComparison(first, second), .orderedAscending)
+    XCTAssertEqual(first.compare(second), .orderedAscending)
   }
 
-  func testStateOrdering() {
-    let stateOrder: [FBiOSTargetState] = [
-      .creating,
-      .shutdown,
-      .booting,
-      .booted,
-      .shuttingDown,
-      .unknown,
-    ]
-    var input: [FBiOSTarget] = []
-    for state in stateOrder {
-      let target = FBiOSTargetDouble()
-      target.targetType = .device
-      target.state = state
-      target.deviceType = FBiOSTargetConfiguration.nameToDevice[.modeliPhone6S]
-      target.osVersion = FBiOSTargetConfiguration.nameToOSVersion[.nameiOS_10_0]
-      input.append(target)
-    }
-    for (index, target) in input.enumerated() {
-      let expected = stateOrder[index]
-      let actual = target.state
-      XCTAssertEqual(expected, actual)
-    }
-  }
-
-  func testiPadComesBeforeiPhone() {
+  func testiPhoneComesBeforeiPad() {
     let deviceTypes = FBiOSTargetTests.iPhoneDeviceTypes + FBiOSTargetTests.iPadDeviceTypes
-    var input: [FBiOSTarget] = []
+    var input: [any FBiOSTargetInfo] = []
     for deviceType in deviceTypes {
       let target = FBiOSTargetDouble()
       target.targetType = .device
       target.state = .booted
       target.deviceType = deviceType
-      target.osVersion = FBiOSTargetConfiguration.nameToOSVersion[.nameiOS_10_0]
+      target.osVersion = FBiOSTargetConfiguration.nameToOSVersion[.nameiOS_10_0]!
       input.append(target)
     }
     let output = input.sorted { $0.compare($1) == .orderedAscending }

@@ -5,8 +5,17 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import Darwin
 import Foundation
+
+#if os(macOS)
+import Darwin
+#elseif canImport(Glibc)
+import Glibc
+#elseif canImport(Musl)
+import Musl
+#else
+#error("Unknown platform")
+#endif
 
 /// Discovers running companions and starts them on demand, keyed by simulator /
 /// device udid.
@@ -23,19 +32,9 @@ public final class CompanionManager {
   /// is scoped to simulators.
   private static let simulatorOnlyFilter = "simulator"
 
-  /// - Parameters:
-  ///   - version: which companion generation to discover. Determines the base
-  ///     directory used for the registry, logs, and socket paths (see
-  ///     `CompanionPaths`), so a v1 manager and a v2 manager never collide.
-  ///     Defaults to `.v1`.
-  ///   - companionPath: path to the binary used to spawn companions on demand.
-  ///     Defaults to `version`'s `CompanionPaths.defaultCompanionExecutable`
-  ///     (`idb_companion` for v1, `idb2` for v2); pass an explicit path to
-  ///     override it (e.g. a test fixture).
-  ///   - deviceSetPath: optional custom CoreSimulator device set.
-  ///   - registry: the backing companion registry. Defaults to one rooted at
-  ///     `version`'s state file; pass an explicit registry to override it (e.g. a
-  ///     test fixture with an isolated state file).
+  /// `version` selects the base directory for the registry, logs and sockets (see `CompanionPaths`),
+  /// so v1 and v2 managers never collide. `companionPath` and `registry` default to that version's
+  /// executable and state file.
   public init(
     version: CompanionVersion = .v1,
     companionPath: String? = nil,
@@ -84,7 +83,6 @@ public final class CompanionManager {
       if isAlive(companion) {
         reachable.append(companion)
       } else {
-        // Drop entries whose companion has gone away.
         try registry.remove(udid: companion.udid)
       }
     }
@@ -116,11 +114,10 @@ public final class CompanionManager {
   /// Ensures a companion exists for `udid` and records it. `idleShutdownTime`, if
   /// set, is forwarded to a newly spawned companion as `--idle-shutdown-time`.
   @discardableResult
-  public func spawnCompanionServer(udid: String, only: String? = nil, idleShutdownTime: Int? = nil) async throws -> CompanionInfo {
+  func spawnCompanionServer(udid: String, only: String? = nil, idleShutdownTime: Int? = nil) async throws -> CompanionInfo {
     let path = paths.companionSocketPath(forUDID: udid)
     let info: CompanionInfo
     if CompanionConnectivity.isDomainSocketBound(path: path) {
-      // A companion is already serving this path, so reuse it.
       info = CompanionInfo(udid: udid, isLocal: true, pid: nil, address: .domainSocket(path: path))
     } else {
       info = try await spawner.spawnDomainSocketServer(udid: udid, only: only, path: path, idleShutdownTime: idleShutdownTime)
@@ -141,7 +138,7 @@ public final class CompanionManager {
       guard let pid = companion.pid else {
         continue
       }
-      Darwin.kill(pid, SIGKILL)
+      Platform.kill(pid, SIGKILL)
     }
   }
 }

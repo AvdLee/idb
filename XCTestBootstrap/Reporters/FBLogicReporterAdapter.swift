@@ -8,37 +8,36 @@
 import FBControlCore
 import Foundation
 
-@objc public final class FBLogicReporterAdapter: NSObject, FBLogicXCTestReporter {
+public final class FBLogicReporterAdapter: FBLogicXCTestReporter {
 
   private let reporter: FBXCTestReporter
   private let logger: FBControlCoreLogger?
 
-  @objc public init(reporter: FBXCTestReporter, logger: FBControlCoreLogger?) {
+  public init(reporter: FBXCTestReporter, logger: FBControlCoreLogger?) {
     self.reporter = reporter
     self.logger = logger?.withName("FBLogicReporterAdapter") as (any FBControlCoreLogger)?
-    super.init()
   }
 
-  // MARK: FBLogicXCTestReporter
+  // MARK: - FBLogicXCTestReporter
 
-  @objc public func didBeginExecutingTestPlan() {
+  public func didBeginExecutingTestPlan() {
     reporter.didBeginExecutingTestPlan()
   }
 
-  @objc public func didFinishExecutingTestPlan() {
+  public func didFinishExecutingTestPlan() {
     reporter.didFinishExecutingTestPlan()
     reporter.processUnderTestDidExit()
   }
 
-  @objc public func processWaitingForDebugger(withProcessIdentifier pid: pid_t) {
+  public func processWaitingForDebugger(withProcessIdentifier pid: pid_t) {
     reporter.processWaitingForDebugger(withProcessIdentifier: pid)
   }
 
-  @objc public func testHadOutput(_ output: String) {
+  public func testHadOutput(_ output: String) {
     reporter.testHadOutput(output)
   }
 
-  @objc public func handleEventJSONData(_ data: Data) {
+  public func handleEventJSONData(_ data: Data) {
     if data.isEmpty {
       logger?.log("Received zero-length JSON data")
       return
@@ -86,14 +85,12 @@ import Foundation
     }
   }
 
-  @objc public func didCrashDuringTest(_ error: Error) {
+  public func didCrashDuringTest(_ error: Error) {
     if reporter.responds(to: #selector(FBXCTestReporter.didCrashDuringTest(_:))) {
       reporter.didCrashDuringTest(error as NSError)
     }
     reporter.processUnderTestDidExit()
   }
-
-  // MARK: Private
 
   private func handleEndTest(_ jsonEvent: [String: Any], data: Data) {
     let testClass = jsonEvent["className"] as? String ?? ""

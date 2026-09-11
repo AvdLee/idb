@@ -1,0 +1,308 @@
+/*
+ * Copyright (c) Meta Platforms, Inc. and affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+@preconcurrency import CoreSimulator
+@preconcurrency import FBControlCore
+@preconcurrency import Foundation
+
+extension FBSimulatorConfiguration {
+
+  // MARK: - Matching Configuration against Available Versions
+
+  static func newestAvailableOS(forDevice device: FBDeviceType) throws -> FBOSVersion? {
+    try FBSimulatorConfiguration.supportedOSVersions(forDevice: device).last
+  }
+
+  func newestAvailableOS() throws -> FBSimulatorConfiguration {
+    guard let os = try FBSimulatorConfiguration.newestAvailableOS(forDevice: device) else {
+      throw SimulatorConfigurationError.noNewestAvailableOS(device: device.model.rawValue)
+    }
+    return withOSNamed(os.name)
+  }
+
+  static func oldestAvailableOS(forDevice device: FBDeviceType) throws -> FBOSVersion? {
+    try FBSimulatorConfiguration.supportedOSVersions(forDevice: device).first
+  }
+
+  func oldestAvailableOS() throws -> FBSimulatorConfiguration {
+    guard let os = try FBSimulatorConfiguration.oldestAvailableOS(forDevice: device) else {
+      throw SimulatorConfigurationError.noOldestAvailableOS(device: device.model.rawValue)
+    }
+    return withOSNamed(os.name)
+  }
+
+  static func inferSimulatorConfiguration(fromDevice simDevice: SimDevice) throws -> FBSimulatorConfiguration {
+    let metadata = resolvedMetadata(from: simDevice)
+    guard let runtimeName = metadata.runtimeName else {
+      throw SimulatorConfigurationError.missingRuntimeMetadata(identifier: simDevice.runtimeIdentifier)
+    }
+    let osName = FBOSVersionName(rawValue: runtimeName)
+    guard FBiOSTargetConfiguration.nameToOSVersion[osName] != nil else {
+      throw SimulatorConfigurationError.unsupportedOSVersion(name: osName.rawValue)
+    }
+    guard let deviceModelName = metadata.deviceModelName else {
+      throw SimulatorConfigurationError.missingDeviceTypeMetadata(identifier: simDevice.deviceTypeIdentifier)
+    }
+    let model = FBDeviceModel(rawValue: deviceModelName)
+    guard FBiOSTargetConfiguration.nameToDevice[model] != nil else {
+      throw SimulatorConfigurationError.unsupportedDevice(name: model.rawValue)
+    }
+    return try FBSimulatorConfiguration.defaultConfiguration().withOSNamed(osName).withDeviceModel(model)
+  }
+
+  static func inferSimulatorConfigurationFromDeviceSynthesizingMissing(_ simDevice: SimDevice) -> FBSimulatorConfiguration {
+    if let configuration = try? inferSimulatorConfiguration(fromDevice: simDevice) {
+      return configuration
+    }
+    let metadata = resolvedMetadata(from: simDevice)
+    let fallback = try? defaultConfiguration()
+    let osName = metadata.runtimeName.map(FBOSVersionName.init(rawValue:))
+      ?? fallback?.os.name
+      ?? FBOSVersionName(rawValue: "Unknown Runtime")
+    let model = metadata.deviceModelName.map(FBDeviceModel.init(rawValue:))
+      ?? fallback?.device.model
+      ?? FBDeviceModel(rawValue: "Unknown Device")
+    let os = FBiOSTargetConfiguration.nameToOSVersion[osName] ?? FBOSVersion.generic(withName: osName.rawValue)
+    let device = FBiOSTargetConfiguration.nameToDevice[model] ?? FBDeviceType.generic(withName: model.rawValue)
+    return FBSimulatorConfiguration(device: device, os: os)
+  }
+
+  func checkRuntimeRequirements() throws {
+    let runtime: SimRuntime
+    do {
+      runtime = try obtainRuntime()
+    } catch {
+      throw SimulatorConfigurationError.runtimeUnavailable(configuration: "\(self)", reason: error.localizedDescription)
+    }
+    let deviceType: SimDeviceType
+    do {
+      deviceType = try obtainDeviceType()
+    } catch {
+      throw SimulatorConfigurationError.deviceTypeUnavailable(configuration: "\(self)", reason: error.localizedDescription)
+    }
+    if !runtime.supportsDeviceType(deviceType) {
+      throw SimulatorConfigurationError.runtimeDeviceTypeMismatch(
+        deviceType: deviceType.name ?? "unknown",
+        runtime: runtime.name ?? "unknown")
+    }
+  }
+
+  public static func supportedOSVersions() throws -> [FBOSVersion] {
+    try osVersions(forRuntimes: supportedRuntimes())
+  }
+
+  public static func supportedOSVersions(forDevice device: FBDeviceType) throws -> [FBOSVersion] {
+    try osVersions(forRuntimes: supportedRuntimes(forDevice: device))
+  }
+
+  public static func allAvailableDefaultConfigrations(withLogger logger: (any FBControlCoreLogger)?) throws -> [FBSimulatorConfiguration] {
+    var absentOSVersions: NSArray?
+    var absentDeviceTypes: NSArray?
+    let configurations = try allAvailableDefaultConfigrations(withAbsentOSVersionsOut: &absentOSVersions, absentDeviceTypesOut: &absentDeviceTypes)
+    if let absentOSVersions = absentOSVersions as? [String] {
+      for osVersion in absentOSVersions {
+        logger?.error().log("OS Version configuration for '\(osVersion)' is missing")
+      }
+    }
+    if let absentDeviceTypes = absentDeviceTypes as? [String] {
+      for deviceType in absentDeviceTypes {
+        logger?.error().log("Device Type configuration for '\(deviceType)' is missing")
+      }
+    }
+    return configurations
+  }
+
+  public static func allAvailableDefaultConfigrations(
+    withAbsentOSVersionsOut absentOSVersionsOut: AutoreleasingUnsafeMutablePointer<NSArray?>?,
+    absentDeviceTypesOut: AutoreleasingUnsafeMutablePointer<NSArray?>?
+  ) throws -> [FBSimulatorConfiguration] {
+    var configurations: [FBSimulatorConfiguration] = []
+    var absentOSVersions: [String] = []
+    var absentDeviceTypes: [String] = []
+    let deviceTypes = try supportedDeviceTypes()
+
+    for runtime in try supportedRuntimes() {
+      if !runtime.available {
+        continue
+      }
+      let runtimeName = runtime.name ?? "unknown"
+      let osName = FBOSVersionName(rawValue: runtimeName)
+      if FBiOSTargetConfiguration.nameToOSVersion[osName] == nil {
+        absentOSVersions.append(runtimeName)
+        continue
+      }
+
+      for deviceType in deviceTypes {
+        if !runtime.supportsDeviceType(deviceType) {
+          continue
+        }
+        let deviceTypeName = deviceType.name ?? "unknown"
+        let model = FBDeviceModel(rawValue: deviceTypeName)
+        if FBiOSTargetConfiguration.nameToDevice[model] == nil {
+          absentDeviceTypes.append(deviceTypeName)
+          continue
+        }
+
+        let configuration = try FBSimulatorConfiguration.defaultConfiguration().withDeviceModel(model).withOSNamed(osName)
+        configurations.append(configuration)
+      }
+    }
+
+    absentOSVersionsOut?.pointee = absentOSVersions as NSArray
+    absentDeviceTypesOut?.pointee = absentDeviceTypes as NSArray
+    return configurations
+  }
+
+  // MARK: - Obtaining CoreSimulator Classes
+
+  func obtainRuntime() throws -> SimRuntime {
+    try FBSimulatorConfiguration.resolveRuntime(for: self, from: FBSimulatorConfiguration.supportedRuntimes())
+  }
+
+  /// Pure matching over the supplied runtimes, separated from the CoreSimulator service
+  /// context so the resolution rules are directly testable.
+  static func resolveRuntime(for configuration: FBSimulatorConfiguration, from runtimes: [SimRuntime]) throws -> SimRuntime {
+    let matchingRuntimes = runtimes.filter { runtime in
+      runtime.available
+        && runtime.name == configuration.os.name.rawValue
+        && FBSimulatorConfiguration.runtime(runtime, supportsFamilyOf: configuration.device)
+    }
+    // Multiple builds of one runtime version can be installed side by side (a normal
+    // beta-cycle state); a version tie resolves to the newest build rather than failing.
+    // `max` is nil only for an empty collection, so the guard doubles as the no-match check.
+    guard
+      let newest = matchingRuntimes.max(by: { left, right in
+        (left.buildVersionString ?? "").compare(right.buildVersionString ?? "", options: .numeric) == .orderedAscending
+      })
+    else {
+      throw SimulatorConfigurationError.noMatchingRuntime(available: "\(runtimes)")
+    }
+    return newest
+  }
+
+  func obtainDeviceType() throws -> SimDeviceType {
+    let deviceTypes = try FBSimulatorConfiguration.supportedDeviceTypes()
+    let matchingDeviceTypes = deviceTypes.filter { $0.name == device.model.rawValue }
+    if matchingDeviceTypes.isEmpty {
+      throw SimulatorConfigurationError.noMatchingDeviceType(available: "\(matchingDeviceTypes)")
+    }
+    if matchingDeviceTypes.count > 1 {
+      throw SimulatorConfigurationError.ambiguousDeviceType(matches: "\(matchingDeviceTypes)")
+    }
+    return matchingDeviceTypes[0]
+  }
+
+  // MARK: - Private
+
+  private static func osVersions(forRuntimes runtimes: [SimRuntime]) -> [FBOSVersion] {
+    runtimes.map { runtime in
+      guard let name = FBOSVersionName(rawValue: runtime.name) else {
+        return FBOSVersion.generic(withName: "unknown")
+      }
+      return FBiOSTargetConfiguration.nameToOSVersion[name] ?? FBOSVersion.generic(withName: name.rawValue)
+    }
+  }
+
+  private static func supportedRuntimes() throws -> [SimRuntime] {
+    try SimulatorServiceContext.sharedServiceContext().supportedRuntimes()
+  }
+
+  private static func supportedDeviceTypes() throws -> [SimDeviceType] {
+    try SimulatorServiceContext.sharedServiceContext().supportedDeviceTypes()
+  }
+
+  private struct ResolvedMetadata {
+    let runtimeName: String?
+    let deviceModelName: String?
+  }
+
+  private static func resolvedMetadata(from simDevice: SimDevice) -> ResolvedMetadata {
+    let runtimeIdentifier = nonEmpty(simDevice.runtimeIdentifier)
+    let runtimeName = resolvedMetadataName(
+      directName: metadataName(forKey: "runtime", from: simDevice),
+      identifier: runtimeIdentifier
+    ) {
+      try supportedRuntimes().map { (identifier: $0.identifier, name: $0.name) }
+    } ?? runtimeName(fromIdentifier: runtimeIdentifier)
+    let deviceModelName = resolvedMetadataName(
+      directName: metadataName(forKey: "deviceType", from: simDevice),
+      identifier: nonEmpty(simDevice.deviceTypeIdentifier)
+    ) {
+      try supportedDeviceTypes().map { (identifier: $0.identifier, name: $0.name) }
+    }
+    return ResolvedMetadata(runtimeName: runtimeName, deviceModelName: deviceModelName)
+  }
+
+  static func resolvedMetadataName(
+    directName: String?,
+    identifier: String?,
+    candidates: () throws -> [(identifier: String?, name: String?)]
+  ) -> String? {
+    if let directName = nonEmpty(directName) {
+      return directName
+    }
+    guard let identifier = nonEmpty(identifier), let candidates = try? candidates() else {
+      return nil
+    }
+    return candidates.first { nonEmpty($0.identifier) == identifier }
+      .flatMap { nonEmpty($0.name) }
+  }
+
+  static func runtimeName(fromIdentifier identifier: String?) -> String? {
+    let prefix = "com.apple.CoreSimulator.SimRuntime."
+    guard let identifier = nonEmpty(identifier), identifier.hasPrefix(prefix) else {
+      return nil
+    }
+    let components = identifier.dropFirst(prefix.count).split(separator: "-")
+    guard components.count >= 2, components.dropFirst().allSatisfy({ Int($0) != nil }) else {
+      return nil
+    }
+    return "\(components[0]) \(components.dropFirst().joined(separator: "."))"
+  }
+
+  private static func metadataName(forKey key: String, from simDevice: SimDevice) -> String? {
+    guard let metadata = simDevice.value(forKey: key) as? NSObject else {
+      return nil
+    }
+    return nonEmpty(metadata.value(forKey: "name") as? String)
+  }
+
+  private static func nonEmpty(_ value: String?) -> String? {
+    guard let value, !value.isEmpty else {
+      return nil
+    }
+    return value
+  }
+
+  private static func supportedRuntimes(forDevice device: FBDeviceType) throws -> [SimRuntime] {
+    try supportedRuntimes()
+      .filter { runtime($0, supportsFamilyOf: device) }
+      .sorted { left, right in
+        let leftVersion = NSDecimalNumber(string: left.versionString)
+        let rightVersion = NSDecimalNumber(string: right.versionString)
+        return leftVersion.compare(rightVersion) == .orderedAscending
+      }
+  }
+
+  private static func runtime(_ runtime: SimRuntime, supportsFamilyOf device: FBDeviceType) -> Bool {
+    guard let familyIDs = runtime.supportedProductFamilyIDs as? [NSNumber] else {
+      return false
+    }
+    return familyIDs.contains(NSNumber(value: device.family.rawValue))
+  }
+}
+
+extension FBOSVersionName {
+  /// CoreSimulator's un-annotated headers surface `SimRuntime.name` as optional; a runtime
+  /// with no name has no version name, rather than a version name made from a placeholder.
+  fileprivate init?(rawValue: String?) {
+    guard let rawValue else {
+      return nil
+    }
+    self.init(rawValue: rawValue)
+  }
+}

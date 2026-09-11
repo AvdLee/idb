@@ -23,6 +23,18 @@ static int gClientFd = -1;
 // lost connection should end the process or just reset. Set when the server starts.
 static BOOL gHostOutlivesSession = NO;
 
+// The next run index for compiled dylibs, bumped once per executed command.
+// Persists for the process lifetime -- including across client reconnects for the
+// `app` context.
+static int gRunIndex = 0;
+
+// A stable identifier for this REPL host process, generated once and persisted for
+// the process lifetime -- including across client reconnects for the `app` context
+// (like gRunIndex). The driver keys its session report on this: reconnecting to a
+// still-running app sees the same id and appends to the report, while a relaunch is
+// a new process with a new id that starts the report fresh.
+static NSString *gSessionID = nil;
+
 // MARK: - Socket Setup
 
 static int CreateSocketAtPath(NSString *socketPath)
@@ -48,13 +60,7 @@ static int CreateSocketAtPath(NSString *socketPath)
   return fd;
 }
 
-// MARK: - Framing
-//
-// Each message is a length-prefixed frame: a 4-byte big-endian byte count
-// followed by that many bytes of a binary property list. Framing by length
-// (rather than a delimiter) lets a payload carry arbitrary binary -- so command
-// and response values travel as raw property-list data and round-trip exactly,
-// with no delimiter byte to collide with or escape.
+// MARK: - Framing (see ReplSocketServer.h)
 
 static BOOL ReadFully(int fd, void *buffer, size_t count)
 {
@@ -73,7 +79,11 @@ static BOOL WriteFully(int fd, const void *buffer, size_t count)
 {
   size_t total = 0;
   while (total < count) {
-    ssize_t n = write(fd, (const char *)buffer + total, count - total);
+    // Use send() with MSG_NOSIGNAL rather than write() so a write to a client
+    // that has hung up without completing the protocol (e.g. the reattach
+    // liveness probe connects then closes without reading) fails with EPIPE
+    // instead of raising SIGPIPE and terminating the host app.
+    ssize_t n = send(fd, (const char *)buffer + total, count - total, MSG_NOSIGNAL);
     if (n <= 0) {
       return NO;
     }
@@ -167,9 +177,11 @@ static NSDictionary *ProcessCommand(NSDictionary *command)
 
 int FBReplServeSocket(NSString *socketPath, NSArray<NSString *> *generatedInterfaces, BOOL keepListening)
 {
-  // Record the host's lifetime mode so injected code (via FBReplHostOutlivesSession)
-  // can tell whether a dropped connection should end the process or just reset.
   gHostOutlivesSession = keepListening;
+
+  if (gSessionID == nil) {
+    gSessionID = [[[NSUUID UUID] UUIDString] copy];
+  }
 
   if (socketPath.length == 0) {
     return 0;
@@ -180,10 +192,8 @@ int FBReplServeSocket(NSString *socketPath, NSArray<NSString *> *generatedInterf
     return 1;
   }
 
-  // Accept a connection and process commands until it closes. In keepListening
-  // mode (the app context) loop back to accept the next client so the in-app REPL
-  // resets and stays ready; otherwise serve a single connection and return so the
-  // host process exits (test / simulator contexts).
+  // keepListening (app context): re-accept after each client disconnects instead of
+  // returning.
   BOOL listening = YES;
   while (listening) {
     int clientFd = accept(serverFd, NULL, NULL);
@@ -191,9 +201,7 @@ int FBReplServeSocket(NSString *socketPath, NSArray<NSString *> *generatedInterf
       break;
     }
     gClientFd = clientFd;
-    // Greet the client with the .swiftinterface paths the probe generated (an
-    // empty list when there are none), then handle commands.
-    WriteMessage(@{@"type" : @"greeting", @"interfaces" : generatedInterfaces ?: @[]}, clientFd);
+    WriteMessage(@{@"type" : @"greeting", @"interfaces" : generatedInterfaces ?: @[], @"nextRunIndex" : @(gRunIndex), @"sessionID" : gSessionID ?: @""}, clientFd);
     BOOL connected = YES;
     while (connected) {
       @autoreleasepool {
@@ -203,6 +211,8 @@ int FBReplServeSocket(NSString *socketPath, NSArray<NSString *> *generatedInterf
         } else {
           NSMutableDictionary *response = [ProcessCommand(command) mutableCopy];
           response[@"type"] = @"result";
+          gRunIndex++;
+          response[@"nextRunIndex"] = @(gRunIndex);
           WriteMessage(response, clientFd);
           [response release];
         }

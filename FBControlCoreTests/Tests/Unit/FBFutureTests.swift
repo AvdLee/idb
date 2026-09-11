@@ -691,6 +691,49 @@ final class FBFutureTests: XCTestCase {
     XCTAssertEqual(cancelFuture.state, .cancelled)
   }
 
+  func testResolveValueReturnsResultSynchronously() {
+    let future = FBFuture<AnyObject>.resolveValue { _ in
+      NSNumber(value: 7)
+    }
+
+    XCTAssertEqual(future.state, .done)
+    XCTAssertEqual(future.result as? NSNumber, NSNumber(value: 7))
+    XCTAssertNil(future.error)
+  }
+
+  func testResolveValueUsesErrorWhenBlockReturnsNil() {
+    let expectedError = NSError(domain: "resolve-value", code: 3, userInfo: nil)
+
+    let future = FBFuture<AnyObject>.resolveValue { error in
+      error?.pointee = expectedError
+      return nil
+    }
+
+    XCTAssertEqual(future.state, .failed)
+    XCTAssertEqual(future.error as NSError?, expectedError)
+    XCTAssertNil(future.result)
+  }
+
+  func testAsyncResolveValueResolvesOnProvidedQueue() {
+    let resolverCalled = XCTestExpectation(description: "Resolver called")
+    let completionCalled = XCTestExpectation(description: "Completion called")
+    let future = FBFuture<AnyObject>.onQueue(
+      queue,
+      resolveValue: { _ in
+        resolverCalled.fulfill()
+        return NSNumber(value: 11)
+      })
+    future.onQueue(
+      queue,
+      notifyOfCompletion: { completed in
+        XCTAssertEqual(completed.state, FBFutureState.done)
+        XCTAssertEqual(completed.result as? NSNumber, NSNumber(value: 11))
+        completionCalled.fulfill()
+      })
+
+    wait(for: [resolverCalled, completionCalled], timeout: FBControlCoreGlobalConfiguration.fastTimeout)
+  }
+
   func testTimedOutIn() {
     let future = FBMutableFuture<NSNumber>()
       .onQueue(
@@ -1043,475 +1086,50 @@ final class FBFutureTests: XCTestCase {
     XCTAssertEqual(raced.result as? NSNumber, NSNumber(value: true))
   }
 
-  func testContextualTeardownOrdering() {
-    var fmapCalled = false
-    var teardownCalled = false
-    let completionExpectation = XCTestExpectation(description: "Resolved Completion")
-    let teardownExpectation = XCTestExpectation(description: "Resolved Teardown")
+  func testDelayedFutureResolvesFromWrappedFuture() {
+    let future = FBFuture<AnyObject>(result: NSNumber(value: 21)).delay(0.1)
 
-    FBFuture<AnyObject>(result: NSNumber(value: 1))
-      .onQueue(
-        queue,
-        contextualTeardown: { value, state in
-          XCTAssertTrue(fmapCalled)
-          XCTAssertEqual(value as? NSNumber, NSNumber(value: 1))
-          XCTAssertEqual(state, .done)
-          teardownCalled = true
-          teardownExpectation.fulfill()
-          return FBFuture<NSNull>.empty()
-        }
-      )
-      .onQueue(
-        queue,
-        pend: { value in
-          XCTAssertEqual(value as? NSNumber, NSNumber(value: 1))
-          return FBFuture<AnyObject>(result: NSNumber(value: 2))
-        }
-      )
-      .onQueue(
-        queue,
-        handleError: { error in
-          // should not be called and should not affect teardowns
-          XCTFail()
-          return FBFuture<AnyObject>(error: error)
-        }
-      )
-      .onQueue(
-        queue,
-        pop: { value in
-          XCTAssertFalse(teardownCalled)
-          XCTAssertEqual(value as? NSNumber, NSNumber(value: 2))
-          fmapCalled = true
-          return FBFuture<AnyObject>(result: NSNumber(value: 3))
-        }
-      )
-      .onQueue(
-        queue,
-        notifyOfCompletion: { future in
-          XCTAssertTrue(fmapCalled)
-          XCTAssertEqual(future.result as? NSNumber, NSNumber(value: 3))
-          completionExpectation.fulfill()
-        })
-
-    wait(for: [completionExpectation], timeout: FBControlCoreGlobalConfiguration.fastTimeout)
-    wait(for: [teardownExpectation], timeout: FBControlCoreGlobalConfiguration.fastTimeout)
+    wait(
+      for: [
+        keyValueObservingExpectation(for: future, keyPath: "result", expectedValue: NSNumber(value: 21)),
+        keyValueObservingExpectation(for: future, keyPath: "state", expectedValue: FBFutureState.done.rawValue as NSNumber),
+      ], timeout: FBControlCoreGlobalConfiguration.fastTimeout)
   }
 
-  func testContextualTeardownWithErrorHandling() {
-    let completionExpectation = XCTestExpectation(description: "Resolved Completion")
-    let teardownExpectation = XCTestExpectation(description: "Resolved Teardown")
-    let errorHandlingExpectation = XCTestExpectation(description: "Handled Error")
+  func testRephraseFailureReplacesErrorDescription() {
+    let completionCalled = XCTestExpectation(description: "Completion called")
+    let underlyingError = NSError(
+      domain: "underlying",
+      code: 12,
+      userInfo: [NSLocalizedDescriptionKey: "low level failure"])
+    let future = FBFuture<AnyObject>(error: underlyingError).rephraseFailure("higher level operation failed")
+    future.onQueue(
+      queue,
+      notifyOfCompletion: { completed in
+        XCTAssertEqual(completed.state, FBFutureState.failed)
+        XCTAssertTrue(completed.error?.localizedDescription.contains("higher level operation failed") ?? false)
+        XCTAssertNotEqual(completed.error as NSError?, underlyingError)
+        completionCalled.fulfill()
+      })
 
-    FBFuture<AnyObject>(result: NSNumber(value: 1))
-      .onQueue(
-        queue,
-        contextualTeardown: { value, state in
-          XCTAssertEqual(value as? NSNumber, NSNumber(value: 1))
-          XCTAssertEqual(state, .done)
-          teardownExpectation.fulfill()
-          return FBFuture<NSNull>.empty()
-        }
-      )
-      .onQueue(
-        queue,
-        pend: { _ in
-          return FBFuture<AnyObject>(error: NSError(domain: "e", code: 0, userInfo: nil))
-        }
-      )
-      .onQueue(
-        queue,
-        handleError: { _ in
-          errorHandlingExpectation.fulfill()
-          return FBFuture<AnyObject>(result: NSNumber(value: 2))
-        }
-      )
-      .onQueue(
-        queue,
-        pop: { value in
-          return FBFuture<AnyObject>(result: value)
-        }
-      )
-      .onQueue(
-        queue,
-        notifyOfCompletion: { future in
-          XCTAssertEqual(future.result as? NSNumber, NSNumber(value: 2))
-          completionExpectation.fulfill()
-        })
-
-    wait(for: [completionExpectation], timeout: FBControlCoreGlobalConfiguration.fastTimeout)
-    wait(for: [errorHandlingExpectation], timeout: FBControlCoreGlobalConfiguration.fastTimeout)
-    wait(for: [teardownExpectation], timeout: FBControlCoreGlobalConfiguration.fastTimeout)
+    wait(for: [completionCalled], timeout: FBControlCoreGlobalConfiguration.fastTimeout)
   }
 
-  func testContextualTeardownWithErrorMapping() {
-    let completionExpectation = XCTestExpectation(description: "Resolved Completion")
-    let teardownExpectation = XCTestExpectation(description: "Resolved Teardown")
-    let errorHandlingExpectation = XCTestExpectation(description: "Handled Error")
+  func testLogCompletionIncludesPurposeAndResolvedState() {
+    let logger = CapturingFutureLogger()
+    let completionLogged = XCTestExpectation(description: "Completion logged")
+    logger.onLog = {
+      completionLogged.fulfill()
+    }
 
-    FBFuture<AnyObject>(result: NSNumber(value: 1))
-      .onQueue(
-        queue,
-        contextualTeardown: { _, _ in
-          teardownExpectation.fulfill()
-          return FBFuture<NSNull>.empty()
-        }
-      )
-      .onQueue(
-        queue,
-        pend: { _ in
-          return FBFuture<AnyObject>(error: NSError(domain: "e", code: 0, userInfo: nil))
-        }
-      )
-      .onQueue(
-        queue,
-        handleError: { _ in
-          errorHandlingExpectation.fulfill()
-          return FBFuture<AnyObject>(error: NSError(domain: "e", code: 42, userInfo: nil))
-        }
-      )
-      .onQueue(
-        queue,
-        pop: { value in
-          return FBFuture<AnyObject>(result: value)
-        }
-      )
-      .onQueue(
-        queue,
-        notifyOfCompletion: { future in
-          XCTAssertNotNil(future.error)
-          XCTAssertEqual((future.error as NSError?)?.code, 42)
-          completionExpectation.fulfill()
-        })
+    FBFuture<AnyObject>(result: NSNumber(value: 5))
+      .named("Fetch")
+      .logCompletion(logger, withPurpose: "loading value")
 
-    wait(for: [completionExpectation], timeout: FBControlCoreGlobalConfiguration.fastTimeout)
-    wait(for: [errorHandlingExpectation], timeout: FBControlCoreGlobalConfiguration.fastTimeout)
-    wait(for: [teardownExpectation], timeout: FBControlCoreGlobalConfiguration.fastTimeout)
-  }
-
-  func testStackedTeardownBehavesLikeAStack() {
-    var fmapCalled = false
-    var outerTeardownCalled = false
-    var innerTeardownCalled = false
-    let completionExpectation = XCTestExpectation(description: "Resolved Completion")
-    let outerTeardownExpectation = XCTestExpectation(description: "Resolved Outer Teardown")
-    let innerTeardownExpectation = XCTestExpectation(description: "Resolved Inner Teardown")
-
-    FBFuture<AnyObject>(result: NSNumber(value: 1))
-      .onQueue(
-        queue,
-        contextualTeardown: { value, state in
-          XCTAssertTrue(fmapCalled)
-          XCTAssertTrue(innerTeardownCalled)
-          XCTAssertEqual(value as? NSNumber, NSNumber(value: 1))
-          XCTAssertEqual(state, .done)
-          outerTeardownCalled = true
-          outerTeardownExpectation.fulfill()
-          return FBFuture<NSNull>.empty().delay(1)
-        }
-      )
-      .onQueue(
-        queue,
-        push: { value in
-          XCTAssertEqual(value as? NSNumber, NSNumber(value: 1))
-          return FBFuture<AnyObject>(result: NSNumber(value: 2)).onQueue(
-            self.queue,
-            contextualTeardown: { innerValue, innerState in
-              XCTAssertEqual(innerValue as? NSNumber, NSNumber(value: 2))
-              XCTAssertFalse(outerTeardownCalled)
-              XCTAssertEqual(innerState, .done)
-              innerTeardownCalled = true
-              innerTeardownExpectation.fulfill()
-              return FBFuture<NSNull>.empty()
-            })
-        }
-      )
-      .onQueue(
-        queue,
-        pop: { value in
-          XCTAssertFalse(outerTeardownCalled)
-          XCTAssertEqual(value as? NSNumber, NSNumber(value: 2))
-          fmapCalled = true
-          return FBFuture<AnyObject>(result: NSNumber(value: 3))
-        }
-      )
-      .onQueue(
-        queue,
-        notifyOfCompletion: { future in
-          XCTAssertTrue(fmapCalled)
-          XCTAssertEqual(future.result as? NSNumber, NSNumber(value: 3))
-          completionExpectation.fulfill()
-        })
-
-    wait(for: [completionExpectation], timeout: FBControlCoreGlobalConfiguration.fastTimeout)
-    wait(for: [outerTeardownExpectation, innerTeardownExpectation], timeout: FBControlCoreGlobalConfiguration.fastTimeout)
-  }
-
-  func testReplacedTeardownStack() {
-    var popCalled = false
-    var firstTeardownCalled = false
-    var replacedTeardownCalled = false
-    let completionExpectation = XCTestExpectation(description: "Resolved Completion")
-    let firstTeardownExpectation = XCTestExpectation(description: "Resolved Outer Teardown")
-    let replacedTeardownExpectation = XCTestExpectation(description: "Resolved Inner Teardown")
-    FBFuture<AnyObject>(result: NSNumber(value: 1))
-      .onQueue(
-        queue,
-        contextualTeardown: { value, state in
-          XCTAssertFalse(popCalled)
-          XCTAssertFalse(replacedTeardownCalled)
-          XCTAssertEqual(value as? NSNumber, NSNumber(value: 1))
-          XCTAssertEqual(state, .done)
-          firstTeardownCalled = true
-          firstTeardownExpectation.fulfill()
-          return FBFuture<NSNull>.empty().delay(1)
-        }
-      )
-      .onQueue(
-        queue,
-        replace: { value in
-          XCTAssertEqual(value as? NSNumber, NSNumber(value: 1))
-          return FBFuture<AnyObject>(result: NSNumber(value: 2))
-            .onQueue(
-              self.queue,
-              contextualTeardown: { innerValue, state in
-                XCTAssertTrue(popCalled)
-                XCTAssertEqual(innerValue as? NSNumber, NSNumber(value: 2))
-                XCTAssertTrue(firstTeardownCalled)
-                XCTAssertFalse(replacedTeardownCalled)
-                replacedTeardownCalled = true
-                replacedTeardownExpectation.fulfill()
-                return FBFuture<NSNull>.empty()
-              })
-        }
-      )
-      .onQueue(
-        queue,
-        pop: { value in
-          XCTAssertTrue(firstTeardownCalled)
-          XCTAssertFalse(replacedTeardownCalled)
-          XCTAssertEqual(value as? NSNumber, NSNumber(value: 2))
-          popCalled = true
-          return FBFuture<AnyObject>(result: NSNumber(value: 3))
-        }
-      )
-      .onQueue(
-        queue,
-        notifyOfCompletion: { future in
-          XCTAssertTrue(popCalled)
-          XCTAssertEqual(future.result as? NSNumber, NSNumber(value: 3))
-          completionExpectation.fulfill()
-        })
-    wait(for: [completionExpectation], timeout: FBControlCoreGlobalConfiguration.fastTimeout)
-    wait(for: [firstTeardownExpectation, replacedTeardownExpectation], timeout: FBControlCoreGlobalConfiguration.fastTimeout)
-  }
-
-  func testAdditionalTeardownOrdering() {
-    var popCalled = false
-    var initialTeardownCalled = false
-    var subsequentTeardownCalled = false
-    let completionExpectation = XCTestExpectation(description: "Resolved Completion")
-    let initialTeardownExpectation = XCTestExpectation(description: "Resolved Outer Teardown")
-    let subsequentTeardownExpectation = XCTestExpectation(description: "Resolved Inner Teardown")
-
-    FBFuture<AnyObject>(result: NSNumber(value: 1))
-      .onQueue(
-        queue,
-        contextualTeardown: { value, state in
-          XCTAssertTrue(popCalled)
-          XCTAssertTrue(subsequentTeardownCalled)
-          XCTAssertEqual(value as? NSNumber, NSNumber(value: 1))
-          XCTAssertEqual(state, .done)
-          initialTeardownCalled = true
-          initialTeardownExpectation.fulfill()
-          return FBFuture<NSNull>.empty()
-        }
-      )
-      .onQueue(
-        queue,
-        contextualTeardown: { value, state in
-          XCTAssertTrue(popCalled)
-          XCTAssertFalse(initialTeardownCalled)
-          XCTAssertEqual(value as? NSNumber, NSNumber(value: 1))
-          XCTAssertEqual(state, .done)
-          subsequentTeardownCalled = true
-          subsequentTeardownExpectation.fulfill()
-          return FBFuture<NSNull>.empty().delay(1)
-        }
-      )
-      .onQueue(
-        queue,
-        pop: { value in
-          XCTAssertFalse(initialTeardownCalled)
-          XCTAssertFalse(subsequentTeardownCalled)
-          XCTAssertEqual(value as? NSNumber, NSNumber(value: 1))
-          popCalled = true
-          return FBFuture<AnyObject>(result: NSNumber(value: 3))
-        }
-      )
-      .onQueue(
-        queue,
-        notifyOfCompletion: { future in
-          XCTAssertTrue(popCalled)
-          XCTAssertEqual(future.result as? NSNumber, NSNumber(value: 3))
-          completionExpectation.fulfill()
-        })
-
-    wait(for: [completionExpectation], timeout: FBControlCoreGlobalConfiguration.fastTimeout)
-    wait(for: [initialTeardownExpectation, subsequentTeardownExpectation], timeout: FBControlCoreGlobalConfiguration.fastTimeout)
-  }
-
-  func testStackedErrorDoesNotResolveInnerStack() {
-    let error = NSError(domain: "foo", code: 2, userInfo: nil)
-
-    var pushCalled = false
-    var outerTeardownCalled = false
-    let completionExpectation = XCTestExpectation(description: "Resolved Completion")
-    let outerTeardownExpectation = XCTestExpectation(description: "Resolved Outer Teardown")
-
-    FBFuture<AnyObject>(result: NSNumber(value: 1))
-      .onQueue(
-        queue,
-        contextualTeardown: { value, state in
-          XCTAssertTrue(pushCalled)
-          XCTAssertEqual(value as? NSNumber, NSNumber(value: 1))
-          XCTAssertEqual(state, .failed)
-          outerTeardownCalled = true
-          outerTeardownExpectation.fulfill()
-          return FBFuture<NSNull>.empty()
-        }
-      )
-      .onQueue(
-        queue,
-        push: { value in
-          pushCalled = true
-          XCTAssertEqual(value as? NSNumber, NSNumber(value: 1))
-          return FBFuture<AnyObject>(error: error).onQueue(
-            self.queue,
-            contextualTeardown: { _, _ in
-              XCTFail("Should not resolve error teardown")
-              return FBFuture<NSNull>.empty()
-            })
-        }
-      )
-      .onQueue(
-        queue,
-        pop: { _ in
-          XCTFail("Should not resolve error mapping")
-          return FBFuture<AnyObject>(error: error)
-        }
-      )
-      .onQueue(
-        queue,
-        notifyOfCompletion: { future in
-          XCTAssertTrue(pushCalled)
-          XCTAssertEqual(future.error as NSError?, error)
-          completionExpectation.fulfill()
-        })
-
-    wait(for: [completionExpectation, outerTeardownExpectation], timeout: FBControlCoreGlobalConfiguration.fastTimeout)
-  }
-
-  func testFutureToContext() {
-    var teardownCalled = false
-    let innerTeardownExpectation = XCTestExpectation(description: "Resolved Inner Teardown")
-
-    FBFuture<AnyObject>(result: NSNumber(value: 1))
-      .onQueue(
-        queue,
-        pushTeardown: { value in
-          XCTAssertEqual(value as? NSNumber, NSNumber(value: 1))
-          return FBFuture<AnyObject>(result: NSNumber(value: 2))
-            .onQueue(
-              self.queue,
-              contextualTeardown: { innerValue, state in
-                XCTAssertFalse(teardownCalled)
-                XCTAssertEqual(innerValue as? NSNumber, NSNumber(value: 2))
-                XCTAssertEqual(state, .done)
-                innerTeardownExpectation.fulfill()
-                teardownCalled = true
-                return FBFuture<NSNull>.empty()
-              })
-        }
-      )
-      .onQueue(
-        queue,
-        pop: { value in
-          XCTAssertEqual(value as? NSNumber, NSNumber(value: 2))
-          XCTAssertFalse(teardownCalled)
-          return FBFuture<AnyObject>(result: NSNumber(value: 3))
-        })
-
-    wait(for: [innerTeardownExpectation], timeout: FBControlCoreGlobalConfiguration.fastTimeout)
-  }
-
-  func testContextToFuture() {
-    var teardown: FBMutableFuture<NSNull>?
-    var teardownCalled = false
-    let completionExpectation = XCTestExpectation(description: "Resolved Completion")
-    let teardownExpectation = XCTestExpectation(description: "Resolved Completion")
-
-    FBFuture<AnyObject>(result: NSNumber(value: 1))
-      .onQueue(
-        queue,
-        contextualTeardown: { value, _ in
-          XCTAssertEqual(value as? NSNumber, NSNumber(value: 1))
-          teardownCalled = true
-          teardownExpectation.fulfill()
-          return FBFuture<NSNull>.empty()
-        }
-      )
-      .onQueue(
-        queue,
-        enter: { value, innerTeardown in
-          XCTAssertEqual(value as? NSNumber, NSNumber(value: 1))
-          teardown = innerTeardown
-          return NSNumber(value: 2)
-        }
-      )
-      .onQueue(
-        queue,
-        notifyOfCompletion: { future in
-          XCTAssertEqual(future.result as? NSNumber, NSNumber(value: 2))
-          completionExpectation.fulfill()
-        })
-
-    // Wait for the base future to resolve and confirm there's no teardown called yet.
-    wait(for: [completionExpectation], timeout: FBControlCoreGlobalConfiguration.fastTimeout)
-    XCTAssertFalse(teardownCalled)
-
-    // Now teardown the context manually.
-    teardown?.resolve(withResult: NSNull())
-    wait(for: [teardownExpectation], timeout: FBControlCoreGlobalConfiguration.fastTimeout)
-  }
-
-  func testContextToFutureError() {
-    let completionExpectation = XCTestExpectation(description: "Resolved Completion")
-    let expectedError = NSError(domain: "foo", code: 0, userInfo: nil)
-
-    FBFuture<AnyObject>(error: expectedError)
-      .onQueue(
-        queue,
-        contextualTeardown: { _, _ in
-          XCTFail("contextualTeardown should not be called when the base future errors")
-          return FBFuture<NSNull>.empty()
-        }
-      )
-      .onQueue(
-        queue,
-        enter: { value, _ in
-          XCTFail("enter should not be called when the base future errors")
-          return value
-        }
-      )
-      .onQueue(
-        queue,
-        notifyOfCompletion: { future in
-          XCTAssertEqual(future.error as NSError?, expectedError)
-          completionExpectation.fulfill()
-        })
-
-    // Wait for the base future to resolve and confirm there's no teardown called yet.
-    wait(for: [completionExpectation], timeout: FBControlCoreGlobalConfiguration.fastTimeout)
+    wait(for: [completionLogged], timeout: FBControlCoreGlobalConfiguration.fastTimeout)
+    XCTAssertEqual(logger.messages.count, 1)
+    XCTAssertTrue(logger.messages[0].contains("loading value"))
+    XCTAssertTrue(logger.messages[0].contains("Fetch Future done"))
   }
 
   // MARK: - Helpers
@@ -1544,4 +1162,33 @@ final class FBFutureTests: XCTestCase {
 
     wait(for: expectations, timeout: FBControlCoreGlobalConfiguration.fastTimeout)
   }
+}
+
+private final class CapturingFutureLogger: NSObject, FBControlCoreLogger, @unchecked Sendable {
+  private let lock = NSLock()
+  private var storedMessages: [String] = []
+  var onLog: (() -> Void)?
+  var name: String? { nil }
+  var level: FBControlCoreLogLevel { .multiple }
+
+  var messages: [String] {
+    lock.lock()
+    defer { lock.unlock() }
+    return storedMessages
+  }
+
+  func log(_ message: String) -> any FBControlCoreLogger {
+    lock.lock()
+    storedMessages.append(message)
+    let handler = onLog
+    lock.unlock()
+    handler?()
+    return self
+  }
+
+  func info() -> any FBControlCoreLogger { self }
+  func debug() -> any FBControlCoreLogger { self }
+  func error() -> any FBControlCoreLogger { self }
+  func withName(_ name: String) -> any FBControlCoreLogger { self }
+  func withDateFormatEnabled(_ enabled: Bool) -> any FBControlCoreLogger { self }
 }

@@ -24,6 +24,29 @@ public enum IDB {
   public static var ui: IDBAPI.IDB.UI {
     get
   }
+  public struct Screenshot {
+    @discardableResult
+    public func capture() -> Swift.String?
+    @discardableResult
+    public func capture(rect: CoreFoundation.CGRect) -> Swift.String?
+    @discardableResult
+    public func capture(label: Swift.String) -> Swift.String?
+    public func captureImage() -> CoreGraphics.CGImage?
+    public func captureImage(rect: CoreFoundation.CGRect) -> CoreGraphics.CGImage?
+    public func captureImage(label: Swift.String) -> CoreGraphics.CGImage?
+  }
+  public static var screenshot: IDBAPI.IDB.Screenshot {
+    get
+  }
+  public struct Video {
+    @discardableResult
+    public func startRecording() -> Swift.Bool
+    @discardableResult
+    public func stopRecording() -> Swift.String?
+  }
+  public static var video: IDBAPI.IDB.Video {
+    get
+  }
 }
 extension IDBAPI.IDB {
   public struct AXElement : Swift.Decodable, Swift.Sendable {

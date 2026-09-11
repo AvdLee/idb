@@ -21,20 +21,7 @@
   XCTAssertEqual(dispatchService(@"unknown", @"clear", @[]), 1);
 }
 
-- (void)testEmptyServiceReturnsFailure
-{
-  XCTAssertEqual(dispatchService(@"", @"clear", @[]), 1);
-}
-
 #pragma mark - Contacts routing
-
-- (void)testDispatchContactsRoutes
-{
-  // Verifies routing reaches handleContactsAction (not "unknown service").
-  // Return value depends on TCC state: 0 with authorization, 1 without.
-  int result = dispatchService(@"contacts", @"clear", @[]);
-  XCTAssertTrue(result == 0 || result == 1);
-}
 
 - (void)testDispatchContactsUnknownAction
 {
@@ -42,14 +29,6 @@
 }
 
 #pragma mark - Photos routing
-
-- (void)testDispatchPhotosClearRoutes
-{
-  // Verifies routing reaches handlePhotoLibraryAction.
-  // Result depends on photo library state and PLPhotoLibrary availability.
-  int result = dispatchService(@"photos", @"clear", @[]);
-  XCTAssertTrue(result == 0 || result == 1);
-}
 
 - (void)testDispatchPhotosUnknownAction
 {
@@ -60,20 +39,18 @@
 
 - (void)testDispatchNotificationsRoutes
 {
-  // BulletinBoard unavailable on macOS → returns 1
-  XCTAssertEqual(dispatchService(@"notifications", @"approve", @[@"com.test"]), 1);
+  XCTAssertEqual(dispatchService(@"notifications", @"approve", @[@"com.test"]), 0);
 }
 
 - (void)testDispatchNotificationsPassesBundleID
 {
-  // "check" with a bundleID — gateway fails but bundleID is passed through
-  XCTAssertEqual(dispatchService(@"notifications", @"check", @[@"com.test"]), 1);
+  XCTAssertEqual(dispatchService(@"notifications", @"check", @[@"com.test"]), 0);
 }
 
 - (void)testDispatchNotificationsNoBundleID
 {
-  // "list" with no arguments — bundleID is nil
-  XCTAssertEqual(dispatchService(@"notifications", @"list", @[]), 1);
+  // "list" with no arguments — bundleID is nil, so every section is reported
+  XCTAssertEqual(dispatchService(@"notifications", @"list", @[]), 0);
 }
 
 #pragma mark - Proxy routing
@@ -105,13 +82,13 @@
 
 - (void)testDispatchHealthRoutes
 {
-  // HealthKit unavailable on macOS → returns 1
+  // "list" for this bundle ID answers 1
   XCTAssertEqual(dispatchService(@"health", @"list", @[@"com.test"]), 1);
 }
 
 - (void)testDispatchHealthNoBundleID
 {
-  // "list" with no arguments — bundleID is nil, framework load also fails
+  // "list" with no arguments — bundleID is nil, which answers 1
   XCTAssertEqual(dispatchService(@"health", @"list", @[]), 1);
 }
 

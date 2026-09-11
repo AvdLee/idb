@@ -8,8 +8,6 @@
 import CompanionLib
 @preconcurrency import FBControlCore
 import Foundation
-// Uses XCTest to match the existing `IDBTransientTests` in this target; migrating
-// the whole target to Swift Testing is a separate effort.
 // ast-grep-ignore: swift-testing/swift/no-new-xctest
 import XCTest
 
@@ -35,7 +33,7 @@ private final class EventLog: @unchecked Sendable {
 final class IdleMonitorTests: XCTestCase {
 
   /// A short idle window keeps the timing-based tests fast; waits below use a
-  /// generous multiple of it to stay robust under load.
+  /// large multiple of it to avoid flaking under load.
   private let idleTime: TimeInterval = 0.2
 
   private static let logger = FBIDBLogger(

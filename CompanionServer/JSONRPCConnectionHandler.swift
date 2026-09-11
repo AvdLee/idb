@@ -6,7 +6,7 @@
  */
 
 import Foundation
-@_implementationOnly import NIOCore
+internal import NIOCore
 
 /// Per-connection handler sitting after `NewlineFrameDecoder`. It decodes the
 /// first line as a `JSONRPCRequest` and hands it (with this connection's channel)
@@ -17,8 +17,6 @@ import Foundation
 final class JSONRPCConnectionHandler: ChannelInboundHandler {
   typealias InboundIn = ByteBuffer
 
-  /// Hands a decoded request and its channel to the server for asynchronous
-  /// processing; the server writes the response and closes the channel.
   private let submit: @Sendable (JSONRPCRequest, Channel) -> Void
 
   init(submit: @escaping @Sendable (JSONRPCRequest, Channel) -> Void) {

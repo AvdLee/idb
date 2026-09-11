@@ -21,7 +21,7 @@ struct GRPCMethodInfo {
   let callType: GRPCCallType
 }
 
-final class MethodInfoSetterInterceptor<Request, Response>: ServerInterceptor<Request, Response> {
+final class MethodInfoSetterInterceptor<Request, Response>: ServerInterceptor<Request, Response>, @unchecked Sendable {
 
   @Atomic var methodDescriptors: [String: GRPCMethodDescriptor] = Idb_CompanionServiceServerMetadata
     .serviceDescriptor
@@ -38,7 +38,7 @@ final class MethodInfoSetterInterceptor<Request, Response>: ServerInterceptor<Re
           path: methodDescriptor.path,
           callType: methodDescriptor.type)
       } else {
-        assertionFailure("Method not found in descriptors list. If this is client and companion version mismatch, ignore that error")
+        assertionFailure("\(context.path) is not in the service descriptor")
         // context.callType is not reported correctly in ServerInterceptorContext and always return .bidirectionalStreaming
         methodInfo = GRPCMethodInfo(
           name: String(extractMethodName(path: context.path)),
@@ -55,8 +55,9 @@ final class MethodInfoSetterInterceptor<Request, Response>: ServerInterceptor<Re
   }
 
   private func extractMethodName(path: String) -> Substring {
-    path
-      .suffix(from: path.lastIndex(of: "/")!)
-      .dropFirst()
+    guard let lastSeparator = path.lastIndex(of: "/") else {
+      return path[...]
+    }
+    return path[path.index(after: lastSeparator)...]
   }
 }

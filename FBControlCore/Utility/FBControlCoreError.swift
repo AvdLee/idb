@@ -12,7 +12,7 @@ public let FBControlCoreErrorDomain = "com.facebook.FBControlCore"
 @objc
 open class FBControlCoreError: NSObject {
 
-  // MARK: Properties
+  // MARK: - Properties
 
   private var domain: String
   private var describedAs: String?
@@ -20,8 +20,6 @@ open class FBControlCoreError: NSObject {
   private var additionalInfo: [String: Any]
   private var describeRecursively: Bool
   private var errorCode: Int
-
-  // MARK: Initializers
 
   public required override init() {
     domain = FBControlCoreErrorDomain
@@ -31,7 +29,7 @@ open class FBControlCoreError: NSObject {
     super.init()
   }
 
-  // MARK: Public Methods
+  // MARK: - Public Methods
 
   @objc open class func describe(_ description: String) -> Self {
     let instance = self.init()
@@ -91,10 +89,6 @@ open class FBControlCoreError: NSObject {
     return FBFuture<AnyObject>(error: build())
   }
 
-  @objc open func failFutureContext() -> FBFutureContext<AnyObject> {
-    return FBFutureContext<AnyObject>(error: build())
-  }
-
   @objc @discardableResult
   open func failPointer(_ error: NSErrorPointer) -> UnsafeMutableRawPointer? {
     error?.pointee = build()
@@ -151,13 +145,11 @@ open class FBControlCoreError: NSObject {
     return NSError(domain: domain, code: errorCode, userInfo: userInfo)
   }
 
-  // MARK: NSObject
-
   open override var description: String {
     build().description
   }
 
-  // MARK: Private
+  // MARK: - Private
 
   private func underlyingError() -> NSError? {
     guard let error = cause else {

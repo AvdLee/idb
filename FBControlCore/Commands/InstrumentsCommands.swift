@@ -7,9 +7,9 @@
 
 import Foundation
 
-public protocol InstrumentsCommands: AnyObject {
+public protocol InstrumentsCommands {
 
-  func startInstruments(
+  func start(
     configuration: FBInstrumentsConfiguration,
     logger: any FBControlCoreLogger
   ) async throws -> FBInstrumentsOperation

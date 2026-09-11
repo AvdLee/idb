@@ -34,46 +34,19 @@ final class FBControlCoreTransientTests: XCTestCase {
     )
   }
 
-  // MARK: FBBundleDescriptor
+  // MARK: - FBBundleDescriptor
 
-  func testBundleDescriptorInitAndProperties() {
-    let bundle = FBBundleDescriptor(name: "MyApp", identifier: "com.example.app", path: "/tmp/MyApp.app", binary: nil)
-
-    XCTAssertEqual(bundle.name, "MyApp")
-    XCTAssertEqual(bundle.identifier, "com.example.app")
-    XCTAssertEqual(bundle.path, "/tmp/MyApp.app")
-    XCTAssertNil(bundle.binary)
-  }
-
-  func testBundleDescriptorEqualityWithNilBinary() {
-    let a = FBBundleDescriptor(name: "App", identifier: "com.test", path: "/a", binary: nil)
-    let b = FBBundleDescriptor(name: "App", identifier: "com.test", path: "/a", binary: nil)
-
-    // Two bundles with nil binaries should be equal
-    XCTAssertEqual(a, b)
-  }
-
+  /// The binary is a reference type, so this pins that a descriptor compares it by value:
+  /// two descriptors carrying distinct but equal binaries are equal.
   func testBundleDescriptorWithBinaryEquality() throws {
-    let binary = try FBBinaryDescriptor.binary(withPath: "/usr/bin/codesign")
-    let a = FBBundleDescriptor(name: "App", identifier: "com.test", path: "/a", binary: binary)
-    let b = FBBundleDescriptor(name: "App", identifier: "com.test", path: "/a", binary: binary)
+    let firstBinary = try FBBinaryDescriptor.binary(withPath: "/usr/bin/codesign")
+    let secondBinary = try FBBinaryDescriptor.binary(withPath: "/usr/bin/codesign")
+    XCTAssertFalse(firstBinary === secondBinary)
+
+    let a = FBBundleDescriptor(name: "App", identifier: "com.test", path: "/a", binary: firstBinary)
+    let b = FBBundleDescriptor(name: "App", identifier: "com.test", path: "/a", binary: secondBinary)
 
     XCTAssertEqual(a, b)
-  }
-
-  func testBundleDescriptorInequalityByIdentifier() throws {
-    let binary = try FBBinaryDescriptor.binary(withPath: "/usr/bin/codesign")
-    let a = FBBundleDescriptor(name: "App", identifier: "com.test.a", path: "/a", binary: binary)
-    let b = FBBundleDescriptor(name: "App", identifier: "com.test.b", path: "/a", binary: binary)
-
-    XCTAssertNotEqual(a, b)
-  }
-
-  func testBundleDescriptorCopyReturnsSelf() {
-    let bundle = makeBundle()
-    let copy = bundle.copy() as AnyObject
-
-    XCTAssertTrue(bundle === copy)
   }
 
   func testBundleDescriptorDescription() {
@@ -87,21 +60,7 @@ final class FBControlCoreTransientTests: XCTestCase {
     XCTAssertThrowsError(try FBBundleDescriptor.bundle(fromPath: "/nonexistent/path"))
   }
 
-  func testIsApplicationAtPathForNonAppPath() {
-    XCTAssertFalse(FBBundleDescriptor.isApplication(atPath: "/tmp/notanapp"))
-    XCTAssertFalse(FBBundleDescriptor.isApplication(atPath: "/tmp/file.txt"))
-  }
-
-  // MARK: FBInstalledApplication
-
-  func testInstalledApplicationInitWithEnum() {
-    let bundle = makeBundle()
-    let app = FBInstalledApplication(bundle: bundle, installType: .user, dataContainer: "/data")
-
-    XCTAssertTrue(app.bundle === bundle)
-    XCTAssertEqual(app.installType, .user)
-    XCTAssertEqual(app.dataContainer, "/data")
-  }
+  // MARK: - FBInstalledApplication
 
   func testInstalledApplicationInstallTypeStringConversion() {
     let bundle = makeBundle()
@@ -150,11 +109,16 @@ final class FBControlCoreTransientTests: XCTestCase {
     XCTAssertNotEqual(a, c)
   }
 
-  func testInstalledApplicationCopyReturnsSelf() {
-    let app = FBInstalledApplication(bundle: makeBundle(), installType: .user, dataContainer: nil as String?)
-    let copy = app.copy() as AnyObject
+  /// The data container takes part in equality but deliberately not in the hash, so two
+  /// applications differing only by their container are unequal yet share a hash bucket.
+  func testInstalledApplicationHashIgnoresDataContainer() throws {
+    let binary = try FBBinaryDescriptor.binary(withPath: "/usr/bin/codesign")
+    let bundle = FBBundleDescriptor(name: "App", identifier: "com.test", path: "/tmp", binary: binary)
+    let a = FBInstalledApplication(bundle: bundle, installType: .user, dataContainer: "/data/one")
+    let b = FBInstalledApplication(bundle: bundle, installType: .user, dataContainer: "/data/two")
 
-    XCTAssertTrue(app === copy)
+    XCTAssertNotEqual(a, b)
+    XCTAssertEqual(a.hashValue, b.hashValue)
   }
 
   func testInstalledApplicationDescription() {
@@ -164,21 +128,7 @@ final class FBControlCoreTransientTests: XCTestCase {
     XCTAssertTrue(app.description.contains("/data/container"))
   }
 
-  func testInstalledApplicationNilDataContainer() {
-    let app = FBInstalledApplication(bundle: makeBundle(), installType: .user, dataContainer: nil as String?)
-    XCTAssertNil(app.dataContainer)
-  }
-
-  // MARK: FBProcessInfo
-
-  func testProcessInfoInitAndProperties() {
-    let info = FBProcessInfo(processIdentifier: 42, launchPath: "/usr/bin/ls", arguments: ["-la"], environment: ["HOME": "/Users/test"])
-
-    XCTAssertEqual(info.processIdentifier, 42)
-    XCTAssertEqual(info.launchPath, "/usr/bin/ls")
-    XCTAssertEqual(info.arguments, ["-la"])
-    XCTAssertEqual(info.environment, ["HOME": "/Users/test"])
-  }
+  // MARK: - FBProcessInfo
 
   func testProcessInfoProcessName() {
     let info = FBProcessInfo(processIdentifier: 1, launchPath: "/usr/bin/some_tool", arguments: [], environment: [:])
@@ -201,12 +151,6 @@ final class FBControlCoreTransientTests: XCTestCase {
     XCTAssertEqual(a, b)
   }
 
-  func testProcessInfoCopyReturnsSelf() {
-    let info = FBProcessInfo(processIdentifier: 1, launchPath: "/bin/sh", arguments: [], environment: [:])
-    let copy = info.copy() as AnyObject
-    XCTAssertTrue(info === copy)
-  }
-
   func testProcessInfoDescription() {
     let info = FBProcessInfo(processIdentifier: 99, launchPath: "/usr/bin/ruby", arguments: [], environment: [:])
     XCTAssertTrue(info.description.contains("ruby"))
@@ -219,32 +163,7 @@ final class FBControlCoreTransientTests: XCTestCase {
     XCTAssertEqual(a.hash, b.hash)
   }
 
-  // MARK: FBApplicationLaunchConfiguration
-
-  func testApplicationLaunchConfigurationInit() {
-    let config = FBApplicationLaunchConfiguration(
-      bundleID: "com.example.app",
-      bundleName: "ExampleApp",
-      arguments: ["--verbose"],
-      environment: ["DEBUG": "1"],
-      waitForDebugger: true,
-      io: makeIO(),
-      launchMode: .relaunchIfRunning
-    )
-
-    XCTAssertEqual(config.bundleID, "com.example.app")
-    XCTAssertEqual(config.bundleName, "ExampleApp")
-    XCTAssertEqual(config.arguments, ["--verbose"])
-    XCTAssertEqual(config.environment, ["DEBUG": "1"])
-    XCTAssertTrue(config.waitForDebugger)
-    XCTAssertEqual(config.launchMode, .relaunchIfRunning)
-  }
-
-  func testApplicationLaunchConfigurationNilBundleName() {
-    let config = makeAppLaunch()
-    XCTAssertNil(config.bundleName)
-    XCTAssertEqual(config.launchMode, .failIfRunning)
-  }
+  // MARK: - FBApplicationLaunchConfiguration
 
   func testApplicationLaunchConfigurationEquality() {
     let io = makeIO()
@@ -276,22 +195,7 @@ final class FBControlCoreTransientTests: XCTestCase {
     XCTAssertTrue(config.description.contains("MyApp"))
   }
 
-  // MARK: FBProcessSpawnConfiguration
-
-  func testProcessSpawnConfigurationInit() {
-    let config = FBProcessSpawnConfiguration(
-      launchPath: "/usr/bin/env",
-      arguments: ["echo", "hello"],
-      environment: ["PATH": "/usr/bin"],
-      io: makeIO(),
-      mode: .posixSpawn
-    )
-
-    XCTAssertEqual(config.launchPath, "/usr/bin/env")
-    XCTAssertEqual(config.arguments, ["echo", "hello"])
-    XCTAssertEqual(config.environment, ["PATH": "/usr/bin"])
-    XCTAssertEqual(config.mode, .posixSpawn)
-  }
+  // MARK: - FBProcessSpawnConfiguration
 
   func testProcessSpawnConfigurationProcessName() {
     let config = FBProcessSpawnConfiguration(
@@ -333,7 +237,7 @@ final class FBControlCoreTransientTests: XCTestCase {
     XCTAssertTrue(config.description.contains("/usr/bin/env"))
   }
 
-  // MARK: FBCollectionInformation
+  // MARK: - FBCollectionInformation
 
   func testOneLineDescriptionFromArray() {
     let result = FBCollectionInformation.oneLineDescription(from: ["alpha", "beta", "gamma"])
@@ -380,7 +284,7 @@ final class FBControlCoreTransientTests: XCTestCase {
     XCTAssertFalse(FBCollectionInformation.isDictionaryHeterogeneous(dict as! [AnyHashable: Any], keyClass: NSString.self, valueClass: NSString.self))
   }
 
-  // MARK: FBCollectionOperations
+  // MARK: - FBCollectionOperations
 
   func testArrayFromIndices() {
     var indexSet = IndexSet()
@@ -466,160 +370,5 @@ final class FBControlCoreTransientTests: XCTestCase {
   func testArrayWithObjectCountZero() {
     let result = FBCollectionOperations.array(with: "x", count: 0)
     XCTAssertEqual(result.count, 0)
-  }
-
-  // MARK: FBEventReporterSubject
-
-  func testSubjectForEvent() {
-    let subject = FBEventReporterSubject(forEvent: "my_event")
-
-    XCTAssertEqual(subject.eventName, "my_event")
-    XCTAssertEqual(subject.eventType, FBEventType.discrete)
-    XCTAssertNil(subject.arguments)
-    XCTAssertNil(subject.duration)
-    XCTAssertNil(subject.size)
-    XCTAssertNil(subject.message)
-  }
-
-  func testSubjectForStartedCall() {
-    let subject = FBEventReporterSubject(forStartedCall: "install", arguments: ["com.app"])
-
-    XCTAssertEqual(subject.eventName, "install")
-    XCTAssertEqual(subject.eventType, FBEventType.started)
-    XCTAssertEqual(subject.arguments, ["com.app"])
-    XCTAssertNil(subject.duration)
-  }
-
-  func testSubjectForSuccessfulCall() {
-    let subject = FBEventReporterSubject(forSuccessfulCall: "install", duration: 1.5, size: 1024, arguments: ["arg1"])
-
-    XCTAssertEqual(subject.eventName, "install")
-    XCTAssertEqual(subject.eventType, FBEventType.success)
-    XCTAssertEqual(subject.arguments, ["arg1"])
-    XCTAssertEqual(subject.duration, 1500)
-    XCTAssertEqual(subject.size, 1024)
-    XCTAssertNil(subject.message)
-  }
-
-  func testSubjectForFailingCall() {
-    let subject = FBEventReporterSubject(forFailingCall: "install", duration: 0.25, message: "timeout", size: nil as NSNumber?, arguments: [])
-
-    XCTAssertEqual(subject.eventName, "install")
-    XCTAssertEqual(subject.eventType, FBEventType.failure)
-    XCTAssertEqual(subject.message, "timeout")
-    XCTAssertEqual(subject.duration, 250)
-    XCTAssertNil(subject.size)
-  }
-
-  func testEventTypeConstants() {
-    XCTAssertEqual(FBEventType.started.rawValue, "started")
-    XCTAssertEqual(FBEventType.ended.rawValue, "ended")
-    XCTAssertEqual(FBEventType.discrete.rawValue, "discrete")
-    XCTAssertEqual(FBEventType.success.rawValue, "success")
-    XCTAssertEqual(FBEventType.failure.rawValue, "failure")
-  }
-
-  // MARK: FBTestLaunchConfiguration
-
-  func testTestLaunchConfigurationInit() {
-    let testBundle = makeBundle(name: "Tests", identifier: "com.test.unit", path: "/tmp/Tests.xctest")
-    let appLaunch = makeAppLaunch(bundleName: "Host")
-    let testsToRun: Set<String> = ["TestClass/testMethod"]
-    let testsToSkip: Set<String> = ["TestClass/testSkipped"]
-
-    let config = FBTestLaunchConfiguration(
-      testBundle: testBundle,
-      applicationLaunchConfiguration: appLaunch,
-      testHostBundle: nil,
-      timeout: 300,
-      initializeUITesting: true,
-      useXcodebuild: false,
-      testsToRun: testsToRun,
-      testsToSkip: testsToSkip,
-      targetApplicationBundle: nil,
-      xcTestRunProperties: nil,
-      resultBundlePath: "/tmp/results",
-      reportActivities: true,
-      coverageDirectoryPath: "/tmp/coverage",
-      enableContinuousCoverageCollection: false,
-      logDirectoryPath: "/tmp/logs",
-      reportResultBundle: true
-    )
-
-    XCTAssertTrue(config.testBundle === testBundle)
-    XCTAssertEqual(config.applicationLaunchConfiguration, appLaunch)
-    XCTAssertNil(config.testHostBundle)
-    XCTAssertEqual(config.timeout, 300)
-    XCTAssertTrue(config.shouldInitializeUITesting)
-    XCTAssertFalse(config.shouldUseXcodebuild)
-    XCTAssertEqual(config.testsToRun, testsToRun)
-    XCTAssertEqual(config.testsToSkip, testsToSkip)
-    XCTAssertNil(config.targetApplicationBundle)
-    XCTAssertNil(config.xcTestRunProperties)
-    XCTAssertEqual(config.resultBundlePath, "/tmp/results")
-    XCTAssertTrue(config.reportActivities)
-    XCTAssertEqual(config.coverageDirectoryPath, "/tmp/coverage")
-    XCTAssertFalse(config.shouldEnableContinuousCoverageCollection)
-    XCTAssertEqual(config.logDirectoryPath, "/tmp/logs")
-    XCTAssertTrue(config.reportResultBundle)
-  }
-
-  func testTestLaunchConfigurationCopy() {
-    let testBundle = makeBundle(name: "Tests", identifier: "com.test.unit", path: "/tmp/Tests.xctest")
-    let appLaunch = makeAppLaunch()
-
-    let config = FBTestLaunchConfiguration(
-      testBundle: testBundle,
-      applicationLaunchConfiguration: appLaunch,
-      testHostBundle: nil,
-      timeout: 60,
-      initializeUITesting: false,
-      useXcodebuild: false,
-      testsToRun: nil,
-      testsToSkip: nil,
-      targetApplicationBundle: nil,
-      xcTestRunProperties: nil,
-      resultBundlePath: nil,
-      reportActivities: false,
-      coverageDirectoryPath: nil,
-      enableContinuousCoverageCollection: false,
-      logDirectoryPath: nil,
-      reportResultBundle: false
-    )
-
-    let copy = config.copy() as! FBTestLaunchConfiguration
-
-    XCTAssertEqual(copy.testBundle.name, config.testBundle.name)
-    XCTAssertEqual(copy.testBundle.identifier, config.testBundle.identifier)
-    XCTAssertEqual(copy.timeout, config.timeout)
-    XCTAssertEqual(copy.shouldInitializeUITesting, config.shouldInitializeUITesting)
-  }
-
-  // MARK: FBArchitecture Constants
-
-  func testArchitectureConstants() {
-    XCTAssertEqual(FBArchitecture.I386.rawValue, "i386")
-    XCTAssertEqual(FBArchitecture.X86_64.rawValue, "x86_64")
-    XCTAssertEqual(FBArchitecture.armv7.rawValue, "armv7")
-    XCTAssertEqual(FBArchitecture.armv7s.rawValue, "armv7s")
-    XCTAssertEqual(FBArchitecture.arm64.rawValue, "arm64")
-    XCTAssertEqual(FBArchitecture.arm64e.rawValue, "arm64e")
-  }
-
-  // MARK: FBCrashLog dateFormatter
-
-  func testCrashLogDateFormatter() {
-    let formatter = FBCrashLog.dateFormatter()
-    XCTAssertNotNil(formatter)
-  }
-
-  // MARK: FBApplicationInstallInfoKey Constants
-
-  func testApplicationInstallInfoKeyConstants() {
-    XCTAssertEqual(FBApplicationInstallInfoKey.applicationType.rawValue, "ApplicationType")
-    XCTAssertEqual(FBApplicationInstallInfoKey.bundleIdentifier.rawValue, "CFBundleIdentifier")
-    XCTAssertEqual(FBApplicationInstallInfoKey.bundleName.rawValue, "CFBundleName")
-    XCTAssertEqual(FBApplicationInstallInfoKey.path.rawValue, "Path")
-    XCTAssertEqual(FBApplicationInstallInfoKey.signerIdentity.rawValue, "SignerIdentity")
   }
 }

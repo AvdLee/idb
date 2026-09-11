@@ -4,7 +4,6 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-# pyre-strict
 
 import asyncio
 import codecs
@@ -35,6 +34,8 @@ from idb.common.hid import (
     key_press_to_events,
     multi_tap_to_events,
     pinch_to_events,
+    rotate_to_events,
+    shake_to_events,
     swipe_to_events,
     tap_to_events,
     text_to_events,
@@ -43,7 +44,14 @@ from idb.common.logging import log_call
 from idb.common.stream import stream_map
 from idb.common.tar import create_tar, drain_untar, generate_tar
 from idb.common.types import (
+    AccessibilityDragOptions,
     AccessibilityInfo,
+    AccessibilityInfoOptions,
+    AccessibilityMarker,
+    AccessibilityPoint,
+    AccessibilityScrollDirection,
+    AccessibilitySearchableKey,
+    AccessibilityTarget,
     Address,
     AppProcessState,
     Client as ClientBase,
@@ -54,6 +62,7 @@ from idb.common.types import (
     CrashLog,
     CrashLogInfo,
     CrashLogQuery,
+    DEFAULT_SCREENSHOT_OPTIONS,
     DomainSocketAddress,
     FileContainer,
     FileContainerType,
@@ -61,6 +70,7 @@ from idb.common.types import (
     FileListing,
     HIDButtonType,
     HIDEvent,
+    HIDOrientationType,
     IdbConnectionException,
     IdbException,
     InstalledAppInfo,
@@ -70,11 +80,14 @@ from idb.common.types import (
     LoggingMetadata,
     OnlyFilter,
     Permission,
+    Screenshot,
+    ScreenshotOptions,
     TargetDescription,
     TCPAddress,
     TestRunInfo,
     VideoFormat,
 )
+from idb.grpc.accessibility import accessibility_info_to_grpc
 from idb.grpc.crash import (
     _to_crash_log,
     _to_crash_log_info_list,
@@ -85,7 +98,7 @@ from idb.grpc.file import container_to_grpc as file_container_to_grpc
 from idb.grpc.hid import event_to_grpc
 from idb.grpc.idb_grpc import CompanionServiceStub
 from idb.grpc.idb_pb2 import (
-    AccessibilityInfoRequest,
+    AccessibilityActionRequest,
     AddMediaRequest,
     ANY as AnySetting,
     ApproveRequest,
@@ -112,13 +125,12 @@ from idb.grpc.idb_pb2 import (
     OpenUrlRequest,
     Payload,
     PhotosClearRequest,
-    Point,
     PullRequest,
     PushRequest,
     RecordRequest,
+    RecordResponse,
     RevokeRequest,
     RmRequest,
-    ScreenshotRequest,
     SendNotificationRequest,
     SetLocationRequest,
     SettingRequest,
@@ -146,6 +158,7 @@ from idb.grpc.instruments import (
     translate_instruments_timings,
 )
 from idb.grpc.launch import drain_launch_stream, end_launch_stream
+from idb.grpc.screenshot import screenshot_from_grpc, screenshot_to_grpc
 from idb.grpc.stream import (
     cancel_wrapper,
     drain_to_stream,
@@ -247,6 +260,10 @@ class Client(ClientBase):
         self.stub = stub
         self.companion = companion
         self.logger = logger
+
+    @property
+    def metadata(self) -> LoggingMetadata:
+        return plugin.current_scoped_invocation_metadata()
 
     @property
     def address(self) -> Address:
@@ -491,20 +508,111 @@ class Client(ClientBase):
 
     @log_and_handle_exceptions("accessibility_info")
     async def accessibility_info(
-        self, point: tuple[int, int] | None, nested: bool
+        self,
+        target: AccessibilityTarget | None,
+        options: AccessibilityInfoOptions,
     ) -> AccessibilityInfo:
-        grpc_point = Point(x=point[0], y=point[1]) if point is not None else None
         response = await self.stub.accessibility_info(
-            AccessibilityInfoRequest(
-                point=grpc_point,
-                format=(
-                    AccessibilityInfoRequest.NESTED
-                    if nested
-                    else AccessibilityInfoRequest.LEGACY
-                ),
-            )
+            accessibility_info_to_grpc(target, options)
         )
         return AccessibilityInfo(json=response.json)
+
+    @log_and_handle_exceptions("accessibility_tap")
+    async def accessibility_tap(
+        self,
+        target: AccessibilityTarget,
+        expected_value: str | None = None,
+        expected_key: AccessibilitySearchableKey = AccessibilitySearchableKey.LABEL,
+        ignore_case: bool = False,
+    ) -> None:
+        request = AccessibilityActionRequest(
+            tap=AccessibilityActionRequest.Tap(
+                check_expected_value=expected_value is not None,
+                expected_value=expected_value or "",
+                expected_key=expected_key.value,
+            ),
+        )
+        if isinstance(target, AccessibilityMarker):
+            request.marker = target.value
+            request.match_key = target.match_key.value
+            request.depth = target.depth
+        elif isinstance(target, AccessibilityPoint):
+            request.point.x = target.x
+            request.point.y = target.y
+        request.ignore_case = ignore_case
+        await self.stub.accessibility_action(request)
+
+    @log_and_handle_exceptions("accessibility_scroll")
+    async def accessibility_scroll(
+        self,
+        target: AccessibilityTarget | None,
+        direction: AccessibilityScrollDirection,
+        ignore_case: bool = False,
+    ) -> None:
+        request = AccessibilityActionRequest(
+            scroll=AccessibilityActionRequest.Scroll(direction=direction.value),
+        )
+        if isinstance(target, AccessibilityMarker):
+            request.marker = target.value
+            request.match_key = target.match_key.value
+            request.depth = target.depth
+        elif isinstance(target, AccessibilityPoint):
+            request.point.x = target.x
+            request.point.y = target.y
+        request.ignore_case = ignore_case
+        await self.stub.accessibility_action(request)
+
+    @log_and_handle_exceptions("accessibility_set_value")
+    async def accessibility_set_value(
+        self,
+        target: AccessibilityTarget,
+        value: str,
+        ignore_case: bool = False,
+    ) -> None:
+        request = AccessibilityActionRequest(
+            set_value=AccessibilityActionRequest.SetValue(value=value),
+        )
+        if isinstance(target, AccessibilityMarker):
+            request.marker = target.value
+            request.match_key = target.match_key.value
+            request.depth = target.depth
+        elif isinstance(target, AccessibilityPoint):
+            request.point.x = target.x
+            request.point.y = target.y
+        request.ignore_case = ignore_case
+        await self.stub.accessibility_action(request)
+
+    @log_and_handle_exceptions("accessibility_drag")
+    async def accessibility_drag(
+        self,
+        source: AccessibilityTarget,
+        destination: AccessibilityTarget,
+        options: AccessibilityDragOptions,
+        ignore_case: bool = False,
+    ) -> None:
+        drag = AccessibilityActionRequest.Drag(
+            press_duration=options.press_duration or 0.0,
+            duration=options.duration or 0.0,
+            release_duration=options.release_duration or 0.0,
+            delta=options.delta or 0.0,
+        )
+        if isinstance(destination, AccessibilityMarker):
+            drag.marker = destination.value
+            drag.destination_match_key = destination.match_key.value
+            drag.destination_depth = destination.depth
+        elif isinstance(destination, AccessibilityPoint):
+            drag.point.x = destination.x
+            drag.point.y = destination.y
+        request = AccessibilityActionRequest(drag=drag)
+        if isinstance(source, AccessibilityMarker):
+            request.marker = source.value
+            request.match_key = source.match_key.value
+            request.depth = source.depth
+        elif isinstance(source, AccessibilityPoint):
+            request.point.x = source.x
+            request.point.y = source.y
+        request.ignore_case = ignore_case
+        await self.stub.accessibility_action(request)
 
     @log_and_handle_exceptions("add_media")
     async def add_media(self, file_paths: list[str]) -> None:
@@ -582,9 +690,11 @@ class Client(ClientBase):
         await self.stub.photos_clear(PhotosClearRequest())
 
     @log_and_handle_exceptions("screenshot")
-    async def screenshot(self) -> bytes:
-        response = await self.stub.screenshot(ScreenshotRequest())
-        return response.image_data
+    async def screenshot(
+        self, options: ScreenshotOptions = DEFAULT_SCREENSHOT_OPTIONS
+    ) -> Screenshot:
+        response = await self.stub.screenshot(screenshot_to_grpc(options))
+        return screenshot_from_grpc(options, response)
 
     @log_and_handle_exceptions("set_location")
     async def set_location(self, latitude: float, longitude: float) -> None:
@@ -909,6 +1019,14 @@ class Client(ClientBase):
         await self.send_events(button_press_to_events(button_type, duration))
 
     @log_and_handle_exceptions("hid")
+    async def rotate(self, orientation: HIDOrientationType) -> None:
+        await self.send_events(rotate_to_events(orientation))
+
+    @log_and_handle_exceptions("hid")
+    async def shake(self) -> None:
+        await self.send_events(shake_to_events())
+
+    @log_and_handle_exceptions("hid")
     async def key(self, keycode: int, duration: float | None = None) -> None:
         await self.send_events(key_press_to_events(keycode, duration))
 
@@ -1086,6 +1204,7 @@ class Client(ClientBase):
         wait_for_debugger: bool = False,
         stop: asyncio.Event | None = None,
         pid_file: str | None = None,
+        enable_repl: bool = False,
     ) -> None:
         async with self.stub.launch.open() as stream:
             request = LaunchRequest(
@@ -1096,6 +1215,7 @@ class Client(ClientBase):
                     foreground_if_running=foreground_if_running,
                     wait_for_debugger=wait_for_debugger,
                     wait_for=True if stop else False,
+                    enable_repl=enable_repl,
                 )
             )
             await stream.send_message(request)
@@ -1109,35 +1229,63 @@ class Client(ClientBase):
                 await drain_launch_stream(stream, pid_file)
 
     @log_and_handle_exceptions("record")
-    async def record_video(self, stop: asyncio.Event, output_file: str) -> None:
+    async def record_video(
+        self,
+        stop: asyncio.Event,
+        output_file: str,
+        fps: int | None = None,
+        scale_factor: float | None = None,
+        bitrate: float | None = None,
+        key_frame_rate: float | None = None,
+    ) -> None:
         self.logger.info("Starting connection to backend")
+        requested_encode_options = any([fps, scale_factor, bitrate, key_frame_rate])
+        applied: list[RecordResponse.Applied] = []
         async with self.stub.record.open() as stream:
             if self.is_local:
                 self.logger.info(
                     f"Starting video recording to local file {output_file}"
                 )
-                await stream.send_message(
-                    RecordRequest(start=RecordRequest.Start(file_path=output_file))
-                )
+                file_path = output_file
             else:
                 self.logger.info("Starting video recording with response data")
-                await stream.send_message(
-                    # pyre-ignore
-                    RecordRequest(start=RecordRequest.Start(file_path=None))
+                file_path = None
+            await stream.send_message(
+                RecordRequest(
+                    start=RecordRequest.Start(
+                        # pyre-ignore
+                        file_path=file_path,
+                        # Zero is how the wire says "unset", and each has a companion-side default.
+                        fps=fps or 0,
+                        scale_factor=scale_factor or 0,
+                        avg_bitrate=bitrate or 0,
+                        key_frame_rate=key_frame_rate or 0,
+                    )
                 )
+            )
             await stop.wait()
             self.logger.info("Stopping video recording")
             await stream.send_message(RecordRequest(stop=RecordRequest.Stop()))
             await stream.end()
             if self.is_local:
                 self.logger.info("Video saved at output path")
-                await stream.recv_message()
+                # The echo of the encode options, when there is one, precedes the file path.
+                while True:
+                    response = await stream.recv_message()
+                    if response is None or response.WhichOneof("output") != "applied":
+                        break
+                    applied.append(response.applied)
             else:
                 self.logger.info(f"Decompressing gzip to {output_file}")
                 await drain_gzip_decompress(
-                    generate_video_bytes(stream), output_path=output_file
+                    generate_video_bytes(stream, applied), output_path=output_file
                 )
                 self.logger.info(f"Finished decompression to {output_file}")
+        if requested_encode_options and not applied:
+            self.logger.warning(
+                "The companion did not report which encode options it applied, so it predates them "
+                "and recorded at its own defaults"
+            )
 
     @log_and_handle_exceptions("video_stream")
     async def stream_video(
@@ -1346,24 +1494,6 @@ class Client(ClientBase):
             yield message
 
     @log_and_handle_exceptions("setting")
-    async def set_hardware_keyboard(self, enabled: bool) -> None:
-        await self.stub.setting(
-            SettingRequest(
-                hardwareKeyboard=SettingRequest.HardwareKeyboard(enabled=enabled)
-            )
-        )
-
-    @log_and_handle_exceptions("setting")
-    async def set_locale(self, locale_identifier: str) -> None:
-        await self.stub.setting(
-            SettingRequest(
-                stringSetting=SettingRequest.StringSetting(
-                    setting=LocaleSetting, value=locale_identifier
-                )
-            )
-        )
-
-    @log_and_handle_exceptions("setting")
     async def set_preference(
         self, name: str, value: str, value_type: str, domain: str | None
     ) -> None:
@@ -1379,11 +1509,6 @@ class Client(ClientBase):
                 )
             )
         )
-
-    @log_and_handle_exceptions("get_setting")
-    async def get_locale(self) -> str:
-        response = await self.stub.get_setting(GetSettingRequest(setting=LocaleSetting))
-        return response.value
 
     @log_and_handle_exceptions("get_setting")
     async def get_preference(self, name: str, domain: str | None) -> str:

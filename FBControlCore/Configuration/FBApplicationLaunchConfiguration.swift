@@ -7,7 +7,6 @@
 
 import Foundation
 
-@objc(FBApplicationLaunchMode)
 public enum FBApplicationLaunchMode: UInt {
   case failIfRunning = 0
   case foregroundIfRunning = 1
@@ -15,14 +14,13 @@ public enum FBApplicationLaunchMode: UInt {
 }
 
 @objc(FBApplicationLaunchConfiguration)
-public class FBApplicationLaunchConfiguration: FBProcessLaunchConfiguration {
+public final class FBApplicationLaunchConfiguration: FBProcessLaunchConfiguration {
 
   @objc public let bundleID: String
   @objc public let bundleName: String?
   @objc public let waitForDebugger: Bool
-  @objc public let launchMode: FBApplicationLaunchMode
+  public let launchMode: FBApplicationLaunchMode
 
-  @objc
   public init(bundleID: String, bundleName: String?, arguments: [String], environment: [String: String], waitForDebugger: Bool, io: FBProcessIO<AnyObject, AnyObject, AnyObject>, launchMode: FBApplicationLaunchMode) {
     self.bundleID = bundleID
     self.bundleName = bundleName
@@ -30,8 +28,6 @@ public class FBApplicationLaunchConfiguration: FBProcessLaunchConfiguration {
     self.launchMode = launchMode
     super.init(arguments: arguments, environment: environment, io: io)
   }
-
-  // MARK: NSObject
 
   public override var hash: Int {
     super.hash ^ (bundleID as NSString).hash ^ ((bundleName as NSString?)?.hash ?? 0) &+ (waitForDebugger ? 1231 : 1237)

@@ -9,73 +9,6 @@
 
 #import "FBControlCore.h"
 
-@class FBFutureContext_Teardown;
-
-// A class that encapsulates a mutable array of FBFutureContext_Teardown for
-// a threadsafety.
-@interface FBFutureTeardowns : NSObject
-- (void)addObject:(FBFutureContext_Teardown *)object;
-- (FBFutureContext_Teardown *)pop;
-- (void)addObjectsFromArray:(NSArray<FBFutureContext_Teardown *> *)array;
-- (NSArray<FBFutureContext_Teardown *> *)asArray;
-@end
-
-@implementation FBFutureTeardowns
-{
-  NSMutableArray<FBFutureContext_Teardown *> *_data;
-  dispatch_queue_t _queue;
-}
-
-- (instancetype)init
-{
-  return [self initWithArray:@[]];
-}
-
-- (instancetype)initWithArray:(NSArray<FBFutureContext_Teardown *> *)teardowns
-{
-  self = [super init];
-  if (self) {
-    _data = [teardowns mutableCopy];
-    _queue = dispatch_queue_create("com.facebook.fbcontrolcore.FBFutureTeardowns", DISPATCH_QUEUE_SERIAL);
-  }
-  return self;
-}
-
-- (void)addObject:(FBFutureContext_Teardown *)object
-{
-  dispatch_sync(_queue, ^{
-    [self->_data addObject:object];
-  });
-}
-
-- (FBFutureContext_Teardown *)pop
-{
-  __block FBFutureContext_Teardown *result;
-  dispatch_sync(_queue, ^{
-    result = [self->_data lastObject];
-    [self->_data removeLastObject];
-  });
-  return result;
-}
-
-- (void)addObjectsFromArray:(NSArray<FBFutureContext_Teardown *> *)array
-{
-  dispatch_sync(_queue, ^{
-    [self->_data addObjectsFromArray:array];
-  });
-}
-
-- (NSArray<FBFutureContext_Teardown *> *)asArray
-{
-  __block NSArray<FBFutureContext_Teardown *> *result;
-  dispatch_sync(_queue, ^{
-    result = [self->_data copy];
-  });
-  return result;
-}
-
-@end
-
 /**
  A String Mirror of the State.
  */
@@ -175,217 +108,6 @@ static void final_resolveUntil(FBMutableFuture *final, dispatch_queue_t queue, F
   _handler = handler;
 
   return self;
-}
-
-@end
-
-@interface FBFutureContext_Teardown : NSObject
-
-@property (nonatomic, readonly, strong) FBFuture *future;
-@property (nonatomic, readonly, strong) dispatch_queue_t queue;
-@property (nonatomic, readonly, strong) FBFuture<NSNull *> *(^action)(id, FBFutureState);
-
-@end
-
-@implementation FBFutureContext_Teardown
-
-- (instancetype)initWithFuture:(FBFuture *)future queue:(dispatch_queue_t)queue action:(FBFuture<NSNull *> *(^)(id, FBFutureState))action
-{
-  self = [super init];
-  if (!self) {
-    return nil;
-  }
-
-  _future = future;
-  _queue = queue;
-  _action = action;
-
-  return self;
-}
-
-- (FBFuture<NSNull *> *)performTeardown:(FBFutureState)endState
-{
-  NSAssert(self.future.state != FBFutureStateRunning, @"Performing teardown on an unresolved future is not-permitted.");
-  FBFuture<NSNull *> *(^action)(id, FBFutureState) = self.action;
-  FBMutableFuture<NSNull *> *teardownCompleted = FBMutableFuture.future;
-
-  // By this point the future will actually be resolved.
-  // The reason for this notifyOfCompletion, is that we can use it for the queue-bounce to the queue that the action is expected to be called on.
-  [self.future onQueue:self.queue
-    notifyOfCompletion:^(FBFuture *resolved) {
-      if (resolved.result) {
-        FBFuture<NSNull *> *resolvedTeardownCompleted = action(resolved.result, endState);
-        [teardownCompleted resolveFromFuture:resolvedTeardownCompleted];
-      } else {
-        [teardownCompleted resolveWithResult:NSNull.null];
-      }
-    }];
-  return teardownCompleted;
-}
-
-@end
-
-@interface FBFutureContext ()
-
-@property (nonatomic, readonly) FBFutureTeardowns *teardowns;
-
-@end
-
-@implementation FBFutureContext
-
-#pragma mark Initializers
-
-+ (FBFutureContext *)futureContextWithFuture:(FBFuture *)future;
-{
-  return [[self alloc] initWithFuture:future teardowns:[FBFutureTeardowns new]];
-}
-
-+ (FBFutureContext *)futureContextWithResult:(id)result
-{
-  return [self futureContextWithFuture:[FBFuture futureWithResult:result]];
-}
-
-+ (FBFutureContext *)futureContextWithError:(NSError *)error
-{
-  return [self futureContextWithFuture:[FBFuture futureWithError:error]];
-}
-
-+ (FBFutureContext<NSArray<id> *> *)futureContextWithFutureContexts:(NSArray<FBFutureContext *> *)contexts
-{
-  NSMutableArray<FBFuture *> *futures = NSMutableArray.array;
-  FBFutureTeardowns *teardowns = [[FBFutureTeardowns alloc] init];
-  for (FBFutureContext *context in contexts) {
-    [futures addObject:context.future];
-    [teardowns addObjectsFromArray:[context.teardowns asArray]];
-  }
-  FBFuture<NSArray<id> *> *future = [FBFuture futureWithFutures:futures];
-  return [[FBFutureContext alloc] initWithFuture:future teardowns:teardowns];
-}
-
-- (instancetype)initWithFuture:(FBFuture *)future teardowns:(FBFutureTeardowns *)teardowns
-{
-  self = [super init];
-  if (!self) {
-    return nil;
-  }
-
-  _future = future;
-  _teardowns = teardowns;
-
-  return self;
-}
-
-#pragma mark Public
-
-- (FBFuture *)onQueue:(dispatch_queue_t)queue pop:(FBFuture *(^)(id))pop
-{
-  return [[self.future
-           onQueue:queue
-           fmap:pop]
-          onQueue:queue
-          notifyOfCompletion:^(FBFuture *resolved) {
-            NSArray<FBFutureContext_Teardown *> *teardowns = [self.teardowns asArray];
-            [FBFutureContext popTeardowns:teardowns.reverseObjectEnumerator state:resolved.state];
-          }];
-}
-
-- (FBFutureContext *)onQueue:(dispatch_queue_t)queue pend:(FBFuture *(^)(id result))fmap
-{
-  FBFuture *next = [self.future onQueue:queue fmap:fmap];
-  return [[FBFutureContext alloc] initWithFuture:next teardowns:self.teardowns];
-}
-
-- (FBFutureContext *)onQueue:(dispatch_queue_t)queue push:(FBFutureContext *(^)(id))fmap
-{
-  dispatch_queue_t nextContextQueue = dispatch_queue_create("com.facebook.fbcontrolcore.next_context", DISPATCH_QUEUE_SERIAL);
-  __block FBFutureContext *nextContext = nil;
-  FBFuture *future = [self.future onQueue:queue
-                                     fmap:^(id result) {
-                                       FBFutureContext *resolved = fmap(result);
-                                       dispatch_sync(nextContextQueue, ^{
-                                         [nextContext.teardowns addObjectsFromArray:[resolved.teardowns asArray]];
-                                       });
-                                       return resolved.future;
-                                     }];
-  dispatch_sync(nextContextQueue, ^{
-    nextContext = [[FBFutureContext alloc] initWithFuture:future teardowns:self.teardowns];
-  });
-  return nextContext;
-}
-
-- (FBFutureContext *)onQueue:(dispatch_queue_t)queue replace:(FBFutureContext *(^)(id))replace
-{
-  dispatch_queue_t nextContextQueue = dispatch_queue_create("com.facebook.fbcontrolcore.next_context", DISPATCH_QUEUE_SERIAL);
-  FBFutureContext_Teardown *top = [self.teardowns pop];
-  __block FBFutureContext *nextContext = nil;
-  FBFuture *future = [[self.future
-                       onQueue:queue
-                       fmap:^(id result) {
-                         FBFutureContext *resolved = replace(result);
-                         dispatch_sync(nextContextQueue, ^{
-                           [nextContext.teardowns addObjectsFromArray:[resolved.teardowns asArray]];
-                         });
-                         return resolved.future;
-                       }]
-                      onQueue:queue
-                      chain:^(FBFuture *resolved) {
-                        return [[top performTeardown:resolved.state] chainReplace:resolved];
-                      }];
-
-  dispatch_sync(nextContextQueue, ^{
-    nextContext = [[FBFutureContext alloc] initWithFuture:future teardowns:self.teardowns];
-  });
-  return nextContext;
-}
-
-- (FBFutureContext *)onQueue:(dispatch_queue_t)queue handleError:(nonnull FBFuture * _Nonnull (^)(NSError * _Nonnull))handler
-{
-  FBFuture *next = [self.future onQueue:queue handleError:handler];
-  return [[FBFutureContext alloc] initWithFuture:next teardowns:self.teardowns];
-}
-
-- (FBFutureContext *)onQueue:(dispatch_queue_t)queue contextualTeardown:(FBFuture<NSNull *> *(^)(id, FBFutureState) )action
-{
-  FBFutureContext_Teardown *teardown = [[FBFutureContext_Teardown alloc] initWithFuture:self.future queue:queue action:action];
-  [self.teardowns addObject:teardown];
-  return self;
-}
-
-- (FBFuture *)onQueue:(dispatch_queue_t)queue enter:(id (^)(id result, FBMutableFuture<NSNull *> *teardown))enter
-{
-  FBMutableFuture *started = FBMutableFuture.future;
-
-  [[self
-    onQueue:queue
-    pop:^(id contextValue) {
-      FBMutableFuture<NSNull *> *completed = FBMutableFuture.future;
-      id mappedValue = enter(contextValue, completed);
-      [started resolveWithResult:mappedValue];
-      return completed;
-    }]
-   onQueue:queue
-   handleError:^(NSError *error) {
-     [started resolveWithError:error];
-     return [FBFuture futureWithError:error];
-   }];
-
-  return started;
-}
-
-#pragma mark Private
-
-+ (FBFuture<NSNull *> *)popTeardowns:(NSEnumerator<FBFutureContext_Teardown *> *)teardowns state:(FBFutureState)state
-{
-  FBFutureContext_Teardown *teardown = teardowns.nextObject;
-  if (!teardown) {
-    return FBFuture.empty;
-  }
-  return [[teardown
-           performTeardown:state]
-          onQueue:teardown.queue
-          chain:^(id _) {
-            return [self popTeardowns:teardowns state:state];
-          }];
 }
 
 @end
@@ -500,7 +222,6 @@ static void final_resolveUntil(FBMutableFuture *final, dispatch_queue_t queue, F
       FBFutureLoopState resolveOrFailWhenResult = resolveOrFailWhen(&error);
       switch (resolveOrFailWhenResult) {
         case FBFutureLoopContinue:
-          //Continue running
           break;
         case FBFutureLoopFailed:
           dispatch_cancel(timer);
@@ -588,7 +309,7 @@ static void final_resolveUntil(FBMutableFuture *final, dispatch_queue_t queue, F
     FBFutureState state = future.state;
     switch (state) {
       case FBFutureStateDone:
-        results[index] = future.result;
+        results[index] = future.result ?: NSNull.null;
         remaining--;
         if (remaining == 0) {
           [compositeFuture resolveWithResult:[results copy]];
@@ -610,14 +331,8 @@ static void final_resolveUntil(FBMutableFuture *final, dispatch_queue_t queue, F
   for (NSUInteger index = 0; index < futures.count; index++) {
     FBFuture *future = futures[index];
     if (future.hasCompleted) {
-      // The reason that this is done in-line is to avoid work being
-      // asynchronous when not necessary. For example a future-of-futures where
-      // the input futures have resolved already should resolve immediately.
-      // The dispatch_sync ensures that in this case, the composed future is
-      // resolved before returning from the constructor.
-      // It's OK to use dispatch_sync here: queue is local; there is no dispatch
-      // calls within futureCompleted().
-      // @lint-ignore FBOBJCDISCOURAGEDFUNCTION
+      // Already-completed inputs are folded in synchronously so the composite resolves before this returns.
+      // dispatch_sync is safe: `queue` is private and `futureCompleted` never dispatches.
       dispatch_sync(queue, ^{
         futureCompleted(future, index);
       });
@@ -665,14 +380,8 @@ static void final_resolveUntil(FBMutableFuture *final, dispatch_queue_t queue, F
 
   for (FBFuture *future in futures) {
     if (future.hasCompleted) {
-      // The reason that this is done in-line is to avoid work being
-      // asynchronous when not necessary. For example a future-of-futures where
-      // the input futures have resolved already should resolve immediately.
-      // The dispatch_sync ensures that in this case, the composed future is
-      // resolved before returning from the constructor.
-      // It's OK to use dispatch_sync here: queue is local; there is no dispatch
-      // calls within futureCompleted()
-      // @lint-ignore FBOBJCDISCOURAGEDFUNCTION
+      // Already-completed inputs are folded in synchronously so the composite resolves before this returns.
+      // dispatch_sync is safe: `queue` is private and `futureCompleted` never dispatches.
       dispatch_sync(queue, ^{
         futureCompleted(future);
       });
@@ -727,8 +436,9 @@ static void final_resolveUntil(FBMutableFuture *final, dispatch_queue_t queue, F
 - (FBFuture<NSNull *> *)cancel
 {
   @synchronized(self) {
-    if (self.resolvedCancellation) {
-      return self.resolvedCancellation;
+    FBFuture<NSNull *> *resolvedCancellation = self.resolvedCancellation;
+    if (resolvedCancellation) {
+      return resolvedCancellation;
     }
     if (self.state != FBFutureStateRunning) {
       return FBFuture.empty;
@@ -736,8 +446,9 @@ static void final_resolveUntil(FBMutableFuture *final, dispatch_queue_t queue, F
   }
   NSArray<FBFuture_Cancellation *> *cancelResponders = [self resolveAsCancelled];
   @synchronized(self) {
-    self.resolvedCancellation = [FBFuture resolveCancellationResponders:cancelResponders forOriginalName:self.name];
-    return self.resolvedCancellation;
+    FBFuture<NSNull *> *resolvedCancellation = [FBFuture resolveCancellationResponders:cancelResponders forOriginalName:self.name];
+    self.resolvedCancellation = resolvedCancellation;
+    return resolvedCancellation;
   }
 }
 
@@ -915,28 +626,6 @@ static void final_resolveUntil(FBMutableFuture *final, dispatch_queue_t queue, F
                                         causedBy:error]
                                        failFuture];
                  }];
-}
-
-#pragma mark Creating Context
-
-- (FBFutureContext *)onQueue:(dispatch_queue_t)queue contextualTeardown:(FBFuture<NSNull *> *(^)(id, FBFutureState))action
-{
-  FBFutureContext_Teardown *teardown = [[FBFutureContext_Teardown alloc] initWithFuture:self queue:queue action:action];
-  return [[FBFutureContext alloc] initWithFuture:self teardowns:[[FBFutureTeardowns alloc] initWithArray:@[teardown]]];
-}
-
-- (FBFutureContext *)onQueue:(dispatch_queue_t)queue pushTeardown:(FBFutureContext *(^)(id))fmap
-{
-  FBFutureTeardowns *teardowns = [FBFutureTeardowns new];
-  FBFuture *future = [self onQueue:queue
-                              fmap:^(id value) {
-                                FBFutureContext *chained = fmap(value);
-                                for (FBFutureContext_Teardown *teardown in [chained.teardowns asArray]) {
-                                  [teardowns addObject:[[FBFutureContext_Teardown alloc] initWithFuture:chained.future queue:teardown.queue action:teardown.action]];
-                                }
-                                return chained.future;
-                              }];
-  return [[FBFutureContext alloc] initWithFuture:future teardowns:teardowns];
 }
 
 #pragma mark Metadata

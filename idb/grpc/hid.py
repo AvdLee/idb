@@ -4,7 +4,6 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-# pyre-strict
 
 from typing import List, Tuple, TypeVar
 
@@ -15,9 +14,12 @@ from idb.common.types import (
     HIDDirection,
     HIDEvent,
     HIDKey,
+    HIDOrientation,
+    HIDOrientationType,
     HIDPinch,
     HIDPress,
     HIDPressAction,
+    HIDShake,
     HIDSwipe,
     HIDTouch,
     Point,
@@ -35,6 +37,9 @@ GrpcHIDSwipe = GrpcHIDEvent.HIDSwipe
 GrpcHIDTouch = GrpcHIDEvent.HIDTouch
 GrpcHIDButtonType = GrpcHIDEvent.HIDButtonType
 GrpcHIDDirection = GrpcHIDEvent.HIDDirection
+GrpcHIDOrientation = GrpcHIDEvent.HIDOrientation
+GrpcHIDShake = GrpcHIDEvent.HIDShake
+GrpcHIDOrientationType = GrpcHIDEvent.HIDOrientationType
 _A = TypeVar("_A")
 _B = TypeVar("_B")
 
@@ -50,6 +55,13 @@ BUTTON_TYPE_PAIRS: "List[Tuple[HIDButtonType, GrpcHIDButtonType]]" = [
 DIRECTION_PAIRS: "List[Tuple[HIDDirection, GrpcHIDDirection]]" = [
     (HIDDirection.DOWN, GrpcHIDEvent.DOWN),
     (HIDDirection.UP, GrpcHIDEvent.UP),
+]
+
+ORIENTATION_TYPE_PAIRS: "List[Tuple[HIDOrientationType, GrpcHIDOrientationType]]" = [
+    (HIDOrientationType.PORTRAIT, GrpcHIDEvent.PORTRAIT),
+    (HIDOrientationType.PORTRAIT_UPSIDE_DOWN, GrpcHIDEvent.PORTRAIT_UPSIDE_DOWN),
+    (HIDOrientationType.LANDSCAPE_LEFT, GrpcHIDEvent.LANDSCAPE_LEFT),
+    (HIDOrientationType.LANDSCAPE_RIGHT, GrpcHIDEvent.LANDSCAPE_RIGHT),
 ]
 
 
@@ -124,6 +136,22 @@ def pinch_to_grpc(pinch: HIDPinch) -> GrpcHIDPinch:
     )
 
 
+def orientation_type_to_grpc(
+    orientation_type: HIDOrientationType,
+) -> GrpcHIDOrientationType:
+    return _translation_from_pairs(ORIENTATION_TYPE_PAIRS, orientation_type)
+
+
+def orientation_to_grpc(orientation: HIDOrientation) -> GrpcHIDOrientation:
+    return GrpcHIDOrientation(
+        orientation=orientation_type_to_grpc(orientation.orientation)
+    )
+
+
+def shake_to_grpc(shake: HIDShake) -> GrpcHIDShake:
+    return GrpcHIDShake()
+
+
 def event_to_grpc(event: HIDEvent) -> GrpcHIDEvent:
     if isinstance(event, HIDPress):
         return GrpcHIDEvent(press=press_to_grpc(event))
@@ -133,5 +161,9 @@ def event_to_grpc(event: HIDEvent) -> GrpcHIDEvent:
         return GrpcHIDEvent(delay=delay_to_grpc(event))
     elif isinstance(event, HIDPinch):
         return GrpcHIDEvent(pinch=pinch_to_grpc(event))
+    elif isinstance(event, HIDOrientation):
+        return GrpcHIDEvent(orientation=orientation_to_grpc(event))
+    elif isinstance(event, HIDShake):
+        return GrpcHIDEvent(shake=shake_to_grpc(event))
     else:
         raise Exception(f"Invalid event {event}")

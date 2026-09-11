@@ -22,28 +22,32 @@ private func processIsTranslated() -> Int32 {
   return ret
 }
 
-@objc(FBArchitectureProcessAdapter)
-public class FBArchitectureProcessAdapter: NSObject {
+public enum FBArchitectureAdapterError: Error, LocalizedError {
+  case noCompatibleArchitecture(requested: [String], host: [String])
+  case timedOut(seconds: Double, waitingFor: String)
+  case verificationFailed(architecture: String, binary: String)
+  case extractionFailed(architecture: String, binary: String)
+  case otoolFailed(binary: String)
 
-  /// Force binaries to be launched in desired architectures.
-  ///
-  /// Convenience method for `adaptProcessConfiguration(_:toAnyArchitectureIn:hostArchitectures:queue:temporaryDirectory:)`
-  @objc public func adaptProcessConfiguration(
-    _ processConfiguration: FBProcessSpawnConfiguration,
-    toAnyArchitectureIn requestedArchitectures: Set<FBArchitecture>,
-    queue: DispatchQueue,
-    temporaryDirectory: URL
-  ) -> FBFuture<FBProcessSpawnConfiguration> {
-    return adaptProcessConfiguration(
-      processConfiguration,
-      toAnyArchitectureIn: requestedArchitectures,
-      hostArchitectures: FBArchitectureProcessAdapter.hostMachineSupportedArchitectures(),
-      queue: queue,
-      temporaryDirectory: temporaryDirectory
-    )
+  public var errorDescription: String? {
+    switch self {
+    case let .noCompatibleArchitecture(requested, host):
+      return "Could not select an architecture from \(FBCollectionInformation.oneLineDescription(from: requested)) compatible with \(FBCollectionInformation.oneLineDescription(from: host))"
+    case let .timedOut(seconds, waitingFor):
+      return "Timed out after \(String(format: "%.1f", seconds))s waiting for \(waitingFor)"
+    case let .verificationFailed(architecture, binary):
+      return "Desired architecture \(architecture) not found in \(binary) binary"
+    case let .extractionFailed(architecture, binary):
+      return "Failed to thin \(architecture) architecture out from \(binary) binary"
+    case let .otoolFailed(binary):
+      return "Failed query otool -l from \(binary)"
+    }
   }
+}
 
-  private func selectArchitecture(
+public enum FBArchitectureProcessAdapter {
+
+  private static func selectArchitecture(
     from requestedArchitectures: Set<FBArchitecture>,
     supportedArchitectures: Set<FBArchitecture>
   ) -> FBArchitecture? {
@@ -57,183 +61,118 @@ public class FBArchitectureProcessAdapter: NSObject {
   }
 
   /// Force binaries to be launched in desired architectures.
-  @objc public func adaptProcessConfiguration(
+  public static func adaptProcessConfiguration(
     _ processConfiguration: FBProcessSpawnConfiguration,
     toAnyArchitectureIn requestedArchitectures: Set<FBArchitecture>,
-    hostArchitectures: Set<FBArchitecture>,
-    queue: DispatchQueue,
+    hostArchitectures: Set<FBArchitecture> = FBArchitectureProcessAdapter.hostMachineSupportedArchitectures(),
     temporaryDirectory: URL
-  ) -> FBFuture<FBProcessSpawnConfiguration> {
+  ) async throws -> FBProcessSpawnConfiguration {
     guard let architecture = selectArchitecture(from: requestedArchitectures, supportedArchitectures: hostArchitectures) else {
-      return
-        FBControlCoreError
-        .describe("Could not select an architecture from \(FBCollectionInformation.oneLineDescription(from: Array(requestedArchitectures))) compatible with \(FBCollectionInformation.oneLineDescription(from: Array(hostArchitectures)))")
-        .failFuture() as! FBFuture<FBProcessSpawnConfiguration>
+      throw FBArchitectureAdapterError.noCompatibleArchitecture(requested: requestedArchitectures.map(\.rawValue), host: hostArchitectures.map(\.rawValue))
     }
 
-    return unsafeBitCast(
-      verifyArchitectureAvailable(processConfiguration.launchPath, architecture: architecture, queue: queue)
-        .onQueue(
-          queue,
-          fmap: { (_: AnyObject) -> FBFuture<AnyObject> in
-            let fileName = (processConfiguration.launchPath as NSString).lastPathComponent + UUID().uuidString + "." + (architecture.rawValue)
-            let filePath = temporaryDirectory.appendingPathComponent(fileName, isDirectory: false)
-            return self.extractArchitecture(architecture, processConfiguration: processConfiguration, queue: queue, outputPath: filePath)
-              .mapReplace(filePath.path as NSString)
-          }
-        )
-        .onQueue(
-          queue,
-          fmap: { (extractedBinaryObj: AnyObject) -> FBFuture<AnyObject> in
-            let extractedBinary = extractedBinaryObj as! String
-            return self.getFixedupDyldFrameworkPath(fromOriginalBinary: processConfiguration.launchPath, queue: queue)
-              .onQueue(
-                queue,
-                map: { (dyldFrameworkPathObj: AnyObject) -> AnyObject in
-                  let dyldFrameworkPath = dyldFrameworkPathObj as! String
-                  var updatedEnvironment = processConfiguration.environment as [String: String]
-                  // DYLD_FRAMEWORK_PATH adds additional search paths for required "*.framework"s in binary
-                  // DYLD_LIBRARY_PATH adds additional search paths for required "*.dylib"s in binary
-                  updatedEnvironment["DYLD_FRAMEWORK_PATH"] = dyldFrameworkPath
-                  updatedEnvironment["DYLD_LIBRARY_PATH"] = dyldFrameworkPath
-                  return FBProcessSpawnConfiguration(
-                    launchPath: extractedBinary,
-                    arguments: processConfiguration.arguments,
-                    environment: updatedEnvironment as [String: String],
-                    io: processConfiguration.io,
-                    mode: processConfiguration.mode
-                  )
-                })
-          }),
-      to: FBFuture<FBProcessSpawnConfiguration>.self
+    try await verifyArchitectureAvailable(processConfiguration.launchPath, architecture: architecture)
+
+    let fileName = (processConfiguration.launchPath as NSString).lastPathComponent + UUID().uuidString + "." + (architecture.rawValue)
+    let filePath = temporaryDirectory.appendingPathComponent(fileName, isDirectory: false)
+    try await extractArchitecture(architecture, launchPath: processConfiguration.launchPath, outputPath: filePath)
+
+    let dyldFrameworkPath = try await getFixedupDyldFrameworkPath(fromOriginalBinary: processConfiguration.launchPath)
+    var updatedEnvironment = processConfiguration.environment as [String: String]
+    updatedEnvironment["DYLD_FRAMEWORK_PATH"] = dyldFrameworkPath
+    updatedEnvironment["DYLD_LIBRARY_PATH"] = dyldFrameworkPath
+    return FBProcessSpawnConfiguration(
+      launchPath: filePath.path,
+      arguments: processConfiguration.arguments,
+      environment: updatedEnvironment,
+      io: processConfiguration.io,
+      mode: processConfiguration.mode
     )
   }
 
   /// Verifies that we can extract desired architecture from binary
-  private func verifyArchitectureAvailable(
+  private static func verifyArchitectureAvailable(
     _ binary: String,
-    architecture: FBArchitecture,
-    queue: DispatchQueue
-  ) -> FBFuture<NSNull> {
-    let timeoutDescription = "lipo -verify_arch"
-    return unsafeBitCast(
-      FBProcessBuilder<AnyObject, NSNull, NSNull>
-        .withLaunchPath("/usr/bin/lipo", arguments: [binary, "-verify_arch", architecture.rawValue])
-        .withStdOutToDevNull()
-        .withStdErrToDevNull()
-        .runUntilCompletion(withAcceptableExitCodes: [0])
-        .rephraseFailure("Desired architecture \(architecture) not found in \(binary) binary")
-        .mapReplace(NSNull())
-        .onQueue(
-          queue, timeout: 20,
-          handler: {
-            FBControlCoreError
-              .describe("Timed out after 20.0s waiting for \(timeoutDescription)")
-              .failFuture()
-          }),
-      to: FBFuture<NSNull>.self
-    )
+    architecture: FBArchitecture
+  ) async throws {
+    let result = try await withTimeout(seconds: 20, waitingFor: "lipo -verify_arch") {
+      try await Subprocess(executable: "/usr/bin/lipo", arguments: [binary, "-verify_arch", architecture.rawValue])
+        .run(output: .closed, error: .closed, exitPolicy: .any)
+    }
+    try result.checkExitedCleanly(
+      orThrow: FBArchitectureAdapterError.verificationFailed(architecture: architecture.rawValue, binary: binary))
   }
 
-  private func extractArchitecture(
+  private static func extractArchitecture(
     _ architecture: FBArchitecture,
-    processConfiguration: FBProcessSpawnConfiguration,
-    queue: DispatchQueue,
+    launchPath: String,
     outputPath: URL
-  ) -> FBFuture<NSNull> {
-    let timeoutDescription = "lipo -extract"
-    return unsafeBitCast(
-      FBProcessBuilder<AnyObject, NSNull, AnyObject>
-        .withLaunchPath("/usr/bin/lipo", arguments: [processConfiguration.launchPath, "-extract", architecture.rawValue, "-output", outputPath.path])
-        .withStdOutToDevNull()
-        .withStdErrLineReader({ (line: String) in
-          NSLog("LINE %@\n", line)
-        })
-        .runUntilCompletion(withAcceptableExitCodes: [0])
-        .rephraseFailure("Failed to thin \(architecture) architecture out from \(processConfiguration.launchPath) binary")
-        .mapReplace(NSNull())
-        .onQueue(
-          queue, timeout: 10,
-          handler: {
-            FBControlCoreError
-              .describe("Timed out after 10.0s waiting for \(timeoutDescription)")
-              .failFuture()
-          }),
-      to: FBFuture<NSNull>.self
-    )
+  ) async throws {
+    let result = try await withTimeout(seconds: 10, waitingFor: "lipo -extract") {
+      try await Subprocess(executable: "/usr/bin/lipo", arguments: [launchPath, "-extract", architecture.rawValue, "-output", outputPath.path])
+        .run(
+          output: .closed,
+          error: .lines { line in
+            NSLog("LINE %@\n", line)
+          },
+          exitPolicy: .any)
+    }
+    try result.checkExitedCleanly(
+      orThrow: FBArchitectureAdapterError.extractionFailed(architecture: architecture.rawValue, binary: launchPath))
   }
 
   /// After we lipoed out arch from binary, new binary placed into temporary folder.
   /// That makes all dynamic library imports become incorrect. To fix that up we
   /// have to specify `DYLD_FRAMEWORK_PATH` correctly.
-  private func getFixedupDyldFrameworkPath(
-    fromOriginalBinary binary: String,
-    queue: DispatchQueue
-  ) -> FBFuture<NSString> {
+  private static func getFixedupDyldFrameworkPath(
+    fromOriginalBinary binary: String
+  ) async throws -> String {
     let binaryFolder = ((binary as NSString).resolvingSymlinksInPath as NSString).deletingLastPathComponent
 
-    return unsafeBitCast(
-      unsafeBitCast(
-        getOtoolInfo(fromBinary: binary, queue: queue),
-        to: FBFuture<AnyObject>.self
-      )
-      .onQueue(
-        queue,
-        map: { (resultObj: AnyObject) -> AnyObject in
-          let result = resultObj as! String
-          return self.extractRpaths(fromOtoolOutput: result) as NSSet
-        }
-      )
-      .onQueue(
-        queue,
-        map: { (resultObj: AnyObject) -> AnyObject in
-          let result = resultObj as! Set<String>
-          var rpaths: [String] = []
-          for binaryRpath in result {
-            if binaryRpath.hasPrefix("@executable_path") {
-              rpaths.append(binaryRpath.replacingOccurrences(of: "@executable_path", with: binaryFolder))
-            }
-          }
-          return rpaths.joined(separator: ":") as NSString
-        }),
-      to: FBFuture<NSString>.self
-    )
+    let otoolOutput = try await getOtoolInfo(fromBinary: binary)
+    var rpaths: [String] = []
+    for binaryRpath in extractRpaths(fromOtoolOutput: otoolOutput) {
+      if binaryRpath.hasPrefix("@executable_path") {
+        rpaths.append(binaryRpath.replacingOccurrences(of: "@executable_path", with: binaryFolder))
+      }
+    }
+    return rpaths.joined(separator: ":")
   }
 
-  private func getOtoolInfo(
-    fromBinary binary: String,
-    queue: DispatchQueue
-  ) -> FBFuture<NSString> {
-    let timeoutDescription = "otool -l"
-    return unsafeBitCast(
-      FBProcessBuilder<AnyObject, NSString, NSNull>
-        .withLaunchPath("/usr/bin/otool", arguments: ["-l", binary])
-        .withStdOutInMemoryAsString()
-        .withStdErrToDevNull()
-        .runUntilCompletion(withAcceptableExitCodes: [0])
-        .rephraseFailure("Failed query otool -l from \(binary)")
-        .onQueue(
-          queue,
-          fmap: { task -> FBFuture<AnyObject> in
-            let subprocess = task as! FBSubprocess<AnyObject, NSString, NSNull>
-            if let stdOut = subprocess.stdOut {
-              return FBFuture<AnyObject>(result: stdOut)
-            }
-            return
-              FBControlCoreError
-              .describe("Failed to call otool -l over \(binary)")
-              .failFuture()
-          }
-        )
-        .onQueue(
-          queue, timeout: 10,
-          handler: {
-            FBControlCoreError
-              .describe("Timed out after 10.0s waiting for \(timeoutDescription)")
-              .failFuture()
-          }),
-      to: FBFuture<NSString>.self
-    )
+  private static func getOtoolInfo(
+    fromBinary binary: String
+  ) async throws -> String {
+    let result = try await withTimeout(seconds: 10, waitingFor: "otool -l") {
+      try await Subprocess(executable: "/usr/bin/otool", arguments: ["-l", binary])
+        .run(output: .string, error: .closed, exitPolicy: .any)
+    }
+    try result.checkExitedCleanly(orThrow: FBArchitectureAdapterError.otoolFailed(binary: binary))
+    return result.standardOutput
+  }
+
+  /// Races `operation` against a deadline. On timeout the error is thrown to the
+  /// caller and the losing task is cancelled — which stops observation of a
+  /// spawned process without killing it, matching the future-timeout behaviour
+  /// this replaces.
+  private static func withTimeout<Result: Sendable>(
+    seconds: Double,
+    waitingFor description: String,
+    _ operation: @escaping @Sendable () async throws -> Result
+  ) async throws -> Result {
+    try await withThrowingTaskGroup(of: Result.self) { group in
+      group.addTask {
+        try await operation()
+      }
+      group.addTask {
+        try await Task.sleep(for: .seconds(seconds))
+        throw FBArchitectureAdapterError.timedOut(seconds: seconds, waitingFor: description)
+      }
+      guard let result = try await group.next() else {
+        preconditionFailure("The task group has two children; next() cannot be empty")
+      }
+      group.cancelAll()
+      return result
+    }
   }
 
   /// Extracts rpath from full otool output.
@@ -248,18 +187,10 @@ public class FBArchitectureProcessAdapter: NSObject {
   /// ```
   /// @executable_path/../../Frameworks/
   /// ```
-  private func extractRpaths(fromOtoolOutput otoolOutput: String) -> Set<String> {
+  private static func extractRpaths(fromOtoolOutput otoolOutput: String) -> Set<String> {
     let lines = otoolOutput.components(separatedBy: "\n")
     var result = Set<String>()
 
-    // Rpath entry looks like:
-    // ```
-    // Load command 19
-    //   cmd LC_RPATH
-    //   cmdsize 48
-    //    path @executable_path/../../Frameworks/ (offset 12)
-    // ```
-    // So if we found occurence of `cmd LC_RPATH` rpath value will be two lines below.
     let lcRpathValueOffset = 2
 
     for (index, line) in lines.enumerated() {
@@ -274,7 +205,7 @@ public class FBArchitectureProcessAdapter: NSObject {
   }
 
   /// Checking for `LC_RPATH` in load commands
-  private func isLcPathDefinitionLine(_ line: String) -> Bool {
+  private static func isLcPathDefinitionLine(_ line: String) -> Bool {
     var hasCMD = false
     var hasLcRpath = false
     for component in line.components(separatedBy: " ") {
@@ -287,10 +218,8 @@ public class FBArchitectureProcessAdapter: NSObject {
     return hasCMD && hasLcRpath
   }
 
-  // Note: spaces in path names are not available. Currently we use adapter for binaries
-  // inside Xcode that has relative paths to original binary.
-  // And there is no spaces in paths over there.
-  private func extractRpathValue(fromLine line: String) -> String? {
+  // Splits on spaces, so rpaths containing spaces are unsupported; the Xcode binaries this adapts have none.
+  private static func extractRpathValue(fromLine line: String) -> String? {
     for component in line.components(separatedBy: " ") {
       if component.hasPrefix("@executable_path") {
         return component
@@ -300,7 +229,7 @@ public class FBArchitectureProcessAdapter: NSObject {
   }
 
   /// Returns supported architectures based on companion launch architecture and launch under rosetta determination.
-  @objc public class func hostMachineSupportedArchitectures() -> Set<FBArchitecture> {
+  public static func hostMachineSupportedArchitectures() -> Set<FBArchitecture> {
     #if arch(x86_64)
     let isTranslated = processIsTranslated()
     if isTranslated == 1 {

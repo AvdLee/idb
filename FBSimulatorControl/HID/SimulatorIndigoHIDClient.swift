@@ -1,0 +1,141 @@
+/*
+ * Copyright (c) Meta Platforms, Inc. and affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+@preconcurrency import CoreSimulator
+import Darwin
+@preconcurrency import FBControlCore
+import Foundation
+
+/// Informal protocol for messaging the runtime-only `SimDeviceLegacyHIDClient`. The class has moved
+/// between frameworks across Xcodes and is dlopened on demand, so it is never referenced as a Swift
+/// type: that would emit a link-time `_OBJC_CLASS_$_` symbol pinned to one framework. It is looked up
+/// by name, allocated via `FBObjCRuntimeClass`, and messaged via `unsafeBitCast` to this protocol.
+///
+/// Every send through this protocol has to be guarded with `FBObjCExceptionGuard`. It lands in
+/// CoreSimulator code that asserts on state this process does not own — a device that has been
+/// shut down, a `SimDeviceIO` connection that has gone away — and an `NSException` unwinding
+/// through a Swift frame reaches `libc++abi` and aborts the companion.
+@objc private protocol SimDeviceLegacyHIDClientMessaging {
+  @objc(initWithDevice:error:)
+  func initWithDevice(_ device: Any, error: AutoreleasingUnsafeMutablePointer<AnyObject?>?) -> AnyObject?
+
+  @objc(sendWithMessage:freeWhenDone:completionQueue:completion:)
+  func send(
+    withMessage message: UnsafeMutableRawPointer,
+    freeWhenDone: Bool,
+    completionQueue: DispatchQueue,
+    completion: @escaping @Sendable (Error?) -> Void)
+}
+
+/**
+ Owns the runtime-only SimulatorKit `SimDeviceLegacyHIDClient` and delivers Indigo message bytes to
+ it (the IndigoHIDRegistrationPort transport). The concrete class is looked up by name and messaged
+ via `unsafeBitCast` — it has relocated across Xcodes, so no link-time class reference is emitted.
+
+ Message sends are serialized onto the private `queue`, so the type is `@unchecked Sendable`.
+ */
+final class SimulatorIndigoHIDClient: @unchecked Sendable {
+
+  private static let clientClassName = "SimulatorKit.SimDeviceLegacyHIDClient"
+
+  /// The queue on which messages are sent to the HID server.
+  private let queue: DispatchQueue
+  // Untyped on purpose: the concrete `SimDeviceLegacyHIDClient` is a runtime-only class (see
+  // SimDeviceLegacyHIDClientMessaging). Messaged via unsafeBitCast to that protocol.
+  private var client: AnyObject?
+
+  /// Resolves the runtime-only `SimDeviceLegacyHIDClient` class, dlopening the Xcode frameworks that
+  /// vend it first — `FBSimulatorControl` itself loads only the essential set (CoreSimulator), so
+  /// otherwise there is nothing for the lookup to find. Mirrors `SimulatorIndigoHID.init()`.
+  static func resolveClientClass(
+    loader: FBControlCoreFrameworkLoader = FBSimulatorControlFrameworkLoader.xcodeFrameworks
+  ) throws -> FBObjCRuntimeClass {
+    try loader.loadPrivateFrameworks(nil)
+    guard let clientClass = FBObjCRuntimeClass(name: clientClassName) else {
+      throw SimulatorHIDError.clientClassUnavailable(className: clientClassName)
+    }
+    return clientClass
+  }
+
+  /// Looks up, allocates and initializes the runtime-only HID client for the provided device.
+  convenience init(for device: SimDevice) throws {
+    try self.init(device: device, clientClass: Self.resolveClientClass())
+  }
+
+  /// Allocates and initializes `clientClass` for `device`.
+  convenience init(device: Any, clientClass: FBObjCRuntimeClass) throws {
+    var clientError: AnyObject?
+    let client: AnyObject
+    do {
+      client = try clientClass.instantiate(as: SimDeviceLegacyHIDClientMessaging.self) {
+        $0.initWithDevice(device, error: &clientError)
+      }
+    } catch {
+      // `clientError` first: when the client declines by contract it says why, and that is more
+      // specific than "the initializer returned nil".
+      throw SimulatorHIDError.clientCreationFailed(
+        clientClass: clientClass.name, underlying: (clientError as? Error) ?? error)
+    }
+    self.init(
+      client: client, queue: DispatchQueue(label: "com.facebook.fbsimulatorcontrol.hid"))
+  }
+
+  private init(client: AnyObject, queue: DispatchQueue) {
+    self.client = client
+    self.queue = queue
+  }
+
+  /// Disconnects from the remote HID by releasing the client.
+  func disconnect() {
+    client = nil
+  }
+
+  /// Sends the message bytes, returning when the client acknowledges delivery.
+  ///
+  /// The send is made on `queue`, which serializes it against the `disconnect()` that can arrive
+  /// from any thread.
+  func send(_ data: Data) async throws {
+    try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+      queue.async { [self] in
+        // The event is delivered asynchronously. Copy the message and let the client manage its lifecycle:
+        // the free of the buffer is performed by the client (freeWhenDone) and the Data frees when out of scope.
+        let size = data.count
+        guard let raw = malloc(size) else {
+          fatalError("Failed to allocate \(size) bytes for an Indigo message")
+        }
+        data.withUnsafeBytes { (buffer: UnsafeRawBufferPointer) in
+          guard let base = buffer.baseAddress else { return }
+          raw.copyMemory(from: base, byteCount: size)
+        }
+        guard let client else {
+          free(raw)
+          continuation.resume(throwing: SimulatorHIDError.clientDisposed)
+          return
+        }
+        do {
+          try FBObjCExceptionGuard.run {
+            unsafeBitCast(client, to: SimDeviceLegacyHIDClientMessaging.self)
+              .send(withMessage: raw, freeWhenDone: true, completionQueue: queue) { error in
+                if let error {
+                  continuation.resume(throwing: error)
+                } else {
+                  continuation.resume()
+                }
+              }
+          }
+        } catch {
+          // `raw` is deliberately not freed. Ownership passes to the client with `freeWhenDone`, and a
+          // raise leaves no way to tell whether it got that far; one leaked message beats a double free.
+          //
+          // Resuming here assumes the client cannot have already completed before raising — true of
+          // every observed raise, which come from `-[SimDeviceIOClient ioPorts]` on the way in.
+          continuation.resume(throwing: error)
+        }
+      }
+    }
+  }
+}

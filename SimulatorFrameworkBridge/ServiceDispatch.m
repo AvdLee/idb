@@ -9,17 +9,35 @@
 
 #import <dlfcn.h>
 
-#import "ContactsService.h"
+#import "AccessibilityService.h"
 #import "DnsService.h"
-#import "HealthSettingsService.h"
 #import "NotificationSettingsService.h"
 #import "PhotoLibraryService.h"
 #import "ProxyService.h"
 
+// Contacts and HealthKit are not in the tvOS SDK, so the services built on them are not compiled into
+// the tvOS guest. Their verbs are still recognised, so a caller sees a platform refusal rather than an
+// unknown-service error.
+#if TARGET_OS_TV
+static int unsupportedOnThisPlatform(NSString *service)
+{
+  NSLog(@"The %@ service is not available in a tvOS guest", service);
+  return 1;
+}
+
+#else
+ #import "ContactsService.h"
+ #import "HealthSettingsService.h"
+#endif
+
 int dispatchService(NSString *service, NSString *action, NSArray<NSString *> *arguments)
 {
   if ([service isEqualToString:@"contacts"]) {
+  #if TARGET_OS_TV
+    return unsupportedOnThisPlatform(service);
+  #else
     return handleContactsAction(action);
+  #endif
   } else if ([service isEqualToString:@"dns"]) {
     return handleDnsAction(action, arguments);
   } else if ([service isEqualToString:@"photos"]) {
@@ -28,22 +46,24 @@ int dispatchService(NSString *service, NSString *action, NSArray<NSString *> *ar
     NSString *bundleID = arguments.count > 0 ? arguments[0] : nil;
     return handleNotificationSettingsAction(action, bundleID);
   } else if ([service isEqualToString:@"health"]) {
+  #if TARGET_OS_TV
+    return unsupportedOnThisPlatform(service);
+  #else
     NSString *bundleID = arguments.count > 0 ? arguments[0] : nil;
     NSArray<NSString *> *typeIDs = arguments.count > 1
     ? [arguments subarrayWithRange:NSMakeRange(1, arguments.count - 1)]
     : @[];
     return handleHealthSettingsAction(action, bundleID, typeIDs);
+  #endif
   } else if ([service isEqualToString:@"proxy"]) {
     return handleProxyAction(action, arguments);
+  } else if ([service isEqualToString:@"accessibility"]) {
+    return handleAccessibilityAction(action, arguments);
   } else if ([service isEqualToString:@"repl"]) {
     if ([action isEqualToString:@"start"]) {
-      // Serve the REPL control socket via libRepl, which the bridge loads on
-      // demand (only when a repl session starts). libRepl exports the socket
-      // server -- and the IDB API that injected code calls -- so serving through
-      // its copy keeps both on the same control-socket connection, and injected
-      // `import IDB` symbols resolve against it. Arguments: the socket path, then
-      // libRepl's path. The simulator context has no in-process probe, so it
-      // generates no interfaces (the companion reports the pre-built one).
+      // libRepl exports both the socket server and the IDB API injected code calls, so serving through
+      // its copy keeps both on one connection and lets `import IDB` resolve. Arguments: socket path, then
+      // libRepl path. The simulator context generates no interfaces; the companion reports the pre-built one.
       NSString *socketPath = arguments.count > 0 ? arguments[0] : nil;
       NSString *libReplPath = arguments.count > 1 ? arguments[1] : nil;
       if (libReplPath.length == 0) {
@@ -67,7 +87,7 @@ int dispatchService(NSString *service, NSString *action, NSArray<NSString *> *ar
     return 1;
   } else {
     NSLog(@"Unknown service: %@", service);
-    NSLog(@"Available services: contacts, dns, photos, notifications, health, proxy");
+    NSLog(@"Available services: contacts, dns, photos, notifications, health, proxy, accessibility, repl");
     return 1;
   }
 }

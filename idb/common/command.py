@@ -4,7 +4,6 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-# pyre-strict
 
 from abc import ABCMeta, abstractmethod
 from argparse import ArgumentParser, Namespace
@@ -36,6 +35,14 @@ class Command(metaclass=ABCMeta):
 
     def resolve_command_from_args(self, args: Namespace) -> "Command":
         return self
+
+    def resolve_subcommand_path(self, args: Namespace) -> list[str]:
+        """Canonical subcommand tokens selected in ``args``.
+
+        Leaf commands contribute nothing; :class:`CompositeCommand` overrides
+        this to walk the selected subcommand chain (e.g. ``["ui", "tap"]``).
+        """
+        return []
 
 
 class CompositeCommand(Command, metaclass=ABCMeta):
@@ -83,6 +90,17 @@ class CompositeCommand(Command, metaclass=ABCMeta):
         subcmd = self.subcommands_by_name[subcmd_name]
         assert subcmd is not None, "subcommand %r doesn't exist" % subcmd_name
         return subcmd.resolve_command_from_args(args)
+
+    def resolve_subcommand_path(self, args: Namespace) -> list[str]:
+        subcmd_name = getattr(args, self.name, None)
+        if subcmd_name is None:
+            return []
+        # subcommands_by_name is keyed by aliases as well as canonical names,
+        # so an aliased invocation is normalised to the canonical name here.
+        subcmd = self.subcommands_by_name.get(subcmd_name)
+        if subcmd is None:
+            return []
+        return [subcmd.name, *subcmd.resolve_subcommand_path(args)]
 
     async def run(self, args: Namespace) -> None:
         return await self.resolve_command_from_args(args).run(args)

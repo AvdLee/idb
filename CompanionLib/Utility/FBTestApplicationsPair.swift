@@ -8,18 +8,17 @@
 import FBControlCore
 import Foundation
 
-@objc public final class FBTestApplicationsPair: NSObject {
+public struct FBTestApplicationsPair: CustomStringConvertible {
 
-  @objc public let applicationUnderTest: FBInstalledApplication?
-  @objc public let testHostApp: FBInstalledApplication?
+  public let applicationUnderTest: FBInstalledApplication?
+  public let testHostApp: FBInstalledApplication?
 
-  @objc public init(applicationUnderTest: FBInstalledApplication?, testHostApp: FBInstalledApplication?) {
+  public init(applicationUnderTest: FBInstalledApplication?, testHostApp: FBInstalledApplication?) {
     self.applicationUnderTest = applicationUnderTest
     self.testHostApp = testHostApp
-    super.init()
   }
 
-  public override var description: String {
+  public var description: String {
     let autDesc = applicationUnderTest.map { "\($0)" } ?? "(null)"
     let hostDesc = testHostApp.map { "\($0)" } ?? "(null)"
     return "AUT \(autDesc), Test Host \(hostDesc)"

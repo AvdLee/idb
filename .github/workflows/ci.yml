@@ -1,0 +1,286 @@
+name: CI
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+# Nothing here writes to the repository or its releases; artifacts within a
+# run need no extra permission.
+permissions:
+  contents: read
+
+jobs:
+  python-client:
+    name: Python client (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - ubuntu-latest
+          - macos-26
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - name: Install fb-idb from source
+        run: FB_IDB_VERSION=0.0.0 pip install .
+      - name: Smoke test the CLI
+        run: idb --help
+      - name: Run unit tests
+        # The suites ship inside the package as *_tests.py, which pytest's
+        # default discovery pattern does not match. Run outside the checkout:
+        # from the repo root the source idb/ tree — which lacks the generated
+        # gRPC modules — shadows the installed package and breaks collection.
+        working-directory: ${{ runner.temp }}
+        run: |
+          pip install pytest
+          python -m pytest --pyargs idb -o python_files='*_tests.py'
+
+  pure-python:
+    name: Pure Python tests (no simulator)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      # Logic that needs no simulator, no companion and no idb. Run here rather
+      # than inside the jobs that consume it, so that a red line in the
+      # end-to-end job always means idb is broken.
+      - name: Test the CI scripts
+        run: python -m unittest discover -s CI -p '*_tests.py' -t . -v
+      # The harness's own decisions -- what a non-zero idb exit is reported as,
+      # and what is read out of a launchctl listing. Named *_tests.py so that
+      # the end-to-end job's `unittest discover`, whose pattern is test*.py,
+      # cannot pull them into a run that leases a simulator.
+      - name: Test the end-to-end harness
+        run: python -m unittest EndToEndTests.harness_tests -v
+
+  mac-frameworks:
+    name: Build frameworks (macOS)
+    runs-on: macos-26
+    timeout-minutes: 45
+    env:
+      # Runner filesystems support xattrs; generate projects in place rather
+      # than through the temp-dir workaround for xattr-restricted filesystems,
+      # whose pbxproj path rewrite mangles references reaching more than one
+      # directory level up.
+      XCODEGEN_STRIP_XATTRS: 'false'
+    steps:
+      - uses: actions/checkout@v5
+      - name: Install tools
+        run: brew install xcodegen
+      - name: Build frameworks
+        run: ./build.sh build frameworks
+
+  mac-tests:
+    name: Test ${{ matrix.target }} (macOS)
+    runs-on: macos-26
+    timeout-minutes: 60
+    env:
+      XCODEGEN_STRIP_XATTRS: 'false'
+      # xcodebuild only forwards TEST_RUNNER_-prefixed variables into the test
+      # process; the in-test environment gates (XCTSkipIf on GITHUB_ACTIONS)
+      # never see the job env without this.
+      TEST_RUNNER_GITHUB_ACTIONS: 'true'
+    strategy:
+      fail-fast: false
+      matrix:
+        target:
+          - FBControlCore
+          - XCTestBootstrap
+          # One job per FBSimulatorControl suite, so a Unit regression, a broken
+          # boot and a broken guest read are three signals rather than one.
+          - FBSimulatorControlUnitTests
+          - FBSimulatorControlBootTests
+          - FBSimulatorControlSmokeTests
+          - FBDeviceControl
+    steps:
+      - uses: actions/checkout@v5
+      - name: Install tools
+        run: brew install xcodegen
+      # The smoke suite takes a booted simulator from its environment and does
+      # not boot one itself, so this job is the harness that supplies it, named
+      # by DEVICE_UDID (forwarded through xcodebuild's TEST_RUNNER_ prefix).
+      # The boot suite creates its own and needs no provisioning; the unit suite
+      # needs no simulator at all.
+      - name: Provision a simulator for the smoke suite
+        if: matrix.target == 'FBSimulatorControlSmokeTests'
+        run: python3 -m CI.provision_simulator --name smoke-test-provided --env-prefix TEST_RUNNER_ >> "$GITHUB_ENV"
+      - name: Test ${{ matrix.target }}
+        run: ./build.sh test ${{ matrix.target }}
+      # Hosted runners otherwise yield nothing beyond a failing test's name;
+      # the result bundle carries per-test failure detail and, for tests
+      # killed by the time allowance, a snapshot of where they were stuck.
+      - name: Upload result bundle on failure
+        if: failure()
+        uses: actions/upload-artifact@v5
+        with:
+          name: ${{ matrix.target }}-xcresult
+          path: Build/Logs/Test/*.xcresult
+          if-no-files-found: ignore
+          retention-days: 14
+
+  mac-companion:
+    name: Build companion + distribution (macOS)
+    runs-on: macos-26
+    timeout-minutes: 90
+    env:
+      XCODEGEN_STRIP_XATTRS: 'false'
+    steps:
+      - uses: actions/checkout@v5
+      - name: Install tools
+        run: brew install xcodegen protobuf swift-protobuf
+      # build.sh compiles protoc-gen-grpc-swift from source on first run;
+      # cache that build to keep this job fast.
+      - name: Cache grpc-swift plugin
+        uses: actions/cache@v5
+        with:
+          path: Build/grpc-swift
+          key: grpc-swift-${{ hashFiles('Package.swift') }}-${{ runner.os }}
+      - name: Build everything and assemble the distribution
+        run: ./build.sh build all
+      # Archived first: artifact upload does not keep file modes, and the
+      # end-to-end job has to execute what it downloads.
+      - name: Archive the distribution
+        run: tar -C Build -czf idb-companion-distribution.tgz Distribution
+      - name: Upload distribution
+        uses: actions/upload-artifact@v5
+        with:
+          name: idb-companion-distribution
+          path: idb-companion-distribution.tgz
+      # The same tree packaged exactly as the Release workflow's companion
+      # asset (flat, archive root = Distribution/), so the formulae job below
+      # can install it through the real formula, and so a release cut at this
+      # commit can ship these bytes instead of rebuilding them.
+      - name: Package the companion as the release asset
+        run: |
+          tar -C Build/Distribution -czf idb-companion.macos-arm64.tar.gz .
+          shasum -a 256 idb-companion.macos-arm64.tar.gz | tee idb-companion.macos-arm64.tar.gz.sha256
+      - name: Upload the companion asset
+        uses: actions/upload-artifact@v5
+        with:
+          name: idb-companion
+          path: idb-companion.macos-arm64.tar.gz*
+
+  # The formulae, rendered from .github/formulae/ against this commit's own
+  # companion tarball and wheel and installed through Homebrew from those
+  # local files. A template that no longer matches the tarball layout, a
+  # dependency pin that stopped resolving, or an install block that breaks
+  # fails here, on the diff that caused it, instead of on release day. The
+  # rendered files are uploaded for review; their URLs point at this runner,
+  # so they are a build output, not something to install from.
+  mac-formulae:
+    name: Render and install the formulae (macOS)
+    runs-on: macos-26
+    needs: mac-companion
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v5
+      - uses: Homebrew/actions/setup-homebrew@master
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - name: Download the companion asset
+        uses: actions/download-artifact@v5
+        with:
+          name: idb-companion
+          path: assets
+      # v0.0.0 is a well-formed tag for the render; the wheel must carry the
+      # same version so its filename matches the one the formulae reference.
+      - name: Build the wheel
+        run: |
+          pip install build
+          FB_IDB_VERSION=0.0.0 python -m build --wheel --outdir assets
+      - name: Render the formulae against the local assets
+        run: |
+          python3 .github/scripts/tap_formulae.py render \
+            --tag v0.0.0 \
+            --companion 'assets/idb-companion.macos-arm64.tar.gz' \
+            --wheel 'assets/fb_idb-*-py3-none-any.whl' \
+            --asset-base "file://$PWD/assets" \
+            --out tap
+      - name: Upload the rendered formulae
+        uses: actions/upload-artifact@v5
+        with:
+          name: formulae
+          path: tap/
+      - name: Mount the render as the facebook/fb tap
+        run: |
+          taps="$(brew --repository)/Library/Taps/facebook"
+          mkdir -p "$taps"
+          ln -s "$PWD/tap" "$taps/homebrew-fb"
+          brew tap-info facebook/fb
+      # Homebrew only trusts the formula named on the command line; the
+      # dependencies it pulls from the same untrusted tap are refused. Trust
+      # the scratch tap as a whole so `idb` can bring in idb-cli and
+      # idb-companion.
+      - name: Trust the scratch tap
+        run: brew trust facebook/fb
+      # idb depends on the other two, so one install exercises all three
+      # formulae; a source install of idb-cli is the venv-and-pip path that a
+      # release bottle would skip, which is exactly what should be checked.
+      - name: Install from the local assets
+        run: brew install facebook/fb/idb
+      - name: Test the installed formulae
+        run: brew test facebook/fb/idb-companion facebook/fb/idb-cli facebook/fb/idb
+
+  mac-end-to-end:
+    name: End-to-end (idb through idb_companion, macOS)
+    runs-on: macos-26
+    needs: mac-companion
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - name: Install fb-idb from source
+        run: FB_IDB_VERSION=0.0.0 pip install .
+      - name: Download the distribution
+        uses: actions/download-artifact@v5
+        with:
+          name: idb-companion-distribution
+      - name: Unpack the distribution
+        run: |
+          mkdir -p Build
+          tar -C Build -xzf idb-companion-distribution.tgz
+      # The suite consumes a booted simulator and does not boot one; this job
+      # is the harness that supplies it, named by DEVICE_UDID in the device set
+      # named by DEVICE_SET_PATH. Both are required, so the suite can never run
+      # against a simulator other than the one created here. A device set of
+      # this job's own keeps it clear of anything else on the runner.
+      - name: Provision a simulator
+        run: python3 -m CI.provision_simulator --name end-to-end-provided --device-set "$RUNNER_TEMP/end-to-end-device-set" >> "$GITHUB_ENV"
+      # Strict: a hosted runner has everything the suite needs, so a skip here
+      # would hide a broken environment rather than report a capability gap.
+      - name: Run the end-to-end suite
+        run: |
+          IDB_BIN="$(command -v idb)" \
+          IDB_COMPANION_PATH="$PWD/Build/Distribution/idb_companion" \
+          IDB_E2E_STRICT=1 \
+          python -m unittest discover -s EndToEndTests -t . -v
+      # What the companion's own log cannot account for: the crash report that
+      # separates a signal from an orderly exit, and the simulator's side of a
+      # read that never arrived. See CI/collect_diagnostics.py.
+      - name: Collect diagnostics on failure
+        if: failure()
+        run: python3 -m CI.collect_diagnostics --output "$RUNNER_TEMP/end-to-end-diagnostics"
+      - name: Upload diagnostics on failure
+        if: failure()
+        uses: actions/upload-artifact@v5
+        with:
+          name: end-to-end-diagnostics
+          path: ${{ runner.temp }}/end-to-end-diagnostics
+          if-no-files-found: ignore
+          retention-days: 14

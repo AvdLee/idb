@@ -5,12 +5,13 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+import CompanionUtilities
 import FBControlCore
 import Foundation
 
-class IDBConfiguration: NSObject {
+enum IDBConfiguration {
 
-  @objc static var eventReporter: FBEventReporter = EmptyEventReporter.shared
-
-  static var idbKillswitch: IDBKillswitch = EmptyIDBKillswitch()
+  // Set once at process startup before any request handling, so unsynchronized
+  // access is safe.
+  nonisolated(unsafe) static var eventReporter: FBEventReporter = EmptyEventReporter.shared
 }

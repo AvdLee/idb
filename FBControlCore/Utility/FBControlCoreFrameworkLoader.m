@@ -7,23 +7,9 @@
 
 #import "FBControlCoreFrameworkLoader.h"
 
-#include <dlfcn.h>
-
 #import "FBControlCore-Swift.h"
 #import "FBControlCore-SwiftImport.h"
 #import "FBControlCoreLogger.h"
-
-void *FBGetSymbolFromHandle(void *handle, const char *name)
-{
-  void *function = FBGetSymbolFromHandleOptional(handle, name);
-  NSCAssert(function, @"%s could not be located", name);
-  return function;
-}
-
-void *FBGetSymbolFromHandleOptional(void *handle, const char *name)
-{
-  return dlsym(handle, name);
-}
 
 @implementation FBControlCoreFrameworkLoader
 
@@ -62,24 +48,6 @@ void *FBGetSymbolFromHandleOptional(void *handle, const char *name)
   return result;
 }
 
-- (void)loadPrivateFrameworksOrAbort
-{
-  id<FBControlCoreLogger> logger = [FBControlCoreGlobalConfiguration.defaultLogger withName:@"framework_loader"];
-  NSError *error = nil;
-  BOOL success = [self loadPrivateFrameworks:logger.debug error:&error];
-  if (success) {
-    return;
-  }
-  NSString *message = [NSString stringWithFormat:@"Failed to private frameworks for %@ with error %@", self.frameworkName, error];
-
-  // Log the message.
-  [logger.error log:message];
-  // Assertions give a better message in the crash report.
-  NSAssert(NO, message);
-  // However if assertions are compiled out, then we still need to abort.
-  abort();
-}
-
 #pragma mark Private
 
 + (BOOL)loadPrivateFrameworks:(NSArray<FBWeakFramework *> *)weakFrameworks logger:(id<FBControlCoreLogger>)logger error:(NSError **)error
@@ -91,26 +59,15 @@ void *FBGetSymbolFromHandleOptional(void *handle, const char *name)
     }
   }
 
-  // We're done with loading Frameworks.
-  [logger.debug log:
-   [NSString stringWithFormat:@"Loaded All Private Frameworks %@",
-    [FBCollectionInformation oneLineDescriptionFromArray:[weakFrameworks valueForKeyPath:@"@unionOfObjects.name"] atKeyPath:@"lastPathComponent"]]
-  ];
+  NSArray<NSString *> *frameworkNames = [weakFrameworks valueForKeyPath:@"@unionOfObjects.name"];
+  if (frameworkNames) {
+    [logger.debug log:
+     [NSString stringWithFormat:@"Loaded All Private Frameworks %@",
+      [FBCollectionInformation oneLineDescriptionFromArray:frameworkNames atKeyPath:@"lastPathComponent"]]
+    ];
+  }
 
   return YES;
-}
-
-@end
-
-@implementation NSBundle (FBControlCoreFrameworkLoader)
-
-- (void *)dlopenExecutablePath
-{
-  NSAssert(self.loaded, @"%@ is not loaded", self);
-  NSString *path = [self executablePath];
-  void *handle = dlopen(path.UTF8String, RTLD_LAZY);
-  NSAssert(handle, @"%@ dlopen handle from %@ could not be obtained", self, path);
-  return handle;
 }
 
 @end

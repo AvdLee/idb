@@ -7,29 +7,22 @@
 
 import Foundation
 
-@objc(FBXCTraceRecordCommands)
-public class FBXCTraceRecordCommands: NSObject, FBiOSTargetCommand {
+public final class FBXCTraceRecordCommands: FBiOSTargetCommand, XCTraceRecordCommands {
 
-  // MARK: Properties
+  public let target: any FBiOSTarget
 
-  @objc public let target: any FBiOSTarget
-
-  // MARK: Initializers
-
-  @objc(commandsWithTarget:)
   public class func commands(with target: any FBiOSTarget) -> Self {
     self.init(target: target)
   }
 
   required init(target: any FBiOSTarget) {
     self.target = target
-    super.init()
   }
 
-  // MARK: Operations
+  // MARK: - Operations
 
-  public func startXctraceRecord(_ configuration: FBXCTraceRecordConfiguration, logger: any FBControlCoreLogger) async throws -> FBXCTraceRecordOperation {
-    let shim = try await bridgeFBFuture(FBXCTestShimConfiguration.sharedShimConfiguration(with: logger))
+  public func start(configuration: FBXCTraceRecordConfiguration, logger: any FBControlCoreLogger) async throws -> FBXCTraceRecordOperation {
+    let shim = try await FBXCTestShimConfiguration.sharedShimConfiguration()
     return try await FBXCTraceRecordOperation.operation(with: target, configuration: configuration.withShim(shim), logger: logger)
   }
 }

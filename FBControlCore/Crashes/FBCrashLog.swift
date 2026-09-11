@@ -7,35 +7,38 @@
 
 import Foundation
 
-@objc(FBCrashLog)
-public class FBCrashLog: NSObject, NSCopying {
+/// The kind of process that crashed.
+public struct FBCrashLogInfoProcessType: OptionSet, Sendable {
+  public let rawValue: UInt
 
-  @objc public let info: FBCrashLogInfo
-  @objc public let contents: String
+  public init(rawValue: UInt) {
+    self.rawValue = rawValue
+  }
 
-  @objc
+  /// A process that is part of the operating system runtime.
+  public static let system = FBCrashLogInfoProcessType(rawValue: 1 << 0)
+  /// A process that is an application.
+  public static let application = FBCrashLogInfoProcessType(rawValue: 1 << 1)
+  /// A process that is neither an application nor part of the operating system runtime.
+  public static let custom = FBCrashLogInfoProcessType(rawValue: 1 << 2)
+}
+
+public final class FBCrashLog: CustomStringConvertible {
+
+  public let info: FBCrashLogInfo
+  public let contents: String
+
   public init(info: FBCrashLogInfo, contents: String) {
     self.info = info
     self.contents = contents
-    super.init()
   }
 
-  // MARK: NSObject
-
-  public override var description: String {
+  public var description: String {
     "Crash Info: \(info) \n Crash Report: \(contents)\n"
   }
 
-  // MARK: NSCopying
+  // MARK: - Public
 
-  public func copy(with zone: NSZone? = nil) -> Any {
-    // Is immutable
-    self
-  }
-
-  // MARK: Public
-
-  @objc
   public class func dateFormatter() -> DateFormatter {
     FBCrashLog_dateFormatter
   }
@@ -49,30 +52,60 @@ private let FBCrashLog_dateFormatter: DateFormatter = {
   return formatter
 }()
 
-@objc(FBCrashLogInfo)
-public class FBCrashLogInfo: NSObject, NSCopying {
+public enum FBCrashLogError: Error {
+  case fileDoesNotExist(path: String)
+  case fileNotReadable(path: String)
+  case dataReadFailed(path: String, underlying: Error)
+  case fileEmpty(path: String)
+  case stringExtractionFailed(path: String)
+  case readFailed(path: String, underlying: Error)
+  case parseFailed(underlying: Error)
+  case missingField(field: String)
+}
 
-  // MARK: Properties
+extension FBCrashLogError: LocalizedError {
+  public var errorDescription: String? {
+    switch self {
+    case let .fileDoesNotExist(path):
+      return "File does not exist at given crash path: \(path)"
+    case let .fileNotReadable(path):
+      return "Crash file at \(path) is not readable"
+    case let .dataReadFailed(path, _):
+      return "Could not read data from \(path)"
+    case let .fileEmpty(path):
+      return "Crash file at \(path) is empty"
+    case let .stringExtractionFailed(path):
+      return "Could not extract string from \(path)"
+    case let .readFailed(path, _):
+      return "Failed to read crash log at path \(path)"
+    case let .parseFailed(underlying):
+      return "Could not parse crash string \(underlying)"
+    case let .missingField(field):
+      return "Missing \(field) in crash log"
+    }
+  }
+}
 
-  @objc public let crashPath: String
-  @objc public let executablePath: String
-  @objc public let identifier: String
-  @objc public let processName: String
-  @objc public let processIdentifier: pid_t
-  @objc public let parentProcessName: String
-  @objc public let parentProcessIdentifier: pid_t
-  @objc public let date: Date
-  @objc public let processType: FBCrashLogInfoProcessType
-  @objc public let exceptionDescription: String?
-  @objc public let crashedThreadDescription: String?
+public final class FBCrashLogInfo: CustomStringConvertible {
 
-  @objc public var name: String {
+  // MARK: - Properties
+
+  public let crashPath: String
+  public let executablePath: String
+  public let identifier: String
+  public let processName: String
+  public let processIdentifier: pid_t
+  public let parentProcessName: String
+  public let parentProcessIdentifier: pid_t
+  public let date: Date
+  public let processType: FBCrashLogInfoProcessType
+  public let exceptionDescription: String?
+  public let crashedThreadDescription: String?
+
+  public var name: String {
     (crashPath as NSString).lastPathComponent
   }
 
-  // MARK: Initializers
-
-  @objc
   public init(
     crashPath: String,
     executablePath: String,
@@ -97,39 +130,36 @@ public class FBCrashLogInfo: NSObject, NSCopying {
     self.processType = processType
     self.exceptionDescription = exceptionDescription
     self.crashedThreadDescription = crashedThreadDescription
-    super.init()
   }
 
-  // MARK: Factory Methods
+  // MARK: - Factory Methods
 
-  @objc(fromCrashLogAtPath:error:)
   public class func fromCrashLog(atPath crashPath: String) throws -> FBCrashLogInfo {
     let fileManager = FileManager.default
     if !fileManager.fileExists(atPath: crashPath) {
-      throw FBControlCoreError.describe("File does not exist at given crash path: \(crashPath)").build()
+      throw FBCrashLogError.fileDoesNotExist(path: crashPath)
     }
     if !fileManager.isReadableFile(atPath: crashPath) {
-      throw FBControlCoreError.describe("Crash file at \(crashPath) is not readable").build()
+      throw FBCrashLogError.fileNotReadable(path: crashPath)
     }
     let crashFileData: Data
     do {
       crashFileData = try Data(contentsOf: URL(fileURLWithPath: crashPath))
     } catch {
-      throw FBControlCoreError.describe("Could not read data from \(crashPath)").caused(by: error as NSError).build()
+      throw FBCrashLogError.dataReadFailed(path: crashPath, underlying: error)
     }
     if crashFileData.isEmpty {
-      throw FBControlCoreError.describe("Crash file at \(crashPath) is empty").build()
+      throw FBCrashLogError.fileEmpty(path: crashPath)
     }
 
     guard let crashString = String(data: crashFileData, encoding: .utf8) else {
-      throw FBControlCoreError.describe("Could not extract string from \(crashPath)").build()
+      throw FBCrashLogError.stringExtractionFailed(path: crashPath)
     }
 
     let parser = getPreferredCrashLogParser(forCrashString: crashString)
     return try fromCrashLogString(crashString, crashPath: crashPath, parser: parser)
   }
 
-  @objc(isParsableCrashLog:)
   public class func isParsableCrashLog(_ data: Data) -> Bool {
     #if canImport(Darwin)
     guard let crashString = String(data: data, encoding: .utf8) else {
@@ -147,73 +177,58 @@ public class FBCrashLogInfo: NSObject, NSCopying {
     #endif
   }
 
-  // MARK: NSObject
-
-  public override var description: String {
+  public var description: String {
     "Identifier \(identifier) | Executable Path \(executablePath) | Process \(processName) | pid \(processIdentifier) | Parent \(parentProcessName) | ppid \(parentProcessIdentifier) | Date \(date) | Path \(crashPath) | Exception: \(exceptionDescription ?? "nil") | Trace: \(crashedThreadDescription ?? "nil")"
   }
 
-  // MARK: NSCopying
-
-  public func copy(with zone: NSZone? = nil) -> Any {
-    // Is immutable
-    self
-  }
-
-  // MARK: Public Methods
-
-  @objc(loadRawCrashLogStringWithError:)
   public func loadRawCrashLogString() throws -> String {
     try String(contentsOfFile: crashPath, encoding: .utf8)
   }
 
-  // MARK: Bulk Collection
+  // MARK: - Bulk Collection
 
-  @objc(crashInfoAfterDate:logger:)
   public class func crashInfo(afterDate date: Date, logger: FBControlCoreLogger?) -> [FBCrashLogInfo] {
     var allCrashInfos: [FBCrashLogInfo] = []
 
     for basePath in diagnosticReportsPaths {
       let fileNames = (try? FileManager.default.contentsOfDirectory(atPath: basePath)) ?? []
       let predicate = predicateForFiles(withBasePath: basePath, afterDate: date, withExtensions: ["crash", "ips"])
-      nonisolated(unsafe) let theLogger = logger
       let crashInfos = FBConcurrentCollectionOperations.filterMap(
         fileNames as [Any],
         predicate: predicate,
         map: { item -> Any in
-          let fileName = item as! String
+          guard let fileName = item as? String else {
+            return NSNull()
+          }
           let path = (basePath as NSString).appendingPathComponent(fileName)
           do {
             return try FBCrashLogInfo.fromCrashLog(atPath: path)
           } catch {
-            theLogger?.log("Error parsing log \(error)")
+            logger?.log("Error parsing log \(error)")
             return NSNull()
           }
         }
       )
-      let filtered = (crashInfos as NSArray).filtered(using: NSPredicate.notNullPredicate()) as! [FBCrashLogInfo]
-      allCrashInfos.append(contentsOf: filtered)
+      allCrashInfos.append(contentsOf: crashInfos.compactMap { $0 as? FBCrashLogInfo })
     }
 
     return allCrashInfos
   }
 
-  // MARK: Contents
+  // MARK: - Contents
 
-  @objc(obtainCrashLogWithError:)
   public func obtainCrashLog() throws -> FBCrashLog {
     let contents: String
     do {
       contents = try loadRawCrashLogString()
     } catch {
-      throw FBControlCoreError.describe("Failed to read crash log at path \(crashPath)").caused(by: error as NSError).build()
+      throw FBCrashLogError.readFailed(path: crashPath, underlying: error)
     }
     return FBCrashLog(info: self, contents: contents)
   }
 
-  // MARK: Predicates
+  // MARK: - Predicates
 
-  @objc(predicateForCrashLogsWithProcessID:)
   public class func predicateForCrashLogs(withProcessID processID: pid_t) -> NSPredicate {
     NSPredicate { evaluatedObject, _ in
       guard let crashLog = evaluatedObject as? FBCrashLogInfo else { return false }
@@ -221,7 +236,6 @@ public class FBCrashLogInfo: NSObject, NSCopying {
     }
   }
 
-  @objc(predicateNewerThanDate:)
   public class func predicateNewer(thanDate date: Date) -> NSPredicate {
     NSPredicate { evaluatedObject, _ in
       guard let crashLog = evaluatedObject as? FBCrashLogInfo else { return false }
@@ -229,12 +243,10 @@ public class FBCrashLogInfo: NSObject, NSCopying {
     }
   }
 
-  @objc(predicateOlderThanDate:)
   public class func predicateOlder(thanDate date: Date) -> NSPredicate {
     NSCompoundPredicate(notPredicateWithSubpredicate: predicateNewer(thanDate: date))
   }
 
-  @objc(predicateForIdentifier:)
   public class func predicate(forIdentifier identifier: String) -> NSPredicate {
     NSPredicate { evaluatedObject, _ in
       guard let crashLog = evaluatedObject as? FBCrashLogInfo else { return false }
@@ -242,7 +254,6 @@ public class FBCrashLogInfo: NSObject, NSCopying {
     }
   }
 
-  @objc(predicateForName:)
   public class func predicate(forName name: String) -> NSPredicate {
     NSPredicate { evaluatedObject, _ in
       guard let crashLog = evaluatedObject as? FBCrashLogInfo else { return false }
@@ -250,7 +261,6 @@ public class FBCrashLogInfo: NSObject, NSCopying {
     }
   }
 
-  @objc(predicateForExecutablePathContains:)
   public class func predicate(forExecutablePathContains contains: String) -> NSPredicate {
     NSPredicate { evaluatedObject, _ in
       guard let crashLog = evaluatedObject as? FBCrashLogInfo else { return false }
@@ -258,16 +268,14 @@ public class FBCrashLogInfo: NSObject, NSCopying {
     }
   }
 
-  // MARK: Helpers
-
-  @objc public class var diagnosticReportsPaths: [String] {
+  public class var diagnosticReportsPaths: [String] {
     [
       (NSHomeDirectory() as NSString).appendingPathComponent("Library/Logs/DiagnosticReports"),
       "/Library/Logs/DiagnosticReports",
     ]
   }
 
-  // MARK: Private
+  // MARK: - Private
 
   private class func getPreferredCrashLogParser(forCrashString crashString: String) -> FBCrashLogParser {
     if !crashString.isEmpty && crashString.first == "{" {
@@ -304,30 +312,30 @@ public class FBCrashLogInfo: NSObject, NSCopying {
     )
 
     if let parseError {
-      throw FBControlCoreError.describe("Could not parse crash string \(parseError)").build()
+      throw FBCrashLogError.parseFailed(underlying: parseError)
     }
 
     let processNameStr = processName as String
     if processNameStr.isEmpty {
-      throw FBControlCoreError.describe("Missing process name in crash log").build()
+      throw FBCrashLogError.missingField(field: "process name")
     }
     let identifierStr = identifier as String
     if identifierStr.isEmpty {
-      throw FBControlCoreError.describe("Missing identifier in crash log").build()
+      throw FBCrashLogError.missingField(field: "identifier")
     }
     let parentProcessNameStr = parentProcessName as String
     if parentProcessNameStr.isEmpty {
-      throw FBControlCoreError.describe("Missing parent process name in crash log").build()
+      throw FBCrashLogError.missingField(field: "parent process name")
     }
     let executablePathStr = executablePath as String
     if executablePathStr.isEmpty {
-      throw FBControlCoreError.describe("Missing executable path in crash log").build()
+      throw FBCrashLogError.missingField(field: "executable path")
     }
     if processIdentifier == -1 {
-      throw FBControlCoreError.describe("Missing process identifier in crash log").build()
+      throw FBCrashLogError.missingField(field: "process identifier")
     }
     if parentProcessIdentifier == -1 {
-      throw FBControlCoreError.describe("Missing parent process identifier in crash log").build()
+      throw FBCrashLogError.missingField(field: "parent process identifier")
     }
 
     let processType = self.processType(forExecutablePath: executablePathStr)

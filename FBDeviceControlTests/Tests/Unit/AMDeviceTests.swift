@@ -1,0 +1,379 @@
+/*
+ * Copyright (c) Meta Platforms, Inc. and affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+import FBControlCore
+@testable import FBDeviceControl
+import Testing
+
+// MARK: - File-scope state for C function pointer callbacks
+
+private var sAMDeviceEvents: [String] = []
+
+/// The session is stopped and the device disconnected before the connection is invalidated: the
+/// AMDevice session is released once the service has started, not held for the caller's use of
+/// the connection.
+private let startServiceEvents = [
+  "connect",
+  "is_paired",
+  "validate_pairing",
+  "start_session",
+  "secure_start_service",
+  "service_connection_get_secure_io_context",
+  "stop_session",
+  "disconnect",
+  "service_connection_invalidate",
+]
+
+/// `withAFCConnection` layers an AFC client over the service connection: creating it reads the
+/// secure IO context a second time, and it is closed before the service connection beneath it is
+/// invalidated. A client AFC rejects is released the same way, so both paths record this sequence.
+private let afcConnectionEvents =
+  Array(startServiceEvents.dropLast())
+  + ["service_connection_get_secure_io_context", "connection_close", "service_connection_invalidate"]
+
+// Serialized: the stubs append to the file-scope `sAMDeviceEvents` from the
+// main queue; parallel tests would interleave their recordings.
+@MainActor
+@Suite(.serialized)
+final class AMDeviceTests {
+
+  private let device: FBAMDevice
+
+  init() {
+    device = Self.makeDevice(connectionReuseTimeout: nil, serviceReuseTimeout: nil)
+  }
+
+  // MARK: - Helpers
+
+  private static var stubbedCalls: AMDCalls {
+    var calls = CreateZeroedAMDCalls()
+
+    calls.Retain = { _ in }
+
+    calls.Release = { _ in }
+
+    calls.Connect = { _ in
+      sAMDeviceEvents.append("connect")
+      return 0
+    }
+
+    calls.Disconnect = { _ in
+      sAMDeviceEvents.append("disconnect")
+      return 0
+    }
+
+    calls.StartSession = { _ in
+      sAMDeviceEvents.append("start_session")
+      return 0
+    }
+
+    calls.StopSession = { _ in
+      sAMDeviceEvents.append("stop_session")
+      return 0
+    }
+
+    calls.CopyValue = { _, _, name in
+      guard let name else { return nil }
+      return Unmanaged.passUnretained(name)
+    }
+
+    calls.IsPaired = { _ in
+      sAMDeviceEvents.append("is_paired")
+      return 1
+    }
+
+    calls.ValidatePairing = { _ in
+      sAMDeviceEvents.append("validate_pairing")
+      return 0
+    }
+
+    calls.SecureStartService = { _, _, _, serviceOut in
+      sAMDeviceEvents.append("secure_start_service")
+      serviceOut?.pointee = Unmanaged<AnyObject>.passRetained("A Service" as CFString)
+      return 0
+    }
+
+    calls.ServiceConnectionGetSecureIOContext = { _ in
+      sAMDeviceEvents.append("service_connection_get_secure_io_context")
+      return nil
+    }
+
+    calls.ServiceConnectionInvalidate = { _ in
+      sAMDeviceEvents.append("service_connection_invalidate")
+      return 0
+    }
+
+    // Only read when a service connection is wrapped in an AFC client, and the socket it reports
+    // is unused: the AFC stubs answer for whatever they are handed.
+    calls.ServiceConnectionGetSocket = { _ in 0 }
+
+    calls.CreateHouseArrestService = { _, _, _, connectionOut in
+      sAMDeviceEvents.append("create_house_arrest_service")
+      connectionOut?.pointee = Unmanaged<AnyObject>.passRetained("A HOUSE ARREST" as CFString)
+      return 0
+    }
+
+    return calls
+  }
+
+  /// Records the close alongside the AMDevice events, so the AFC teardown can be ordered against
+  /// the service connection's.
+  private static var stubbedAFCCalls: AFCCalls {
+    var calls = AFCCalls()
+
+    calls.Create = { _, _, _, _, _ in
+      Unmanaged<AnyObject>.passRetained("AN AFC CONNECTION" as CFString)
+    }
+
+    calls.ConnectionIsValid = { _ in 1 }
+
+    calls.ConnectionClose = { _ in
+      sAMDeviceEvents.append("connection_close")
+      return 0
+    }
+
+    return calls
+  }
+
+  private static func makeDevice(connectionReuseTimeout: NSNumber?, serviceReuseTimeout: NSNumber?) -> FBAMDevice {
+    sAMDeviceEvents.removeAll()
+    #expect(sAMDeviceEvents.isEmpty)
+
+    let device = FBAMDevice(
+      allValues: ["UniqueDeviceID": "foo"],
+      calls: stubbedCalls,
+      connectionReuseTimeout: connectionReuseTimeout,
+      serviceReuseTimeout: serviceReuseTimeout,
+      work: DispatchQueue.main,
+      asyncQueue: DispatchQueue.main,
+      logger: FBControlCoreGlobalConfiguration.defaultLogger
+    )
+    device.amDeviceRef = ("A DEVICE" as CFString)
+    #expect(sAMDeviceEvents.isEmpty)
+    sAMDeviceEvents.removeAll()
+    return device
+  }
+
+  /// The context teardown (`stop_session`, `disconnect`) is enqueued on the main queue when the
+  /// popped future resolves, so it can still be pending when the await resumes.
+  private func waitForDeviceEvents(
+    _ expected: [String],
+    timeout: TimeInterval = 5,
+    sourceLocation: SourceLocation = #_sourceLocation
+  ) async {
+    let deadline = Date().addingTimeInterval(timeout)
+    while Date() < deadline, sAMDeviceEvents != expected {
+      try? await Task.sleep(nanoseconds: 20_000_000)
+    }
+    if sAMDeviceEvents != expected {
+      Issue.record(
+        "Timed out after \(timeout)s waiting for the device events to settle, last saw \(sAMDeviceEvents)",
+        sourceLocation: sourceLocation)
+    }
+  }
+
+  // MARK: - Tests
+
+  @Test
+  func descriptionNamesTheDeviceByUdidAndName() {
+    #expect((device.description) == ("AMDevice foo | unknown"))
+
+    device.allValues[DeviceKey.deviceName.rawValue] = "A Phone"
+    #expect((device.description) == ("AMDevice foo | A Phone"))
+    #expect(("\(device)") == ("AMDevice foo | A Phone"))
+  }
+
+  /// Pins the two lifetimes of the unscoped pair, which are not the same: the AMDevice session is
+  /// released as soon as the service has started, while the service connection is invalidated only
+  /// when the caller hands it back.
+  @Test
+  func openServiceConnection_TheCallerInvalidatesTheConnectionItIsHanded() async throws {
+    let connection = try await device.openServiceConnection("com.apple.testservice")
+    #expect((connection.name) == ("com.apple.testservice"))
+    await waitForDeviceEvents(Array(startServiceEvents.dropLast()))
+
+    FBAMDevice.invalidateServiceConnection(
+      connection, service: connection.name, logger: FBControlCoreGlobalConfiguration.defaultLogger)
+
+    await waitForDeviceEvents(startServiceEvents)
+    #expect((startServiceEvents) == (sAMDeviceEvents))
+  }
+
+  @Test
+  func withServiceConnection_InvalidatesTheConnectionWhenTheBodyReturns() async throws {
+    let name = try await device.withServiceConnection("com.apple.testservice") { $0.name }
+    #expect((name) == ("com.apple.testservice"))
+
+    await waitForDeviceEvents(startServiceEvents)
+    #expect((startServiceEvents) == (sAMDeviceEvents))
+  }
+
+  /// The connection is invalidated on the way out of a throwing body, not just a returning one.
+  @Test
+  func withServiceConnection_InvalidatesTheConnectionWhenTheBodyThrows() async throws {
+    struct BodyError: Error {}
+    do {
+      try await device.withServiceConnection("com.apple.testservice") { _ in throw BodyError() }
+      Issue.record("Expected the body's error to propagate")
+    } catch is BodyError {}
+
+    await waitForDeviceEvents(startServiceEvents)
+    #expect((startServiceEvents) == (sAMDeviceEvents))
+  }
+
+  /// The AFC client is handed to the body and closed before the service connection beneath it is
+  /// invalidated, so the two lifetimes are released innermost first.
+  @Test
+  func withAFCConnection_ClosesTheAFCConnectionWhenTheBodyReturns() async throws {
+    let description = try await device.withAFCConnection("com.apple.testservice", calls: Self.stubbedAFCCalls) { afc in
+      String(describing: afc.connection)
+    }
+    #expect(description.contains("AN AFC CONNECTION"))
+
+    await waitForDeviceEvents(afcConnectionEvents)
+    #expect((afcConnectionEvents) == (sAMDeviceEvents))
+  }
+
+  /// Both connections are released on the way out of a throwing body, in the same order.
+  @Test
+  func withAFCConnection_ClosesTheAFCConnectionWhenTheBodyThrows() async throws {
+    struct BodyError: Error {}
+    do {
+      try await device.withAFCConnection("com.apple.testservice", calls: Self.stubbedAFCCalls) { _ in
+        throw BodyError()
+      }
+      Issue.record("Expected the body's error to propagate")
+    } catch is BodyError {
+      // Expected.
+    }
+
+    await waitForDeviceEvents(afcConnectionEvents)
+    #expect((afcConnectionEvents) == (sAMDeviceEvents))
+  }
+
+  /// A connection AFC reports as invalid is rejected before the body runs; rejecting a client
+  /// releases it exactly as handing one to the body does.
+  @Test
+  func withAFCConnection_RejectsAConnectionThatIsNotValid() async throws {
+    var afcCalls = Self.stubbedAFCCalls
+    afcCalls.ConnectionIsValid = { _ in 0 }
+
+    await #expect(throws: AFCConnectionError.self) {
+      try await device.withAFCConnection("com.apple.testservice", calls: afcCalls) { _ in
+        Issue.record("Expected the invalid connection to be rejected before the body runs")
+      }
+    }
+
+    await waitForDeviceEvents(afcConnectionEvents)
+    #expect((afcConnectionEvents) == (sAMDeviceEvents))
+  }
+
+  /// Three consumers of one bundle's house arrest share a single connection, whether they overlap
+  /// or follow one another: the AMDevice session and the AFC connection are both pooled for longer
+  /// than the consumers take, so only the last release starts either teardown.
+  @Test
+  func concurrentHouseArrest() async throws {
+    var afcCalls = AFCCalls()
+    afcCalls.ConnectionClose = { _ in
+      sAMDeviceEvents.append("connection_close")
+      return 0
+    }
+
+    let device = Self.makeDevice(connectionReuseTimeout: 0.5, serviceReuseTimeout: 0.3)
+    await withTaskGroup(of: Void.self) { group in
+      for _ in 0..<3 {
+        group.addTask { @MainActor in
+          try? await device.withHouseArrestAFCConnection(forBundleID: "com.foo.bar", afcCalls: afcCalls) { _ in
+          }
+        }
+      }
+    }
+
+    var expected = [
+      "connect",
+      "is_paired",
+      "validate_pairing",
+      "start_session",
+      "create_house_arrest_service",
+    ]
+    await waitForDeviceEvents(expected)
+    #expect((expected) == (sAMDeviceEvents))
+
+    // The AFC connection's 0.3s reuse window elapses before the session's 0.5s one, so the close
+    // lands ahead of the session teardown.
+    expected += [
+      "connection_close",
+      "stop_session",
+      "disconnect",
+    ]
+    await waitForDeviceEvents(expected)
+    #expect((expected) == (sAMDeviceEvents))
+  }
+
+  /// The house arrest connection outlives the AMDevice session that created it. Production builds
+  /// every device with no connection reuse timeout but a six second service reuse timeout, so two
+  /// consecutive file operations on the same bundle re-establish the session while sharing one AFC
+  /// connection, and that connection is closed only once the window elapses with no consumer.
+  @Test
+  func houseArrestConnectionIsSharedAcrossSequentialScopes() async throws {
+    var afcCalls = AFCCalls()
+    afcCalls.ConnectionClose = { _ in
+      sAMDeviceEvents.append("connection_close")
+      return 0
+    }
+
+    let device = Self.makeDevice(connectionReuseTimeout: nil, serviceReuseTimeout: 2)
+    for _ in 0..<2 {
+      try await device.withHouseArrestAFCConnection(forBundleID: "com.foo.bar", afcCalls: afcCalls) { _ in
+      }
+    }
+
+    let session = ["connect", "is_paired", "validate_pairing", "start_session"]
+    let sessionTeardown = ["stop_session", "disconnect"]
+    var expected = session + ["create_house_arrest_service"] + sessionTeardown + session + sessionTeardown
+    await waitForDeviceEvents(expected)
+    #expect((expected) == (sAMDeviceEvents))
+
+    expected += ["connection_close"]
+    await waitForDeviceEvents(expected, timeout: 10)
+    #expect((expected) == (sAMDeviceEvents))
+  }
+
+  /// Cancelling a consumer that is queued behind another's use of house arrest abandons its place
+  /// in line.
+  @Test
+  func houseArrest_CancellingAQueuedConsumerAbandonsItsPlaceInLine() async throws {
+    let device = Self.makeDevice(connectionReuseTimeout: nil, serviceReuseTimeout: nil)
+    nonisolated(unsafe) let holderHasConnection = FBMutableFuture<NSNull>()
+    nonisolated(unsafe) let gate = FBMutableFuture<NSNull>()
+
+    let holder = Task { @MainActor in
+      try await device.withHouseArrestAFCConnection(forBundleID: "com.foo.bar", afcCalls: Self.stubbedAFCCalls) { _ in
+        holderHasConnection.resolve(withResult: NSNull())
+        try await bridgeFBFutureVoid(gate)
+      }
+    }
+    try await bridgeFBFutureVoid(holderHasConnection)
+
+    nonisolated(unsafe) var waiterBodyRan = false
+    let waiter = Task { @MainActor in
+      try await device.withHouseArrestAFCConnection(forBundleID: "com.foo.bar", afcCalls: Self.stubbedAFCCalls) { _ in
+        waiterBodyRan = true
+      }
+    }
+    // Give the waiter a chance to park behind the holder before cancelling it.
+    try? await Task.sleep(nanoseconds: 50_000_000)
+    waiter.cancel()
+    gate.resolve(withResult: NSNull())
+
+    await #expect(throws: CancellationError.self) {
+      try await waiter.value
+    }
+    #expect(!waiterBodyRan)
+    try await holder.value
+  }
+}

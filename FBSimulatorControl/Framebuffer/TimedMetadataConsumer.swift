@@ -1,0 +1,43 @@
+/*
+ * Copyright (c) Meta Platforms, Inc. and affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+import FBControlCore
+import Foundation
+
+// MARK: - TimedMetadataConsumer
+
+/// A sink for the timed-metadata (chapter) markers emitted by `FBSimulatorVideoStream.writeTimedMetadata`:
+/// either a streaming transport writer (fMP4 `emsg` / MPEG-TS ID3) or an `AVAssetWriter` chapter track.
+protocol TimedMetadataConsumer: AnyObject {
+  /// Write a single timed-metadata marker for the current stream position.
+  func writeTimedMetadata(_ text: String, logger: any FBControlCoreLogger)
+}
+
+// MARK: - TransportTimedMetadataConsumer
+
+/// The streaming `TimedMetadataConsumer`: muxes each marker into the encoded byte stream via the
+/// transport writer (MPEG-TS ID3 or fMP4 `emsg`). Transports that carry no timed-metadata channel
+/// (e.g. Annex-B) pass `nil` and drop markers with a log.
+final class TransportTimedMetadataConsumer: TimedMetadataConsumer {
+  private let consumer: any FBDataConsumer
+  /// Transport writer that can mux timed metadata into the same byte stream. `nil` for stateless
+  /// transports (Annex-B).
+  private let timedMetadataWriter: (any FBVideoStreamTimedMetadataWriter)?
+
+  init(consumer: any FBDataConsumer, timedMetadataWriter: (any FBVideoStreamTimedMetadataWriter)?) {
+    self.consumer = consumer
+    self.timedMetadataWriter = timedMetadataWriter
+  }
+
+  func writeTimedMetadata(_ text: String, logger: any FBControlCoreLogger) {
+    guard let timedMetadataWriter else {
+      logger.log("writeTimedMetadata: not supported for this transport, dropping")
+      return
+    }
+    timedMetadataWriter.writeTimedMetadata(text, to: consumer)
+  }
+}

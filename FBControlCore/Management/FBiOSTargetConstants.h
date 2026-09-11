@@ -8,8 +8,7 @@
 #import <Foundation/Foundation.h>
 
 /**
- An enum representing states. The values here are not guaranteed to be stable over time and should not be serialized.
- FBiOSTargetStateString is guaranteed to be stable over time.
+ Raw values are not stable across versions and must not be serialized; the Swift `FBiOSTargetStateString` form is.
  */
 typedef NS_ENUM(NSUInteger, FBiOSTargetState) {
   FBiOSTargetStateCreating = 0,
@@ -32,17 +31,3 @@ typedef NS_ENUM(NSUInteger, FBiOSTargetType) {
   FBiOSTargetTypeDevice = 1 << 1,
   FBiOSTargetTypeLocalMac = 1 << 2,
 };
-
-/**
- String representations of FBiOSTargetState.
- */
-typedef NSString *FBiOSTargetStateString NS_STRING_ENUM;
-extern FBiOSTargetStateString _Nonnull const FBiOSTargetStateStringCreating;
-extern FBiOSTargetStateString _Nonnull const FBiOSTargetStateStringShutdown;
-extern FBiOSTargetStateString _Nonnull const FBiOSTargetStateStringBooting;
-extern FBiOSTargetStateString _Nonnull const FBiOSTargetStateStringBooted;
-extern FBiOSTargetStateString _Nonnull const FBiOSTargetStateStringShuttingDown;
-extern FBiOSTargetStateString _Nonnull const FBiOSTargetStateStringDFU;
-extern FBiOSTargetStateString _Nonnull const FBiOSTargetStateStringRecovery;
-extern FBiOSTargetStateString _Nonnull const FBiOSTargetStateStringRestoreOS;
-extern FBiOSTargetStateString _Nonnull const FBiOSTargetStateStringUnknown;

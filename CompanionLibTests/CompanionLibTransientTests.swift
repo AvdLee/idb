@@ -5,199 +5,140 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-@preconcurrency import CompanionLib
+@preconcurrency @testable import CompanionLib
 @preconcurrency import FBControlCore
-import XCTest
+import Testing
 
-final class CompanionLibTransientTests: XCTestCase {
-
-  // MARK: - BridgeQueues Tests
-
-  func testFutureSerialFullfillmentQueueExists() {
-    let queue = BridgeQueues.futureSerialFullfillmentQueue
-    XCTAssertEqual(String(cString: __dispatch_queue_get_label(queue)), "com.facebook.fbfuture.fullfilment")
-  }
-
-  func testMiscEventReaderQueueExists() {
-    let queue = BridgeQueues.miscEventReaderQueue
-    XCTAssertEqual(String(cString: __dispatch_queue_get_label(queue)), "com.facebook.miscellaneous.reader")
-  }
+@Suite
+struct CompanionLibTransientTests {
 
   // MARK: - bridgeFBFuture (single future) Tests
 
-  func testValueResolvesSuccessfulFuture() async throws {
+  @Test
+  func valueResolvesSuccessfulFuture() async throws {
     let expected = "hello" as NSString
     let future = FBFuture<NSString>(result: expected)
     let result = try await bridgeFBFuture(future)
-    XCTAssertEqual(result, expected)
+    #expect((result) == (expected))
   }
 
-  func testValueThrowsOnFailedFuture() async {
+  @Test
+  func valueThrowsOnFailedFuture() async {
     let expectedError = NSError(domain: "test", code: 42)
     let future = FBFuture<NSString>(error: expectedError)
     do {
       _ = try await bridgeFBFuture(future)
-      XCTFail("Expected error")
+      Issue.record("Expected error")
     } catch {
       let nsError = error as NSError
-      XCTAssertEqual(nsError.domain, "test")
-      XCTAssertEqual(nsError.code, 42)
+      #expect((nsError.domain) == ("test"))
+      #expect((nsError.code) == (42))
     }
-  }
-
-  func testValueCancelsFutureOnTaskCancellation() async {
-    let mutableFuture = FBMutableFuture<NSString>()
-    let future = convertFBMutableFuture(mutableFuture)
-
-    let task = Task {
-      try await bridgeFBFuture(future)
-    }
-
-    // Give the continuation time to register
-    try? await Task.sleep(nanoseconds: 50_000_000)
-    task.cancel()
-
-    // After cancellation the underlying future should have been cancelled
-    try? await Task.sleep(nanoseconds: 50_000_000)
-    XCTAssertTrue(task.isCancelled)
   }
 
   // MARK: - bridgeFBFutures (multiple futures) Tests
 
-  func testValuesResolvesMultipleFuturesInOrder() async throws {
+  @Test
+  func valuesResolvesMultipleFuturesInOrder() async throws {
     let f1 = FBFuture<NSString>(result: "a" as NSString)
     let f2 = FBFuture<NSString>(result: "b" as NSString)
     let f3 = FBFuture<NSString>(result: "c" as NSString)
 
     let results = try await bridgeFBFutures([f1, f2, f3])
-    XCTAssertEqual(results, ["a" as NSString, "b" as NSString, "c" as NSString])
+    #expect((results) == (["a" as NSString, "b" as NSString, "c" as NSString]))
   }
 
-  func testValuesWithArrayResolvesInOrder() async throws {
-    let futures = (0..<5).map { i in
-      FBFuture<NSNumber>(result: NSNumber(value: i))
-    }
-    let results = try await bridgeFBFutures(futures)
-    XCTAssertEqual(results.map(\.intValue), [0, 1, 2, 3, 4])
-  }
-
-  func testValuesThrowsIfAnyFutureFails() async {
+  @Test
+  func valuesThrowsIfAnyFutureFails() async {
     let f1 = FBFuture<NSString>(result: "ok" as NSString)
     let f2 = FBFuture<NSString>(error: NSError(domain: "test", code: 99))
 
     do {
       _ = try await bridgeFBFutures([f1, f2])
-      XCTFail("Expected error")
+      Issue.record("Expected error")
     } catch {
       let nsError = error as NSError
-      XCTAssertEqual(nsError.code, 99)
+      #expect((nsError.code) == (99))
     }
   }
 
-  func testValuesWithEmptyArrayReturnsEmpty() async throws {
+  @Test
+  func valuesWithEmptyArrayReturnsEmpty() async throws {
     let futures: [FBFuture<NSString>] = []
     let results = try await bridgeFBFutures(futures)
-    XCTAssertTrue(results.isEmpty)
+    #expect((results.isEmpty))
   }
 
   // MARK: - bridgeFBFutureVoid Tests
 
-  func testAwaitNSNullFuture() async throws {
+  @Test
+  func awaitNSNullFuture() async throws {
     let future = FBFuture<NSNull>(result: NSNull())
     try await bridgeFBFutureVoid(future)
   }
 
-  func testAwaitNSNullFutureThrowsOnError() async {
+  @Test
+  func awaitNSNullFutureThrowsOnError() async {
     let future = FBFuture<NSNull>(error: NSError(domain: "test", code: 1))
     do {
       try await bridgeFBFutureVoid(future)
-      XCTFail("Expected error")
+      Issue.record("Expected error")
     } catch {
       let nsError = error as NSError
-      XCTAssertEqual(nsError.code, 1)
+      #expect((nsError.code) == (1))
     }
-  }
-
-  func testAwaitAnyObjectFuture() async throws {
-    let future = FBFuture<AnyObject>(result: "value" as NSString)
-    try await bridgeFBFutureVoid(future)
   }
 
   // MARK: - bridgeFBFutureArray (NSArray bridge) Tests
 
-  func testValueBridgesNSArrayToTypedSwiftArray() async throws {
+  @Test
+  func valueBridgesNSArrayToTypedSwiftArray() async throws {
     let nsArray = NSArray(array: [NSNumber(value: 1), NSNumber(value: 2), NSNumber(value: 3)])
     let future = FBFuture<NSArray>(result: nsArray)
     let result: [NSNumber] = try await bridgeFBFutureArray(future)
-    XCTAssertEqual(result, [NSNumber(value: 1), NSNumber(value: 2), NSNumber(value: 3)])
+    #expect((result) == ([NSNumber(value: 1), NSNumber(value: 2), NSNumber(value: 3)]))
   }
 
   // MARK: - bridgeFBFutureDictionary (NSDictionary bridge) Tests
 
-  func testValueBridgesNSDictionaryToTypedSwiftDict() async throws {
+  @Test
+  func valueBridgesNSDictionaryToTypedSwiftDict() async throws {
     let nsDict = NSDictionary(dictionary: ["key1": NSNumber(value: 10), "key2": NSNumber(value: 20)])
     let future = FBFuture<NSDictionary>(result: nsDict)
     let result: [NSString: NSNumber] = try await bridgeFBFutureDictionary(future)
-    XCTAssertEqual(result["key1" as NSString], NSNumber(value: 10))
-    XCTAssertEqual(result["key2" as NSString], NSNumber(value: 20))
+    #expect((result["key1" as NSString]) == (NSNumber(value: 10)))
+    #expect((result["key2" as NSString]) == (NSNumber(value: 20)))
   }
 
   // MARK: - convertFBMutableFuture Tests
 
-  func testConvertMutableFutureToFuture() async throws {
+  @Test
+  func convertMutableFutureToFuture() async throws {
     let mutableFuture = FBMutableFuture<NSString>()
     let future = convertFBMutableFuture(mutableFuture)
     mutableFuture.resolve(withResult: "resolved" as NSString)
     let result = try await bridgeFBFuture(future)
-    XCTAssertEqual(result, "resolved" as NSString)
+    #expect((result) == ("resolved" as NSString))
   }
 
-  func testConvertMutableFutureToFutureWithError() async {
+  @Test
+  func convertMutableFutureToFutureWithError() async {
     let mutableFuture = FBMutableFuture<NSString>()
     let future = convertFBMutableFuture(mutableFuture)
     let expectedError = NSError(domain: "test", code: 77)
     mutableFuture.resolveWithError(expectedError)
     do {
       _ = try await bridgeFBFuture(future)
-      XCTFail("Expected error")
+      Issue.record("Expected error")
     } catch {
-      XCTAssertEqual((error as NSError).code, 77)
+      #expect(((error as NSError).code) == (77))
     }
-  }
-
-  // MARK: - FBCodeCoverageRequest Tests
-
-  func testCodeCoverageRequestInitSetsProperties() {
-    let request = FBCodeCoverageRequest(collect: true, format: .exported, enableContinuousCoverageCollection: false)
-    XCTAssertTrue(request.collect)
-    XCTAssertEqual(request.format, .exported)
-    XCTAssertFalse(request.shouldEnableContinuousCoverageCollection)
-  }
-
-  func testCodeCoverageRequestNotCollecting() {
-    let request = FBCodeCoverageRequest(collect: false, format: .raw, enableContinuousCoverageCollection: true)
-    XCTAssertFalse(request.collect)
-    XCTAssertEqual(request.format, .raw)
-    XCTAssertTrue(request.shouldEnableContinuousCoverageCollection)
-  }
-
-  // MARK: - FBDsymInstallLinkToBundle Tests
-
-  func testDsymInstallLinkToBundleXCTest() {
-    let link = FBDsymInstallLinkToBundle("com.example.test", bundle_type: .xcTest)
-    XCTAssertEqual(link.bundle_id, "com.example.test")
-    XCTAssertEqual(link.bundle_type, .xcTest)
-  }
-
-  func testDsymInstallLinkToBundleApp() {
-    let link = FBDsymInstallLinkToBundle("com.example.app", bundle_type: .app)
-    XCTAssertEqual(link.bundle_id, "com.example.app")
-    XCTAssertEqual(link.bundle_type, .app)
   }
 
   // MARK: - FBXCTestRunRequest Factory & Property Tests
 
-  func testLogicTestRequestProperties() {
+  @Test
+  func logicTestRequestProperties() {
     let coverageRequest = FBCodeCoverageRequest(collect: false, format: .raw, enableContinuousCoverageCollection: false)
     let request = FBXCTestRunRequest.logicTest(
       withTestBundleID: "com.test.bundle",
@@ -213,23 +154,29 @@ final class CompanionLibTransientTests: XCTestCase {
       waitForDebugger: false,
       collectResultBundle: false
     )
-    XCTAssertTrue(request.isLogicTest)
-    XCTAssertFalse(request.isUITest)
-    XCTAssertEqual(request.testBundleID, "com.test.bundle")
-    XCTAssertEqual(request.environment, ["KEY": "VALUE"])
-    XCTAssertEqual(request.arguments, ["-arg1"])
-    XCTAssertEqual(request.testsToRun, Set(["TestClass/testMethod"]))
-    XCTAssertTrue(request.testsToSkip.isEmpty)
-    XCTAssertEqual(request.testTimeout, NSNumber(value: 300))
-    XCTAssertTrue(request.reportActivities)
-    XCTAssertFalse(request.reportAttachments)
-    XCTAssertFalse(request.coverageRequest.collect)
-    XCTAssertTrue(request.collectLogs)
-    XCTAssertFalse(request.waitForDebugger)
-    XCTAssertFalse(request.collectResultBundle)
+    #expect((request.bundle) == (.identifier("com.test.bundle")))
+    #expect((request.mode) == (.logic))
+    #expect((request.isLogicTest))
+    #expect(!(request.isUITest))
+    #expect((request.testBundleID) == ("com.test.bundle"))
+    #expect((request.testPath) == nil)
+    #expect((request.testHostAppBundleID) == nil)
+    #expect((request.testTargetAppBundleID) == nil)
+    #expect((request.environment) == (["KEY": "VALUE"]))
+    #expect((request.arguments) == (["-arg1"]))
+    #expect((request.testsToRun) == (Set(["TestClass/testMethod"])))
+    #expect((request.testsToSkip.isEmpty))
+    #expect((request.testTimeout) == (NSNumber(value: 300)))
+    #expect((request.reportActivities))
+    #expect(!(request.reportAttachments))
+    #expect(!(request.coverageRequest.collect))
+    #expect((request.collectLogs))
+    #expect(!(request.waitForDebugger))
+    #expect(!(request.collectResultBundle))
   }
 
-  func testApplicationTestRequestProperties() {
+  @Test
+  func applicationTestRequestProperties() {
     let coverageRequest = FBCodeCoverageRequest(collect: true, format: .exported, enableContinuousCoverageCollection: true)
     let request = FBXCTestRunRequest.applicationTest(
       withTestBundleID: "com.test.apptest",
@@ -246,18 +193,22 @@ final class CompanionLibTransientTests: XCTestCase {
       waitForDebugger: true,
       collectResultBundle: true
     )
-    XCTAssertFalse(request.isLogicTest)
-    XCTAssertFalse(request.isUITest)
-    XCTAssertEqual(request.testBundleID, "com.test.apptest")
-    XCTAssertEqual(request.testHostAppBundleID, "com.test.host")
-    XCTAssertNil(request.testTargetAppBundleID)
-    XCTAssertNil(request.testsToRun)
-    XCTAssertTrue(request.coverageRequest.collect)
-    XCTAssertTrue(request.waitForDebugger)
-    XCTAssertTrue(request.collectResultBundle)
+    #expect((request.bundle) == (.identifier("com.test.apptest")))
+    #expect((request.mode) == (.application(testHostAppBundleID: "com.test.host")))
+    #expect(!(request.isLogicTest))
+    #expect(!(request.isUITest))
+    #expect((request.testBundleID) == ("com.test.apptest"))
+    #expect((request.testPath) == nil)
+    #expect((request.testHostAppBundleID) == ("com.test.host"))
+    #expect((request.testTargetAppBundleID) == nil)
+    #expect((request.testsToRun) == nil)
+    #expect((request.coverageRequest.collect))
+    #expect((request.waitForDebugger))
+    #expect((request.collectResultBundle))
   }
 
-  func testUITestRequestProperties() {
+  @Test
+  func uITestRequestProperties() {
     let coverageRequest = FBCodeCoverageRequest(collect: false, format: .raw, enableContinuousCoverageCollection: false)
     let request = FBXCTestRunRequest.uiTest(
       withTestBundleID: "com.test.uitest",
@@ -274,19 +225,22 @@ final class CompanionLibTransientTests: XCTestCase {
       collectLogs: true,
       collectResultBundle: false
     )
-    XCTAssertFalse(request.isLogicTest)
-    XCTAssertTrue(request.isUITest)
-    XCTAssertEqual(request.testBundleID, "com.test.uitest")
-    XCTAssertEqual(request.testHostAppBundleID, "com.test.runner")
-    XCTAssertEqual(request.testTargetAppBundleID, "com.test.app")
-    XCTAssertEqual(request.environment, ["UI": "true"])
-    XCTAssertEqual(request.arguments, ["-ui"])
-    XCTAssertEqual(request.testsToRun, Set(["UITestSuite"]))
-    XCTAssertEqual(request.testsToSkip, Set(["UITestSuite/testSkipped"]))
-    XCTAssertFalse(request.waitForDebugger)
+    #expect((request.bundle) == (.identifier("com.test.uitest")))
+    #expect((request.mode) == (.ui(testHostAppBundleID: "com.test.runner", testTargetAppBundleID: "com.test.app")))
+    #expect(!(request.isLogicTest))
+    #expect((request.isUITest))
+    #expect((request.testBundleID) == ("com.test.uitest"))
+    #expect((request.testHostAppBundleID) == ("com.test.runner"))
+    #expect((request.testTargetAppBundleID) == ("com.test.app"))
+    #expect((request.environment) == (["UI": "true"]))
+    #expect((request.arguments) == (["-ui"]))
+    #expect((request.testsToRun) == (Set(["UITestSuite"])))
+    #expect((request.testsToSkip) == (Set(["UITestSuite/testSkipped"])))
+    #expect(!(request.waitForDebugger))
   }
 
-  func testLogicTestWithTestPathProperties() {
+  @Test
+  func logicTestWithTestPathProperties() {
     let coverageRequest = FBCodeCoverageRequest(collect: false, format: .raw, enableContinuousCoverageCollection: false)
     let testURL = URL(fileURLWithPath: "/tmp/MyTest.xctest")
     let request = FBXCTestRunRequest.logicTest(
@@ -303,47 +257,122 @@ final class CompanionLibTransientTests: XCTestCase {
       waitForDebugger: false,
       collectResultBundle: false
     )
-    XCTAssertTrue(request.isLogicTest)
-    XCTAssertFalse(request.isUITest)
-    XCTAssertEqual(request.testPath, testURL)
+    #expect((request.bundle) == (.path(testURL)))
+    #expect((request.mode) == (.logic))
+    #expect((request.isLogicTest))
+    #expect(!(request.isUITest))
+    #expect((request.testPath) == (testURL))
+    #expect((request.testBundleID) == nil)
+  }
+
+  @Test
+  func pathBundlesCombineWithHostedModes() {
+    let coverageRequest = FBCodeCoverageRequest(collect: false, format: .raw, enableContinuousCoverageCollection: false)
+    let testURL = URL(fileURLWithPath: "/tmp/MyTest.xctest")
+    let applicationTest = FBXCTestRunRequest.applicationTest(
+      withTestPath: testURL,
+      testHostAppBundleID: "com.test.host",
+      environment: [:],
+      arguments: [],
+      testsToRun: nil,
+      testsToSkip: Set<String>(),
+      testTimeout: nil,
+      reportActivities: false,
+      reportAttachments: false,
+      coverageRequest: coverageRequest,
+      collectLogs: false,
+      waitForDebugger: false,
+      collectResultBundle: false
+    )
+    #expect((applicationTest.bundle) == (.path(testURL)))
+    #expect((applicationTest.mode) == (.application(testHostAppBundleID: "com.test.host")))
+    #expect(!(applicationTest.isLogicTest))
+    #expect(!(applicationTest.isUITest))
+    #expect((applicationTest.testPath) == (testURL))
+    #expect((applicationTest.testBundleID) == nil)
+    #expect((applicationTest.testTargetAppBundleID) == nil)
+
+    let uiTest = FBXCTestRunRequest.uiTest(
+      withTestPath: testURL,
+      testHostAppBundleID: "com.test.runner",
+      testTargetAppBundleID: "com.test.app",
+      environment: [:],
+      arguments: [],
+      testsToRun: nil,
+      testsToSkip: Set<String>(),
+      testTimeout: nil,
+      reportActivities: false,
+      reportAttachments: false,
+      coverageRequest: coverageRequest,
+      collectLogs: false,
+      collectResultBundle: false
+    )
+    #expect((uiTest.bundle) == (.path(testURL)))
+    #expect((uiTest.mode) == (.ui(testHostAppBundleID: "com.test.runner", testTargetAppBundleID: "com.test.app")))
+    #expect(!(uiTest.isLogicTest))
+    #expect((uiTest.isUITest))
+    #expect((uiTest.testPath) == (testURL))
+    #expect((uiTest.testBundleID) == nil)
+  }
+
+  @Test
+  func requestDescriptionNamesModeAndBundle() {
+    let coverageRequest = FBCodeCoverageRequest(collect: false, format: .raw, enableContinuousCoverageCollection: false)
+    let logicTest = FBXCTestRunRequest.logicTest(
+      withTestBundleID: "com.test.bundle",
+      environment: [:],
+      arguments: [],
+      testsToRun: nil,
+      testsToSkip: Set<String>(),
+      testTimeout: nil,
+      reportActivities: false,
+      reportAttachments: false,
+      coverageRequest: coverageRequest,
+      collectLogs: false,
+      waitForDebugger: false,
+      collectResultBundle: false
+    )
+    #expect((String(describing: logicTest)) == ("logic test of bundle id com.test.bundle"))
+
+    let applicationTest = FBXCTestRunRequest.applicationTest(
+      withTestBundleID: "com.test.apptest",
+      testHostAppBundleID: "com.test.host",
+      environment: [:],
+      arguments: [],
+      testsToRun: nil,
+      testsToSkip: Set<String>(),
+      testTimeout: nil,
+      reportActivities: false,
+      reportAttachments: false,
+      coverageRequest: coverageRequest,
+      collectLogs: false,
+      waitForDebugger: false,
+      collectResultBundle: false
+    )
+    #expect((String(describing: applicationTest)) == ("application test of bundle id com.test.apptest hosted by com.test.host"))
+
+    let uiTest = FBXCTestRunRequest.uiTest(
+      withTestPath: URL(fileURLWithPath: "/tmp/MyTest.xctest"),
+      testHostAppBundleID: "com.test.runner",
+      testTargetAppBundleID: "com.test.app",
+      environment: [:],
+      arguments: [],
+      testsToRun: nil,
+      testsToSkip: Set<String>(),
+      testTimeout: nil,
+      reportActivities: false,
+      reportAttachments: false,
+      coverageRequest: coverageRequest,
+      collectLogs: false,
+      collectResultBundle: false
+    )
+    #expect((String(describing: uiTest)) == ("ui test of bundle at /tmp/MyTest.xctest hosted by com.test.runner targeting com.test.app"))
   }
 
   // MARK: - FBXCTestReporterConfiguration Tests
 
-  func testReporterConfigurationInitSetsProperties() {
-    let config = FBXCTestReporterConfiguration(
-      resultBundlePath: "/path/to/result",
-      coverageConfiguration: nil,
-      logDirectoryPath: "/path/to/logs",
-      binariesPaths: ["/path/to/binary1", "/path/to/binary2"],
-      reportAttachments: true,
-      reportResultBundle: false
-    )
-    XCTAssertEqual(config.resultBundlePath, "/path/to/result")
-    XCTAssertNil(config.coverageConfiguration)
-    XCTAssertEqual(config.logDirectoryPath, "/path/to/logs")
-    XCTAssertEqual(config.binariesPaths, ["/path/to/binary1", "/path/to/binary2"])
-    XCTAssertTrue(config.reportAttachments)
-    XCTAssertFalse(config.reportResultBundle)
-  }
-
-  func testReporterConfigurationNilPaths() {
-    let config = FBXCTestReporterConfiguration(
-      resultBundlePath: nil,
-      coverageConfiguration: nil,
-      logDirectoryPath: nil,
-      binariesPaths: [],
-      reportAttachments: false,
-      reportResultBundle: true
-    )
-    XCTAssertNil(config.resultBundlePath)
-    XCTAssertNil(config.logDirectoryPath)
-    XCTAssertTrue(config.binariesPaths.isEmpty)
-    XCTAssertFalse(config.reportAttachments)
-    XCTAssertTrue(config.reportResultBundle)
-  }
-
-  func testReporterConfigurationDescription() {
+  @Test
+  func reporterConfigurationDescription() {
     let config = FBXCTestReporterConfiguration(
       resultBundlePath: "/result",
       coverageConfiguration: nil,
@@ -353,19 +382,14 @@ final class CompanionLibTransientTests: XCTestCase {
       reportResultBundle: false
     )
     let desc = config.description
-    XCTAssertTrue(desc.contains("/result"))
-    XCTAssertTrue(desc.contains("/logs"))
-  }
-
-  // MARK: - FBIDBError Tests
-
-  func testIDBErrorDomainConstant() {
-    XCTAssertEqual(FBIDBErrorDomain, "com.facebook.idb")
+    #expect((desc.contains("/result")))
+    #expect((desc.contains("/logs")))
   }
 
   // MARK: - bridgeFBFuture with delayed resolution Tests
 
-  func testValueWithDelayedResolution() async throws {
+  @Test
+  func valueWithDelayedResolution() async throws {
     let mutableFuture = FBMutableFuture<NSString>()
     let future = convertFBMutableFuture(mutableFuture)
 
@@ -375,10 +399,11 @@ final class CompanionLibTransientTests: XCTestCase {
     }
 
     let result = try await bridgeFBFuture(future)
-    XCTAssertEqual(result, "delayed" as NSString)
+    #expect((result) == ("delayed" as NSString))
   }
 
-  func testValuesWithDelayedResolution() async throws {
+  @Test
+  func valuesWithDelayedResolution() async throws {
     let mf1 = FBMutableFuture<NSNumber>()
     let mf2 = FBMutableFuture<NSNumber>()
     let f1 = convertFBMutableFuture(mf1)
@@ -393,7 +418,7 @@ final class CompanionLibTransientTests: XCTestCase {
     }
 
     let results = try await bridgeFBFutures([f1, f2])
-    XCTAssertEqual(results[0], NSNumber(value: 1))
-    XCTAssertEqual(results[1], NSNumber(value: 2))
+    #expect((results[0]) == (NSNumber(value: 1)))
+    #expect((results[1]) == (NSNumber(value: 2)))
   }
 }

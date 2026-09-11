@@ -8,7 +8,7 @@
 import FBControlCore
 import Foundation
 
-@objc final class FBiOSTargetDescription: NSObject, FBiOSTargetInfo, NSCopying {
+final class FBiOSTargetDescription: FBiOSTargetInfo {
 
   let uniqueIdentifier: String
   let udid: String
@@ -30,7 +30,7 @@ import Foundation
   private static let keyType = "type"
   private static let keyUDID = "udid"
 
-  @objc init?(target: FBiOSTargetInfo) {
+  init(target: FBiOSTargetInfo) {
     self.extendedInformation = target.extendedInformation
     self.model = target.deviceType.model
     self.name = target.name
@@ -41,20 +41,15 @@ import Foundation
     self.uniqueIdentifier = target.uniqueIdentifier
     self.deviceType = target.deviceType
     self.architectures = target.architectures
-    super.init()
   }
 
-  func copy(with zone: NSZone? = nil) -> Any {
-    self
-  }
-
-  @objc var asJSON: [String: Any] {
+  var asJSON: [String: Any] {
     var representation: [String: Any] = [
       Self.keyModel: model as Any? ?? NSNull(),
       Self.keyName: name as Any? ?? NSNull(),
       Self.keyOSVersion: osVersion.name as Any? ?? NSNull(),
-      Self.keyState: FBiOSTargetStateStringFromState(state),
-      Self.keyType: FBiOSTargetTypeStringFromTargetType(targetType),
+      Self.keyState: state.stateString.rawValue,
+      Self.keyType: targetType.stringRepresentation,
       Self.keyUDID: udid as Any? ?? NSNull(),
     ]
     for (key, value) in extendedInformation {

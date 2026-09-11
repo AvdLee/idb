@@ -20,7 +20,7 @@ import GRPC
 /// All blocking socket I/O runs on a dedicated dispatch queue so the gRPC
 /// handler's cooperative thread is never blocked (a user's compiled code may run
 /// for an arbitrary amount of time).
-final class ReplSocketClient {
+final class ReplSocketClient: @unchecked Sendable {
 
   private let fd: Int32
   private let ioQueue = DispatchQueue(label: "com.facebook.idb.repl.socket")
@@ -77,10 +77,20 @@ final class ReplSocketClient {
     return ReplSocketClient(fd: fd)
   }
 
-  /// Reads the shim's greeting frame, sent once on connect before any command,
-  /// and returns the `.swiftinterface` paths it advertises (possibly empty). Must
-  /// be called exactly once, before the first `execute`.
-  func readGreeting() async throws -> [String] {
+  /// The shim's greeting: the `.swiftinterface` paths it advertises (possibly
+  /// empty), the next run index to number compiled dylibs from (nonzero only when
+  /// the app persisted a higher value across reconnects), and the host's stable
+  /// session id (the same across reconnects to a still-running app, regenerated on
+  /// relaunch).
+  struct Greeting {
+    let interfaces: [String]
+    let nextRunIndex: UInt32
+    let sessionID: String
+  }
+
+  /// Reads the shim's greeting frame, sent once on connect before any command.
+  /// Must be called exactly once, before the first `execute`.
+  func readGreeting() async throws -> Greeting {
     let fd = self.fd
     return try await withCheckedThrowingContinuation { continuation in
       ioQueue.async {
@@ -90,7 +100,9 @@ final class ReplSocketClient {
             throw GRPCStatus(code: .internalError, message: "repl: expected a 'greeting' message, got type '\(message["type"] as? String ?? "nil")'")
           }
           let interfaces = message["interfaces"] as? [String] ?? []
-          continuation.resume(returning: interfaces)
+          let nextRunIndex = (message["nextRunIndex"] as? NSNumber)?.uint32Value ?? 0
+          let sessionID = message["sessionID"] as? String ?? ""
+          continuation.resume(returning: Greeting(interfaces: interfaces, nextRunIndex: nextRunIndex, sessionID: sessionID))
         } catch {
           continuation.resume(throwing: error)
         }
@@ -110,9 +122,11 @@ final class ReplSocketClient {
   /// `result` for this execute arrives. A `read` returning EOF/error before a
   /// complete message means the shim closed the socket mid-exchange (e.g. the test
   /// process crashed), surfaced as a disconnect.
-  func execute(dylibPath: String, symbol: String, hostCommandHandler: @escaping HostCommandHandler) async throws -> (success: Bool, output: String) {
+  func execute(dylibPath: String, symbol: String, hostCommandHandler: @escaping HostCommandHandler) async throws -> (success: Bool, output: String, nextRunIndex: Int32) {
     let fd = self.fd
     return try await withCheckedThrowingContinuation { continuation in
+      // Not Sendable, so rebound as nonisolated(unsafe) for the ioQueue closure to capture.
+      nonisolated(unsafe) let hostCommandHandler = hostCommandHandler
       ioQueue.async {
         do {
           try Self.writeMessage(["type": "execute", "dylib": dylibPath, "symbol": symbol], to: fd)
@@ -131,7 +145,8 @@ final class ReplSocketClient {
                 success
                 ? (message["result"] as? String ?? "")
                 : "Error: \(message["error"] as? String ?? "unknown")"
-              continuation.resume(returning: (success, output))
+              let nextRunIndex = (message["nextRunIndex"] as? NSNumber)?.int32Value ?? 0
+              continuation.resume(returning: (success, output, nextRunIndex))
               return
 
             case let other:
@@ -152,17 +167,15 @@ final class ReplSocketClient {
     final class Box: @unchecked Sendable { var value: HostCommandResult = .failure(HostCommandError.message("repl: host command did not complete")) }
     let box = Box()
     let semaphore = DispatchSemaphore(value: 0)
+    nonisolated(unsafe) let commandHandler = handler
     Task {
-      box.value = await handler(commandData)
+      box.value = await commandHandler(commandData)
       semaphore.signal()
     }
     semaphore.wait()
     return box.value
   }
 
-  /// Builds a `host_result` message from a command's outcome: the payload bytes
-  /// become the `result` value on success, or the error's description becomes the
-  /// `error` message on failure.
   private static func hostResultMessage(_ result: HostCommandResult) -> [String: Any] {
     switch result {
     case .success(let data):
@@ -174,8 +187,6 @@ final class ReplSocketClient {
 
   // MARK: - Framing
 
-  /// Reads one length-prefixed frame from `fd` (a 4-byte big-endian byte count
-  /// then that many payload bytes), throwing on EOF/error.
   private static func readFrame(fd: Int32) throws -> Data {
     let header = try readBytes(fd: fd, count: 4)
     let length = (Int(header[0]) << 24) | (Int(header[1]) << 16) | (Int(header[2]) << 8) | Int(header[3])
@@ -183,8 +194,6 @@ final class ReplSocketClient {
     return try readBytes(fd: fd, count: length)
   }
 
-  /// Reads exactly `count` bytes from `fd`, looping over short reads; throws on
-  /// EOF/error.
   private static func readBytes(fd: Int32, count: Int) throws -> Data {
     var data = Data(count: count)
     var total = 0
@@ -204,7 +213,6 @@ final class ReplSocketClient {
     return data
   }
 
-  /// Reads one frame and decodes it as a binary property-list message.
   private static func readMessage(fd: Int32) throws -> [String: Any] {
     let frame = try readFrame(fd: fd)
     guard let message = try PropertyListSerialization.propertyList(from: frame, options: [], format: nil) as? [String: Any] else {
@@ -213,13 +221,11 @@ final class ReplSocketClient {
     return message
   }
 
-  /// Writes `message` as a binary property-list frame to `fd`.
   private static func writeMessage(_ message: [String: Any], to fd: Int32) throws {
     let payload = try PropertyListSerialization.data(fromPropertyList: message, format: .binary, options: 0)
     try writeFrame(payload, to: fd)
   }
 
-  /// Writes `payload` as a length-prefixed frame to `fd`.
   private static func writeFrame(_ payload: Data, to fd: Int32) throws {
     let length = payload.count
     var framed = Data([

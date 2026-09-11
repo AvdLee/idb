@@ -9,57 +9,39 @@ import Foundation
 
 // MARK: - FBiOSTargetScreenInfo
 
-@objc(FBiOSTargetScreenInfo)
-public final class FBiOSTargetScreenInfo: NSObject, NSCopying {
+public struct FBiOSTargetScreenInfo: Equatable, Hashable, CustomStringConvertible {
 
-  @objc public let widthPixels: UInt
-  @objc public let heightPixels: UInt
-  @objc public let scale: Float
+  public let widthPixels: UInt
+  public let heightPixels: UInt
+  public let scale: Float
 
-  @objc
   public init(widthPixels: UInt, heightPixels: UInt, scale: Float) {
     self.widthPixels = widthPixels
     self.heightPixels = heightPixels
     self.scale = scale
-    super.init()
   }
 
-  // MARK: NSObject
-
-  public override func isEqual(_ object: Any?) -> Bool {
-    guard let other = object as? FBiOSTargetScreenInfo else { return false }
-    return widthPixels == other.widthPixels
-      && heightPixels == other.heightPixels
-      && scale == other.scale
+  /// Truncating the scale to `Int` means two screens differing only in the fraction of their scale
+  /// collide, which equality still separates.
+  public func hash(into hasher: inout Hasher) {
+    hasher.combine(Int(widthPixels) ^ Int(heightPixels) ^ Int(scale))
   }
 
-  public override var hash: Int {
-    Int(widthPixels) ^ Int(heightPixels) ^ Int(scale)
-  }
-
-  public override var description: String {
+  public var description: String {
     String(format: "Screen Pixels %lu,%lu | Scale %fX", widthPixels, heightPixels, scale)
-  }
-
-  // MARK: NSCopying
-
-  public func copy(with zone: NSZone? = nil) -> Any {
-    self
   }
 }
 
 // MARK: - FBDeviceType
 
-@objc(FBDeviceType)
-public final class FBDeviceType: NSObject, NSCopying {
+public struct FBDeviceType: Equatable, Hashable, CustomStringConvertible, Sendable {
 
-  @objc public let model: FBDeviceModel
-  @objc public let productTypes: Set<String>
-  @objc public let deviceArchitecture: FBArchitecture
-  @objc public let family: FBControlCoreProductFamily
+  public let model: FBDeviceModel
+  public let productTypes: Set<String>
+  public let deviceArchitecture: FBArchitecture
+  public let family: FBControlCoreProductFamily
 
-  @objc(genericWithName:)
-  public class func generic(withName name: String) -> FBDeviceType {
+  public static func generic(withName name: String) -> FBDeviceType {
     FBDeviceType(model: FBDeviceModel(rawValue: name), productTypes: [], deviceArchitecture: .arm64, family: .familyUnknown)
   }
 
@@ -68,72 +50,61 @@ public final class FBDeviceType: NSObject, NSCopying {
     self.productTypes = productTypes
     self.deviceArchitecture = deviceArchitecture
     self.family = family
-    super.init()
   }
 
-  // MARK: NSObject
-
-  public override func isEqual(_ object: Any?) -> Bool {
-    guard let other = object as? FBDeviceType else { return false }
-    return model == other.model
+  /// The model is the identity: the other properties are catalogue data looked up from it, so a
+  /// catalogue entry and a generic device type of the same model are equal.
+  public static func == (lhs: FBDeviceType, rhs: FBDeviceType) -> Bool {
+    lhs.model == rhs.model
   }
 
-  public override var hash: Int {
-    model.hashValue
+  public func hash(into hasher: inout Hasher) {
+    hasher.combine(model)
   }
 
-  public override var description: String {
+  public var description: String {
     "Model '\(model.rawValue)'"
   }
 
-  // MARK: NSCopying
+  // MARK: - Fileprivate Helpers
 
-  public func copy(with zone: NSZone? = nil) -> Any {
-    self
-  }
-
-  // MARK: Fileprivate Helpers
-
-  fileprivate class func iPhone(withModel model: FBDeviceModel, productType: String, deviceArchitecture: FBArchitecture) -> FBDeviceType {
+  fileprivate static func iPhone(withModel model: FBDeviceModel, productType: String, deviceArchitecture: FBArchitecture) -> FBDeviceType {
     iPhone(withModel: model, productTypes: [productType], deviceArchitecture: deviceArchitecture)
   }
 
-  fileprivate class func iPhone(withModel model: FBDeviceModel, productTypes: [String], deviceArchitecture: FBArchitecture) -> FBDeviceType {
+  fileprivate static func iPhone(withModel model: FBDeviceModel, productTypes: [String], deviceArchitecture: FBArchitecture) -> FBDeviceType {
     FBDeviceType(model: model, productTypes: Set(productTypes), deviceArchitecture: deviceArchitecture, family: .familyiPhone)
   }
 
-  fileprivate class func iPad(withModel model: FBDeviceModel, productTypes: [String], deviceArchitecture: FBArchitecture) -> FBDeviceType {
+  fileprivate static func iPad(withModel model: FBDeviceModel, productTypes: [String], deviceArchitecture: FBArchitecture) -> FBDeviceType {
     FBDeviceType(model: model, productTypes: Set(productTypes), deviceArchitecture: deviceArchitecture, family: .familyiPad)
   }
 
-  fileprivate class func tv(withModel model: FBDeviceModel, productTypes: [String], deviceArchitecture: FBArchitecture) -> FBDeviceType {
+  fileprivate static func tv(withModel model: FBDeviceModel, productTypes: [String], deviceArchitecture: FBArchitecture) -> FBDeviceType {
     FBDeviceType(model: model, productTypes: Set(productTypes), deviceArchitecture: deviceArchitecture, family: .familyAppleTV)
   }
 
-  fileprivate class func watch(withModel model: FBDeviceModel, productTypes: [String], deviceArchitecture: FBArchitecture) -> FBDeviceType {
+  fileprivate static func watch(withModel model: FBDeviceModel, productTypes: [String], deviceArchitecture: FBArchitecture) -> FBDeviceType {
     FBDeviceType(model: model, productTypes: Set(productTypes), deviceArchitecture: deviceArchitecture, family: .familyAppleWatch)
   }
 
-  fileprivate class func generic(withModel model: String) -> FBDeviceType {
+  fileprivate static func generic(withModel model: String) -> FBDeviceType {
     FBDeviceType(model: FBDeviceModel(rawValue: model), productTypes: [], deviceArchitecture: .arm64, family: .familyUnknown)
   }
 }
 
 // MARK: - FBOSVersion
 
-@objc(FBOSVersion)
-public final class FBOSVersion: NSObject, NSCopying {
+public struct FBOSVersion: Equatable, Hashable, CustomStringConvertible, Sendable {
 
-  @objc public let name: FBOSVersionName
-  @objc public let families: Set<NSNumber>
+  public let name: FBOSVersionName
+  public let families: Set<NSNumber>
 
-  @objc(genericWithName:)
-  public class func generic(withName name: String) -> FBOSVersion {
+  public static func generic(withName name: String) -> FBOSVersion {
     FBOSVersion(name: FBOSVersionName(rawValue: name), families: [])
   }
 
-  @objc(operatingSystemVersionFromName:)
-  public class func operatingSystemVersion(fromName name: String) -> OperatingSystemVersion {
+  public static func operatingSystemVersion(fromName name: String) -> OperatingSystemVersion {
     let components = name.components(separatedBy: CharacterSet.punctuationCharacters)
     var version = OperatingSystemVersion(majorVersion: 0, minorVersion: 0, patchVersion: 0)
     for (index, component) in components.enumerated() {
@@ -155,47 +126,38 @@ public final class FBOSVersion: NSObject, NSCopying {
   private init(name: FBOSVersionName, families: Set<NSNumber>) {
     self.name = name
     self.families = families
-    super.init()
   }
 
-  // MARK: Public Computed Properties
+  // MARK: - Public Computed Properties
 
-  @objc public var versionString: String {
+  public var versionString: String {
     (name.rawValue as String).components(separatedBy: CharacterSet.whitespaces)[1]
   }
 
-  @objc public var number: NSDecimalNumber {
+  public var number: NSDecimalNumber {
     NSDecimalNumber(string: versionString)
   }
 
-  @objc public var version: OperatingSystemVersion {
+  public var version: OperatingSystemVersion {
     FBOSVersion.operatingSystemVersion(fromName: versionString)
   }
 
-  // MARK: NSObject
-
-  public override func isEqual(_ object: Any?) -> Bool {
-    guard let other = object as? FBOSVersion else { return false }
-    return name == other.name
+  /// The name is the identity: `families` is catalogue data looked up from it.
+  public static func == (lhs: FBOSVersion, rhs: FBOSVersion) -> Bool {
+    lhs.name == rhs.name
   }
 
-  public override var hash: Int {
-    name.hashValue
+  public func hash(into hasher: inout Hasher) {
+    hasher.combine(name)
   }
 
-  public override var description: String {
+  public var description: String {
     "OS '\(name.rawValue)'"
   }
 
-  // MARK: NSCopying
+  // MARK: - Fileprivate Helpers
 
-  public func copy(with zone: NSZone? = nil) -> Any {
-    self
-  }
-
-  // MARK: Fileprivate Helpers
-
-  fileprivate class func iOS(withName name: FBOSVersionName) -> FBOSVersion {
+  fileprivate static func iOS(withName name: FBOSVersionName) -> FBOSVersion {
     let families: Set<NSNumber> = [
       NSNumber(value: FBControlCoreProductFamily.familyiPhone.rawValue),
       NSNumber(value: FBControlCoreProductFamily.familyiPad.rawValue),
@@ -203,27 +165,23 @@ public final class FBOSVersion: NSObject, NSCopying {
     return FBOSVersion(name: name, families: families)
   }
 
-  fileprivate class func tvOS(withName name: FBOSVersionName) -> FBOSVersion {
+  fileprivate static func tvOS(withName name: FBOSVersionName) -> FBOSVersion {
     FBOSVersion(name: name, families: [NSNumber(value: FBControlCoreProductFamily.familyAppleTV.rawValue)])
   }
 
-  fileprivate class func watchOS(withName name: FBOSVersionName) -> FBOSVersion {
+  fileprivate static func watchOS(withName name: FBOSVersionName) -> FBOSVersion {
     FBOSVersion(name: name, families: [NSNumber(value: FBControlCoreProductFamily.familyAppleWatch.rawValue)])
   }
 
-  fileprivate class func macOS(withName name: FBOSVersionName) -> FBOSVersion {
+  fileprivate static func macOS(withName name: FBOSVersionName) -> FBOSVersion {
     FBOSVersion(name: name, families: [NSNumber(value: FBControlCoreProductFamily.familyMac.rawValue)])
   }
 }
 
-// MARK: - FBiOSTargetConfiguration
-
 @objc(FBiOSTargetConfiguration)
 public final class FBiOSTargetConfiguration: NSObject {
 
-  // MARK: Device Configurations
-
-  nonisolated(unsafe) private static let _deviceConfigurations: [FBDeviceType] = {
+  private static let _deviceConfigurations: [FBDeviceType] = {
     [
       FBDeviceType.iPhone(withModel: .modeliPhone4s, productType: "iPhone4,1", deviceArchitecture: .armv7),
       FBDeviceType.iPhone(withModel: .modeliPhone5, productTypes: ["iPhone5,1", "iPhone5,2"], deviceArchitecture: .armv7s),
@@ -322,9 +280,7 @@ public final class FBiOSTargetConfiguration: NSObject {
     ]
   }()
 
-  // MARK: OS Configurations
-
-  nonisolated(unsafe) private static let _osConfigurations: [FBOSVersion] = {
+  private static let _osConfigurations: [FBOSVersion] = {
     [
       FBOSVersion.iOS(withName: .nameiOS_7_1),
       FBOSVersion.iOS(withName: .nameiOS_8_0),
@@ -417,9 +373,9 @@ public final class FBiOSTargetConfiguration: NSObject {
     ]
   }()
 
-  // MARK: Class Properties
+  // MARK: - Class Properties
 
-  nonisolated(unsafe) private static let _nameToDevice: [FBDeviceModel: FBDeviceType] = {
+  public static let nameToDevice: [FBDeviceModel: FBDeviceType] = {
     var dictionary = [FBDeviceModel: FBDeviceType]()
     for device in _deviceConfigurations {
       dictionary[device.model] = device
@@ -427,7 +383,7 @@ public final class FBiOSTargetConfiguration: NSObject {
     return dictionary
   }()
 
-  nonisolated(unsafe) private static let _productTypeToDevice: [String: FBDeviceType] = {
+  public static let productTypeToDevice: [String: FBDeviceType] = {
     var dictionary = [String: FBDeviceType]()
     for device in _deviceConfigurations {
       for productType in device.productTypes {
@@ -437,7 +393,7 @@ public final class FBiOSTargetConfiguration: NSObject {
     return dictionary
   }()
 
-  nonisolated(unsafe) private static let _nameToOSVersion: [FBOSVersionName: FBOSVersion] = {
+  public static let nameToOSVersion: [FBOSVersionName: FBOSVersion] = {
     var dictionary = [FBOSVersionName: FBOSVersion]()
     for os in _osConfigurations {
       dictionary[os.name] = os
@@ -445,19 +401,7 @@ public final class FBiOSTargetConfiguration: NSObject {
     return dictionary
   }()
 
-  @objc public class var nameToDevice: [FBDeviceModel: FBDeviceType] {
-    _nameToDevice
-  }
-
-  @objc public class var productTypeToDevice: [String: FBDeviceType] {
-    _productTypeToDevice
-  }
-
-  @objc public class var nameToOSVersion: [FBOSVersionName: FBOSVersion] {
-    _nameToOSVersion
-  }
-
-  // MARK: Public Methods
+  // MARK: - Public Methods
 
   @objc(baseArchsToCompatibleArch:)
   public class func baseArchsToCompatibleArch(_ architectures: [FBArchitecture]) -> Set<FBArchitecture> {

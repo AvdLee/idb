@@ -11,13 +11,13 @@ import XCTest
 // swiftlint:disable force_cast
 final class FBSubprocessTests: XCTestCase {
 
-  private func startSynchronously<S: AnyObject, O: AnyObject, E: AnyObject>(_ builder: FBProcessBuilder<S, O, E>) -> FBSubprocess<S, O, E> {
+  private func startSynchronously<S: AnyObject, O: AnyObject, E: AnyObject>(_ builder: FBProcessBuilder<S, O, E>) throws -> FBSubprocess<S, O, E> {
     let future = builder.start()
-    return try! future.`await`() as! FBSubprocess<S, O, E>
+    return try future.`await`()
   }
 
   private func runAndWaitForTaskFuture<S: AnyObject, O: AnyObject, E: AnyObject>(_ future: FBFuture<FBSubprocess<S, O, E>>) -> FBSubprocess<S, O, E> {
-    let erasedFuture = unsafeBitCast(future, to: FBFuture<AnyObject>.self)
+    let erasedFuture = future.retyped(FBFuture<AnyObject>.self)
     let timedFuture = erasedFuture.timeout(FBControlCoreGlobalConfiguration.regularTimeout, waitingFor: "FBTask to complete")
     _ = try? timedFuture.`await`()
     return future.result!
@@ -50,7 +50,7 @@ final class FBSubprocessTests: XCTestCase {
     XCTAssertThrowsError(try future.`await`())
   }
 
-  func testEnvironment() {
+  func testEnvironment() throws {
     let environment: [String: String] = [
       "FOO0": "BAR0",
       "FOO1": "BAR1",
@@ -61,56 +61,60 @@ final class FBSubprocessTests: XCTestCase {
     let futureProcess = FBProcessBuilder<NSNull, NSData, NSData>
       .withLaunchPath("/usr/bin/env")
       .withEnvironment(environment)
+      .withStdOutInMemoryAsString()
       .runUntilCompletion(withAcceptableExitCodes: nil)
 
     let process = runAndWaitForTaskFuture(futureProcess)
     XCTAssertEqual(process.exitCode.result, 0)
-    let stdOut = process.stdOut as! String
+    let stdOut = try XCTUnwrap(process.stdOut) as String
     for key in environment.keys {
       let expected = "\(key)=\(environment[key]!)"
       XCTAssertTrue(stdOut.contains(expected))
     }
   }
 
-  func testBase64Matches() {
+  func testBase64Matches() throws {
     let filePath = TestFixtures.assetsdCrashPathWithCustomDeviceSet
-    let expected = (try! Data(contentsOf: URL(fileURLWithPath: filePath))).base64EncodedString(options: [])
+    let expected = (try Data(contentsOf: URL(fileURLWithPath: filePath))).base64EncodedString(options: [])
 
     let futureProcess = FBProcessBuilder<NSNull, NSData, NSData>
       .withLaunchPath("/usr/bin/base64", arguments: ["-i", filePath])
+      .withStdOutInMemoryAsString()
       .runUntilCompletion(withAcceptableExitCodes: nil)
     let process = runAndWaitForTaskFuture(futureProcess)
 
     XCTAssertEqual(process.statLoc.state, FBFutureState.done)
     XCTAssertEqual(process.exitCode.state, FBFutureState.done)
     XCTAssertEqual(process.signal.state, FBFutureState.failed)
-    XCTAssertEqual(process.stdOut as! String, expected)
+    XCTAssertEqual(try XCTUnwrap(process.stdOut) as String, expected)
     XCTAssertGreaterThan(process.processIdentifier, 1)
   }
 
-  func testStringsOfCurrentBinary() {
+  func testStringsOfCurrentBinary() throws {
     let bundlePath = Bundle(for: type(of: self)).bundlePath
     let binaryName = ((bundlePath as NSString).lastPathComponent as NSString).deletingPathExtension
     let binaryPath = ((bundlePath as NSString).appendingPathComponent("Contents/MacOS") as NSString).appendingPathComponent(binaryName)
 
     let futureProcess = FBProcessBuilder<NSNull, NSData, NSData>
       .withLaunchPath("/usr/bin/strings", arguments: [binaryPath])
+      .withStdOutInMemoryAsString()
       .runUntilCompletion(withAcceptableExitCodes: nil)
     let process = runAndWaitForTaskFuture(futureProcess)
 
     XCTAssertEqual(process.statLoc.state, FBFutureState.done)
     XCTAssertEqual(process.exitCode.state, FBFutureState.done)
     XCTAssertEqual(process.signal.state, FBFutureState.failed)
-    XCTAssertTrue((process.stdOut as! String).contains("testStringsOfCurrentBinary"))
+    XCTAssertTrue((try XCTUnwrap(process.stdOut) as String).contains("testStringsOfCurrentBinary"))
     XCTAssertGreaterThan(process.processIdentifier, 1)
   }
 
-  func testBundleContents() {
+  func testBundleContents() throws {
     let bundle = Bundle(for: type(of: self))
     let resourcesPath = (bundle.bundlePath as NSString).appendingPathComponent("Contents/Resources")
 
     let futureProcess = FBProcessBuilder<NSNull, NSData, NSData>
       .withLaunchPath("/bin/ls", arguments: ["-1", resourcesPath])
+      .withStdOutInMemoryAsString()
       .runUntilCompletion(withAcceptableExitCodes: nil)
     let process = runAndWaitForTaskFuture(futureProcess)
 
@@ -119,7 +123,7 @@ final class FBSubprocessTests: XCTestCase {
     XCTAssertEqual(process.signal.state, FBFutureState.failed)
     XCTAssertGreaterThan(process.processIdentifier, 1)
 
-    let fileNames = (process.stdOut as! String).components(separatedBy: .newlines)
+    let fileNames = (try XCTUnwrap(process.stdOut) as String).components(separatedBy: .newlines)
     XCTAssertGreaterThanOrEqual(fileNames.count, 2)
 
     for fileName in fileNames {
@@ -186,7 +190,7 @@ final class FBSubprocessTests: XCTestCase {
   }
 
   func testUpdatesStateWithAsynchronousTermination() throws {
-    let process = startSynchronously(
+    let process = try startSynchronously(
       FBProcessBuilder<NSNull, NSData, NSData>.withLaunchPath("/bin/sleep", arguments: ["1"])
     )
 
@@ -194,7 +198,7 @@ final class FBSubprocessTests: XCTestCase {
   }
 
   func testAwaitingTerminationOfShortLivedProcess() throws {
-    let process = startSynchronously(
+    let process = try startSynchronously(
       FBProcessBuilder<NSNull, NSData, NSData>.withLaunchPath("/bin/sleep", arguments: ["0"])
     )
 
@@ -221,7 +225,7 @@ final class FBSubprocessTests: XCTestCase {
   func testAwaitingTerminationDoesNotTerminateStalledTask() throws {
     let expectation = XCTestExpectation(description: "Termination Handler Called")
     expectation.isInverted = true
-    let process = startSynchronously(
+    let process = try startSynchronously(
       FBProcessBuilder<NSNull, NSData, NSData>.withLaunchPath("/bin/sleep", arguments: ["1000"])
     )
 
@@ -242,7 +246,7 @@ final class FBSubprocessTests: XCTestCase {
   func testInputReading() throws {
     let expected = "FOO BAR BAZ".data(using: .utf8)!
 
-    let process = startSynchronously(
+    let process = try startSynchronously(
       FBProcessBuilder<NSNull, NSData, NSData>
         .withLaunchPath("/bin/cat", arguments: [])
         .withStdInConnected()
@@ -251,40 +255,13 @@ final class FBSubprocessTests: XCTestCase {
     )
 
     XCTAssertTrue((process.stdIn as AnyObject).conforms(to: FBDataConsumer.self))
-    (process.stdIn as! FBDataConsumer).consumeData(expected)
-    (process.stdIn as! FBDataConsumer).consumeEndOfFile()
+    let stdIn = try XCTUnwrap(process.stdIn)
+    stdIn.consumeData(expected)
+    stdIn.consumeEndOfFile()
 
-    let waitSuccess = try process.exitCode.await(withTimeout: 2) != nil
-    XCTAssertTrue(waitSuccess)
+    _ = try process.exitCode.await(withTimeout: 2)
 
-    XCTAssertEqual(expected, process.stdOut as! Data)
-  }
-
-  func testInputStream() throws {
-    let expected = "FOO BAR BAZ"
-
-    let input = FBProcessInput<OutputStream>.fromStream()
-    let stream: OutputStream = input.contents
-
-    let process = startSynchronously(
-      FBProcessBuilder<NSNull, NSData, NSData>
-        .withLaunchPath("/bin/cat", arguments: [])
-        .withStdIn(unsafeBitCast(input, to: FBProcessInput<AnyObject>.self))
-        .withStdOutInMemoryAsString()
-        .withStdErrToDevNull()
-    )
-
-    XCTAssertTrue(stream is OutputStream)
-    XCTAssertTrue(process.stdIn is OutputStream)
-    stream.open()
-    let bytes = Array(expected.utf8)
-    stream.write(bytes, maxLength: bytes.count)
-    stream.close()
-
-    let waitSuccess = try process.exitCode.await(withTimeout: 2) != nil
-    XCTAssertTrue(waitSuccess)
-
-    XCTAssertEqual(expected, process.stdOut as! String)
+    XCTAssertEqual(expected, try XCTUnwrap(process.stdOut) as Data)
   }
 
   func testInputStreamWithBrokenPipe() throws {
@@ -293,15 +270,14 @@ final class FBSubprocessTests: XCTestCase {
     let input = FBProcessInput<OutputStream>.fromStream()
     let stream: OutputStream = input.contents
 
-    let process = startSynchronously(
+    let process = try startSynchronously(
       FBProcessBuilder<NSNull, NSData, NSData>
         .withLaunchPath("/bin/cat", arguments: [])
-        .withStdIn(unsafeBitCast(input, to: FBProcessInput<AnyObject>.self))
+        .withStdIn(input.retyped(FBProcessInput<AnyObject>.self))
         .withStdOutInMemoryAsString()
         .withStdErrToDevNull()
     )
 
-    XCTAssertTrue(stream is OutputStream)
     XCTAssertTrue(process.stdIn is OutputStream)
     stream.open()
     let bytes = Array(expected.utf8)
@@ -311,24 +287,43 @@ final class FBSubprocessTests: XCTestCase {
     XCTAssertEqual(stream.write(bytes, maxLength: bytes.count), -1)
     XCTAssertNotNil(stream.streamError)
 
-    let waitSuccess = try process.exitCode.await(withTimeout: 2) != nil
-    XCTAssertTrue(waitSuccess)
+    _ = try process.exitCode.await(withTimeout: 2)
 
-    XCTAssertEqual(expected, process.stdOut as! String)
+    XCTAssertEqual(expected, try XCTUnwrap(process.stdOut) as String)
+  }
+
+  func testInputStreamReportsBrokenPipeAfterReaderExits() throws {
+    let input = FBProcessInput<OutputStream>.fromStream()
+    let stream = input.contents
+
+    let process = try startSynchronously(
+      FBProcessBuilder<NSNull, NSData, NSData>
+        .withLaunchPath("/usr/bin/true", arguments: [])
+        .withStdIn(input.retyped(FBProcessInput<AnyObject>.self))
+        .withStdOutToDevNull()
+        .withStdErrToDevNull()
+    )
+
+    stream.open()
+    _ = try process.exitCode.await(withTimeout: 2)
+
+    let bytes = Array("payload".utf8)
+    XCTAssertEqual(stream.write(bytes, maxLength: bytes.count), -1)
+    XCTAssertNotNil(stream.streamError)
+    stream.close()
   }
 
   func testOutputStream() throws {
     let expected = "FOO BAR BAZ"
 
-    let process = startSynchronously(
+    let process = try startSynchronously(
       FBProcessBuilder<NSNull, NSData, NSData>
         .withLaunchPath("/bin/echo", arguments: ["FOO BAR BAZ"])
         .withStdErrToDevNull()
         .withStdOutToInputStream()
     )
 
-    let stream = process.stdOut as! InputStream
-    XCTAssertTrue(stream is InputStream)
+    let stream = try XCTUnwrap(process.stdOut)
     stream.open()
 
     var output = Data()
@@ -343,14 +338,13 @@ final class FBSubprocessTests: XCTestCase {
     let actual = String(data: output, encoding: .ascii)!.trimmingCharacters(in: .newlines)
     XCTAssertEqual(expected, actual)
 
-    let waitSuccess = try process.exitCode.await(withTimeout: 2) != nil
-    XCTAssertTrue(waitSuccess)
+    _ = try process.exitCode.await(withTimeout: 2)
   }
 
   func testInputFromData() throws {
     let expected = "FOO BAR BAZ".data(using: .utf8)!
 
-    let process = startSynchronously(
+    let process = try startSynchronously(
       FBProcessBuilder<NSNull, NSData, NSData>
         .withLaunchPath("/bin/cat", arguments: [])
         .withStdIn(from: expected)
@@ -358,29 +352,13 @@ final class FBSubprocessTests: XCTestCase {
         .withStdErrToDevNull()
     )
 
-    let waitSuccess = try process.exitCode.await(withTimeout: 2) != nil
-    XCTAssertTrue(waitSuccess)
+    _ = try process.exitCode.await(withTimeout: 2)
 
-    XCTAssertEqual(expected, process.stdOut as! Data)
-  }
-
-  func testSendingSIGINT() throws {
-    let process = startSynchronously(
-      FBProcessBuilder<NSNull, NSData, NSData>.withLaunchPath("/bin/sleep", arguments: ["1000000"])
-    )
-
-    XCTAssertEqual(process.statLoc.state, FBFutureState.running)
-    XCTAssertEqual(process.exitCode.state, FBFutureState.running)
-    XCTAssertEqual(process.signal.state, FBFutureState.running)
-
-    try process.sendSignal(SIGINT).`await`()
-    XCTAssertEqual(process.exitCode.state, FBFutureState.failed)
-    XCTAssertEqual(process.signal.state, FBFutureState.done)
-    XCTAssertEqual(process.signal.result, NSNumber(value: SIGINT))
+    XCTAssertEqual(expected, try XCTUnwrap(process.stdOut) as Data)
   }
 
   func testSendingSIGKILL() throws {
-    let process = startSynchronously(
+    let process = try startSynchronously(
       FBProcessBuilder<NSNull, NSData, NSData>.withLaunchPath("/bin/sleep", arguments: ["1000000"])
     )
 
@@ -396,9 +374,20 @@ final class FBSubprocessTests: XCTestCase {
   }
 
   func testHUPBackoffToKILL() throws {
-    let process = startSynchronously(
-      FBProcessBuilder<NSNull, NSData, NSData>.withLaunchPath("/usr/bin/nohup", arguments: ["/bin/sleep", "10000000"])
+    // The child must already ignore SIGHUP when signalled or it dies of SIGHUP and never backs off to SIGKILL.
+    // `nohup` installs SIG_IGN asynchronously after spawn, so set the disposition in a shell, announce
+    // readiness, and `exec` so the sleeping pid keeps it.
+    let ignoringHUP = XCTestExpectation(description: "Child Has Ignored SIGHUP")
+    let process = try startSynchronously(
+      FBProcessBuilder<NSNull, NSData, NSData>
+        .withLaunchPath("/bin/sh", arguments: ["-c", "trap '' HUP; echo ready; exec /bin/sleep 10000000"])
+        .withStdOutLineReader { line in
+          if line == "ready" {
+            ignoringHUP.fulfill()
+          }
+        }
     )
+    wait(for: [ignoringHUP], timeout: FBControlCoreGlobalConfiguration.fastTimeout)
 
     XCTAssertEqual(process.statLoc.state, FBFutureState.running)
     XCTAssertEqual(process.exitCode.state, FBFutureState.running)

@@ -1,0 +1,20 @@
+/*
+ * Copyright (c) Meta Platforms, Inc. and affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+@preconcurrency import FBControlCore
+import Foundation
+
+public let FBDeviceControlErrorDomain = "com.facebook.FBDeviceControl"
+
+@objc(FBDeviceControlError)
+open class DeviceControlError: FBControlCoreError {
+
+  public required init() {
+    super.init()
+    inDomain(FBDeviceControlErrorDomain)
+  }
+}
