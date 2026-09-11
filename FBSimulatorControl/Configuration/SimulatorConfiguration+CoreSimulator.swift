@@ -35,7 +35,7 @@ extension FBSimulatorConfiguration {
     return withOSNamed(os.name)
   }
 
-  static func inferSimulatorConfiguration(fromDevice simDevice: SimDevice) throws -> FBSimulatorConfiguration {
+  public static func inferSimulatorConfiguration(fromDevice simDevice: SimDevice) throws -> FBSimulatorConfiguration {
     let metadata = resolvedMetadata(from: simDevice)
     guard let runtimeName = metadata.runtimeName else {
       throw SimulatorConfigurationError.missingRuntimeMetadata(identifier: simDevice.runtimeIdentifier)
@@ -54,7 +54,7 @@ extension FBSimulatorConfiguration {
     return try FBSimulatorConfiguration.defaultConfiguration().withOSNamed(osName).withDeviceModel(model)
   }
 
-  static func inferSimulatorConfigurationFromDeviceSynthesizingMissing(_ simDevice: SimDevice) -> FBSimulatorConfiguration {
+  public static func inferSimulatorConfigurationFromDeviceSynthesizingMissing(_ simDevice: SimDevice) -> FBSimulatorConfiguration {
     if let configuration = try? inferSimulatorConfiguration(fromDevice: simDevice) {
       return configuration
     }

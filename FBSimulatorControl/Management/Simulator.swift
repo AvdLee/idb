@@ -20,7 +20,7 @@ public final class FBSimulator: FBiOSTarget, Hashable, CustomStringConvertible, 
   // MARK: - Properties
 
   /// The underlying `SimDevice`.
-  let device: SimDevice
+  public let device: SimDevice
 
   /// The Simulator Set that the Simulator belongs to. Nil for simulators created outside a set.
   ///
@@ -41,7 +41,7 @@ public final class FBSimulator: FBiOSTarget, Hashable, CustomStringConvertible, 
 
   // MARK: - Initializers
 
-  class func fromSimDevice(_ device: SimDevice, configuration: FBSimulatorConfiguration?, set: FBSimulatorSet) -> FBSimulator {
+  public class func fromSimDevice(_ device: SimDevice, configuration: FBSimulatorConfiguration?, set: FBSimulatorSet) -> FBSimulator {
     FBSimulator(
       device: device,
       configuration: configuration ?? FBSimulatorConfiguration.inferSimulatorConfigurationFromDeviceSynthesizingMissing(device),
@@ -50,7 +50,7 @@ public final class FBSimulator: FBiOSTarget, Hashable, CustomStringConvertible, 
       logger: set.logger)
   }
 
-  init(
+  public init(
     device: SimDevice,
     configuration: FBSimulatorConfiguration,
     set: FBSimulatorSet?,

@@ -76,11 +76,11 @@ public final class SimulatorServiceContext {
     return deviceSetPaths
   }
 
-  func supportedRuntimes() -> [SimRuntime] {
+  public func supportedRuntimes() -> [SimRuntime] {
     return (serviceContext.supportedRuntimes as? [SimRuntime]) ?? []
   }
 
-  func supportedDeviceTypes() -> [SimDeviceType] {
+  public func supportedDeviceTypes() -> [SimDeviceType] {
     return (serviceContext.supportedDeviceTypes as? [SimDeviceType]) ?? []
   }
 

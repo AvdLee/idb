@@ -12,7 +12,7 @@ import Foundation
 public final class FBSimulatorSet: FBiOSTargetSet {
 
   public let configuration: FBSimulatorControlConfiguration
-  let deviceSet: SimDeviceSet
+  public let deviceSet: SimDeviceSet
   public weak var delegate: (any FBiOSTargetSetDelegate)?
   public let logger: any FBControlCoreLogger
   public let workQueue: DispatchQueue
@@ -32,7 +32,7 @@ public final class FBSimulatorSet: FBiOSTargetSet {
   /// - Parameter logger: nil means `FBControlCoreGlobalConfiguration.defaultLogger`, which is
   ///   os_log-only unless the `FBCONTROLCORE_LOGGING`/`FBCONTROLCORE_DEBUG_LOGGING` environment
   ///   variables are set — see its documentation. The resolved logger is stored non-optionally.
-  class func set(withConfiguration configuration: FBSimulatorControlConfiguration, deviceSet: SimDeviceSet, delegate: (any FBiOSTargetSetDelegate)?, logger: (any FBControlCoreLogger)?) throws -> FBSimulatorSet {
+  public class func set(withConfiguration configuration: FBSimulatorControlConfiguration, deviceSet: SimDeviceSet, delegate: (any FBiOSTargetSetDelegate)?, logger: (any FBControlCoreLogger)?) throws -> FBSimulatorSet {
     let resolvedLogger = logger ?? FBControlCoreGlobalConfiguration.defaultLogger
     try FBSimulatorControlFrameworkLoader.essentialFrameworks.loadPrivateFrameworks(resolvedLogger)
     return FBSimulatorSet(configuration: configuration, deviceSet: deviceSet, delegate: delegate, logger: resolvedLogger)

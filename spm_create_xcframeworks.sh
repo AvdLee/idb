@@ -70,7 +70,7 @@ build_xcframework() {
     # so strip the module qualifier from the interfaces before packaging.
     if [ "$framework_name" = "FBSimulatorControl" ]; then
         find "${framework_path}/Modules/${framework_name}.swiftmodule" -name '*.swiftinterface' \
-            -exec sed -i '' -e '/import CoreSimulator/d' -e 's/\([^A-Za-z0-9_.]\)FBSimulatorControl\./\1/g' -e 's/^FBSimulatorControl\.//' -e 's/FBSimulatorControl:://g' {} +
+            -exec sed -i '' -e '/import CoreSimulator/d' -e '/CoreSimulator::/d' -e 's/\([^A-Za-z0-9_.]\)FBSimulatorControl\./\1/g' -e 's/^FBSimulatorControl\.//' -e 's/FBSimulatorControl:://g' {} +
 
         # The standalone archive does not run the companion's distribution assembly.
         # Install the guests into the framework bundle so BundledResources can resolve

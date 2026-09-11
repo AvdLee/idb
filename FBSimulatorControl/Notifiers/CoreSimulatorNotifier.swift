@@ -14,12 +14,12 @@ public final class CoreSimulatorNotifier {
   private let handle: UInt64
   private let notifier: SimDeviceNotifier? // nil in test doubles
 
-  class func notifier(for simDevice: SimDevice, queue: DispatchQueue, block: @escaping @Sendable ([String: Any]) -> Void) -> CoreSimulatorNotifier {
+  public class func notifier(for simDevice: SimDevice, queue: DispatchQueue, block: @escaping @Sendable ([String: Any]) -> Void) -> CoreSimulatorNotifier {
     let notifier = simDevice.notificationManager as AnyObject?
     return CoreSimulatorNotifier(notifier: notifier, queue: queue, block: block)
   }
 
-  class func resolveLeavesState(_ state: FBiOSTargetState, for device: SimDevice) -> FBFuture<NSNull> {
+  public class func resolveLeavesState(_ state: FBiOSTargetState, for device: SimDevice) -> FBFuture<NSNull> {
     let future = FBMutableFuture<NSNull>()
     let queue = DispatchQueue(label: "com.facebook.fbsimulatorcontrol.resolve_state")
     nonisolated(unsafe) let futureRef = future

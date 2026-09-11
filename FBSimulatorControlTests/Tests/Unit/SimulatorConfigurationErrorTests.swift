@@ -28,12 +28,12 @@ final class SimulatorConfigurationErrorTests: XCTestCase {
       "No available OS versions for the default simulator configuration"
     )
     XCTAssertEqual(
-      FBSimulatorConfigurationError.missingRuntimeMetadata(identifier: "com.apple.CoreSimulator.SimRuntime.iOS-27-0").errorDescription,
-      "CoreSimulator did not provide runtime metadata for 'com.apple.CoreSimulator.SimRuntime.iOS-27-0'"
+      SimulatorConfigurationError.missingRuntimeMetadata(identifier: "com.apple.CoreSimulator.SimRuntime.iOS-27-0").errorDescription,
+      "Could not recover runtime metadata for identifier com.apple.CoreSimulator.SimRuntime.iOS-27-0"
     )
     XCTAssertEqual(
-      FBSimulatorConfigurationError.missingDeviceTypeMetadata(identifier: nil).errorDescription,
-      "CoreSimulator did not provide device type metadata"
+      SimulatorConfigurationError.missingDeviceTypeMetadata(identifier: nil).errorDescription,
+      "Could not recover device type metadata for identifier unknown"
     )
   }
 
