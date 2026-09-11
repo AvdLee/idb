@@ -1,8 +1,8 @@
 {
-  "source_revision": "2dac1fa8faa203aa03df503a3324da07e4e9497b",
+  "source_revision": "193146e0971d833aaa18fc4df98122fbb29680d8",
   "toolchain": {
-    "developer_directory": "/Applications/Xcode-26.6.0.app/Contents/Developer",
-    "xcode_version": "26.6",
-    "xcode_build": "17F113"
+    "developer_directory": "/Applications/Xcode.app/Contents/Developer",
+    "xcode_version": "27.0",
+    "xcode_build": "27A266a"
   }
 }

@@ -96,6 +96,8 @@ build_xcframework() {
                 exit 1
             fi
         done
+        codesign --force --sign - --timestamp=none \
+            "${xcframework_path}/macos-arm64_x86_64/${framework_name}.framework"
     fi
 }
 

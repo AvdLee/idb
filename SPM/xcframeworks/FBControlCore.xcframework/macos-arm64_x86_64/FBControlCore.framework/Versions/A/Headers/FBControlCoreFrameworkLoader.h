@@ -11,39 +11,12 @@
 @protocol FBControlCoreLogger;
 
 /**
- Loads a Symbol from a Handle, using dlsym.
- Will assert if the symbol cannot be found.
-
- @param handle the handle to obtain.
- @param name the name of the symbol.
- @return the Symbol if successful.
- */
-void *_Nonnull FBGetSymbolFromHandle(void * _Nonnull handle, const char * _Nonnull name);
-
-/**
- Loads a Symbol from a Handle, using dlsym.
- Will return a NULL pointer if the symbol cannot be found.
-
- @param handle the handle to obtain.
- @param name the name of the symbol.
- @return the Symbol if successful.
- */
-void *_Nullable FBGetSymbolFromHandleOptional(void * _Nonnull handle, const char * _Nonnull name);
-
-/**
  A Base Framework loader, that will ensure that the current user can load Frameworks.
  */
 @interface FBControlCoreFrameworkLoader : NSObject
 
 #pragma mark Initializers
 
-/**
- The Designated Initializer
-
- @param frameworkName the name of the loading framework.
- @param frameworks the framework dependencies
- @return a new Framework Loader
- */
 + (nonnull instancetype)loaderWithName:(nonnull NSString *)frameworkName frameworks:(nonnull NSArray<FBWeakFramework *> *)frameworks;
 
 /**
@@ -75,30 +48,9 @@ void *_Nullable FBGetSymbolFromHandleOptional(void * _Nonnull handle, const char
 #pragma mark Public Methods
 
 /**
- Confirms that the current user can load Frameworks.
- Subclasses should load the frameworks upon which they depend.
-
- @param logger the Logger to log events to.
- @param error any error that occurred during performing the preconditions.
- @return YES if FBSimulatorControl is usable, NO otherwise.
+ Loads the frameworks, at most once per instance.
+ A nil logger loads silently.
  */
 - (BOOL)loadPrivateFrameworks:(nullable id<FBControlCoreLogger>)logger error:(NSError * _Nullable * _Nullable)error;
-
-/**
- Calls +[FBControlCore loadPrivateFrameworks:error], aborting in the event the Frameworks could not be loaded
- */
-- (void)loadPrivateFrameworksOrAbort;
-
-@end
-
-/**
- Wrappers around NSBundle.
- */
-@interface NSBundle (FBControlCoreFrameworkLoader)
-
-/**
- Performs a dlopen on the executable path and returns the handle, or else aborts.
- */
-- (void * _Nonnull)dlopenExecutablePath;
 
 @end

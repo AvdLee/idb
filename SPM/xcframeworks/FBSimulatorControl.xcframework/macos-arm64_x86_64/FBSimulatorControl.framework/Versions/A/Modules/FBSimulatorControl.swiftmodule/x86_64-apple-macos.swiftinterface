@@ -1,10 +1,10 @@
 // swift-interface-format-version: 1.0
-// swift-compiler-version: Apple Swift version 6.3.3 (swiftlang-6.3.3.1.3 clang-2100.1.1.101)
-// swift-module-flags: -target x86_64-apple-macos15.0 -enable-objc-interop -enable-library-evolution -swift-version 6 -O -enable-experimental-feature DebugDescriptionMacro -module-name FBSimulatorControl
-// swift-module-flags-ignorable: -no-verify-emitted-module-interface -formal-cxx-interoperability-mode=off -interface-compiler-version 6.3.3
+// swift-compiler-version: Apple Swift version 6.4 (swiftlang-6.4.0.34.1 clang-2100.3.34.1)
+// swift-module-flags: -target x86_64-apple-macos15.0 -enable-objc-interop -enable-library-evolution -language-mode 6 -O -enable-experimental-feature DebugDescriptionMacro -module-name FBSimulatorControl
+// swift-module-flags-ignorable: -no-verify-emitted-module-interface -formal-cxx-interoperability-mode=off -interface-compiler-version 6.4
 import AVFoundation
 import AppKit
-import ApplicationServices
+import CoreFoundation
 import CoreGraphics
 import CoreImage
 import CoreMedia
@@ -15,394 +15,814 @@ import Darwin
 @preconcurrency import FBControlCore
 @_exported import FBSimulatorControl
 @preconcurrency import Foundation
-import IOSurface
+@preconcurrency import IOSurface
 import ImageIO
 import Metal
-import ObjectiveC
 import QuartzCore
 import Swift
-import Synchronization
 import UniformTypeIdentifiers
 import VideoToolbox
-@preconcurrency import XCTestBootstrap
 import XPC
 import _Concurrency
 import _StringProcessing
 import _SwiftConcurrencyShims
-public protocol AccessibilityOperations : AnyObject {
-  func accessibilityElement(at point: CGPoint) async throws -> FBAccessibilityElement
-  func accessibilityElementForFrontmostApplication() async throws -> FBAccessibilityElement
-  func accessibilityElementMatching(value: String, forKey key: FBAXSearchableKey, depth: UInt) async throws -> FBAccessibilityElement
-}
-public protocol AccessibilityCommands : AccessibilityOperations {
-}
-public enum FBAXUIElementAccessibility {
-  public enum QueryError : Error, CustomStringConvertible {
-    case notTrusted(bundlePath: String)
-    case appElementUnavailable(simulatorPID: pid_t)
-    case renderableViewNotFound(simulatorPID: pid_t, deviceName: String?, axWindowsError: AXError, axWindowTitles: [String], cgWindowTitles: [String], bundlePath: String)
-    public var description: String {
-      get
-    }
+public enum AXBridgeError : Foundation::LocalizedError, Swift::Sendable {
+  case bridgeUnavailable
+  case readerUnavailable(Swift::String)
+  case frontmostUnresolved(method: FBAXBridgeFrontmostMethod, reason: Swift::String)
+  case applicationUnavailable(pid: _DarwinFoundation2::pid_t?)
+  case applicationNotResponding(pid: _DarwinFoundation2::pid_t?)
+  case assertionFailed(Swift::String)
+  case socketPathTooLong(path: Swift::String, limit: Swift::Int)
+  case guestDiedBeforeBinding(pid: _DarwinFoundation2::pid_t, signal: Swift::Int?, exitCode: Swift::Int?, path: Swift::String)
+  case guestFailure(Swift::String)
+  public var errorDescription: Swift::String? {
+    get
   }
-  public static func accessibilityElements(forSimulatorPID simulatorPID: pid_t, deviceName: String?, nestedFormat: Bool) throws -> [[String : Any]]
 }
-@_hasMissingDesignatedInitializers final public class FBAccessibilityElement {
-  @objc deinit
-  final public func close()
-  final public func serialize(with options: FBAccessibilityRequestOptions) throws -> FBAccessibilityElementsResponse
-  final public func stringValue(forSearchableKey key: FBAXSearchableKey) throws -> String
-  final public func tap() throws
-  final public func scroll(with direction: FBAccessibilityScrollDirection) throws
-  final public func setValue(_ value: Any) throws
-  final public func findElement(withValue value: String, forKey key: FBAXSearchableKey, depth: UInt) throws -> FBAccessibilityElement
+extension AXBridgeError : Swift::CustomStringConvertible {
+  public var description: Swift::String {
+    get
+  }
 }
-public enum FBAccessibilityError : LocalizedError, Sendable {
-  case closedElement(operation: String)
-  case noStringValue(key: String)
-  case pressUnsupported(supportedActions: String)
+public enum FBAXBridgeFrontmostMethod : Swift::String, Swift::Sendable, Swift::CaseIterable {
+  case centerPoint
+  case windowServer
+  case runningBoard
+  public init?(rawValue: Swift::String)
+  public typealias AllCases = [FBAXBridgeFrontmostMethod]
+  public typealias RawValue = Swift::String
+  nonisolated public static var allCases: [FBAXBridgeFrontmostMethod] {
+    get
+  }
+  public var rawValue: Swift::String {
+    get
+  }
+}
+public enum FBAccessibilityElementQuery : Swift::Equatable, Swift::Sendable {
+  case point(CoreFoundation::CGPoint)
+  case marker(value: Swift::String, key: FBControlCore::FBAXSearchableKey, depth: Swift::UInt, ignoresCase: Swift::Bool = false)
+  case frontmost
+  case application(pid: _DarwinFoundation2::pid_t)
+  public static func == (a: FBAccessibilityElementQuery, b: FBAccessibilityElementQuery) -> Swift::Bool
+}
+extension FBAccessibilityElementQuery {
+  public var targetDescriptor: FBControlCore::FBAccessibilityTargetDescriptor {
+    get
+  }
+}
+extension FBAccessibilityElementQuery : Swift::CustomStringConvertible {
+  public var description: Swift::String {
+    get
+  }
+}
+public enum AccessibilityError : Foundation::LocalizedError, Swift::Sendable {
+  case closedElement(operation: Swift::String)
+  case noStringValue(key: Swift::String)
+  case pressUnsupported(supportedActions: Swift::String)
   case pressFailed
-  case elementNotFound(key: String, value: String, depth: UInt)
-  case simulatorDeallocated
-  case simulatorNotBooted(description: String)
+  case elementNotFound(key: Swift::String, value: Swift::String, depth: Swift::UInt)
+  case simulatorNotBooted(description: Swift::String)
   case accessibilityUnavailable
   case dispatcherUnavailable
   case noTranslationObject
-  case springBoardRemediationFailed(serviceName: String)
+  case springBoardRemediationFailed(serviceName: Swift::String)
   case springBoardNotRunning
-  public var errorDescription: String? {
+  public var errorDescription: Swift::String? {
     get
   }
 }
-extension FBAccessibilityError : CustomStringConvertible {
-  public var description: String {
+extension AccessibilityError : Swift::CustomStringConvertible {
+  public var description: Swift::String {
     get
   }
 }
-final public class FBAccessibilityProfilingCollector {
-  final public var translationDuration: CFAbsoluteTime
-  final public var elementConversionDuration: CFAbsoluteTime
-  final public var serializationDuration: CFAbsoluteTime
+final public class AccessibilityProfilingCollector {
+  final public var translationDuration: Swift::Double
+  final public var elementConversionDuration: Swift::Double
   public init()
-  final public func incrementElementCount()
-  final public func incrementAttributeFetchCount(forKey key: String?)
-  final public func addXPCCallDuration(_ duration: CFAbsoluteTime)
-  final public var fetchedKeys: Set<String> {
+  final public var fetchedKeys: Swift::Set<Swift::String> {
     get
   }
-  final public var elementCount: Int64 {
+  final public var elementCount: Swift::Int64 {
     get
   }
-  final public var attributeFetchCount: Int64 {
+  final public var attributeFetchCount: Swift::Int64 {
     get
   }
-  final public var xpcCallCount: Int64 {
+  final public var xpcCallCount: Swift::Int64 {
     get
   }
-  final public var totalXPCDuration: CFAbsoluteTime {
+  final public var totalXPCDuration: CoreFoundation::CFAbsoluteTime {
     get
   }
-  final public func finalize(withSerializationDuration serializationDuration: CFAbsoluteTime) -> FBAccessibilityProfilingData
+  final public func finalize(withWalkDuration walkDuration: CoreFoundation::CFAbsoluteTime) -> FBControlCore::FBAccessibilityProfilingData
   @objc deinit
 }
-@_hasMissingDesignatedInitializers @objc(FBAppleSimctlCommandExecutor) final public class FBAppleSimctlCommandExecutor : NSObject {
-  @objc(executorForSimulator:) final public class func executor(for simulator: FBSimulator) -> FBAppleSimctlCommandExecutor
-  @objc(taskBuilderWithCommand:arguments:) final public func taskBuilder(withCommand command: String, arguments: [String]) -> FBProcessBuilder<NSNull, FBControlCoreLogger, FBControlCoreLogger>
+@_hasMissingDesignatedInitializers final public class AppleSimctlCommandExecutor {
+  final public class func executor(for simulator: FBSimulator) -> AppleSimctlCommandExecutor
+  final public func taskBuilder(withCommand command: Swift::String, arguments: [Swift::String]) -> FBControlCore::FBProcessBuilder<Foundation::NSNull, any FBControlCore::FBControlCoreLogger, any FBControlCore::FBControlCoreLogger>
   @objc deinit
 }
-@_hasMissingDesignatedInitializers @objc(FBCoreSimulatorNotifier) final public class FBCoreSimulatorNotifier : NSObject {
-  @objc final public func terminate()
+@_hasMissingDesignatedInitializers final public class CoreSimulatorNotifier {
+  final public func terminate()
   @objc deinit
 }
-@objc @_hasMissingDesignatedInitializers public class FBDefaultsModificationStrategy : NSObject {
-  public func modifyDefaults(inDomainOrPath domainOrPath: String?, defaults: [String : Any]) async throws
-  @objc deinit
+public func verifySimulatorIsBooted(_ simulator: FBSimulator, deadline: FBControlCore::PollDeadline? = nil) async throws
+public struct FBFramebufferStats : Swift::Sendable {
+  public var frameRenderedCount: Swift::UInt
+  public init()
 }
-@objc @_inheritsConvenienceInitializers @_hasMissingDesignatedInitializers public class FBPreferenceModificationStrategy : FBDefaultsModificationStrategy {
-  public func setPreference(_ name: String, value: String, type: String?, domain: String?) async throws
-  public func getCurrentPreference(_ name: String, domain: String?) async throws -> String
-  @objc deinit
-}
-@objc @_inheritsConvenienceInitializers @_hasMissingDesignatedInitializers public class FBLocationServicesModificationStrategy : FBDefaultsModificationStrategy {
-  public func approveLocationServices(forBundleIDs bundleIDs: [String]) async throws
-  public func revokeLocationServices(forBundleIDs bundleIDs: [String]) async throws
-  @objc deinit
-}
-@objc public protocol FBFramebufferConsumer : ObjectiveC.NSObjectProtocol {
-  @objc(didChangeIOSurface:) func didChange(_ surface: IOSurface?)
-  @objc func didReceiveDamageRect()
-}
-@_hasMissingDesignatedInitializers @objc(FBFramebuffer) final public class FBFramebuffer : NSObject, @unchecked Sendable {
-  @objc(mainScreenSurfaceForSimulator:logger:error:) final public class func mainScreenSurface(for simulator: FBSimulator, logger: any FBControlCoreLogger) throws -> FBFramebuffer
-  @objc(attachConsumer:onQueue:) final public func attach(_ consumer: any FBFramebufferConsumer, on queue: DispatchQueue) -> IOSurface?
-  @objc(detachConsumer:) final public func detach(_ consumer: any FBFramebufferConsumer)
-  @objc(isConsumerAttached:) final public func isConsumerAttached(_ consumer: any FBFramebufferConsumer) -> Bool
-  @objc final public func currentStats() -> FBFramebufferStats
-  @objc final public var statsStartTime: CFTimeInterval {
-    @objc get
+public enum FramebufferError : Swift::Error, Foundation::LocalizedError {
+  case mainScreenSurfaceNotFound(description: Swift::String)
+  case surfaceCallbackRegistrationFailed(underlying: (any Swift::Error)?)
+  public var errorDescription: Swift::String? {
+    get
   }
+}
+public enum FramebufferEvent : Swift::Sendable {
+  case surfaceChanged(IOSurface::IOSurface?)
+  case frameRendered
+}
+@_hasMissingDesignatedInitializers final public class FBFramebuffer : @unchecked Swift::Sendable {
+  final public class func mainScreenSurface(for simulator: FBSimulator, logger: any FBControlCore::FBControlCoreLogger) throws -> FBFramebuffer
+  final public func attach() throws -> FramebufferAttachment
+  final public func currentStats() -> FBFramebufferStats
   @objc deinit
 }
-extension FBSimulator : XCTraceRecordCommands {
-  public func startXctraceRecord(configuration: FBXCTraceRecordConfiguration, logger: any FBControlCoreLogger) async throws -> FBXCTraceRecordOperation
+@_hasMissingDesignatedInitializers final public class FramebufferAttachment : @unchecked Swift::Sendable {
+  final public let initialSurface: IOSurface::IOSurface?
+  final public let events: _Concurrency::AsyncStream<FramebufferEvent>
+  final public func cancel()
+  @objc deinit
 }
-extension FBSimulator : InstrumentsCommands {
-  public func startInstruments(configuration: FBInstrumentsConfiguration, logger: any FBControlCoreLogger) async throws -> FBInstrumentsOperation
+public protocol LaunchCtlCommands : AnyObject {
+  func serviceName(forProcessIdentifier pid: _DarwinFoundation2::pid_t) async throws -> Swift::String
+  func serviceName(forProcess process: FBControlCore::FBProcessInfo) async throws -> Swift::String
+  func serviceNamesAndProcessIdentifiers(matching regex: Foundation::NSRegularExpression) async throws -> [Swift::String : Foundation::NSNumber]
+  func firstServiceNameAndProcessIdentifier(matching regex: Foundation::NSRegularExpression) async throws -> (serviceName: Swift::String, processIdentifier: _DarwinFoundation2::pid_t)
+  func processIsRunning(onSimulator process: FBControlCore::FBProcessInfo) async throws -> Swift::Bool
+  func listServices() async throws -> [Swift::String : Any]
+  func stopService(withName serviceName: Swift::String) async throws -> Swift::String
+  func startService(withName serviceName: Swift::String) async throws -> Swift::String
+  func serviceIsRunning(named serviceName: Swift::String) async throws -> Swift::Bool
+  func processIsRunning(withProcessIdentifier pid: _DarwinFoundation2::pid_t) async throws -> Swift::Bool
 }
-extension FBSimulator : AsynciOSTarget {
-  public func compare(_ target: any AsynciOSTarget) -> ComparisonResult
+extension LaunchCtlCommands {
+  public func serviceIsRunning(named serviceName: Swift::String) async throws -> Swift::Bool
+  public func processIsRunning(withProcessIdentifier pid: _DarwinFoundation2::pid_t) async throws -> Swift::Bool
 }
-public struct FBInSimulatorToolOutput : Sendable {
-  public let stdout: Data
-  public let stderr: Data
-  public let exitCode: Int32
-  public init(stdout: Data, stderr: Data, exitCode: Int32)
+public enum FBOverlayCoordSpace : Swift::String {
+  case composed
+  case device
+  public init?(rawValue: Swift::String)
+  public typealias RawValue = Swift::String
+  public var rawValue: Swift::String {
+    get
+  }
+}
+public struct FBOverlayCoordinateTransform {
+  public let bufferWidth: Swift::Int
+  public let bufferHeight: Swift::Int
+  public let overlayScale: CoreFoundation::CGFloat
+  public let insetCorrection: CoreFoundation::CGPoint
+  public init(screenPixelWidth: Swift::Int, screenPixelHeight: Swift::Int, retinaScale: CoreFoundation::CGFloat, videoScale: CoreFoundation::CGFloat, borderTop: Swift::Int, scaledBorderTop: Swift::Int, borderBottom: Swift::Int, scaledBorderBottom: Swift::Int, coordSpace: FBOverlayCoordSpace = .composed)
+  public func bufferSize(width: CoreFoundation::CGFloat, height: CoreFoundation::CGFloat) -> CoreFoundation::CGSize
+  public static let defaultBarHeight: Swift::Int
+  public static func barHeightEven(logicalHeight: Swift::Int = defaultBarHeight) -> Swift::Int
+}
+public enum FBBarContent : Swift::Equatable {
+  case text(Swift::String)
+  case stats
+  case hidden
+  public static func == (a: FBBarContent, b: FBBarContent) -> Swift::Bool
+}
+public enum FBBarMode : Swift::String {
+  case pad
+  case overlay
+  public init?(rawValue: Swift::String)
+  public typealias RawValue = Swift::String
+  public var rawValue: Swift::String {
+    get
+  }
+}
+final public class FBOverlayRenderer {
+  final public let buffer: CoreVideo::CVPixelBuffer
+  final public let transform: FBOverlayCoordinateTransform
+  final public var logger: (any FBControlCore::FBControlCoreLogger)?
+  final public var barContent: [Swift::String : FBBarContent] {
+    get
+  }
+  final public var barMode: [Swift::String : FBBarMode] {
+    get
+  }
+  final public var barFit: [Swift::String : Swift::Bool] {
+    get
+  }
+  convenience public init(width: Swift::Int, height: Swift::Int, scaleFactor: CoreFoundation::CGFloat = 1.0)
+  public init(transform: FBOverlayCoordinateTransform)
+  final public func render(overlays: [FBOverlayShape])
+  final public func clear()
+  final public func startEffectTimer(onTick: @escaping () -> Swift::Void)
+  final public func setBarContent(_ content: FBBarContent, position: Swift::String)
+  final public func setStatsText(_ text: Swift::String, position: Swift::String)
+  final public func setBarMode(_ mode: FBBarMode, position: Swift::String)
+  final public func setBarFit(_ fit: Swift::Bool, position: Swift::String)
+  final public func renderToBuffer()
+  @objc deinit
+}
+public struct OverlayCommand : Swift::Decodable {
+  public let overlays: [FBOverlayShape]
+  public init(overlays: [FBOverlayShape])
+  public init(from decoder: any Swift::Decoder) throws
+}
+public enum FBOverlayShape : Swift::Decodable {
+  case circle(FBOverlayShape.Circle)
+  case rectangle(FBOverlayShape.Rectangle)
+  case label(FBOverlayShape.Label)
+  public struct Circle : Swift::Decodable {
+    public let x: CoreFoundation::CGFloat
+    public let y: CoreFoundation::CGFloat
+    public let radius: CoreFoundation::CGFloat
+    public let rgba: [CoreFoundation::CGFloat]
+    public let effect: FBOverlayShape.Effect?
+    public init(x: CoreFoundation::CGFloat, y: CoreFoundation::CGFloat, radius: CoreFoundation::CGFloat, rgba: [CoreFoundation::CGFloat], effect: FBOverlayShape.Effect?)
+    public init(from decoder: any Swift::Decoder) throws
+  }
+  public struct Rectangle : Swift::Decodable {
+    public let x: CoreFoundation::CGFloat
+    public let y: CoreFoundation::CGFloat
+    public let width: CoreFoundation::CGFloat
+    public let height: CoreFoundation::CGFloat
+    public let rgba: [CoreFoundation::CGFloat]
+    public let effect: FBOverlayShape.Effect?
+    public init(x: CoreFoundation::CGFloat, y: CoreFoundation::CGFloat, width: CoreFoundation::CGFloat, height: CoreFoundation::CGFloat, rgba: [CoreFoundation::CGFloat], effect: FBOverlayShape.Effect?)
+    public init(from decoder: any Swift::Decoder) throws
+  }
+  public struct Label : Swift::Decodable {
+    public let text: Swift::String
+    public let padding: CoreFoundation::CGFloat
+    public let font: Swift::String
+    public init(text: Swift::String, padding: CoreFoundation::CGFloat, font: Swift::String)
+    public init(from decoder: any Swift::Decoder) throws
+  }
+  public enum Effect : Swift::Decodable {
+    case fadeout(FBOverlayShape.Effect.FadeEffect)
+    case fadein(FBOverlayShape.Effect.FadeEffect)
+    case translate(FBOverlayShape.Effect.TranslateEffect)
+    public struct FadeEffect : Swift::Decodable {
+      public let durationMs: CoreFoundation::CGFloat
+      public init(durationMs: CoreFoundation::CGFloat)
+      public init(from decoder: any Swift::Decoder) throws
+    }
+    public struct TranslateEffect : Swift::Decodable {
+      public let x: CoreFoundation::CGFloat
+      public let y: CoreFoundation::CGFloat
+      public let durationMs: CoreFoundation::CGFloat
+      public init(x: CoreFoundation::CGFloat, y: CoreFoundation::CGFloat, durationMs: CoreFoundation::CGFloat)
+      public init(from decoder: any Swift::Decoder) throws
+    }
+    public init(from decoder: any Swift::Decoder) throws
+  }
+  public init(from decoder: any Swift::Decoder) throws
 }
 extension FBSimulator {
-  public func runRuntimeTool(_ relativePath: String, arguments: [String] = [], environment: [String : String] = [:]) async throws -> FBInSimulatorToolOutput
-  public func launchProcessConsumingOutput(launchPath: String, arguments: [String] = [], environment: [String : String] = [:]) async throws -> FBInSimulatorToolOutput
-}
-@_hasMissingDesignatedInitializers final public class FBSimulatorAccessibilityCommands : AccessibilityOperations {
-  final public class func commands(with target: FBSimulator) -> Self
-  final public func accessibilityElement(at point: CGPoint) async throws -> FBAccessibilityElement
-  final public func accessibilityElementForFrontmostApplication() async throws -> FBAccessibilityElement
-  final public func accessibilityElementMatching(value: String, forKey key: FBAXSearchableKey, depth: UInt) async throws -> FBAccessibilityElement
-  @objc deinit
-}
-extension FBSimulator : AccessibilityCommands {
-  public func accessibilityElement(at point: CGPoint) async throws -> FBAccessibilityElement
-  public func accessibilityElementForFrontmostApplication() async throws -> FBAccessibilityElement
-  public func accessibilityElementMatching(value: String, forKey key: FBAXSearchableKey, depth: UInt) async throws -> FBAccessibilityElement
-}
-@objc @_hasMissingDesignatedInitializers public class FBSimulatorApplicationCommands : NSObject, FBiOSTargetCommand {
-  @objc public class func commands(with target: any FBiOSTarget) -> Self
-  @objc deinit
-}
-extension FBSimulator : ApplicationCommands {
-  public func installApplication(atPath path: String) async throws -> FBInstalledApplication
-  public func uninstallApplication(bundleID: String) async throws
-  public func launchApplication(_ configuration: FBApplicationLaunchConfiguration) async throws -> FBLaunchedApplication
-  public func killApplication(bundleID: String) async throws
-  public func installedApplications() async throws -> [FBInstalledApplication]
-  public func installedApplication(bundleID: String) async throws -> FBInstalledApplication
-  public func runningApplications() async throws -> [String : pid_t]
-  public func processID(forBundleID bundleID: String) async throws -> pid_t
-}
-@objc(FBSimulatorBootConfiguration) public class FBSimulatorBootConfiguration : NSObject, NSCopying {
-  @objc final public let options: FBSimulatorBootOptions
-  @objc final public let environment: [String : String]
-  @objc(defaultConfiguration) nonisolated(unsafe) public static let `default`: FBSimulatorBootConfiguration
-  @objc public init(options: FBSimulatorBootOptions, environment: [String : String])
-  @objc public func copy(with zone: NSZone? = nil) -> Any
-  @objc override dynamic public func isEqual(_ object: Any?) -> Bool
-  @objc override dynamic public var hash: Int {
-    @objc get
+  final public var application: FBSimulatorApplicationCommands {
+    get
   }
-  @objc override dynamic public var description: String {
-    @objc get
+  final public var crashLog: SimulatorCrashLogCommands {
+    get
   }
-  @objc deinit
+  final public var screenshot: SimulatorScreenshotCommands {
+    get
+  }
+  final public var location: SimulatorLocationCommands {
+    get
+  }
+  final public var debugger: SimulatorDebuggerCommands {
+    get
+  }
+  final public var file: SimulatorFileCommands {
+    get
+  }
+  final public var log: SimulatorLogCommands {
+    get
+  }
+  final public var processSpawn: SimulatorProcessSpawnCommands {
+    get
+  }
+  final public var videoRecording: FBSimulatorVideoRecordingCommands {
+    get
+  }
+  final public var videoStream: SimulatorVideoStreamCommands {
+    get
+  }
+  final public var launchCtl: SimulatorLaunchCtlCommands {
+    get
+  }
+  final public var xctraceRecord: FBControlCore::FBXCTraceRecordCommands {
+    get
+  }
+  final public var instruments: SimulatorInstrumentsCommands {
+    get
+  }
+  final public var lifecycle: SimulatorLifecycleCommands {
+    get
+  }
+  final public var power: SimulatorPowerCommands {
+    get
+  }
+  final public var erase: SimulatorEraseCommands {
+    get
+  }
+  final public var media: SimulatorMediaCommands {
+    get
+  }
+  final public var keychain: SimulatorKeychainCommands {
+    get
+  }
+  final public var privacy: SimulatorPrivacyCommands {
+    get
+  }
+  final public var preferences: SimulatorPreferencesCommands {
+    get
+  }
+  final public var statusBar: SimulatorStatusBarCommands {
+    get
+  }
+  final public var network: SimulatorNetworkCommands {
+    get
+  }
+  final public var health: SimulatorHealthCommands {
+    get
+  }
+  final public var contacts: SimulatorContactsCommands {
+    get
+  }
+  final public var photos: SimulatorPhotosCommands {
+    get
+  }
+  final public func uiAutomation(backend: FBUIAutomationBackend) throws -> any FBUIAutomation
+  final public var dapServer: SimulatorDapServerCommand {
+    get
+  }
+  final public var notification: SimulatorNotificationCommands {
+    get
+  }
+  final public var memory: SimulatorMemoryCommands {
+    get
+  }
+  final public var audio: SimulatorAudioCommands {
+    get
+  }
+  final public var runtimeTools: SimulatorRuntimeToolCommands {
+    get
+  }
+  final public var bootstrapPorts: SimulatorBootstrapPortCommands {
+    get
+  }
 }
-@_inheritsConvenienceInitializers @objc(FBSimulatorBootStrategy) final public class FBSimulatorBootStrategy : NSObject {
-  @objc(boot:withConfiguration:) final public class func boot(_ simulator: FBSimulator, with configuration: FBSimulatorBootConfiguration) -> FBFuture<NSNull>
-  @objc override dynamic public init()
-  @objc deinit
+public enum SimulatorFrameworkBridgeError : Swift::Error, Foundation::LocalizedError {
+  case binaryMissing
+  case serviceFailed(service: Swift::String, action: Swift::String, exitCode: Swift::Int32, stderr: Swift::String)
+  public var errorDescription: Swift::String? {
+    get
+  }
 }
-@_hasMissingDesignatedInitializers @objc(FBSimulatorBootVerificationStrategy) final public class FBSimulatorBootVerificationStrategy : NSObject {
-  @objc final public class func verifySimulatorIsBooted(_ simulator: FBSimulator) -> FBFuture<NSNull>
+@_hasMissingDesignatedInitializers final public class FBSimulator : FBControlCore::FBiOSTarget, Swift::Hashable, Swift::CustomStringConvertible, @unchecked Swift::Sendable {
+  final public var set: FBSimulatorSet? {
+    get
+  }
+  final public var configuration: FBSimulatorConfiguration
+  final public let commandCache: FBControlCore::FBTargetCommandCache
+  final public let logger: any FBControlCore::FBControlCoreLogger
+  final public let auxillaryDirectory: Swift::String
+  final public var uniqueIdentifier: Swift::String {
+    get
+  }
+  final public var udid: Swift::String {
+    get
+  }
+  final public var name: Swift::String {
+    get
+  }
+  final public var state: FBControlCore::FBiOSTargetState {
+    get
+  }
+  final public var targetType: FBControlCore::FBiOSTargetType {
+    get
+  }
+  final public var architectures: [FBControlCore::FBArchitecture] {
+    get
+  }
+  final public var deviceType: FBControlCore::FBDeviceType {
+    get
+  }
+  final public var osVersion: FBControlCore::FBOSVersion {
+    get
+  }
+  final public var extendedInformation: [Swift::String : Any] {
+    get
+  }
+  final public var runtimeRootDirectory: Swift::String {
+    get async
+  }
+  final public var platformRootDirectory: Swift::String {
+    get async
+  }
+  final public var screenInfo: FBControlCore::FBiOSTargetScreenInfo? {
+    get
+  }
+  final public var temporaryDirectory: FBControlCore::FBTemporaryDirectory {
+    get
+  }
+  final public var workQueue: Dispatch::DispatchQueue {
+    get
+  }
+  final public var asyncQueue: Dispatch::DispatchQueue {
+    get
+  }
+  final public func replacementMapping() -> [Swift::String : Swift::String]
+  final public func environmentAdditions() -> [Swift::String : Swift::String]
+  final public func requiresBundlesToBeSigned() -> Swift::Bool
+  public static func commands(with target: any FBControlCore::FBiOSTarget) -> Self
+  final public var stateString: FBControlCore::FBiOSTargetStateString {
+    get
+  }
+  final public var customDeviceSetPath: Swift::String? {
+    get
+  }
+  final public var simctlExecutor: AppleSimctlCommandExecutor {
+    get
+  }
+  final public func hash(into hasher: inout Swift::Hasher)
+  public static func == (lhs: FBSimulator, rhs: FBSimulator) -> Swift::Bool
+  final public var description: Swift::String {
+    get
+  }
+  public typealias Application = FBSimulatorApplicationCommands
+  public typealias CrashLog = SimulatorCrashLogCommands
+  public typealias Debugger = SimulatorDebuggerCommands
+  public typealias Erase = SimulatorEraseCommands
+  public typealias File = SimulatorFileCommands
+  public typealias Instruments = SimulatorInstrumentsCommands
+  public typealias Lifecycle = SimulatorLifecycleCommands
+  public typealias Location = SimulatorLocationCommands
+  public typealias Log = SimulatorLogCommands
+  public typealias Power = SimulatorPowerCommands
+  public typealias Screenshot = SimulatorScreenshotCommands
+  public typealias VideoRecording = FBSimulatorVideoRecordingCommands
+  public typealias VideoStream = SimulatorVideoStreamCommands
+  public typealias XCTraceRecord = FBControlCore::FBXCTraceRecordCommands
   @objc deinit
+  final public var hashValue: Swift::Int {
+    get
+  }
+}
+public enum FBSimulatorApplicationInstallError : Swift::Error, Foundation::LocalizedError {
+  case installFailed(bundleDescription: Swift::String, options: Swift::String)
+  case processSuspended(bundleID: Swift::String, processIdentifier: _DarwinFoundation2::pid_t, debuggerAttached: Swift::Bool)
+  case processDebuggerAttached(bundleID: Swift::String, processIdentifier: _DarwinFoundation2::pid_t)
+  case targetNotBooted(state: Swift::String)
+  case targetUnavailable(reason: Swift::String)
+  case installingSystemApplication(applicationDescription: Swift::String)
+  case applicationMissingExecutable(path: Swift::String)
+  case unsupportedArchitectures(binaryArchitectures: [Swift::String], binaryPath: Swift::String, simulatorArchitectures: [Swift::String])
+  public var errorDescription: Swift::String? {
+    get
+  }
+}
+public enum FBSimulatorApplicationUninstallError : Swift::Error, Foundation::LocalizedError {
+  case uninstallingSystemApplication(applicationDescription: Swift::String)
+  case uninstallFailed(bundleID: Swift::String, underlying: any Swift::Error)
+  public var errorDescription: Swift::String? {
+    get
+  }
+}
+public enum SimulatorApplicationLaunchError : Swift::Error, Foundation::LocalizedError {
+  case attachmentMissingFiles(bundleID: Swift::String)
+  case launchingUninstalledApplication(bundleID: Swift::String, underlying: any Swift::Error)
+  case foregroundIfRunningIncompatibleWithWaitForDebugger
+  case applicationAlreadyRunning(bundleID: Swift::String, processIdentifier: _DarwinFoundation2::pid_t)
+  case noDataDirectory(bundleID: Swift::String)
+  public var errorDescription: Swift::String? {
+    get
+  }
+}
+public enum SimulatorApplicationLookupError : Swift::Error, Foundation::LocalizedError {
+  case servicePatternConstructionFailed
+  case searchPatternConstructionFailed(bundleID: Swift::String)
+  case installInfoFieldNotAString(field: Swift::String, value: Swift::String, key: Swift::String, info: Swift::String)
+  case dataContainerNotAURL(value: Swift::String, key: Swift::String, info: Swift::String)
+  case applicationInfoUnavailable(path: Swift::String)
+  public var errorDescription: Swift::String? {
+    get
+  }
+}
+public struct FBSimulatorApplicationCommands : FBControlCore::ApplicationCommands {
+  public static func commands(with simulator: FBSimulator) -> FBSimulatorApplicationCommands
+  public func install(atPath path: Swift::String) async throws -> FBControlCore::FBInstalledApplication
+  public func launch(_ configuration: FBControlCore::FBApplicationLaunchConfiguration) async throws -> any FBControlCore::FBLaunchedApplication
+  public func kill(bundleID: Swift::String) async throws
+  public func installed() async throws -> [FBControlCore::FBInstalledApplication]
+  public func uninstall(bundleID: Swift::String) async throws
+  public func installed(bundleID: Swift::String) async throws -> FBControlCore::FBInstalledApplication
+  public func running() async throws -> [Swift::String : _DarwinFoundation2::pid_t]
+  public func processID(forBundleID bundleID: Swift::String) async throws -> _DarwinFoundation2::pid_t
+}
+public struct SimulatorAudioSettings : Swift::Equatable, Swift::Sendable {
+  public static let relativePath: Swift::String
+  public static let volumeNotificationName: Swift::String
+  public static let ringerNotificationName: Swift::String
+  public let volume: Swift::Double
+  public let ringerEnabled: Swift::Bool
+  public init(volume: Swift::Double, ringerEnabled: Swift::Bool)
+  public static func settings(fromPropertyList plist: [Swift::String : Any]) throws -> SimulatorAudioSettings
+  public static func volumeNotificationState(for volume: Swift::Double) throws -> Swift::UInt64
+  public static func settings(atPath path: Swift::String) throws -> SimulatorAudioSettings
+  public static func == (a: SimulatorAudioSettings, b: SimulatorAudioSettings) -> Swift::Bool
+}
+public struct FBSimulatorAudioSettingsUpdate : Swift::Equatable, Swift::Sendable {
+  public let volume: Swift::Double?
+  public let ringerEnabled: Swift::Bool?
+  public init(volume: Swift::Double? = nil, ringerEnabled: Swift::Bool? = nil)
+  public var isEmpty: Swift::Bool {
+    get
+  }
+  public static func == (a: FBSimulatorAudioSettingsUpdate, b: FBSimulatorAudioSettingsUpdate) -> Swift::Bool
+}
+public enum SimulatorAudioError : Swift::Error, Foundation::LocalizedError {
+  case noDataDirectory
+  case unreadable(path: Swift::String, underlying: any Swift::Error)
+  case malformed(path: Swift::String)
+  case volumeMissing(keys: [Swift::String])
+  case volumeOutOfRange(volume: Swift::Double)
+  public var errorDescription: Swift::String? {
+    get
+  }
+}
+public struct SimulatorAudioCommands {
+  public static func commands(with simulator: FBSimulator) -> SimulatorAudioCommands
+  public func settings() async throws -> SimulatorAudioSettings
+  public func updateSettings(_ update: FBSimulatorAudioSettingsUpdate) async throws
+}
+public struct SimulatorBootOptions : Swift::OptionSet, Swift::Hashable, Swift::Sendable {
+  public let rawValue: Swift::UInt
+  public init(rawValue: Swift::UInt)
+  public static let tieToProcessLifecycle: SimulatorBootOptions
+  public static let verifyUsable: SimulatorBootOptions
+  public typealias ArrayLiteralElement = SimulatorBootOptions
+  public typealias Element = SimulatorBootOptions
+  public typealias RawValue = Swift::UInt
+}
+public struct FBSimulatorBootConfiguration : Swift::Equatable, Swift::Hashable, Swift::Sendable, Swift::CustomStringConvertible {
+  public let options: SimulatorBootOptions
+  public let environment: [Swift::String : Swift::String]
+  public static let `default`: FBSimulatorBootConfiguration
+  public init(options: SimulatorBootOptions, environment: [Swift::String : Swift::String])
+  public var description: Swift::String {
+    get
+  }
+  public static func == (a: FBSimulatorBootConfiguration, b: FBSimulatorBootConfiguration) -> Swift::Bool
+  public func hash(into hasher: inout Swift::Hasher)
+  public var hashValue: Swift::Int {
+    get
+  }
+}
+public struct SimulatorBootstrapPortCommands {
+  public static func commands(with simulator: FBSimulator) -> SimulatorBootstrapPortCommands
+  public func lookup(named name: Swift::String) throws -> Foundation::NSNumber
+}
+public enum SimulatorPortLookupError : Swift::Error, Foundation::LocalizedError {
+  case portNotFound(name: Swift::String)
+  public var errorDescription: Swift::String? {
+    get
+  }
 }
 extension FBSimulatorConfiguration {
-  final public class func newestAvailableOS(forDevice device: FBDeviceType) throws -> FBOSVersion?
-  @objc final public func newestAvailableOS() throws -> FBSimulatorConfiguration
-  final public class func oldestAvailableOS(forDevice device: FBDeviceType) throws -> FBOSVersion?
-  @objc final public func oldestAvailableOS() throws -> FBSimulatorConfiguration
-  @objc(checkRuntimeRequirementsReturningError:) final public func checkRuntimeRequirements() throws
-  @objc final public class func supportedOSVersions() throws -> [FBOSVersion]
-  @objc(supportedOSVersionsForDevice:error:) final public class func supportedOSVersions(forDevice device: FBDeviceType) throws -> [FBOSVersion]
-  @objc(allAvailableDefaultConfigurationsWithLogger:error:) final public class func allAvailableDefaultConfigrations(withLogger logger: (any FBControlCoreLogger)?) throws -> [FBSimulatorConfiguration]
-  @objc(allAvailableDefaultConfigurationsWithAbsentOSVersionsOut:absentDeviceTypesOut:error:) final public class func allAvailableDefaultConfigrations(withAbsentOSVersionsOut absentOSVersionsOut: AutoreleasingUnsafeMutablePointer<NSArray?>?, absentDeviceTypesOut: AutoreleasingUnsafeMutablePointer<NSArray?>?) throws -> [FBSimulatorConfiguration]
+  public static func supportedOSVersions() throws -> [FBControlCore::FBOSVersion]
+  public static func supportedOSVersions(forDevice device: FBControlCore::FBDeviceType) throws -> [FBControlCore::FBOSVersion]
+  public static func allAvailableDefaultConfigrations(withLogger logger: (any FBControlCore::FBControlCoreLogger)?) throws -> [FBSimulatorConfiguration]
+  public static func allAvailableDefaultConfigrations(withAbsentOSVersionsOut absentOSVersionsOut: Swift::AutoreleasingUnsafeMutablePointer<Foundation::NSArray?>?, absentDeviceTypesOut: Swift::AutoreleasingUnsafeMutablePointer<Foundation::NSArray?>?) throws -> [FBSimulatorConfiguration]
 }
-@_hasMissingDesignatedInitializers @objc(FBSimulatorConfiguration) final public class FBSimulatorConfiguration : NSObject, NSCopying {
-  @objc final public let device: FBDeviceType
-  @objc final public let os: FBOSVersion
-  @objc public static func defaultConfiguration() throws -> FBSimulatorConfiguration
-  @objc(overrideDefaultConfigurationWithDeviceModel:osName:) public static func overrideDefaultConfiguration(withDeviceModel model: FBDeviceModel, osName: FBOSVersionName)
-  @objc public static func clearDefaultConfigurationOverride()
-  @objc final public func copy(with zone: NSZone? = nil) -> Any
-  @objc override final public var hash: Int {
-    @objc get
+public struct FBSimulatorConfiguration : Swift::Equatable, Swift::Hashable, Swift::CustomStringConvertible {
+  public let device: FBControlCore::FBDeviceType
+  public let os: FBControlCore::FBOSVersion
+  public static func defaultConfiguration() throws -> FBSimulatorConfiguration
+  public static func == (lhs: FBSimulatorConfiguration, rhs: FBSimulatorConfiguration) -> Swift::Bool
+  public func hash(into hasher: inout Swift::Hasher)
+  public var description: Swift::String {
+    get
   }
-  @objc override final public func isEqual(_ object: Any?) -> Bool
-  @objc override final public var description: String {
-    @objc get
+  public func withDeviceModel(_ model: FBControlCore::FBDeviceModel) -> FBSimulatorConfiguration
+  public func withOSNamed(_ osName: FBControlCore::FBOSVersionName) -> FBSimulatorConfiguration
+  public var hashValue: Swift::Int {
+    get
   }
-  @objc final public func withDeviceModel(_ model: FBDeviceModel) -> FBSimulatorConfiguration
-  @objc final public func withOSNamed(_ osName: FBOSVersionName) -> FBSimulatorConfiguration
-  @objc deinit
 }
-public enum FBSimulatorConfigurationError : LocalizedError, Sendable {
-  case noNewestAvailableOS(device: String)
-  case noOldestAvailableOS(device: String)
-  case unsupportedOSVersion(name: String)
-  case unsupportedDevice(name: String)
-  case missingRuntimeMetadata(identifier: String?)
-  case missingDeviceTypeMetadata(identifier: String?)
-  case runtimeUnavailable(configuration: String, reason: String?)
-  case deviceTypeUnavailable(configuration: String, reason: String?)
-  case runtimeDeviceTypeMismatch(deviceType: String, runtime: String)
-  case noMatchingRuntime(available: String)
-  case ambiguousRuntime(matches: String)
-  case noMatchingDeviceType(available: String)
-  case ambiguousDeviceType(matches: String)
-  case noDefaultDeviceTypeRegistered(model: String)
+public enum SimulatorConfigurationError : Foundation::LocalizedError, Swift::Sendable {
+  case noNewestAvailableOS(device: Swift::String)
+  case noOldestAvailableOS(device: Swift::String)
+  case missingRuntimeMetadata(identifier: Swift::String?)
+  case missingDeviceTypeMetadata(identifier: Swift::String?)
+  case unsupportedOSVersion(name: Swift::String)
+  case unsupportedDevice(name: Swift::String)
+  case runtimeUnavailable(configuration: Swift::String, reason: Swift::String?)
+  case deviceTypeUnavailable(configuration: Swift::String, reason: Swift::String?)
+  case runtimeDeviceTypeMismatch(deviceType: Swift::String, runtime: Swift::String)
+  case noMatchingRuntime(available: Swift::String)
+  case ambiguousRuntime(matches: Swift::String)
+  case noMatchingDeviceType(available: Swift::String)
+  case ambiguousDeviceType(matches: Swift::String)
+  case noDefaultDeviceTypeRegistered(model: Swift::String)
   case noAvailableOSVersionsForDefault
-  public var errorDescription: String? {
+  public var errorDescription: Swift::String? {
     get
   }
 }
-extension FBSimulatorConfigurationError : CustomStringConvertible {
-  public var description: String {
+extension SimulatorConfigurationError : Swift::CustomStringConvertible {
+  public var description: Swift::String {
     get
   }
 }
-@_hasMissingDesignatedInitializers @objc(FBSimulatorControl) final public class FBSimulatorControl : NSObject {
-  @objc final public var configuration: FBSimulatorControlConfiguration
-  @objc final public let serviceContext: FBSimulatorServiceContext
-  @objc final public let set: FBSimulatorSet
-  @objc(withConfiguration:error:) final public class func withConfiguration(_ configuration: FBSimulatorControlConfiguration) throws -> FBSimulatorControl
-  @objc(withConfiguration:developerDirectory:error:) final public class func withConfiguration(_ configuration: FBSimulatorControlConfiguration, developerDirectory: String?) throws -> FBSimulatorControl
-  @objc deinit
+public enum SimulatorContactsError : Swift::Error {
+  case noDataDirectoryForPlists
+  case addressBookDirectoryMissing(path: Swift::String)
+  case contactsDirectoryEnumerationFailed(path: Swift::String)
+  case noContactsDatabases
 }
-@objc(FBSimulatorControlConfiguration) public class FBSimulatorControlConfiguration : NSObject, NSCopying {
-  @objc final public let deviceSetPath: String?
-  @objc final public let logger: FBControlCoreLogger
-  @objc final public let reporter: FBEventReporter?
-  @objc(configurationWithDeviceSetPath:logger:reporter:) public class func configuration(withDeviceSetPath deviceSetPath: String?, logger: (any FBControlCoreLogger)?, reporter: (any FBEventReporter)?) -> FBSimulatorControlConfiguration
-  @objc public init(deviceSetPath: String?, logger: (any FBControlCoreLogger)?, reporter: (any FBEventReporter)?)
-  @objc public func copy(with zone: NSZone? = nil) -> Any
-  @objc override dynamic public var hash: Int {
-    @objc get
+extension SimulatorContactsError : Foundation::LocalizedError {
+  public var errorDescription: Swift::String? {
+    get
   }
-  @objc override dynamic public func isEqual(_ object: Any?) -> Bool
-  @objc override dynamic public var description: String {
-    @objc get
+}
+public struct SimulatorContactsCommands {
+  public static func commands(with simulator: FBSimulator) -> SimulatorContactsCommands
+  public func update(_ databaseDirectory: Swift::String) async throws
+  public func clear() async throws
+}
+@_hasMissingDesignatedInitializers final public class SimulatorControlBootstrap {
+  final public var configuration: FBSimulatorControlConfiguration
+  final public let serviceContext: SimulatorServiceContext
+  final public let set: FBSimulatorSet
+  final public class func withConfiguration(_ configuration: FBSimulatorControlConfiguration) throws -> SimulatorControlBootstrap
+  @objc deinit
+}
+public enum SimulatorDeviceSetError : Swift::Error, Foundation::LocalizedError {
+  case simDeviceSetUnavailable
+  case defaultPathUnavailable
+  public var errorDescription: Swift::String? {
+    get
   }
-  @objc(defaultDeviceSetPath) public class var defaultDeviceSetPath: String {
-    @objc get
+  public static func == (a: SimulatorDeviceSetError, b: SimulatorDeviceSetError) -> Swift::Bool
+  public func hash(into hasher: inout Swift::Hasher)
+  public var hashValue: Swift::Int {
+    get
   }
+}
+public struct FBSimulatorControlConfiguration : Swift::Equatable, Swift::Hashable, Swift::CustomStringConvertible {
+  public let deviceSetPath: Swift::String?
+  public let logger: any FBControlCore::FBControlCoreLogger
+  public static func configuration(withDeviceSetPath deviceSetPath: Swift::String?, logger: (any FBControlCore::FBControlCoreLogger)?) -> FBSimulatorControlConfiguration
+  public init(deviceSetPath: Swift::String?, logger: (any FBControlCore::FBControlCoreLogger)?)
+  public static func == (lhs: FBSimulatorControlConfiguration, rhs: FBSimulatorControlConfiguration) -> Swift::Bool
+  public func hash(into hasher: inout Swift::Hasher)
+  public var description: Swift::String {
+    get
+  }
+  public static func defaultDeviceSetPath() throws -> Swift::String
+  public var hashValue: Swift::Int {
+    get
+  }
+}
+public enum FBSimulatorControlFrameworkLoader {
+  public static let essentialFrameworks: FBControlCore::FBControlCoreFrameworkLoader
+  public static let accessibilityFrameworks: FBControlCore::FBControlCoreFrameworkLoader
+  public static let xcodeFrameworks: FBControlCore::FBControlCoreFrameworkLoader
+}
+public enum SimulatorCrashLogError : Swift::Error, Foundation::LocalizedError {
+  case fileAccessUnsupported
+  public var errorDescription: Swift::String? {
+    get
+  }
+  public static func == (a: SimulatorCrashLogError, b: SimulatorCrashLogError) -> Swift::Bool
+  public func hash(into hasher: inout Swift::Hasher)
+  public var hashValue: Swift::Int {
+    get
+  }
+}
+@_hasMissingDesignatedInitializers final public class SimulatorCrashLogCommands : FBControlCore::CrashLogCommands {
+  final public class func commands(with simulator: FBSimulator) -> SimulatorCrashLogCommands
+  final public func notifyOfCrash(matching predicate: Foundation::NSPredicate) async throws -> FBControlCore::FBCrashLogInfo
+  final public func crashes(matching predicate: Foundation::NSPredicate, useCache: Swift::Bool) async throws -> [FBControlCore::FBCrashLogInfo]
+  final public func pruneCrashes(matching predicate: Foundation::NSPredicate) async throws -> [FBControlCore::FBCrashLogInfo]
+  final public func withFiles<R>(body: (any FBControlCore::AsyncFileContainer) async throws -> R) async throws -> R
   @objc deinit
 }
-@objc @_hasMissingDesignatedInitializers final public class FBSimulatorCrashLogCommands : NSObject, FBiOSTargetCommand {
-  @objc final public class func commands(with target: any FBiOSTarget) -> FBSimulatorCrashLogCommands
+public enum SimulatorDapServerError : Swift::Error {
+  case logDirectoryCreationFailed(path: Swift::String, underlying: any Swift::Error)
+  case logFileCreationFailed(path: Swift::String)
+  case noDataDirectory
+}
+extension SimulatorDapServerError : Foundation::LocalizedError {
+  public var errorDescription: Swift::String? {
+    get
+  }
+}
+@_hasMissingDesignatedInitializers final public class SimulatorDapServerCommand {
+  final public class func commands(with simulator: FBSimulator) -> SimulatorDapServerCommand
+  final public func launch(_ dapPath: Swift::String, stdIn: FBControlCore::FBProcessInput<Swift::AnyObject>, stdOut: any FBControlCore::FBDataConsumer) async throws -> FBControlCore::FBSubprocess<Swift::AnyObject, any FBControlCore::FBDataConsumer, Foundation::NSString>
   @objc deinit
 }
-extension FBSimulator : CrashLogCommands {
-  public func crashes(matching predicate: NSPredicate, useCache: Bool) async throws -> [FBCrashLogInfo]
-  public func notifyOfCrash(matching predicate: NSPredicate) async throws -> FBCrashLogInfo
-  public func pruneCrashes(matching predicate: NSPredicate) async throws -> [FBCrashLogInfo]
-  public func withCrashLogFiles<R>(body: (any AsyncFileContainer) async throws -> R) async throws -> R
-}
-@objc @_hasMissingDesignatedInitializers final public class FBSimulatorDapServerCommand : NSObject, FBiOSTargetCommand {
-  @objc final public class func commands(with target: any FBiOSTarget) -> FBSimulatorDapServerCommand
+@_hasMissingDesignatedInitializers final public class SimulatorDebuggerCommands : FBControlCore::DebuggerCommands {
+  final public class func commands(with simulator: FBSimulator) -> SimulatorDebuggerCommands
+  final public func launchDebugServer(forHostApplication application: FBControlCore::FBBundleDescriptor, port: _DarwinFoundation2::in_port_t) async throws -> any FBControlCore::FBDebugServer
   @objc deinit
 }
-extension FBSimulator : DapServerCommand {
-  public func launchDapServer(_ dapPath: Any, stdIn: FBProcessInput<AnyObject>, stdOut: any FBDataConsumer) async throws -> FBSubprocess<AnyObject, FBDataConsumer, NSString>
+public enum SimulatorDeletionError : Swift::Error, Foundation::LocalizedError {
+  case removalTimedOut
+  public var errorDescription: Swift::String? {
+    get
+  }
+  public static func == (a: SimulatorDeletionError, b: SimulatorDeletionError) -> Swift::Bool
+  public func hash(into hasher: inout Swift::Hasher)
+  public var hashValue: Swift::Int {
+    get
+  }
 }
-@objc @_hasMissingDesignatedInitializers final public class FBSimulatorDebuggerCommands : NSObject, FBiOSTargetCommand {
-  @objc final public class func commands(with target: any FBiOSTarget) -> FBSimulatorDebuggerCommands
+public struct SimulatorEraseCommands : FBControlCore::EraseCommands {
+  public static func commands(with simulator: FBSimulator) -> SimulatorEraseCommands
+  public func erase() async throws
+}
+public enum SimulatorFileError : Swift::Error {
+  case noDataContainer(applicationDescription: Swift::String)
+  case noDataDirectory(simulatorDescription: Swift::String)
+  case unsupportedOnSimulators(operation: Swift::String)
+}
+extension SimulatorFileError : Foundation::LocalizedError {
+  public var errorDescription: Swift::String? {
+    get
+  }
+}
+@_hasMissingDesignatedInitializers final public class SimulatorFileCommands : FBControlCore::FileCommands {
+  final public class func commands(with simulator: FBSimulator) -> SimulatorFileCommands
+  final public func withContainerApplication<R>(_ bundleID: Swift::String, body: (any FBControlCore::AsyncFileContainer) async throws -> R) async throws -> R
+  final public func withAuxiliary<R>(body: (any FBControlCore::AsyncFileContainer) async throws -> R) async throws -> R
+  final public func withApplicationContainers<R>(body: (any FBControlCore::AsyncFileContainer) async throws -> R) async throws -> R
+  final public func withGroupContainers<R>(body: (any FBControlCore::AsyncFileContainer) async throws -> R) async throws -> R
+  final public func withRootFilesystem<R>(body: (any FBControlCore::AsyncFileContainer) async throws -> R) async throws -> R
+  final public func withMediaDirectory<R>(body: (any FBControlCore::AsyncFileContainer) async throws -> R) async throws -> R
+  final public func withProvisioningProfiles<R>(body: (any FBControlCore::AsyncFileContainer) async throws -> R) async throws -> R
+  final public func withMDMProfiles<R>(body: (any FBControlCore::AsyncFileContainer) async throws -> R) async throws -> R
+  final public func withSpringboardIconLayout<R>(body: (any FBControlCore::AsyncFileContainer) async throws -> R) async throws -> R
+  final public func withWallpaper<R>(body: (any FBControlCore::AsyncFileContainer) async throws -> R) async throws -> R
+  final public func withDiskImages<R>(body: (any FBControlCore::AsyncFileContainer) async throws -> R) async throws -> R
+  final public func withSymbols<R>(body: (any FBControlCore::AsyncFileContainer) async throws -> R) async throws -> R
   @objc deinit
 }
-extension FBSimulator : DebuggerCommands {
-  public func launchDebugServer(forHostApplication application: FBBundleDescriptor, port: in_port_t) async throws -> any FBDebugServer
+extension FBSimulator {
+  final public var frameworkBridgePath: Swift::String? {
+    get
+  }
 }
-@_inheritsConvenienceInitializers @objc(FBSimulatorDeletionStrategy) final public class FBSimulatorDeletionStrategy : NSObject {
-  @objc final public class func delete(_ simulator: FBSimulator) -> FBFuture<NSNull>
-  @objc final public class func deleteAll(_ simulators: [FBSimulator]) -> FBFuture<NSNull>
-  @objc override dynamic public init()
-  @objc deinit
-}
-@_inheritsConvenienceInitializers @objc(FBSimulatorEraseStrategy) final public class FBSimulatorEraseStrategy : NSObject {
-  @objc override dynamic public init()
-  @objc deinit
-}
-public let FBSimulatorControlErrorDomain: Swift.String
-@_inheritsConvenienceInitializers @objc(FBSimulatorError) open class FBSimulatorError : FBControlCoreError {
-  @objc required dynamic public init()
-  @objc deinit
-}
-@objc @_hasMissingDesignatedInitializers final public class FBSimulatorFileCommands : NSObject, FBiOSTargetCommand {
-  @objc final public class func commands(with target: any FBiOSTarget) -> Self
-  final public func fileCommandsForContainerApplication(_ bundleID: String) -> FBFutureContext<FBContainedFile_ContainedRoot>
-  final public func fileCommandsForAuxillary() -> FBFutureContext<FBContainedFile_ContainedRoot>
-  final public func fileCommandsForApplicationContainers() -> FBFutureContext<FBContainedFile_ContainedRoot>
-  final public func fileCommandsForGroupContainers() -> FBFutureContext<FBContainedFile_ContainedRoot>
-  final public func fileCommandsForRootFilesystem() -> FBFutureContext<FBContainedFile_ContainedRoot>
-  final public func fileCommandsForMediaDirectory() -> FBFutureContext<FBContainedFile_ContainedRoot>
-  final public func fileCommandsForMDMProfiles() -> FBFutureContext<FBContainedFile_ContainedRoot>
-  final public func fileCommandsForProvisioningProfiles() -> FBFutureContext<FBContainedFile_ContainedRoot>
-  final public func fileCommandsForSpringboardIconLayout() -> FBFutureContext<FBContainedFile_ContainedRoot>
-  final public func fileCommandsForWallpaper() -> FBFutureContext<FBContainedFile_ContainedRoot>
-  final public func fileCommandsForDiskImages() -> FBFutureContext<FBContainedFile_ContainedRoot>
-  final public func fileCommandsForSymbols() -> FBFutureContext<FBContainedFile_ContainedRoot>
-  @objc deinit
-}
-extension FBSimulator : FileCommands {
-  public func withFileCommandsForContainerApplication<R>(_ bundleID: String, body: (any AsyncFileContainer) async throws -> R) async throws -> R
-  public func withFileCommandsForAuxillary<R>(body: (any AsyncFileContainer) async throws -> R) async throws -> R
-  public func withFileCommandsForApplicationContainers<R>(body: (any AsyncFileContainer) async throws -> R) async throws -> R
-  public func withFileCommandsForGroupContainers<R>(body: (any AsyncFileContainer) async throws -> R) async throws -> R
-  public func withFileCommandsForRootFilesystem<R>(body: (any AsyncFileContainer) async throws -> R) async throws -> R
-  public func withFileCommandsForMediaDirectory<R>(body: (any AsyncFileContainer) async throws -> R) async throws -> R
-  public func withFileCommandsForProvisioningProfiles<R>(body: (any AsyncFileContainer) async throws -> R) async throws -> R
-  public func withFileCommandsForMDMProfiles<R>(body: (any AsyncFileContainer) async throws -> R) async throws -> R
-  public func withFileCommandsForSpringboardIconLayout<R>(body: (any AsyncFileContainer) async throws -> R) async throws -> R
-  public func withFileCommandsForWallpaper<R>(body: (any AsyncFileContainer) async throws -> R) async throws -> R
-  public func withFileCommandsForDiskImages<R>(body: (any AsyncFileContainer) async throws -> R) async throws -> R
-  public func withFileCommandsForSymbols<R>(body: (any AsyncFileContainer) async throws -> R) async throws -> R
-}
-@_hasMissingDesignatedInitializers final public class FBSimulatorHID : CustomStringConvertible, @unchecked Sendable {
-  final public let purple: FBSimulatorPurpleHID
-  convenience public init(for simulator: FBSimulator, transport transportType: FBSimulatorHIDTransportType? = nil) throws
+@_hasMissingDesignatedInitializers final public class FBSimulatorHID : Swift::CustomStringConvertible, @unchecked Swift::Sendable {
+  final public var flushesAfterEachEvent: Swift::Bool
+  convenience public init(for simulator: FBSimulator, transport transportType: FBSimulatorHIDTransportType? = nil) async throws
   final public func disconnect()
-  final public func sendPurpleEvent(_ data: Data) throws
-  final public func sendPurpleEvent(_ data: Data, timeoutMs: mach_msg_timeout_t) throws
-  final public func postDarwinNotification(_ notificationName: String) throws
-  final public var description: String {
+  final public func flush() async throws
+  final public func send(event: FBSimulatorHIDEvent, logger: any FBControlCore::FBControlCoreLogger) async throws
+  final public var description: Swift::String {
     get
   }
   @objc deinit
 }
-public enum FBSimulatorHIDError : Error, LocalizedError {
-  case clientClassUnavailable(className: String)
-  case clientCreationFailed(clientClass: String, underlying: Error?)
+public enum SimulatorHIDError : Swift::Error, Foundation::LocalizedError {
+  case clientClassUnavailable(className: Swift::String)
+  case clientCreationFailed(clientClass: Swift::String, underlying: (any Swift::Error)?)
   case clientDisposed
-  case simulatorDeallocatedForPurpleEvent
-  case simulatorDeallocatedForDarwinNotification
-  case purpleWorkspacePortUnavailable(underlying: Error?)
-  case machSendTimedOut(port: mach_port_t, timeoutMs: mach_msg_timeout_t, detail: String)
-  case machSendFailed(port: mach_port_t, detail: String, code: kern_return_t)
+  case purpleWorkspacePortUnavailable(underlying: (any Swift::Error)?)
+  case machSendTimedOut(port: _DarwinFoundation2::mach_port_t, timeoutMs: Darwin::mach_msg_timeout_t, detail: Swift::String)
+  case machSendFailed(port: _DarwinFoundation2::mach_port_t, detail: Swift::String, code: Darwin::kern_return_t)
   case simulatorKitUnavailable
-  case keyboardSuppressedByActiveDTUHIDD
-  case notImplementedOnDTUHIDTransport(operation: String)
-  case notImplementedOnIndigoTransport(operation: String)
-  case dtuhidDigitizerServiceUnavailable(underlying: Error?)
+  case keyboardSuppressedByDTUHIDD
+  case notImplementedOnDTUHIDTransport(operation: Swift::String)
+  case dtuhidDigitizerServiceUnavailable(underlying: (any Swift::Error)?)
   case dtuhidXPCSymbolsUnavailable
   case dtuhidConnectionFailed
   case touchUnsupportedOnAppleTV
-  public var errorDescription: String? {
+  public var errorDescription: Swift::String? {
     get
   }
 }
-public let DEFAULT_SWIPE_DELTA: Double
-indirect public enum FBSimulatorHIDEvent : Equatable, Hashable {
-  case touch(direction: FBSimulatorHIDDirection, x: Double, y: Double)
-  case button(direction: FBSimulatorHIDDirection, button: FBSimulatorHIDButton)
-  case keyboard(direction: FBSimulatorHIDDirection, keyCode: UInt32)
-  case twoFingerTouch(direction: FBSimulatorHIDDirection, finger1: CGPoint, finger2: CGPoint)
-  case trackpad(phase: FBSimulatorTrackpadPhase, point: CGPoint)
-  case delay(TimeInterval)
+indirect public enum FBSimulatorHIDEvent : Swift::Equatable, Swift::Hashable, Swift::Sendable {
+  public static let defaultSwipeDelta: Swift::Double
+  case touch(direction: SimulatorHIDDirection, x: Swift::Double, y: Swift::Double, edge: FBSimulatorHIDEdge)
+  case button(direction: SimulatorHIDDirection, button: FBSimulatorHIDButton)
+  case remoteButton(direction: SimulatorHIDDirection, button: FBSimulatorHIDRemoteButton)
+  case keyboard(direction: SimulatorHIDDirection, keyCode: Swift::UInt32)
+  case twoFingerTouch(direction: SimulatorHIDDirection, finger1: CoreFoundation::CGPoint, finger2: CoreFoundation::CGPoint)
+  case trackpad(phase: SimulatorTrackpadPhase, point: FBSimulatorTrackpadPoint)
+  case delay(Foundation::TimeInterval)
   case deviceOrientation(FBSimulatorHIDDeviceOrientation)
   case shake
   case toggleInCallStatusBar
@@ -411,745 +831,810 @@ indirect public enum FBSimulatorHIDEvent : Equatable, Hashable {
   public var subEvents: [FBSimulatorHIDEvent]? {
     get
   }
-  public static func == (a: FBSimulatorHIDEvent, b: FBSimulatorHIDEvent) -> Swift.Bool
-  public func hash(into hasher: inout Swift.Hasher)
-  public var hashValue: Swift.Int {
+  public static func == (a: FBSimulatorHIDEvent, b: FBSimulatorHIDEvent) -> Swift::Bool
+  public func hash(into hasher: inout Swift::Hasher)
+  public var hashValue: Swift::Int {
     get
   }
 }
 extension FBSimulatorHIDEvent {
-  public func sendAsync(on hid: FBSimulatorHID) async throws
-}
-extension FBSimulatorHID {
-  final public func send(event: FBSimulatorHIDEvent, logger: FBControlCoreLogger) async throws
+  public func send(on hid: FBSimulatorHID) async throws
 }
 extension FBSimulatorHIDEvent {
-  public static func tapAt(x: Double, y: Double) -> FBSimulatorHIDEvent
-  public static func tapAt(x: Double, y: Double, duration: Double) -> FBSimulatorHIDEvent
+  public static func touch(direction: SimulatorHIDDirection, x: Swift::Double, y: Swift::Double) -> FBSimulatorHIDEvent
+  public static func tapAt(x: Swift::Double, y: Swift::Double) -> FBSimulatorHIDEvent
+  public static func tapAt(x: Swift::Double, y: Swift::Double, duration: Swift::Double) -> FBSimulatorHIDEvent
   public static func shortButtonPress(_ button: FBSimulatorHIDButton) -> FBSimulatorHIDEvent
-  public static func shortKeyPress(_ keyCode: UInt32) -> FBSimulatorHIDEvent
-  public static func shortKeyPressSequence(_ sequence: [NSNumber]) -> FBSimulatorHIDEvent
+  public static func shortKeyPress(_ keyCode: Swift::UInt32) -> FBSimulatorHIDEvent
+  public static func shortKeyPressSequence(_ sequence: [Swift::UInt32]) -> FBSimulatorHIDEvent
   public static func remoteButton(_ button: FBSimulatorHIDRemoteButton) -> FBSimulatorHIDEvent
-  public static func swipe(_ xStart: Double, yStart: Double, xEnd: Double, yEnd: Double, delta: Double, duration: Double) -> FBSimulatorHIDEvent
-  public static func pan(fromX: Double, fromY: Double, toX: Double, toY: Double, steps: Int, duration: Double) -> FBSimulatorHIDEvent
-  public static func pinchAt(x centerX: Double, y centerY: Double, scale: Double, duration: Double, radius: Double) -> FBSimulatorHIDEvent
+  public static func swipe(_ xStart: Swift::Double, yStart: Swift::Double, xEnd: Swift::Double, yEnd: Swift::Double, delta: Swift::Double, duration: Swift::Double, edge: FBSimulatorHIDEdge = .none) -> FBSimulatorHIDEvent
+  public static let edgeSwipeTravelFraction: Swift::Double
+  public static func edgeSwipe(_ edge: FBSimulatorHIDEdge, screenSize: CoreFoundation::CGSize, duration: Swift::Double, delta: Swift::Double = defaultSwipeDelta) -> FBSimulatorHIDEvent
+  public static func drag(_ xStart: Swift::Double, yStart: Swift::Double, xEnd: Swift::Double, yEnd: Swift::Double, delta: Swift::Double, pressDuration: Swift::Double, duration: Swift::Double, releaseDuration: Swift::Double) -> FBSimulatorHIDEvent
+  public static func pan(from: FBSimulatorTrackpadPoint, to: FBSimulatorTrackpadPoint, steps: Swift::Int, duration: Swift::Double) -> FBSimulatorHIDEvent
+  public static func pinchAt(x centerX: Swift::Double, y centerY: Swift::Double, scale: Swift::Double, duration: Swift::Double, radius: Swift::Double) -> FBSimulatorHIDEvent
 }
-extension FBSimulatorHIDEvent : CustomStringConvertible {
-  public var description: String {
+extension FBSimulatorHIDEvent : Swift::CustomStringConvertible {
+  public var description: Swift::String {
     get
   }
 }
-public enum FBSimulatorHIDTransportType : Equatable, Sendable {
+public enum FBSimulatorHIDTransportType : Swift::Equatable, Swift::Sendable {
   case indigo
   case dtuhid
-  public static func == (a: FBSimulatorHIDTransportType, b: FBSimulatorHIDTransportType) -> Swift.Bool
-  public func hash(into hasher: inout Swift.Hasher)
-  public var hashValue: Swift.Int {
+  public static func == (a: FBSimulatorHIDTransportType, b: FBSimulatorHIDTransportType) -> Swift::Bool
+  public func hash(into hasher: inout Swift::Hasher)
+  public var hashValue: Swift::Int {
     get
   }
 }
-public enum FBSimulatorHIDDirection : Int32, Sendable, CaseIterable {
+extension FBControlCore::FBControlCoreProductFamily {
+  public var hasTouchscreen: Swift::Bool {
+    get
+  }
+}
+public enum SimulatorHIDDirection : Swift::Int32, Swift::Sendable, Swift::CaseIterable {
   case down
   case up
-  public var name: String {
+  public var name: Swift::String {
     get
   }
-  public init?(rawValue: Swift.Int32)
-  public typealias AllCases = [FBSimulatorHIDDirection]
-  public typealias RawValue = Swift.Int32
-  nonisolated public static var allCases: [FBSimulatorHIDDirection] {
+  public init?(rawValue: Swift::Int32)
+  public typealias AllCases = [SimulatorHIDDirection]
+  public typealias RawValue = Swift::Int32
+  nonisolated public static var allCases: [SimulatorHIDDirection] {
     get
   }
-  public var rawValue: Swift.Int32 {
+  public var rawValue: Swift::Int32 {
     get
   }
 }
-public enum FBSimulatorHIDButton : Int32, Sendable, CaseIterable {
+public enum FBSimulatorHIDButton : Swift::Int32, Swift::Sendable, Swift::CaseIterable {
   case applePay
   case homeButton
   case lock
   case sideButton
   case siri
   case playPause
-  public var name: String {
+  case volumeUp
+  case volumeDown
+  public var name: Swift::String {
     get
   }
-  public init?(rawValue: Swift.Int32)
+  public init?(rawValue: Swift::Int32)
   public typealias AllCases = [FBSimulatorHIDButton]
-  public typealias RawValue = Swift.Int32
+  public typealias RawValue = Swift::Int32
   nonisolated public static var allCases: [FBSimulatorHIDButton] {
     get
   }
-  public var rawValue: Swift.Int32 {
+  public var rawValue: Swift::Int32 {
     get
   }
 }
-public enum FBSimulatorHIDRemoteButton : Int32, Sendable, CaseIterable {
+public enum FBSimulatorHIDEdge : Swift::UInt32, Swift::Sendable, Swift::CaseIterable {
+  case none
+  case top
+  case left
+  case bottom
+  case right
+  public var name: Swift::String {
+    get
+  }
+  public init?(rawValue: Swift::UInt32)
+  public typealias AllCases = [FBSimulatorHIDEdge]
+  public typealias RawValue = Swift::UInt32
+  nonisolated public static var allCases: [FBSimulatorHIDEdge] {
+    get
+  }
+  public var rawValue: Swift::UInt32 {
+    get
+  }
+}
+public enum FBSimulatorHIDRemoteButton : Swift::Int32, Swift::Sendable, Swift::CaseIterable {
   case up
   case down
   case left
   case right
   case select
   case menu
-  public var name: String {
+  public var name: Swift::String {
     get
   }
-  public init?(rawValue: Swift.Int32)
+  public init?(rawValue: Swift::Int32)
   public typealias AllCases = [FBSimulatorHIDRemoteButton]
-  public typealias RawValue = Swift.Int32
+  public typealias RawValue = Swift::Int32
   nonisolated public static var allCases: [FBSimulatorHIDRemoteButton] {
     get
   }
-  public var rawValue: Swift.Int32 {
+  public var rawValue: Swift::Int32 {
     get
   }
 }
-public enum FBSimulatorTrackpadPhase : Sendable, Equatable, Hashable, CaseIterable {
+public struct FBSimulatorTrackpadPoint : Swift::Equatable, Swift::Hashable, Swift::Sendable {
+  public let x: Swift::Double
+  public let y: Swift::Double
+  public init?(x: Swift::Double, y: Swift::Double)
+  public static func == (a: FBSimulatorTrackpadPoint, b: FBSimulatorTrackpadPoint) -> Swift::Bool
+  public func hash(into hasher: inout Swift::Hasher)
+  public var hashValue: Swift::Int {
+    get
+  }
+}
+public enum SimulatorTrackpadPhase : Swift::Sendable, Swift::Equatable, Swift::Hashable, Swift::CaseIterable {
   case began
   case changed
   case ended
-  public var name: String {
+  public var name: Swift::String {
     get
   }
-  public static func == (a: FBSimulatorTrackpadPhase, b: FBSimulatorTrackpadPhase) -> Swift.Bool
-  public typealias AllCases = [FBSimulatorTrackpadPhase]
-  nonisolated public static var allCases: [FBSimulatorTrackpadPhase] {
+  public static func == (a: SimulatorTrackpadPhase, b: SimulatorTrackpadPhase) -> Swift::Bool
+  public typealias AllCases = [SimulatorTrackpadPhase]
+  nonisolated public static var allCases: [SimulatorTrackpadPhase] {
     get
   }
-  public func hash(into hasher: inout Swift.Hasher)
-  public var hashValue: Swift.Int {
+  public func hash(into hasher: inout Swift::Hasher)
+  public var hashValue: Swift::Int {
     get
   }
 }
-public enum FBSimulatorHIDDeviceOrientation : Int32, Sendable, CaseIterable {
+public enum FBSimulatorHIDDeviceOrientation : Swift::Int32, Swift::Sendable, Swift::CaseIterable {
   case portrait
   case portraitUpsideDown
   case landscapeRight
   case landscapeLeft
-  public var name: String {
+  public var name: Swift::String {
     get
   }
-  public init?(rawValue: Swift.Int32)
+  public init?(rawValue: Swift::Int32)
   public typealias AllCases = [FBSimulatorHIDDeviceOrientation]
-  public typealias RawValue = Swift.Int32
+  public typealias RawValue = Swift::Int32
   nonisolated public static var allCases: [FBSimulatorHIDDeviceOrientation] {
     get
   }
-  public var rawValue: Swift.Int32 {
+  public var rawValue: Swift::Int32 {
     get
   }
 }
-@_hasMissingDesignatedInitializers @objc(FBSimulatorImage) final public class FBSimulatorImage : NSObject {
-  @objc(imageWithFramebuffer:logger:) final public class func image(with framebuffer: FBFramebuffer, logger: (any FBControlCoreLogger)?) -> FBSimulatorImage
-  @objc final public func image() -> CGImage?
-  @objc final public func jpegImageData() throws -> Data
-  @objc final public func pngImageData() throws -> Data
+public struct SimulatorHealthCommands {
+  public static func commands(with simulator: FBSimulator) -> SimulatorHealthCommands
+  public func setAuthorization(_ approved: Swift::Bool, forBundleID bundleID: Swift::String, typeIdentifiers: [Swift::String]) async throws
+  public func clearAuthorization(forBundleID bundleID: Swift::String) async throws
+  public func listAuthorization(forBundleID bundleID: Swift::String) async throws -> Swift::String
+}
+@_hasMissingDesignatedInitializers public actor SimulatorImage {
+  public static func image(with framebuffer: FBFramebuffer, logger: (any FBControlCore::FBControlCoreLogger)?) -> SimulatorImage
   @objc deinit
-}
-@_hasMissingDesignatedInitializers final public class FBSimulatorIndigoHID {
-  convenience public init() throws
-  final public func keyboard(with direction: FBSimulatorHIDDirection, keyCode: UInt32) -> Data
-  final public func button(with direction: FBSimulatorHIDDirection, button: FBSimulatorHIDButton) -> Data?
-  final public func trackpad(point: CGPoint, phase: FBSimulatorTrackpadPhase) throws -> Data
-  final public func touchScreenSize(_ screenSize: CGSize, screenScale: Float, direction: FBSimulatorHIDDirection, x: Double, y: Double) -> Data
-  final public func twoFingerTouchScreenSize(_ screenSize: CGSize, screenScale: Float, direction: FBSimulatorHIDDirection, finger1: CGPoint, finger2: CGPoint) -> Data
-  @objc deinit
-}
-@_hasMissingDesignatedInitializers @objc(FBSimulatorInflationStrategy) final public class FBSimulatorInflationStrategy : NSObject {
-  @objc(strategyForSet:) final public class func strategy(for set: FBSimulatorSet) -> FBSimulatorInflationStrategy
-  @objc(inflateFromDevices:exitingSimulators:) final public func inflate(fromDevices simDevices: [Any], exitingSimulators simulators: [FBSimulator]) -> [FBSimulator]
-  @objc deinit
-}
-@objc @_hasMissingDesignatedInitializers final public class FBSimulatorKeychainCommands : NSObject, FBiOSTargetCommand {
-  @objc final public class func commands(with target: any FBiOSTarget) -> FBSimulatorKeychainCommands
-  @objc deinit
-}
-extension FBSimulator : KeychainCommands {
-  public func clearKeychain() async throws
-}
-@objc @_hasMissingDesignatedInitializers final public class FBSimulatorLaunchCtlCommands : NSObject, FBiOSTargetCommand {
-  @objc final public class func commands(with target: any FBiOSTarget) -> FBSimulatorLaunchCtlCommands
-  @objc final public class func extractApplicationBundleIdentifier(fromServiceName serviceName: String) -> String?
-  @objc deinit
-}
-extension FBSimulator : LaunchCtlCommands {
-  public func serviceName(forProcessIdentifier pid: pid_t) async throws -> String
-  public func serviceName(forProcess process: FBProcessInfo) async throws -> String
-  public func serviceNamesAndProcessIdentifiers(matching regex: NSRegularExpression) async throws -> [String : NSNumber]
-  public func firstServiceNameAndProcessIdentifier(matching regex: NSRegularExpression) async throws -> (serviceName: String, processIdentifier: pid_t)
-  public func processIsRunning(onSimulator process: FBProcessInfo) async throws -> Bool
-  public func listServices() async throws -> [String : Any]
-  public func stopService(withName serviceName: String) async throws -> String
-  public func startService(withName serviceName: String) async throws -> String
-}
-@_hasMissingDesignatedInitializers @objc(FBSimulatorLaunchedApplication) public class FBSimulatorLaunchedApplication : NSObject, FBLaunchedApplication {
-  @objc final public let configuration: FBApplicationLaunchConfiguration
-  @objc final public let processIdentifier: pid_t
-  @objc public var bundleID: String {
-    @objc get
+  public func image() throws -> CoreGraphics::CGImage?
+  public func image(configuration: FBControlCore::FBScreenshotConfiguration, screenScale: Swift::Double?) throws -> SurfaceImage?
+  @_semantics("defaultActor") nonisolated final public var unownedExecutor: _Concurrency::UnownedSerialExecutor {
+    get
   }
-  public func waitForTermination() async throws
-  public func terminate() async throws
-  @objc public var stdOut: (any FBProcessFileOutput)? {
-    @objc get
+}
+public struct SimulatorInstrumentsCommands : FBControlCore::InstrumentsCommands {
+  public static func commands(with simulator: FBSimulator) -> SimulatorInstrumentsCommands
+  public func start(configuration: FBControlCore::FBInstrumentsConfiguration, logger: any FBControlCore::FBControlCoreLogger) async throws -> FBControlCore::FBInstrumentsOperation
+}
+public struct SimulatorKeychainCommands {
+  public static func commands(with simulator: FBSimulator) -> SimulatorKeychainCommands
+  public func clear() async throws
+}
+public enum SimulatorLaunchCtlError : Swift::Error {
+  case searchPatternConstructionFailed(processIdentifier: _DarwinFoundation2::pid_t)
+  case noMatchingProcesses(pattern: Swift::String)
+  case multipleMatchingProcesses(pattern: Swift::String, matches: [Swift::String : Foundation::NSNumber])
+  case insufficientOutput(output: Swift::String)
+  case stopFailed(serviceName: Swift::String, underlying: any Swift::Error)
+  case startFailed(serviceName: Swift::String, underlying: any Swift::Error)
+  case malformedListLine(words: [Swift::String])
+  case invalidProcessIdentifier(word: Swift::String, words: [Swift::String])
+  case commandFailed(arguments: [Swift::String], exitCode: Swift::Int32, stderr: Swift::String)
+}
+extension SimulatorLaunchCtlError : Foundation::LocalizedError {
+  public var errorDescription: Swift::String? {
+    get
   }
-  @objc public var stdErr: (any FBProcessFileOutput)? {
-    @objc get
+}
+@_hasMissingDesignatedInitializers final public class SimulatorLaunchCtlCommands : LaunchCtlCommands {
+  final public class func commands(with simulator: FBSimulator) -> SimulatorLaunchCtlCommands
+  final public func serviceName(forProcessIdentifier pid: _DarwinFoundation2::pid_t) async throws -> Swift::String
+  final public func serviceNamesAndProcessIdentifiers(matching regex: Foundation::NSRegularExpression) async throws -> [Swift::String : Foundation::NSNumber]
+  final public func firstServiceNameAndProcessIdentifier(matching regex: Foundation::NSRegularExpression) async throws -> (serviceName: Swift::String, processIdentifier: _DarwinFoundation2::pid_t)
+  final public func serviceName(forProcess process: FBControlCore::FBProcessInfo) async throws -> Swift::String
+  final public func processIsRunning(onSimulator process: FBControlCore::FBProcessInfo) async throws -> Swift::Bool
+  final public func listServices() async throws -> [Swift::String : Any]
+  final public func stopService(withName serviceName: Swift::String) async throws -> Swift::String
+  final public func startService(withName serviceName: Swift::String) async throws -> Swift::String
+  final public class func extractApplicationBundleIdentifier(fromServiceName serviceName: Swift::String) -> Swift::String?
+  @objc deinit
+}
+@_hasMissingDesignatedInitializers final public class SimulatorLaunchedApplication : FBControlCore::FBLaunchedApplication, Swift::CustomStringConvertible {
+  final public let configuration: FBControlCore::FBApplicationLaunchConfiguration
+  final public let processIdentifier: _DarwinFoundation2::pid_t
+  final public var bundleID: Swift::String {
+    get
   }
-  @objc public class func application(withSimulator simulator: FBSimulator, configuration: FBApplicationLaunchConfiguration, attachment: FBProcessFileAttachment, launchFuture: FBFuture<NSNumber>) -> FBFuture<FBSimulatorLaunchedApplication>
-  @objc public class func terminationFuture(forSimulator simulator: FBSimulator, processIdentifier: pid_t) -> FBFuture<NSNull>
-  @objc override dynamic public var description: String {
-    @objc get
+  final public func waitForTermination() async throws
+  final public func terminate() async throws
+  final public var stdOut: (any FBControlCore::FBProcessFileOutput)? {
+    get
+  }
+  final public var stdErr: (any FBControlCore::FBProcessFileOutput)? {
+    get
+  }
+  final public class func application(withSimulator simulator: FBSimulator, configuration: FBControlCore::FBApplicationLaunchConfiguration, attachment: FBControlCore::FBProcessFileAttachment, launchFuture: FBControlCore::FBFuture<Foundation::NSNumber>) -> FBControlCore::FBFuture<SimulatorLaunchedApplication>
+  final public class func terminationFuture(forSimulator simulator: FBSimulator, processIdentifier: _DarwinFoundation2::pid_t) -> FBControlCore::FBFuture<Foundation::NSNull>
+  final public var description: Swift::String {
+    get
   }
   @objc deinit
 }
-@objc @_hasMissingDesignatedInitializers final public class FBSimulatorLifecycleCommands : NSObject, FBiOSTargetCommand {
-  @objc final public class func commands(with target: any FBiOSTarget) -> FBSimulatorLifecycleCommands
+public enum SimulatorLifecycleError : Swift::Error {
+  case focusUnsupportedForCustomDeviceSet(deviceSetPath: Swift::String)
+  case focusAmbiguous(runningApplications: Swift::String)
+  case focusFailed(applicationDescription: Swift::String)
+  case openURLFailed(url: Foundation::URL, simulatorDescription: Swift::String, underlying: (any Swift::Error)?)
+}
+extension SimulatorLifecycleError : Foundation::LocalizedError {
+  public var errorDescription: Swift::String? {
+    get
+  }
+}
+@_hasMissingDesignatedInitializers final public class SimulatorLifecycleCommands : FBControlCore::LifecycleCommands {
+  final public class func commands(with simulator: FBSimulator) -> SimulatorLifecycleCommands
+  final public func boot(_ configuration: FBSimulatorBootConfiguration) async throws
+  final public func resolveState(_ state: FBControlCore::FBiOSTargetState) async throws
+  final public func resolveLeavesState(_ state: FBControlCore::FBiOSTargetState) async throws
+  final public func focus() async throws
+  final public func disconnect(withTimeout timeout: Foundation::TimeInterval, logger: (any FBControlCore::FBControlCoreLogger)?) async throws
+  final public func connectToFramebuffer() async throws -> FBFramebuffer
+  final public func connectToHID() async throws -> FBSimulatorHID
+  final public func open(_ url: Foundation::URL) async throws
   @objc deinit
 }
-extension FBSimulator : LifecycleCommands {
-  public func resolveState(_ state: FBiOSTargetState) async throws
-  public func resolveLeavesState(_ state: FBiOSTargetState) async throws
+public struct SimulatorLocationCommands : FBControlCore::LocationCommands {
+  public static func commands(with simulator: FBSimulator) -> SimulatorLocationCommands
+  public func set(longitude: Swift::Double, latitude: Swift::Double) async throws
 }
-extension FBSimulator : PowerCommands {
+public enum SimulatorLogError : Swift::Error, Foundation::LocalizedError {
+  case runtimeRootUnavailable
+  public var errorDescription: Swift::String? {
+    get
+  }
+  public static func == (a: SimulatorLogError, b: SimulatorLogError) -> Swift::Bool
+  public func hash(into hasher: inout Swift::Hasher)
+  public var hashValue: Swift::Int {
+    get
+  }
+}
+public struct SimulatorLogCommands : FBControlCore::LogCommands {
+  public static func commands(with simulator: FBSimulator) -> SimulatorLogCommands
+  public func tail(arguments: [Swift::String], consumer: any FBControlCore::FBDataConsumer) async throws -> any FBControlCore::LogOperation
+}
+public enum SimulatorMediaError : Swift::Error {
+  case noMediaProvided
+  case unknownMediaPaths(paths: [Foundation::URL])
+  case addMediaFailed(paths: [Foundation::URL], underlying: any Swift::Error)
+  case addContactsFailed(paths: [Foundation::URL], underlying: any Swift::Error)
+}
+extension SimulatorMediaError : Foundation::LocalizedError {
+  public var errorDescription: Swift::String? {
+    get
+  }
+}
+public struct SimulatorMediaCommands {
+  public static func commands(with simulator: FBSimulator) -> SimulatorMediaCommands
+  public func upload(_ mediaFileURLs: [Foundation::URL]) throws
+}
+public enum SimulatorMemoryError : Swift::Error, Foundation::LocalizedError {
+  case selectorUnavailable
+  public var errorDescription: Swift::String? {
+    get
+  }
+  public static func == (a: SimulatorMemoryError, b: SimulatorMemoryError) -> Swift::Bool
+  public func hash(into hasher: inout Swift::Hasher)
+  public var hashValue: Swift::Int {
+    get
+  }
+}
+public struct SimulatorMemoryCommands : FBControlCore::MemoryCommands {
+  public static func commands(with simulator: FBSimulator) -> SimulatorMemoryCommands
+  public func simulateWarning() async throws
+}
+public enum SimulatorNetworkError : Swift::Error, Foundation::LocalizedError {
+  case noDnsServers
+  public var errorDescription: Swift::String? {
+    get
+  }
+  public static func == (a: SimulatorNetworkError, b: SimulatorNetworkError) -> Swift::Bool
+  public func hash(into hasher: inout Swift::Hasher)
+  public var hashValue: Swift::Int {
+    get
+  }
+}
+public struct SimulatorNetworkCommands {
+  public static func commands(with simulator: FBSimulator) -> SimulatorNetworkCommands
+  public func setProxy(host: Swift::String, port: Swift::UInt, type: Swift::String) async throws
+  public func clearProxy() async throws
+  public func listProxy() async throws -> Swift::String
+  public func setDnsServers(_ servers: [Swift::String]) async throws
+  public func clearDns() async throws
+  public func listDns() async throws -> Swift::String
+}
+public enum SimulatorNotificationError : Swift::Error {
+  case jsonNotUTF8
+  case jsonNotADictionary
+  case selectorUnavailable
+  public static func == (a: SimulatorNotificationError, b: SimulatorNotificationError) -> Swift::Bool
+  public func hash(into hasher: inout Swift::Hasher)
+  public var hashValue: Swift::Int {
+    get
+  }
+}
+extension SimulatorNotificationError : Foundation::LocalizedError {
+  public var errorDescription: Swift::String? {
+    get
+  }
+}
+public struct SimulatorNotificationCommands {
+  public static func commands(with simulator: FBSimulator) -> SimulatorNotificationCommands
+  public func sendPush(forBundleID bundleID: Swift::String, jsonPayload: Swift::String) async throws
+}
+public struct SimulatorPhotosCommands {
+  public static func commands(with simulator: FBSimulator) -> SimulatorPhotosCommands
+  public func clear() async throws
+}
+public struct SimulatorPowerCommands : FBControlCore::PowerCommands {
+  public static func commands(with simulator: FBSimulator) -> SimulatorPowerCommands
   public func shutdown() async throws
   public func reboot() async throws
 }
-extension FBSimulator : EraseCommands {
-  public func erase() async throws
+public enum SimulatorAppearance : Swift::Int, Swift::Sendable {
+  case light
+  case dark
+  public init?(rawValue: Swift::Int)
+  public typealias RawValue = Swift::Int
+  public var rawValue: Swift::Int {
+    get
+  }
 }
-extension FBSimulator : SimulatorLifecycleCommands {
-  public func boot(_ configuration: FBSimulatorBootConfiguration) async throws
-  public func focus() async throws
-  public func disconnect(withTimeout timeout: TimeInterval, logger: (any FBControlCoreLogger)?) async throws
-  public func connectToFramebuffer() async throws -> FBFramebuffer
-  public func open(_ url: URL) async throws
-  public func connectToHID() async throws -> FBSimulatorHID
+public enum FBSimulatorContentSizeCategory : Swift::Int, Swift::Sendable {
+  case extraSmall
+  case small
+  case medium
+  case large
+  case extraLarge
+  case extraExtraLarge
+  case extraExtraExtraLarge
+  case accessibilityMedium
+  case accessibilityLarge
+  case accessibilityExtraLarge
+  case accessibilityExtraExtraLarge
+  case accessibilityExtraExtraExtraLarge
+  public init?(rawValue: Swift::Int)
+  public typealias RawValue = Swift::Int
+  public var rawValue: Swift::Int {
+    get
+  }
 }
-@objc @_hasMissingDesignatedInitializers final public class FBSimulatorLocationCommands : NSObject, FBiOSTargetCommand {
-  @objc final public class func commands(with target: any FBiOSTarget) -> FBSimulatorLocationCommands
+public enum SimulatorPreferencesError : Swift::Error, Foundation::LocalizedError {
+  case settingNotPreferenceBacked(setting: Swift::String)
+  public var errorDescription: Swift::String? {
+    get
+  }
+}
+public struct SimulatorPreferencesCommands {
+  public static func commands(with simulator: FBSimulator) -> SimulatorPreferencesCommands
+  public func apply(_ setting: FBSimulatorSetting) async throws
+  public func apply(_ resolution: FBSimulatorSettingResolution) async throws
+  public func getCurrentPreference(_ name: Swift::String, domain: Swift::String?) async throws -> Swift::String
+  public func currentSettingValue(name: Swift::String, domain: Swift::String?) async throws -> Swift::String
+}
+public enum SimulatorPrivacyError : Swift::Error {
+  case noDataDirectory
+  case noDataDirectoryForPlists
+  case noServicesToGrant(bundleIDs: Swift::Set<Swift::String>)
+  case noBundleIDsToGrant(services: Swift::Set<FBControlCore::FBTargetSettingsService>)
+  case unhandledGrantServices(services: Swift::Set<FBControlCore::FBTargetSettingsService>)
+  case noServicesToRevoke(bundleIDs: Swift::Set<Swift::String>)
+  case noBundleIDsToRevoke(services: Swift::Set<FBControlCore::FBTargetSettingsService>)
+  case unhandledRevokeServices(services: Swift::Set<FBControlCore::FBTargetSettingsService>)
+  case emptyScheme(operation: Swift::String)
+  case emptyBundleIDs(operation: Swift::String)
+  case schemeApprovalPlistUnreadable(path: Swift::String)
+  case schemeApprovalDirectoryCreationFailed(underlying: any Swift::Error)
+  case schemeApprovalPlistWriteFailed
+  case tccDatabaseMissing(path: Swift::String)
+  case tccDatabaseIsDirectory(path: Swift::String)
+  case tccDatabaseNotWritable(path: Swift::String)
+  case sqliteTaskFailed(exitCode: Swift::Int, stdOut: Swift::String, stdErr: Swift::String)
+  case sqliteCommandFailed(stderr: Swift::String)
+}
+extension SimulatorPrivacyError : Foundation::LocalizedError {
+  public var errorDescription: Swift::String? {
+    get
+  }
+}
+public struct SimulatorPrivacyCommands {
+  public static func commands(with simulator: FBSimulator) -> SimulatorPrivacyCommands
+  public func grantAccess(_ bundleIDs: Swift::Set<Swift::String>, toServices services: Swift::Set<FBControlCore::FBTargetSettingsService>) async throws
+  public func revokeAccess(_ bundleIDs: Swift::Set<Swift::String>, toServices services: Swift::Set<FBControlCore::FBTargetSettingsService>) async throws
+  public func grantAccess(_ bundleIDs: Swift::Set<Swift::String>, toDeeplink scheme: Swift::String) async throws
+  public func revokeAccess(_ bundleIDs: Swift::Set<Swift::String>, toDeeplink scheme: Swift::String) async throws
+}
+public struct SimulatorProcessSpawnCommands : FBControlCore::ProcessSpawnCommands {
+  public static func commands(with simulator: FBSimulator) -> SimulatorProcessSpawnCommands
+  public func launchProcess(_ configuration: FBControlCore::FBProcessSpawnConfiguration) async throws -> FBControlCore::FBSubprocess<Swift::AnyObject, Swift::AnyObject, Swift::AnyObject>
+}
+public struct FBInSimulatorToolOutput : Swift::Sendable {
+  public let stdout: Foundation::Data
+  public let stderr: Foundation::Data
+  public let exitCode: Swift::Int32
+  public init(stdout: Foundation::Data, stderr: Foundation::Data, exitCode: Swift::Int32)
+}
+public struct SimulatorRuntimeToolCommands {
+  public static func commands(with simulator: FBSimulator) -> SimulatorRuntimeToolCommands
+  public func run(_ relativePath: Swift::String, arguments: [Swift::String] = [], environment: [Swift::String : Swift::String] = [:]) async throws -> FBInSimulatorToolOutput
+}
+public enum SimulatorScreenshotError : Swift::Error {
+  case captureFailed
+  public static func == (a: SimulatorScreenshotError, b: SimulatorScreenshotError) -> Swift::Bool
+  public func hash(into hasher: inout Swift::Hasher)
+  public var hashValue: Swift::Int {
+    get
+  }
+}
+extension SimulatorScreenshotError : Foundation::LocalizedError {
+  public var errorDescription: Swift::String? {
+    get
+  }
+}
+@_hasMissingDesignatedInitializers final public class SimulatorScreenshotCommands : FBControlCore::ScreenshotCommands {
+  final public class func commands(with simulator: FBSimulator) -> SimulatorScreenshotCommands
+  final public func take(configuration: FBControlCore::FBScreenshotConfiguration) async throws -> FBControlCore::FBScreenshotResult
+  final public func takeForRepl(cropRect: CoreFoundation::CGRect?, asPNG: Swift::Bool) async throws -> Foundation::Data
   @objc deinit
 }
-extension FBSimulator : LocationCommands {
-  public func overrideLocation(longitude: Double, latitude: Double) async throws
-}
-@objc @_hasMissingDesignatedInitializers final public class FBSimulatorLogCommands : NSObject, FBiOSTargetCommand {
-  @objc final public class func commands(with target: any FBiOSTarget) -> FBSimulatorLogCommands
+@_hasMissingDesignatedInitializers final public class SimulatorServiceContext {
+  final public class func sharedServiceContext() throws -> SimulatorServiceContext
+  final public class func sharedServiceContext(withLogger logger: (any FBControlCore::FBControlCoreLogger)?) throws -> SimulatorServiceContext
   @objc deinit
 }
-extension FBSimulator : LogCommands {
-  public func tailLog(arguments: [String], consumer: any FBDataConsumer) async throws -> any LogOperation
-}
-@objc @_hasMissingDesignatedInitializers final public class FBSimulatorMediaCommands : NSObject, FBiOSTargetCommand {
-  @objc final public class func commands(with target: any FBiOSTarget) -> FBSimulatorMediaCommands
-  @objc deinit
-}
-extension FBSimulator : MediaCommands {
-  public func addMedia(_ mediaFileURLs: [URL]) async throws
-}
-@objc @_hasMissingDesignatedInitializers final public class FBSimulatorMemoryCommands : NSObject, FBiOSTargetCommand {
-  @objc final public class func commands(with target: any FBiOSTarget) -> FBSimulatorMemoryCommands
-  @objc deinit
-}
-extension FBSimulator : MemoryCommands {
-  public func simulateMemoryWarning() async throws
-}
-@objc @_hasMissingDesignatedInitializers final public class FBSimulatorNotificationCommands : NSObject, FBiOSTargetCommand {
-  @objc final public class func commands(with target: any FBiOSTarget) -> FBSimulatorNotificationCommands
-  @objc deinit
-}
-extension FBSimulator : NotificationCommands {
-  public func sendPushNotification(forBundleID bundleID: String, jsonPayload: String) async throws
-}
-@_hasMissingDesignatedInitializers @objc(FBSimulatorNotificationUpdateStrategy) final public class FBSimulatorNotificationUpdateStrategy : NSObject, @unchecked Sendable {
-  @objc(strategyWithSet:) final public class func strategy(with set: FBSimulatorSet) -> FBSimulatorNotificationUpdateStrategy
-  @objc deinit
-}
-@objc @_hasMissingDesignatedInitializers final public class FBSimulatorProcessSpawnCommands : NSObject, FBiOSTargetCommand {
-  @objc final public class func commands(with target: any FBiOSTarget) -> FBSimulatorProcessSpawnCommands
-  @objc deinit
-}
-extension FBSimulator : ProcessSpawnCommands {
-  public func launchProcess(_ configuration: FBProcessSpawnConfiguration) async throws -> FBSubprocess<AnyObject, AnyObject, AnyObject>
-}
-@_hasMissingDesignatedInitializers final public class FBSimulatorPurpleHID {
-  final public func orientationEvent(_ orientation: FBSimulatorHIDDeviceOrientation) -> Data
-  final public func lockDeviceEvent() -> Data
-  @objc deinit
-}
-@objc @_hasMissingDesignatedInitializers final public class FBSimulatorReplCommands : NSObject, FBiOSTargetCommand {
-  @objc final public class func commands(with target: any FBiOSTarget) -> FBSimulatorReplCommands
-  @objc deinit
-}
-extension FBSimulator : ReplCommands {
-  public func startReplTest(bundlePath: String) async throws -> ReplSession
-  public func startReplSimulator() async throws -> ReplSession
-  public func startReplApp(bundleID: String) async throws -> ReplSession
-}
-@objc @_hasMissingDesignatedInitializers final public class FBSimulatorScreenshotCommands : NSObject, FBiOSTargetCommand {
-  @objc final public class func commands(with target: any FBiOSTarget) -> FBSimulatorScreenshotCommands
-  @objc deinit
-}
-extension FBSimulator : ScreenshotCommands {
-  public func takeScreenshot(format: FBScreenshotFormat) async throws -> Data
-}
-@_hasMissingDesignatedInitializers @objc(FBSimulatorServiceContext) final public class FBSimulatorServiceContext : NSObject {
-  @objc final public class func sharedServiceContext() throws -> FBSimulatorServiceContext
-  @objc(sharedServiceContextWithLogger:error:) final public class func sharedServiceContext(withLogger logger: (any FBControlCoreLogger)?) throws -> FBSimulatorServiceContext
-  @objc final public func pathsOfAllDeviceSets() -> [String]
-  @objc deinit
-}
-public enum FBSimulatorServiceContextError : LocalizedError, Sendable {
+public enum SimulatorServiceContextError : Foundation::LocalizedError, Swift::Sendable {
+  case serviceContextClassUnavailable
   case noFullXcodeSelected
-  case serviceContextUnavailable(developerDirectory: String, reason: String?)
-  case defaultDeviceSetUnavailable(reason: String?)
-  case deviceSetUnavailable(configuration: String, reason: String?)
-  case deviceSetDirectoryCreationFailed(path: String, reason: String)
-  case deviceSetPathResolutionFailed(path: String, reason: String)
-  public var errorDescription: String? {
+  case serviceContextUnavailable(developerDirectory: Swift::String, reason: Swift::String?)
+  case defaultDeviceSetUnavailable(reason: Swift::String?)
+  case deviceSetUnavailable(configuration: Swift::String, reason: Swift::String?)
+  case deviceSetDirectoryCreationFailed(path: Swift::String, reason: Swift::String)
+  case deviceSetPathResolutionFailed(path: Swift::String, reason: Swift::String)
+  public var errorDescription: Swift::String? {
     get
   }
 }
-extension FBSimulatorServiceContextError : CustomStringConvertible {
-  public var description: String {
+extension SimulatorServiceContextError : Swift::CustomStringConvertible {
+  public var description: Swift::String {
     get
   }
 }
-@_hasMissingDesignatedInitializers @objc(FBSimulatorSet) final public class FBSimulatorSet : NSObject, FBiOSTargetSet {
-  @objc final public let configuration: FBSimulatorControlConfiguration
-  @objc weak final public var delegate: (any FBiOSTargetSetDelegate)?
-  @objc final public let logger: (any FBControlCoreLogger)?
-  @objc final public let reporter: (any FBEventReporter)?
-  @objc final public let workQueue: DispatchQueue
-  @objc final public let asyncQueue: DispatchQueue
-  @objc final public func target(withUDID udid: String) -> (any FBiOSTargetInfo)?
-  @objc(simulatorWithUDID:) final public func simulator(withUDID udid: String) -> FBSimulator?
-  @objc(createSimulatorWithConfiguration:) final public func createSimulator(with configuration: FBSimulatorConfiguration) -> FBFuture<FBSimulator>
-  @objc(cloneSimulator:toDeviceSet:) final public func cloneSimulator(_ simulator: FBSimulator, toDeviceSet destinationSet: FBSimulatorSet) -> FBFuture<FBSimulator>
-  final public func createSimulatorAsync(with configuration: FBSimulatorConfiguration) async throws -> FBSimulator
-  @objc final public func configurationsForAbsentDefaultSimulators() throws -> [FBSimulatorConfiguration]
-  @objc(shutdown:) final public func shutdown(_ simulator: FBSimulator) -> FBFuture<NSNull>
-  @objc(delete:) final public func delete(_ simulator: FBSimulator) -> FBFuture<NSNull>
-  @objc(shutdownAll:) final public func shutdownAll(_ simulators: [FBSimulator]) -> FBFuture<NSNull>
-  @objc(deleteAll:) final public func deleteAll(_ simulators: [FBSimulator]) -> FBFuture<NSNull>
-  @objc final public func shutdownAll() -> FBFuture<NSNull>
-  @objc final public func deleteAll() -> FBFuture<NSNull>
-  @objc override final public var description: String {
-    @objc get
+@_hasMissingDesignatedInitializers final public class FBSimulatorSet : FBControlCore::FBiOSTargetSet {
+  final public let configuration: FBSimulatorControlConfiguration
+  weak final public var delegate: (any FBControlCore::FBiOSTargetSetDelegate)?
+  final public let logger: any FBControlCore::FBControlCoreLogger
+  final public let workQueue: Dispatch::DispatchQueue
+  final public let asyncQueue: Dispatch::DispatchQueue
+  final public func target(withUDID udid: Swift::String) -> (any FBControlCore::FBiOSTargetInfo)?
+  final public func simulator(withUDID udid: Swift::String) -> FBSimulator?
+  final public func createSimulator(with configuration: FBSimulatorConfiguration) async throws -> FBSimulator
+  final public func cloneSimulator(_ simulator: FBSimulator, toDeviceSet destinationSet: FBSimulatorSet) async throws -> FBSimulator
+  final public func shutdown(_ simulator: FBSimulator) async throws
+  final public func delete(_ simulator: FBSimulator) async throws
+  final public func deleteAll(_ simulators: [FBSimulator]) async throws
+  final public func deleteAll() async throws
+  final public var description: Swift::String {
+    get
   }
-  @objc final public var allTargetInfos: [any FBiOSTargetInfo] {
-    @objc get
+  final public var allTargetInfos: [any FBControlCore::FBiOSTargetInfo] {
+    get
   }
-  @objc final public var allSimulators: [FBSimulator] {
-    @objc get
+  final public var allSimulators: [FBSimulator] {
+    get
   }
   @objc deinit
 }
-public enum FBSimulatorSetError : LocalizedError, Sendable {
-  case deviceTypeOrRuntimeUnavailable(configuration: String, reason: String?)
-  case shutdownAfterCreateFailed(reason: String?)
-  case simulatorNotInflated(udid: String)
+public enum FBSimulatorSetError : Foundation::LocalizedError, Swift::Sendable {
+  case deviceTypeOrRuntimeUnavailable(configuration: Swift::String, reason: Swift::String?)
+  case shutdownAfterCreateFailed(reason: Swift::String?)
+  case simulatorNotInflated(udid: Swift::String)
+  case simulatorHasNoSet(udid: Swift::String)
   case deviceCreationFailed
   case deviceCloneFailed
-  public var errorDescription: String? {
+  public var errorDescription: Swift::String? {
     get
   }
 }
-extension FBSimulatorSetError : CustomStringConvertible {
-  public var description: String {
+extension FBSimulatorSetError : Swift::CustomStringConvertible {
+  public var description: Swift::String {
     get
   }
 }
-@objc public enum FBSimulatorSetting : UInt {
-  case hardwareKeyboard
-  case slowAnimations
-  case increaseContrast
-  public init?(rawValue: Swift.UInt)
-  public typealias RawValue = Swift.UInt
-  public var rawValue: Swift.UInt {
+public enum FBSimulatorSetting : Swift::Equatable {
+  case hardwareKeyboard(Swift::Bool)
+  case slowAnimations(Swift::Bool)
+  case increaseContrast(Swift::Bool)
+  case autoFillPasswords(Swift::Bool)
+  case appearance(SimulatorAppearance)
+  case contentSize(FBSimulatorContentSizeCategory)
+  case locale(localeIdentifier: Swift::String)
+  public static func == (a: FBSimulatorSetting, b: FBSimulatorSetting) -> Swift::Bool
+}
+public enum FBSimulatorSettingResolution : Swift::Equatable {
+  case setting(FBSimulatorSetting)
+  case preference(name: Swift::String, value: Swift::String, type: Swift::String?, domain: Swift::String?)
+  public static func == (a: FBSimulatorSettingResolution, b: FBSimulatorSettingResolution) -> Swift::Bool
+}
+extension FBSimulatorSetting {
+  public static var curatedNames: [Swift::String] {
     get
   }
 }
-@objc public enum FBSimulatorAppearance : Int, Sendable {
-  case light = 1
-  case dark = 2
-  public init?(rawValue: Swift.Int)
-  public typealias RawValue = Swift.Int
-  public var rawValue: Swift.Int {
+public enum SimulatorSettingError : Swift::Error, Swift::CustomStringConvertible, Foundation::LocalizedError {
+  case invalidValue(name: Swift::String, value: Swift::String, expected: Swift::String)
+  public var description: Swift::String {
+    get
+  }
+  public var errorDescription: Swift::String? {
     get
   }
 }
-@objc public enum FBSimulatorContentSizeCategory : Int, Sendable {
-  case extraSmall = 1
-  case small = 2
-  case medium = 3
-  case large = 4
-  case extraLarge = 5
-  case extraExtraLarge = 6
-  case extraExtraExtraLarge = 7
-  case accessibilityMedium = 8
-  case accessibilityLarge = 9
-  case accessibilityExtraLarge = 10
-  case accessibilityExtraExtraLarge = 11
-  case accessibilityExtraExtraExtraLarge = 12
-  public init?(rawValue: Swift.Int)
-  public typealias RawValue = Swift.Int
-  public var rawValue: Swift.Int {
+extension FBSimulatorSettingResolution {
+  public init(name: Swift::String, value: Swift::String, type: Swift::String?, domain: Swift::String?) throws
+}
+extension SimulatorAppearance {
+  public init?(argumentName: Swift::String)
+  public static var allArgumentNames: [Swift::String] {
     get
   }
 }
-@objc @_hasMissingDesignatedInitializers final public class FBSimulatorSettingsCommands : NSObject, FBiOSTargetCommand {
-  @objc final public class func commands(with target: any FBiOSTarget) -> FBSimulatorSettingsCommands
+extension FBSimulatorContentSizeCategory {
+  public init?(argumentName: Swift::String)
+  public static var allArgumentNames: [Swift::String] {
+    get
+  }
+}
+public enum SimulatorStateError : Swift::Error, Foundation::LocalizedError {
+  case notBooted(operation: Swift::String, state: Swift::String)
+  case notShutdown(operation: Swift::String, state: Swift::String)
+  case unknownState(operation: Swift::String)
+  public var errorDescription: Swift::String? {
+    get
+  }
+}
+public struct SimulatorStatusBarCommands {
+  public static func commands(with simulator: FBSimulator) -> SimulatorStatusBarCommands
+  public func current() async throws -> FBStatusBarOverride
+  public func set(_ override: FBStatusBarOverride?) async throws
+}
+@_hasMissingDesignatedInitializers public actor FBSimulatorVideo {
+  nonisolated final public let stream: FBSimulatorVideoStream
+  public static func video(withFramebuffer framebuffer: FBFramebuffer, configuration: FBControlCore::FBVideoStreamConfiguration, filePath: Swift::String, edgeInsets: FBVideoStreamEdgeInsets = FBVideoStreamEdgeInsets(top: 0, bottom: 0, left: 0, right: 0), chaptersEnabled: Swift::Bool = false, logger: any FBControlCore::FBControlCoreLogger) -> FBSimulatorVideo
+  public func startRecording() async throws
+  public func stop() async throws -> Foundation::URL
+  @objc deinit
+  @_semantics("defaultActor") nonisolated final public var unownedExecutor: _Concurrency::UnownedSerialExecutor {
+    get
+  }
+}
+@_hasMissingDesignatedInitializers final public class FBSimulatorVideoRecordingCommands : FBControlCore::VideoRecordingCommands {
+  final public class func commands(with simulator: FBSimulator) -> FBSimulatorVideoRecordingCommands
+  final public var honorsRecordingConfiguration: Swift::Bool {
+    get
+  }
+  final public func startRecording(toFile filePath: Swift::String) async throws -> any FBControlCore::FBVideoRecording
+  final public func startRecording(toFile filePath: Swift::String, configuration: FBControlCore::FBVideoStreamConfiguration) async throws -> any FBControlCore::FBVideoRecording
+  final public func stop() async throws -> Foundation::URL
   @objc deinit
 }
-extension FBSimulator : SettingsCommands {
-  public func setSetting(_ setting: FBSimulatorSetting, enabled: Bool) async throws
-  public func setPreference(_ name: String, value: String, type: String?, domain: String?) async throws
-  public func getCurrentPreference(_ name: String, domain: String?) async throws -> String
-  public func grantAccess(_ bundleIDs: Set<String>, toServices services: Set<FBTargetSettingsService>) async throws
-  public func revokeAccess(_ bundleIDs: Set<String>, toServices services: Set<FBTargetSettingsService>) async throws
-  public func grantAccess(_ bundleIDs: Set<String>, toDeeplink scheme: String) async throws
-  public func revokeAccess(_ bundleIDs: Set<String>, toDeeplink scheme: String) async throws
-  public func updateContacts(_ databaseDirectory: String) async throws
-  public func clearContacts() async throws
-  public func clearPhotos() async throws
-  public func currentAppearance() async throws -> FBSimulatorAppearance
-  public func setAppearance(_ appearance: FBSimulatorAppearance) async throws
-  public func currentContentSizeCategory() async throws -> FBSimulatorContentSizeCategory
-  public func setContentSizeCategory(_ category: FBSimulatorContentSizeCategory) async throws
-  public func currentStatusBarOverrides() async throws -> FBStatusBarOverride
-  public func overrideStatusBar(_ override: FBStatusBarOverride?) async throws
-  public func setProxy(host: String, port: UInt, type: String) async throws
-  public func clearProxy() async throws
-  public func listProxy() async throws -> String
-  public func setDnsServers(_ servers: [String]) async throws
-  public func clearDns() async throws
-  public func listDns() async throws -> String
-  public func setHealthAuthorization(_ approved: Bool, forBundleID bundleID: String, typeIdentifiers: [String]) async throws
-  public func clearHealthAuthorization(forBundleID bundleID: String) async throws
-  public func listHealthAuthorization(forBundleID bundleID: String) async throws -> String
+public struct FBVideoStreamEdgeInsets : Swift::Sendable {
+  public var top: Swift::UInt
+  public var bottom: Swift::UInt
+  public var left: Swift::UInt
+  public var right: Swift::UInt
+  public init(top: Swift::UInt, bottom: Swift::UInt, left: Swift::UInt, right: Swift::UInt)
 }
-@_inheritsConvenienceInitializers @objc(FBSimulatorShutdownStrategy) final public class FBSimulatorShutdownStrategy : NSObject {
-  @objc final public class func shutdown(_ simulator: FBSimulator) -> FBFuture<NSNull>
-  @objc final public class func shutdownAll(_ simulators: [FBSimulator]) -> FBFuture<NSNull>
-  @objc override dynamic public init()
+@_hasMissingDesignatedInitializers public actor FBSimulatorVideoStream : FBControlCore::FBVideoStream {
+  public static func make(framebuffer: FBFramebuffer, configuration: FBControlCore::FBVideoStreamConfiguration, logger: any FBControlCore::FBControlCoreLogger) -> FBSimulatorVideoStream
+  public static func make(framebuffer: FBFramebuffer, configuration: FBControlCore::FBVideoStreamConfiguration, edgeInsets: FBVideoStreamEdgeInsets, logger: any FBControlCore::FBControlCoreLogger) -> FBSimulatorVideoStream
+  public static func start(framebuffer: FBFramebuffer, configuration: FBControlCore::FBVideoStreamConfiguration, edgeInsets: FBVideoStreamEdgeInsets = FBVideoStreamEdgeInsets(top: 0, bottom: 0, left: 0, right: 0), to consumer: any FBControlCore::FBDataConsumer, logger: any FBControlCore::FBControlCoreLogger) async throws -> FBSimulatorVideoStream
   @objc deinit
-}
-@_hasMissingDesignatedInitializers final public class FBSimulatorVideo : @unchecked Sendable {
-  final public let stream: FBSimulatorVideoStream
-  final public class func video(withFramebuffer framebuffer: FBFramebuffer, configuration: FBVideoStreamConfiguration, filePath: String, edgeInsets: FBVideoStreamEdgeInsets = FBVideoStreamEdgeInsets(top: 0, bottom: 0, left: 0, right: 0), chaptersEnabled: Bool = false, logger: any FBControlCoreLogger) -> FBSimulatorVideo
-  final public func startRecording() async throws
-  final public func stopRecording() async throws
-  @objc deinit
-}
-@objc @_hasMissingDesignatedInitializers final public class FBSimulatorVideoRecordingCommands : NSObject, FBiOSTargetCommand {
-  @objc final public class func commands(with target: any FBiOSTarget) -> FBSimulatorVideoRecordingCommands
-  @objc deinit
-}
-extension FBSimulator : VideoRecordingCommands {
-  public func startRecording(toFile filePath: String) async throws
-  public func startRecording(toFile filePath: String, configuration: FBVideoStreamConfiguration) async throws
-  public func stopRecording() async throws
-}
-extension FBSimulator : VideoStreamCommands {
-  public func createStream(configuration: FBVideoStreamConfiguration, to consumer: any FBDataConsumer) async throws -> any FBVideoStream
-}
-public struct FBVideoStreamEdgeInsets {
-  public var top: UInt
-  public var bottom: UInt
-  public var left: UInt
-  public var right: UInt
-  public init(top: UInt, bottom: UInt, left: UInt, right: UInt)
-}
-public struct FBVideoEncoderStats {
-  public var callbackCount: UInt
-  public var writeCount: UInt
-  public var dropCount: UInt
-  public var writeFailureCount: UInt
-  public var encodeErrorCount: UInt
-  public var tornFrameCount: UInt
-  public var totalEncodedBytes: UInt
-  public var totalEncodeSubmitSeconds: CFTimeInterval
-  public init()
-  public init(callbackCount: UInt, writeCount: UInt, dropCount: UInt, writeFailureCount: UInt, encodeErrorCount: UInt, tornFrameCount: UInt, totalEncodedBytes: UInt, totalEncodeSubmitSeconds: CFTimeInterval)
-}
-public protocol RSPixelBufferConsumer : AnyObject {
-  func writeEncodedFrame(_ pixelBuffer: CVPixelBuffer, frameNumber: UInt, timeAtFirstFrame: CFTimeInterval) throws
-}
-@_hasMissingDesignatedInitializers @objc(FBSimulatorVideoStream) public class FBSimulatorVideoStream : NSObject, FBFramebufferConsumer, FBVideoStream, @unchecked Sendable {
-  public class func make(framebuffer: FBFramebuffer, configuration: FBVideoStreamConfiguration, logger: any FBControlCoreLogger) -> FBSimulatorVideoStream
-  public class func make(framebuffer: FBFramebuffer, configuration: FBVideoStreamConfiguration, edgeInsets: FBVideoStreamEdgeInsets, logger: any FBControlCoreLogger) -> FBSimulatorVideoStream
-  public class func start(framebuffer: FBFramebuffer, configuration: FBVideoStreamConfiguration, edgeInsets: FBVideoStreamEdgeInsets = FBVideoStreamEdgeInsets(top: 0, bottom: 0, left: 0, right: 0), to consumer: any FBDataConsumer, logger: any FBControlCoreLogger) async throws -> FBSimulatorVideoStream
-  @objc deinit
-  @objc public func startStreaming(_ consumer: any FBDataConsumer) -> FBFuture<NSNull>
-  @objc public func stopStreaming() -> FBFuture<NSNull>
-  @objc(didChangeIOSurface:) public func didChange(_ surface: IOSurface?)
-  @objc public func didReceiveDamageRect()
-  public class func compressionSessionProperties(for configuration: FBVideoStreamConfiguration, callerProperties: [String : Any]) -> [String : Any]
-  public func writeTimedMetadata(_ text: String)
-  public func updateOverlayBuffer(_ overlayBuffer: CVPixelBuffer?)
-  public func requestKeyFrame()
-  public func captureCompositedScreenshot() throws -> Data
+  nonisolated public func startStreaming(_ consumer: any FBControlCore::FBDataConsumer) async throws
+  public func stopStreaming() async throws
+  public static func compressionSessionProperties(for configuration: FBControlCore::FBVideoStreamConfiguration, callerProperties: [Swift::String : Any]) -> [Swift::String : Any]
+  public func writeTimedMetadata(_ text: Swift::String)
+  public func updateOverlayBuffer(_ overlayBuffer: CoreVideo::CVPixelBuffer?)
+  nonisolated public func requestKeyFrame()
+  public func captureCompositedScreenshot() throws -> Foundation::Data
   public func currentEncoderStats() -> FBVideoEncoderStats
-  public func currentFramebufferStats() -> FBFramebufferStats
-  public var currentFrameNumber: UInt {
+  nonisolated public func currentFramebufferStats() -> FBFramebufferStats
+  nonisolated public var framebufferStatsStartTime: CoreFoundation::CFTimeInterval {
     get
   }
-  public var currentTimeAtFirstFrame: CFTimeInterval {
+  public func awaitCompletion() async
+  @_semantics("defaultActor") nonisolated final public var unownedExecutor: _Concurrency::UnownedSerialExecutor {
     get
-  }
-  public var framebufferStatsStartTime: CFTimeInterval {
-    get
-  }
-  public func stop() async throws
-  @objc public var completed: FBFuture<NSNull> {
-    @objc get
   }
 }
-@objc @_hasMissingDesignatedInitializers final public class FBSimulatorXCTestCommands : NSObject, FBiOSTargetCommand {
-  @objc final public class func commands(with target: any FBiOSTarget) -> FBSimulatorXCTestCommands
-  @objc(transportForTestManagerService) final public func transportForTestManagerService() -> FBFutureContext<NSNumber>
-  @objc final public var xctestPath: String {
-    @objc get
-  }
+public struct SimulatorVideoStreamCommands : FBControlCore::VideoStreamCommands {
+  public static func commands(with simulator: FBSimulator) -> SimulatorVideoStreamCommands
+  public func createStream(configuration: FBControlCore::FBVideoStreamConfiguration, to consumer: any FBControlCore::FBDataConsumer) async throws -> any FBControlCore::FBVideoStream
+}
+public struct FBVideoEncoderStats : Swift::Sendable {
+  public var callbackCount: Swift::UInt
+  public var writeCount: Swift::UInt
+  public var dropCount: Swift::UInt
+  public var encodeErrorCount: Swift::UInt
+  public var tornFrameCount: Swift::UInt
+  public var totalEncodedBytes: Swift::UInt
+  public init()
+  public init(callbackCount: Swift::UInt, writeCount: Swift::UInt, dropCount: Swift::UInt, writeFailureCount: Swift::UInt, encodeErrorCount: Swift::UInt, tornFrameCount: Swift::UInt, totalEncodedBytes: Swift::UInt, totalEncodeSubmitSeconds: CoreFoundation::CFTimeInterval)
+}
+public struct FBStatusBarOverride : Swift::Sendable {
+  public var timeString: Swift::String?
+  public var dataNetworkType: Foundation::NSNumber?
+  public var wiFiMode: Foundation::NSNumber?
+  public var wiFiBars: Foundation::NSNumber?
+  public var cellularMode: Foundation::NSNumber?
+  public var cellularBars: Foundation::NSNumber?
+  public var operatorName: Swift::String?
+  public var batteryState: Foundation::NSNumber?
+  public var batteryLevel: Foundation::NSNumber?
+  public var showNotCharging: Foundation::NSNumber?
+  public init()
+}
+public struct SurfaceImage : Swift::Sendable {
+  public let image: CoreGraphics::CGImage
+  public let sourceSize: CoreFoundation::CGSize
+}
+@_hasMissingDesignatedInitializers final public class SurfaceImageGenerator {
+  convenience public init(purpose: Swift::String, logger: (any FBControlCore::FBControlCoreLogger)?)
+  final public func image() throws -> CoreGraphics::CGImage?
+  final public func image(configuration: FBControlCore::FBScreenshotConfiguration, screenScale: Swift::Double?) throws -> SurfaceImage?
+  final public func updateSurface(_ surface: IOSurface::IOSurface?)
   @objc deinit
 }
-extension FBSimulator : XCTestExtendedCommands {
-  public func runTest(launchConfiguration: FBTestLaunchConfiguration, reporter: AnyObject, logger: any FBControlCoreLogger) async throws
-  public func listTests(forBundleAtPath bundlePath: String, timeout: TimeInterval, withAppAtPath appPath: String?) async throws -> [String]
-  public func extendedTestShim() async throws -> String
-  public func withTransportForTestManagerService<R>(body: (NSNumber) async throws -> R) async throws -> R
-  public var xctestPath: String {
+public enum FBAXBridgePersistence : Swift::Sendable, Swift::Hashable {
+  case oneShot
+  case shared
+  case exclusive
+  public static func == (a: FBAXBridgePersistence, b: FBAXBridgePersistence) -> Swift::Bool
+  public func hash(into hasher: inout Swift::Hasher)
+  public var hashValue: Swift::Int {
     get
   }
 }
-@_inheritsConvenienceInitializers @objc(FBStatusBarOverride) final public class FBStatusBarOverride : NSObject {
-  @objc final public var timeString: String?
-  @objc final public var dataNetworkType: NSNumber?
-  @objc final public var wiFiMode: NSNumber?
-  @objc final public var wiFiBars: NSNumber?
-  @objc final public var cellularMode: NSNumber?
-  @objc final public var cellularBars: NSNumber?
-  @objc final public var operatorName: String?
-  @objc final public var batteryState: NSNumber?
-  @objc final public var batteryLevel: NSNumber?
-  @objc final public var showNotCharging: NSNumber?
-  @objc override dynamic public init()
-  @objc deinit
+public enum FBUIAutomationBackend : Swift::Sendable, Swift::Equatable {
+  case accessibility
+  case axBridge(persistence: FBAXBridgePersistence, frontmostMethod: FBAXBridgeFrontmostMethod, automationMode: Swift::Bool?)
+  public static func == (a: FBUIAutomationBackend, b: FBUIAutomationBackend) -> Swift::Bool
 }
-@_hasMissingDesignatedInitializers @objc(FBSurfaceImageGenerator) final public class FBSurfaceImageGenerator : NSObject, FBFramebufferConsumer {
-  @objc(imageGeneratorWithScale:purpose:logger:) convenience public init(scale: NSDecimalNumber, purpose: String, logger: (any FBControlCoreLogger)?)
-  @objc final public func availableImage() -> CGImage?
-  @objc final public func image() -> CGImage?
-  @objc final public func didChange(_ surface: IOSurface?)
-  @objc final public func didReceiveDamageRect()
-  @objc deinit
+extension FBUIAutomationBackend {
+  public var name: FBControlCore::FBUIAutomationBackendName {
+    get
+  }
+  public init(resolvedName name: FBControlCore::FBUIAutomationBackendName, frontmostMethod: FBAXBridgeFrontmostMethod = .windowServer, automationMode: Swift::Bool? = true)
 }
-public protocol KeychainCommands : AnyObject {
-  func clearKeychain() async throws
+public struct FBTapOptions : Swift::Sendable, Swift::Equatable {
+  public struct Assertion : Swift::Sendable, Swift::Equatable {
+    public var key: FBControlCore::FBAXSearchableKey
+    public var value: Swift::String
+    public init(key: FBControlCore::FBAXSearchableKey, value: Swift::String)
+    public static func == (a: FBTapOptions.Assertion, b: FBTapOptions.Assertion) -> Swift::Bool
+  }
+  public var duration: Foundation::TimeInterval?
+  public var assertion: FBTapOptions.Assertion?
+  public init(duration: Foundation::TimeInterval? = nil, assertion: FBTapOptions.Assertion? = nil)
+  public static func == (a: FBTapOptions, b: FBTapOptions) -> Swift::Bool
 }
-public protocol LaunchCtlCommands : AnyObject {
-  func serviceName(forProcessIdentifier pid: pid_t) async throws -> String
-  func serviceName(forProcess process: FBProcessInfo) async throws -> String
-  func serviceNamesAndProcessIdentifiers(matching regex: NSRegularExpression) async throws -> [String : NSNumber]
-  func firstServiceNameAndProcessIdentifier(matching regex: NSRegularExpression) async throws -> (serviceName: String, processIdentifier: pid_t)
-  func processIsRunning(onSimulator process: FBProcessInfo) async throws -> Bool
-  func listServices() async throws -> [String : Any]
-  func stopService(withName serviceName: String) async throws -> String
-  func startService(withName serviceName: String) async throws -> String
-  func serviceIsRunning(named serviceName: String) async throws -> Bool
-  func processIsRunning(withProcessIdentifier pid: pid_t) async throws -> Bool
+public struct FBDragOptions : Swift::Sendable, Swift::Equatable {
+  public var pressDuration: Foundation::TimeInterval
+  public var duration: Foundation::TimeInterval
+  public var releaseDuration: Foundation::TimeInterval
+  public var delta: Swift::Double
+  public init(pressDuration: Foundation::TimeInterval = 0.5, duration: Foundation::TimeInterval = 0.5, releaseDuration: Foundation::TimeInterval = 0.1, delta: Swift::Double = FBSimulatorHIDEvent.defaultSwipeDelta)
+  public static func == (a: FBDragOptions, b: FBDragOptions) -> Swift::Bool
 }
-extension LaunchCtlCommands {
-  public func serviceIsRunning(named serviceName: String) async throws -> Bool
-  public func processIsRunning(withProcessIdentifier pid: pid_t) async throws -> Bool
+public protocol FBUIAutomation : Swift::Sendable {
+  func describe(_ query: FBAccessibilityElementQuery, options: FBControlCore::FBAccessibilityRequestOptions) async throws -> FBControlCore::FBAccessibilityElementsResponse
+  func hitTest(at point: CoreFoundation::CGPoint, options: FBControlCore::FBAccessibilityRequestOptions) async throws -> FBControlCore::FBAccessibilityElementsResponse?
+  func tap(_ query: FBAccessibilityElementQuery, options: FBTapOptions) async throws
+  func setValue(_ value: Swift::String, for query: FBAccessibilityElementQuery) async throws
+  func wait(_ query: FBAccessibilityElementQuery, timeout: Foundation::TimeInterval, pollInterval: Foundation::TimeInterval) async throws
+  func scroll(_ query: FBAccessibilityElementQuery, direction: FBControlCore::FBAccessibilityScrollDirection) async throws
+  func frame(_ query: FBAccessibilityElementQuery) async throws -> CoreFoundation::CGRect
+  func drag(from source: FBAccessibilityElementQuery, to destination: FBAccessibilityElementQuery, options: FBDragOptions) async throws
 }
-public protocol MediaCommands : AnyObject {
-  func addMedia(_ mediaFileURLs: [URL]) async throws
+extension FBUIAutomation {
+  public func tap(_ query: FBAccessibilityElementQuery) async throws
+  public func drag(from source: FBAccessibilityElementQuery, to destination: FBAccessibilityElementQuery) async throws
 }
-public enum FBOverlayCoordSpace : String {
-  case composed
-  case device
-  public init?(rawValue: Swift.String)
-  public typealias RawValue = Swift.String
-  public var rawValue: Swift.String {
+extension FBControlCore::FBAccessibilityElementsResponse {
+  public func formattedOutputJSON(format: FBControlCore::FBAccessibilityOutputFormat) throws -> Foundation::Data
+  public static func emptyOutputJSON(format: FBControlCore::FBAccessibilityOutputFormat, backend: FBUIAutomationBackend, target: FBControlCore::FBAccessibilityTargetDescriptor) throws -> Foundation::Data
+}
+public enum UIAutomationError : Foundation::LocalizedError, Swift::CustomStringConvertible, Swift::Sendable {
+  case elementNotFound(backend: FBUIAutomationBackend, key: Swift::String, value: Swift::String)
+  case elementNotOnScreen(backend: FBUIAutomationBackend, key: Swift::String, value: Swift::String)
+  case frameUnavailable(backend: FBUIAutomationBackend, query: FBAccessibilityElementQuery)
+  case noElementAtPoint(backend: FBUIAutomationBackend, x: Swift::Double, y: Swift::Double)
+  case timedOut(backend: FBUIAutomationBackend, key: Swift::String, value: Swift::String, timeout: Foundation::TimeInterval)
+  case markerRequired(backend: FBUIAutomationBackend, operation: Swift::String)
+  case pointOrMarkerRequired(backend: FBUIAutomationBackend, operation: Swift::String)
+  case invalidPollInterval(backend: FBUIAutomationBackend, pollInterval: Foundation::TimeInterval)
+  case operationUnsupported(backend: FBUIAutomationBackend, operation: Swift::String)
+  case applicationUnavailable(backend: FBUIAutomationBackend, pid: _DarwinFoundation2::pid_t?)
+  case applicationNotResponding(backend: FBUIAutomationBackend, pid: _DarwinFoundation2::pid_t?)
+  case valueMismatch(backend: FBUIAutomationBackend, key: Swift::String, expected: Swift::String, actual: Swift::String)
+  case elementMoved(backend: FBUIAutomationBackend, key: Swift::String, value: Swift::String)
+  case traversalCannotAnswer(backend: FBUIAutomationBackend, traversal: Swift::String, keys: [Swift::String])
+  public var description: Swift::String {
+    get
+  }
+  public var errorDescription: Swift::String? {
     get
   }
 }
-public struct FBOverlayCoordinateTransform {
-  public let bufferWidth: Int
-  public let bufferHeight: Int
-  public let overlayScale: CGFloat
-  public let insetCorrection: CGPoint
-  public let headerHeight: CGFloat
-  public init(screenPixelWidth: Int, screenPixelHeight: Int, retinaScale: CGFloat, videoScale: CGFloat, borderTop: Int, scaledBorderTop: Int, borderBottom: Int, scaledBorderBottom: Int, coordSpace: FBOverlayCoordSpace = .composed)
-  public func bufferPoint(x: CGFloat, y: CGFloat) -> CGPoint
-  public func bufferSize(width: CGFloat, height: CGFloat) -> CGSize
-  public func bufferRect(x: CGFloat, y: CGFloat, width: CGFloat, height: CGFloat) -> CGRect
-  public func translateTarget(x: CGFloat, y: CGFloat) -> CGPoint
-  public func labelOrigin(padding: CGFloat, ascent: CGFloat, descent: CGFloat) -> CGPoint
-  public func labelFontSize(_ baseFontSize: CGFloat) -> CGFloat
-  public static let defaultBarHeight: Int
-  public func barFontSize() -> CGFloat
-  public func barHeight() -> CGFloat
-  public static func barHeightEven(logicalHeight: Int = defaultBarHeight) -> Int
-  public func barY(position: String) -> CGFloat
-}
-public enum FBBarContent : Equatable {
-  case text(String)
-  case stats
-  case hidden
-  public static func == (a: FBBarContent, b: FBBarContent) -> Swift.Bool
-}
-public enum FBBarMode : String {
-  case pad
-  case overlay
-  public init?(rawValue: Swift.String)
-  public typealias RawValue = Swift.String
-  public var rawValue: Swift.String {
+extension FBUIAutomationBackend {
+  public var inlineName: Swift::String {
+    get
+  }
+  public var displayName: Swift::String {
     get
   }
 }
-final public class FBOverlayRenderer {
-  final public let buffer: CVPixelBuffer
-  final public let transform: FBOverlayCoordinateTransform
-  final public var logger: FBControlCoreLogger?
-  final public var barContent: [String : FBBarContent] {
-    get
-  }
-  final public var barMode: [String : FBBarMode] {
-    get
-  }
-  final public var barFit: [String : Bool] {
-    get
-  }
-  convenience public init(width: Int, height: Int, scaleFactor: CGFloat = 1.0)
-  public init(transform: FBOverlayCoordinateTransform)
-  final public func render(overlays: [FBOverlayShape])
-  final public func clear()
-  final public func startEffectTimer(onTick: @escaping () -> Void)
-  final public func setBarContent(_ content: FBBarContent, position: String)
-  final public func setStatsText(_ text: String, position: String)
-  final public func setBarMode(_ mode: FBBarMode, position: String)
-  final public func setBarFit(_ fit: Bool, position: String)
-  final public func renderToBuffer()
-  @objc deinit
-}
-public struct FBOverlayCommand : Decodable {
-  public let overlays: [FBOverlayShape]
-  public init(overlays: [FBOverlayShape])
-  public init(from decoder: any Swift.Decoder) throws
-}
-public enum FBOverlayShape : Decodable {
-  case circle(Circle)
-  case rectangle(Rectangle)
-  case label(Label)
-  public struct Circle : Decodable {
-    public let x: CGFloat
-    public let y: CGFloat
-    public let radius: CGFloat
-    public let rgba: [CGFloat]
-    public let effect: Effect?
-    public init(x: CGFloat, y: CGFloat, radius: CGFloat, rgba: [CGFloat], effect: Effect?)
-    public init(from decoder: any Swift.Decoder) throws
-  }
-  public struct Rectangle : Decodable {
-    public let x: CGFloat
-    public let y: CGFloat
-    public let width: CGFloat
-    public let height: CGFloat
-    public let rgba: [CGFloat]
-    public let effect: Effect?
-    public init(x: CGFloat, y: CGFloat, width: CGFloat, height: CGFloat, rgba: [CGFloat], effect: Effect?)
-    public init(from decoder: any Swift.Decoder) throws
-  }
-  public struct Label : Decodable {
-    public let text: String
-    public let padding: CGFloat
-    public let font: String
-    public init(text: String, padding: CGFloat, font: String)
-    public init(from decoder: any Swift.Decoder) throws
-  }
-  public enum Effect : Decodable {
-    case fadeout(FadeEffect)
-    case fadein(FadeEffect)
-    case translate(TranslateEffect)
-    public struct FadeEffect : Decodable {
-      public let durationMs: CGFloat
-      public init(durationMs: CGFloat)
-      public init(from decoder: any Swift.Decoder) throws
-    }
-    public struct TranslateEffect : Decodable {
-      public let x: CGFloat
-      public let y: CGFloat
-      public let durationMs: CGFloat
-      public init(x: CGFloat, y: CGFloat, durationMs: CGFloat)
-      public init(from decoder: any Swift.Decoder) throws
-    }
-    public init(from decoder: Decoder) throws
-  }
-  public init(from decoder: Decoder) throws
-}
-public protocol SettingsCommands : AnyObject {
-  func setSetting(_ setting: FBSimulatorSetting, enabled: Bool) async throws
-  func currentAppearance() async throws -> FBSimulatorAppearance
-  func setAppearance(_ appearance: FBSimulatorAppearance) async throws
-  func currentContentSizeCategory() async throws -> FBSimulatorContentSizeCategory
-  func setContentSizeCategory(_ category: FBSimulatorContentSizeCategory) async throws
-  func currentStatusBarOverrides() async throws -> FBStatusBarOverride
-  func overrideStatusBar(_ override: FBStatusBarOverride?) async throws
-  func setPreference(_ name: String, value: String, type: String?, domain: String?) async throws
-  func getCurrentPreference(_ name: String, domain: String?) async throws -> String
-  func grantAccess(_ bundleIDs: Set<String>, toServices services: Set<FBTargetSettingsService>) async throws
-  func revokeAccess(_ bundleIDs: Set<String>, toServices services: Set<FBTargetSettingsService>) async throws
-  func grantAccess(_ bundleIDs: Set<String>, toDeeplink scheme: String) async throws
-  func revokeAccess(_ bundleIDs: Set<String>, toDeeplink scheme: String) async throws
-  func updateContacts(_ databaseDirectory: String) async throws
-  func clearContacts() async throws
-  func clearPhotos() async throws
-  func setProxy(host: String, port: UInt, type: String) async throws
-  func clearProxy() async throws
-  func listProxy() async throws -> String
-  func setDnsServers(_ servers: [String]) async throws
-  func clearDns() async throws
-  func listDns() async throws -> String
-  func setHealthAuthorization(_ approved: Bool, forBundleID bundleID: String, typeIdentifiers: [String]) async throws
-  func clearHealthAuthorization(forBundleID bundleID: String) async throws
-  func listHealthAuthorization(forBundleID bundleID: String) async throws -> String
-}
-public protocol SimulatorLifecycleCommands : AnyObject {
-  func boot(_ configuration: FBSimulatorBootConfiguration) async throws
-  func focus() async throws
-  func disconnect(withTimeout timeout: TimeInterval, logger: (any FBControlCoreLogger)?) async throws
-  func connectToFramebuffer() async throws -> FBFramebuffer
-  func open(_ url: URL) async throws
-  func connectToHID() async throws -> FBSimulatorHID
-}
-extension FBSimulatorHIDButton : Swift.Equatable {}
-extension FBSimulatorHIDButton : Swift.Hashable {}
-extension FBSimulatorHIDButton : Swift.RawRepresentable {}
-extension FBSimulatorHIDRemoteButton : Swift.Equatable {}
-extension FBSimulatorHIDRemoteButton : Swift.Hashable {}
-extension FBSimulatorHIDRemoteButton : Swift.RawRepresentable {}
-extension FBSimulatorHIDTransportType : Swift.Hashable {}
-extension FBSimulatorHIDDirection : Swift.Equatable {}
-extension FBSimulatorHIDDirection : Swift.Hashable {}
-extension FBSimulatorHIDDirection : Swift.RawRepresentable {}
-extension FBSimulatorHIDDeviceOrientation : Swift.Equatable {}
-extension FBSimulatorHIDDeviceOrientation : Swift.Hashable {}
-extension FBSimulatorHIDDeviceOrientation : Swift.RawRepresentable {}
-extension FBSimulatorSetting : Swift.Equatable {}
-extension FBSimulatorSetting : Swift.Hashable {}
-extension FBSimulatorSetting : Swift.RawRepresentable {}
-extension FBSimulatorAppearance : Swift.Equatable {}
-extension FBSimulatorAppearance : Swift.Hashable {}
-extension FBSimulatorAppearance : Swift.RawRepresentable {}
-extension FBSimulatorContentSizeCategory : Swift.Equatable {}
-extension FBSimulatorContentSizeCategory : Swift.Hashable {}
-extension FBSimulatorContentSizeCategory : Swift.RawRepresentable {}
-extension FBOverlayCoordSpace : Swift.Equatable {}
-extension FBOverlayCoordSpace : Swift.Hashable {}
-extension FBOverlayCoordSpace : Swift.RawRepresentable {}
-extension FBBarMode : Swift.Equatable {}
-extension FBBarMode : Swift.Hashable {}
-extension FBBarMode : Swift.RawRepresentable {}
+extension FBAXBridgeFrontmostMethod : Swift::Equatable {}
+extension FBAXBridgeFrontmostMethod : Swift::Hashable {}
+extension FBAXBridgeFrontmostMethod : Swift::RawRepresentable {}
+extension FBOverlayCoordSpace : Swift::Equatable {}
+extension FBOverlayCoordSpace : Swift::Hashable {}
+extension FBOverlayCoordSpace : Swift::RawRepresentable {}
+extension FBBarMode : Swift::Equatable {}
+extension FBBarMode : Swift::Hashable {}
+extension FBBarMode : Swift::RawRepresentable {}
+extension SimulatorDeviceSetError : Swift::Equatable {}
+extension SimulatorDeviceSetError : Swift::Hashable {}
+extension SimulatorCrashLogError : Swift::Equatable {}
+extension SimulatorCrashLogError : Swift::Hashable {}
+extension SimulatorDeletionError : Swift::Equatable {}
+extension SimulatorDeletionError : Swift::Hashable {}
+extension FBSimulatorHIDButton : Swift::Equatable {}
+extension FBSimulatorHIDButton : Swift::Hashable {}
+extension FBSimulatorHIDButton : Swift::RawRepresentable {}
+extension FBSimulatorHIDTransportType : Swift::Hashable {}
+extension SimulatorHIDDirection : Swift::Equatable {}
+extension SimulatorHIDDirection : Swift::Hashable {}
+extension SimulatorHIDDirection : Swift::RawRepresentable {}
+extension FBSimulatorHIDEdge : Swift::Equatable {}
+extension FBSimulatorHIDEdge : Swift::Hashable {}
+extension FBSimulatorHIDEdge : Swift::RawRepresentable {}
+extension FBSimulatorHIDRemoteButton : Swift::Equatable {}
+extension FBSimulatorHIDRemoteButton : Swift::Hashable {}
+extension FBSimulatorHIDRemoteButton : Swift::RawRepresentable {}
+extension FBSimulatorHIDDeviceOrientation : Swift::Equatable {}
+extension FBSimulatorHIDDeviceOrientation : Swift::Hashable {}
+extension FBSimulatorHIDDeviceOrientation : Swift::RawRepresentable {}
+extension SimulatorLogError : Swift::Equatable {}
+extension SimulatorLogError : Swift::Hashable {}
+extension SimulatorMemoryError : Swift::Equatable {}
+extension SimulatorMemoryError : Swift::Hashable {}
+extension SimulatorNetworkError : Swift::Equatable {}
+extension SimulatorNetworkError : Swift::Hashable {}
+extension SimulatorNotificationError : Swift::Equatable {}
+extension SimulatorNotificationError : Swift::Hashable {}
+extension SimulatorAppearance : Swift::Equatable {}
+extension SimulatorAppearance : Swift::Hashable {}
+extension SimulatorAppearance : Swift::RawRepresentable {}
+extension FBSimulatorContentSizeCategory : Swift::Equatable {}
+extension FBSimulatorContentSizeCategory : Swift::Hashable {}
+extension FBSimulatorContentSizeCategory : Swift::RawRepresentable {}
+extension SimulatorScreenshotError : Swift::Equatable {}
+extension SimulatorScreenshotError : Swift::Hashable {}
