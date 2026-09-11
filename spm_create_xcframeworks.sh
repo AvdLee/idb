@@ -18,6 +18,7 @@ xcode_build="$(DEVELOPER_DIR="$developer_directory" xcodebuild -version | awk '/
 
 # Ensure Xcode projects are generated (xcodegen).
 ./build.sh generate
+./build.sh build SimulatorFrameworkBridge
 
 #!/bin/bash
 
@@ -55,10 +56,25 @@ build_xcframework() {
     if [ "$framework_name" = "FBSimulatorControl" ]; then
         find "${framework_path}/Modules/${framework_name}.swiftmodule" -name '*.swiftinterface' \
             -exec sed -i '' -e 's/\([^A-Za-z0-9_.]\)FBSimulatorControl\./\1/g' -e 's/^FBSimulatorControl\.//' {} +
+
+        # The accessibility bridge must execute inside the Simulator, so bundle
+        # the iOS guest alongside the host framework that launches it.
+        mkdir -p "${framework_path}/Versions/A/Resources"
+        cp Build/Products/Release-iphonesimulator/SimulatorFrameworkBridge \
+            "${framework_path}/Versions/A/Resources/"
+        codesign --force --sign - --timestamp=none "${framework_path}"
     fi
 
     # Create xcframework
     xcodebuild -create-xcframework -framework "$framework_path" -output "$xcframework_path"
+
+    if [ "$framework_name" = "FBSimulatorControl" ]; then
+        local bridge_path="${xcframework_path}/macos-arm64_x86_64/${framework_name}.framework/Versions/A/Resources/SimulatorFrameworkBridge"
+        if [ ! -x "$bridge_path" ]; then
+            echo "error: SimulatorFrameworkBridge was not packaged as an executable resource" >&2
+            exit 1
+        fi
+    fi
 }
 
 # Call the function with different framework names
