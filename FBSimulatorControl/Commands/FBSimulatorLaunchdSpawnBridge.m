@@ -20,9 +20,18 @@ pid_t FBSpawnFromSimulatorLaunchd(
   void (^terminationHandler)(int32_t),
   NSError **error
 ) {
-  return [device _spawnFromLaunchdWithPath:launchPath
-                                  options:options
-                         terminationQueue:terminationQueue
-              terminationHandler:(CDUnknownBlockType)terminationHandler
-                                    error:error];
+  __block pid_t processIdentifier = 0;
+  __block NSError *spawnError = nil;
+  [device bootstrapQueueSync:(CDUnknownBlockType)^BOOL {
+    processIdentifier = [device _spawnFromLaunchdWithPath:launchPath
+                                                   options:options
+                                          terminationQueue:terminationQueue
+                                       terminationHandler:(CDUnknownBlockType)terminationHandler
+                                                     error:&spawnError];
+    return processIdentifier > 0;
+  }];
+  if (processIdentifier <= 0 && error) {
+    *error = spawnError;
+  }
+  return processIdentifier;
 }
