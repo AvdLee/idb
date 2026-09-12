@@ -164,7 +164,7 @@ public struct FBInSimulatorToolOutput : Swift::Sendable {
 }
 extension FBSimulatorControl::FBSimulator {
   public func runRuntimeTool(_ relativePath: Swift::String, arguments: [Swift::String] = [], environment: [Swift::String : Swift::String] = [:]) async throws -> FBSimulatorControl::FBInSimulatorToolOutput
-  public func launchProcessConsumingOutput(launchPath: Swift::String, arguments: [Swift::String] = [], environment: [Swift::String : Swift::String] = [:]) async throws -> FBSimulatorControl::FBInSimulatorToolOutput
+  public func launchProcessConsumingOutput(launchPath: Swift::String, arguments: [Swift::String] = [], environment: [Swift::String : Swift::String] = [:], mode: FBControlCore::FBProcessSpawnMode = .default) async throws -> FBSimulatorControl::FBInSimulatorToolOutput
 }
 @_hasMissingDesignatedInitializers final public class FBSimulatorAccessibilityCommands : FBSimulatorControl::AccessibilityOperations {
   final public class func commands(with target: FBSimulatorControl::FBSimulator) -> Self
