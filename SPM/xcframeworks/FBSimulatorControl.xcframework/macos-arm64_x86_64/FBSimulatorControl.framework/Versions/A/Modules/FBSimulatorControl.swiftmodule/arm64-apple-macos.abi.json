@@ -12841,6 +12841,47 @@
             "funcSelfKind": "NonMutating"
           },
           {
+            "kind": "Function",
+            "name": "shouldAttemptAccessibilityBootstrap",
+            "printedName": "shouldAttemptAccessibilityBootstrap(for:isAppSandboxed:hostXcodeVersion:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Bool",
+                "printedName": "Swift.Bool",
+                "usr": "s:Sb"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "OperatingSystemVersion",
+                "printedName": "Foundation.OperatingSystemVersion",
+                "usr": "c:@SA@NSOperatingSystemVersion"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Bool",
+                "printedName": "Swift.Bool",
+                "usr": "s:Sb"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "OperatingSystemVersion",
+                "printedName": "Foundation.OperatingSystemVersion",
+                "hasDefaultArg": true,
+                "usr": "c:@SA@NSOperatingSystemVersion"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:18FBSimulatorControl0A21AccessibilityCommandsC013shouldAttemptC9Bootstrap3for14isAppSandboxed16hostXcodeVersionSbSo017NSOperatingSystemN0a_SbAItFZ",
+            "mangledName": "$s18FBSimulatorControl0A21AccessibilityCommandsC013shouldAttemptC9Bootstrap3for14isAppSandboxed16hostXcodeVersionSbSo017NSOperatingSystemN0a_SbAItFZ",
+            "moduleName": "FBSimulatorControl",
+            "static": true,
+            "declAttributes": [
+              "Final"
+            ],
+            "funcSelfKind": "NonMutating"
+          },
+          {
             "kind": "Constructor",
             "name": "init",
             "printedName": "init(simulator:translationDispatcher:launchCtl:)",
@@ -30848,6 +30889,43 @@
         "name": "FBSimulatorLaunchCtlCommands",
         "printedName": "FBSimulatorLaunchCtlCommands",
         "children": [
+          {
+            "kind": "Function",
+            "name": "launchCtlLaunchPath",
+            "printedName": "launchCtlLaunchPath(runtimeRoot:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "String",
+                "printedName": "Swift.String",
+                "usr": "s:SS"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "Swift.String?",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "String",
+                    "printedName": "Swift.String",
+                    "usr": "s:SS"
+                  }
+                ],
+                "usr": "s:Sq"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:18FBSimulatorControl0A17LaunchCtlCommandsC06launchdC4Path11runtimeRootS2SSg_tKFZ",
+            "mangledName": "$s18FBSimulatorControl0A17LaunchCtlCommandsC06launchdC4Path11runtimeRootS2SSg_tKFZ",
+            "moduleName": "FBSimulatorControl",
+            "static": true,
+            "declAttributes": [
+              "Final"
+            ],
+            "throwing": true,
+            "funcSelfKind": "NonMutating"
+          },
           {
             "kind": "Function",
             "name": "commands",
@@ -64291,7 +64369,7 @@
     {
       "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Commands\/FBSimulatorLaunchCtlCommands.swift",
       "kind": "StringLiteral",
-      "offset": 5227,
+      "offset": 5290,
       "length": 30,
       "value": "\"UIKitApplication:([^\\[]*).*\""
     },
