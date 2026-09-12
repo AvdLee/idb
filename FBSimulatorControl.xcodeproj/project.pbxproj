@@ -298,7 +298,6 @@
 		78BD579CF4B2EC960F77A47E /* FBAccessibilityResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE730C8EC76096F21606D582 /* FBAccessibilityResponse.swift */; };
 		78FC20940FE3D72B1B5C520D /* FBExceptionInfoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5123D4666A8D29F38DCD2623 /* FBExceptionInfoTests.swift */; };
 		790342DEFA6CF882E6187871 /* AXRoleVocabulary.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD10A51A2DD9EC8B83F10AE1 /* AXRoleVocabulary.swift */; };
-		79452468C67B8843E3459D34 /* FBSimulatorLaunchdSpawnBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = 27ED3A255C2436F392FC50E4 /* FBSimulatorLaunchdSpawnBridge.m */; };
 		7954CA59B203B9DD3F405666 /* FBControlCoreError.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5AC0C527601CCCCBA0E7C96 /* FBControlCoreError.swift */; };
 		79BABD48938C860D71D4EA98 /* FBDeviceApplicationCommands.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEB163A85A2AC3CB76DFBBD2 /* FBDeviceApplicationCommands.swift */; };
 		79D69FA12D549B8DA91EC3BD /* FBSimulatorConfigurationError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65CF70C12C11F8AA9718A741 /* FBSimulatorConfigurationError.swift */; };
@@ -560,7 +559,6 @@
 		F3028E6099D17B342C653894 /* FBTestReporterAdapter.m in Sources */ = {isa = PBXBuildFile; fileRef = C73AD19B23FE6250397C4B1C /* FBTestReporterAdapter.m */; };
 		F4C5660BEE3B33D0236EBDA7 /* FBiOSTargetConfigurationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F32B3B00B429D315FBF25CE /* FBiOSTargetConfigurationTests.swift */; };
 		F634AD360DEFCA11CE576F03 /* FBScreenshotCommands.m in Sources */ = {isa = PBXBuildFile; fileRef = 50F6CE1B83432E2BA793BD54 /* FBScreenshotCommands.m */; };
-		F6509BDBF883504A1D5B65B4 /* FBSimulatorLaunchdSpawnBridge.h in Headers */ = {isa = PBXBuildFile; fileRef = 53E3AE19D3CEF0EC72BF7C7E /* FBSimulatorLaunchdSpawnBridge.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F6AED7F7102530FD620364E7 /* assetsd_custom_set.crash in Resources */ = {isa = PBXBuildFile; fileRef = D1BF57EEA8B53D96F6E8E083 /* assetsd_custom_set.crash */; };
 		F6B375D868A20F2DC2B7FC3B /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3CCA056DD3B3D67982BE1A4B /* Cocoa.framework */; };
 		F70CB4FA797A04DE8E215182 /* FBDeviceCommands.m in Sources */ = {isa = PBXBuildFile; fileRef = 864F3A957BE27DDC77A8134C /* FBDeviceCommands.m */; };
@@ -809,7 +807,6 @@
 		25BBB259C04570A3F1C46D22 /* FBSimulatorScreenshotCommands.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FBSimulatorScreenshotCommands.swift; sourceTree = "<group>"; };
 		276C9839259B670B0F77B872 /* FBArchitecture.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FBArchitecture.m; sourceTree = "<group>"; };
 		278A98344E53F17813B178F1 /* OverlayShapes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverlayShapes.swift; sourceTree = "<group>"; };
-		27ED3A255C2436F392FC50E4 /* FBSimulatorLaunchdSpawnBridge.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FBSimulatorLaunchdSpawnBridge.m; sourceTree = "<group>"; };
 		2945449221F802F94488FFD4 /* FBXCTestProcess.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FBXCTestProcess.swift; sourceTree = "<group>"; };
 		29B621A5D4750FE808127358 /* FBXcodeBuildOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FBXcodeBuildOperation.swift; sourceTree = "<group>"; };
 		29E1B633BA0E26E050611BCE /* FBiOSTargetDouble.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FBiOSTargetDouble.swift; sourceTree = "<group>"; };
@@ -907,7 +904,6 @@
 		53441AA356233D86B1D866F3 /* FBProcessIOTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FBProcessIOTests.swift; sourceTree = "<group>"; };
 		53540B0639E1CCBB4CD5FEC8 /* CompanionUtilitiesTransientTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompanionUtilitiesTransientTests.swift; sourceTree = "<group>"; };
 		53758504FBE59EE7CBA00B9B /* FBFileReaderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FBFileReaderTests.swift; sourceTree = "<group>"; };
-		53E3AE19D3CEF0EC72BF7C7E /* FBSimulatorLaunchdSpawnBridge.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FBSimulatorLaunchdSpawnBridge.h; sourceTree = "<group>"; };
 		543D537519D5FEE4F1B61451 /* FBXcodeDirectoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FBXcodeDirectoryTests.swift; sourceTree = "<group>"; };
 		54A96E326765C1F681C47A03 /* FBInstalledApplication.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FBInstalledApplication.m; sourceTree = "<group>"; };
 		54BB601BF6AF435A58C0F944 /* XPCEncoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XPCEncoder.swift; sourceTree = "<group>"; };
@@ -1509,8 +1505,6 @@
 				9E0BEB0DD862C55B0731B7A0 /* FBSimulatorFileCommands.swift */,
 				714471D1D2B6FE4EE47D0D3A /* FBSimulatorKeychainCommands.swift */,
 				AB12C4BE972A4BC65CA70539 /* FBSimulatorLaunchCtlCommands.swift */,
-				53E3AE19D3CEF0EC72BF7C7E /* FBSimulatorLaunchdSpawnBridge.h */,
-				27ED3A255C2436F392FC50E4 /* FBSimulatorLaunchdSpawnBridge.m */,
 				34BD5AB983E566E80DB418CB /* FBSimulatorLifecycleCommands.swift */,
 				D91CBFD1248E97F50E54595D /* FBSimulatorLocationCommands.swift */,
 				6A5C866181C538FB82E4C99D /* FBSimulatorLogCommands.swift */,
@@ -2702,7 +2696,6 @@
 				5C2AF6735224FC892D731281 /* FBSimulatorBootConfiguration.h in Headers */,
 				BCD48307A1ADE6D94A058E07 /* FBSimulatorControl.h in Headers */,
 				1C767C2A40A10C967B8EB837 /* FBSimulatorControlFrameworkLoader.h in Headers */,
-				F6509BDBF883504A1D5B65B4 /* FBSimulatorLaunchdSpawnBridge.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3186,7 +3179,6 @@
 				2614E7012F4E917370D0B89C /* FBSimulatorInflationStrategy.swift in Sources */,
 				B42304D5C00211D579B6FCC3 /* FBSimulatorKeychainCommands.swift in Sources */,
 				B846E504D4DD1241A40B5177 /* FBSimulatorLaunchCtlCommands.swift in Sources */,
-				79452468C67B8843E3459D34 /* FBSimulatorLaunchdSpawnBridge.m in Sources */,
 				CD559916AAE6A114156AA83B /* FBSimulatorLaunchedApplication.swift in Sources */,
 				6E17F9225E293ACB497548B6 /* FBSimulatorLifecycleCommands.swift in Sources */,
 				BC35175FE65594B2AE4C1D5C /* FBSimulatorLocationCommands.swift in Sources */,

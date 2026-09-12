@@ -357,12 +357,15 @@ static void FBSimulatorControl_SimLogHandler(int level, const char *function, in
                                                   logger:(id<FBControlCoreLogger>)logger
                                                    error:(NSError **)error
 {
+  if (![self.accessibilityAutomationFrameworks loadPrivateFrameworks:logger error:error]) {
+    return NO;
+  }
   return [self performAccessibilityBootstrapForSimulatorDevice:simulatorDevice
                                                        timeout:timeout
                                                         logger:logger
                                                  providerClass:NSClassFromString(@"XCUIDeviceRemoteDaemonConnectionProvider")
                                                   sessionClass:NSClassFromString(@"XCUIDeviceRemoteAutomationSession")
-                                                loadFrameworks:YES
+                                                loadFrameworks:NO
                                                          error:error];
 }
 

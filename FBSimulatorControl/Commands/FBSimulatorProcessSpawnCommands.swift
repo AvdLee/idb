@@ -73,48 +73,27 @@ public final class FBSimulatorProcessSpawnCommands: NSObject, FBiOSTargetCommand
     // holder once `spawnAsync` returns it. The terminationHandler will only be
     // invoked after the process exits, which strictly follows that return.
     let pidHolder = PIDHolder()
-    let terminationHandler: @Sendable (Int32) -> Void = { statLocValue in
-      FBProcessSpawnCommandHelpers.resolveProcessFinished(
-        withStatLoc: statLocValue,
-        inTeardownOfIOAttachment: attachment,
-        statLocFuture: statLoc,
-        exitCodeFuture: exitCode,
-        signalFuture: signal,
-        processIdentifier: pidHolder.value,
-        configuration: configuration,
-        queue: simulator.workQueue,
-        logger: logger
-      )
-      attachment.stdOut?.close()
-      attachment.stdErr?.close()
-    }
-    let processIdentifier: Int32
-    do {
-      processIdentifier = try await simulator.device.spawnAsync(
-        withPath: configuration.launchPath,
-        options: options,
-        terminationQueue: simulator.workQueue,
-        terminationHandler: terminationHandler,
-        completionQueue: simulator.workQueue
-      )
-    } catch {
-      guard simulator.state == .booted, isRuntimeUnavailable(error) else {
-        throw error
-      }
-      var launchdError: NSError?
-      let launchdPID = FBSpawnFromSimulatorLaunchd(
-        simulator.device,
-        configuration.launchPath,
-        options,
-        simulator.workQueue,
-        terminationHandler,
-        &launchdError
-      )
-      guard launchdPID > 0 else {
-        throw launchdError ?? error
-      }
-      processIdentifier = launchdPID
-    }
+    let processIdentifier = try await simulator.device.spawnAsync(
+      withPath: configuration.launchPath,
+      options: options,
+      terminationQueue: simulator.workQueue,
+      terminationHandler: { (statLocValue: Int32) in
+        FBProcessSpawnCommandHelpers.resolveProcessFinished(
+          withStatLoc: statLocValue,
+          inTeardownOfIOAttachment: attachment,
+          statLocFuture: statLoc,
+          exitCodeFuture: exitCode,
+          signalFuture: signal,
+          processIdentifier: pidHolder.value,
+          configuration: configuration,
+          queue: simulator.workQueue,
+          logger: logger
+        )
+        attachment.stdOut?.close()
+        attachment.stdErr?.close()
+      },
+      completionQueue: simulator.workQueue
+    )
     pidHolder.value = processIdentifier
 
     return FBSubprocess<AnyObject, AnyObject, AnyObject>(
@@ -125,17 +104,6 @@ public final class FBSimulatorProcessSpawnCommands: NSObject, FBiOSTargetCommand
       configuration: configuration,
       queue: simulator.workQueue
     )
-  }
-
-  private class func isRuntimeUnavailable(_ error: Error) -> Bool {
-    let error = error as NSError
-    if error.domain == "com.apple.CoreSimulator.SimError", error.code == 401 || error.code == 404 {
-      return true
-    }
-    guard let underlyingError = error.userInfo[NSUnderlyingErrorKey] as? Error else {
-      return false
-    }
-    return isRuntimeUnavailable(underlyingError)
   }
 
   /// Lets the termination handler reach the PID once it's known, since
