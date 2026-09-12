@@ -59603,7 +59603,7 @@
           {
             "kind": "Function",
             "name": "launchProcessConsumingOutput",
-            "printedName": "launchProcessConsumingOutput(launchPath:arguments:environment:mode:)",
+            "printedName": "launchProcessConsumingOutput(launchPath:arguments:environment:)",
             "children": [
               {
                 "kind": "TypeNominal",
@@ -59652,18 +59652,11 @@
                 ],
                 "hasDefaultArg": true,
                 "usr": "s:SD"
-              },
-              {
-                "kind": "TypeNominal",
-                "name": "FBProcessSpawnMode",
-                "printedName": "FBControlCore.FBProcessSpawnMode",
-                "hasDefaultArg": true,
-                "usr": "c:@M@FBControlCore@E@FBProcessSpawnMode"
               }
             ],
             "declKind": "Func",
-            "usr": "s:So11FBSimulatorC0A7ControlE28launchProcessConsumingOutput0C4Path9arguments11environment4modeAC017FBInSimulatorToolF0VSS_SaySSGSDyS2SG13FBControlCore18FBProcessSpawnModeOtYaKF",
-            "mangledName": "$sSo11FBSimulatorC0A7ControlE28launchProcessConsumingOutput0C4Path9arguments11environment4modeAC017FBInSimulatorToolF0VSS_SaySSGSDyS2SG13FBControlCore18FBProcessSpawnModeOtYaKF",
+            "usr": "s:So11FBSimulatorC0A7ControlE28launchProcessConsumingOutput0C4Path9arguments11environmentAC017FBInSimulatorToolF0VSS_SaySSGSDyS2SGtYaKF",
+            "mangledName": "$sSo11FBSimulatorC0A7ControlE28launchProcessConsumingOutput0C4Path9arguments11environmentAC017FBInSimulatorToolF0VSS_SaySSGSDyS2SGtYaKF",
             "moduleName": "FBSimulatorControl",
             "isOpen": true,
             "declAttributes": [
@@ -64340,7 +64333,7 @@
     {
       "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Commands\/FBSimulatorProcessSpawnCommands.swift",
       "kind": "IntegerLiteral",
-      "offset": 5191,
+      "offset": 4224,
       "length": 1,
       "value": "0"
     },
@@ -64508,77 +64501,77 @@
     {
       "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
       "kind": "StringLiteral",
-      "offset": 26816,
+      "offset": 26791,
       "length": 24,
       "value": "\"kTCCServiceAddressBook\""
     },
     {
       "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
       "kind": "StringLiteral",
-      "offset": 26878,
+      "offset": 26853,
       "length": 19,
       "value": "\"kTCCServicePhotos\""
     },
     {
       "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
       "kind": "StringLiteral",
-      "offset": 26935,
+      "offset": 26910,
       "length": 19,
       "value": "\"kTCCServiceCamera\""
     },
     {
       "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
       "kind": "StringLiteral",
-      "offset": 26996,
+      "offset": 26971,
       "length": 23,
       "value": "\"kTCCServiceMicrophone\""
     },
     {
       "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
       "kind": "StringLiteral",
-      "offset": 27160,
+      "offset": 27135,
       "length": 25,
       "value": "\"kTCCServiceContactsFull\""
     },
     {
       "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
       "kind": "StringLiteral",
-      "offset": 27223,
+      "offset": 27198,
       "length": 19,
       "value": "\"kTCCServicePhotos\""
     },
     {
       "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
       "kind": "StringLiteral",
-      "offset": 27280,
+      "offset": 27255,
       "length": 8,
       "value": "\"camera\""
     },
     {
       "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
       "kind": "StringLiteral",
-      "offset": 27328,
+      "offset": 27303,
       "length": 22,
       "value": "\"__CoreLocationAlways\""
     },
     {
       "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
       "kind": "StringLiteral",
-      "offset": 27392,
+      "offset": 27367,
       "length": 23,
       "value": "\"kTCCServiceMicrophone\""
     },
     {
       "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
       "kind": "StringLiteral",
-      "offset": 27557,
+      "offset": 27532,
       "length": 22,
       "value": "\"__CoreLocationAlways\""
     },
     {
       "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
       "kind": "Array",
-      "offset": 27655,
+      "offset": 27630,
       "length": 207,
       "value": "[\"AddressBook.sqlitedb\", \"AddressBook.sqlitedb-shm\", \"AddressBook.sqlitedb-wal\", \"AddressBookImages.sqlitedb\", \"AddressBookImages.sqlitedb-shm\", \"AddressBookImages.sqlitedb-wal\"]"
     },

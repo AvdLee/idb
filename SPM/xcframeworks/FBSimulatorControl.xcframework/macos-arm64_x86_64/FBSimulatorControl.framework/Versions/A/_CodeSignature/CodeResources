@@ -69,7 +69,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			V8w0fubGemLkWMgWV4a/YLZbEXtPqqJgZILLDlHpwVY=
+			3x/0WYjspfEArROG8yQNt4Q1R7IBgbQLpg9EdL2C09A=
 			</data>
 		</dict>
 		<key>Headers/FBSimulatorControlFrameworkLoader.h</key>
@@ -79,67 +79,60 @@
 			mGU57Ujh2FMnGPI2MA9Vd79Evxo4MLtTIIrrD/XVEuU=
 			</data>
 		</dict>
-		<key>Headers/FBSimulatorLaunchdSpawnBridge.h</key>
-		<dict>
-			<key>hash2</key>
-			<data>
-			FTukPrttlutfdJvScHVE39W7wpGUKhWcy2qYlzAPB2I=
-			</data>
-		</dict>
 		<key>Modules/FBSimulatorControl.swiftmodule/arm64-apple-macos.abi.json</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			5DANUnqR0XjENfZn4SVdL/i4cP6s5HqK36060nwHqQs=
+			R7Wd05bJeDMHFnpi18p3F8UGgZKSWxfF/jrhjYoYt00=
 			</data>
 		</dict>
 		<key>Modules/FBSimulatorControl.swiftmodule/arm64-apple-macos.private.swiftinterface</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			X29nHXw5LSwONNyz9IZw/VCv+SW/MFwb/d+/FD4CHDw=
+			nvmS4+dtb50Lkbv7PQezT9n0VFt3Jz0OdwybBgfufRQ=
 			</data>
 		</dict>
 		<key>Modules/FBSimulatorControl.swiftmodule/arm64-apple-macos.swiftdoc</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			CcICsrSVv+uKUd1Pq1p7WjxdZ2KDCB0LUXOdQco98C4=
+			LAPhcA2VkbUSehsxzuqHwAJyBSrVWawrxMSHpPyHZ88=
 			</data>
 		</dict>
 		<key>Modules/FBSimulatorControl.swiftmodule/arm64-apple-macos.swiftinterface</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			X29nHXw5LSwONNyz9IZw/VCv+SW/MFwb/d+/FD4CHDw=
+			nvmS4+dtb50Lkbv7PQezT9n0VFt3Jz0OdwybBgfufRQ=
 			</data>
 		</dict>
 		<key>Modules/FBSimulatorControl.swiftmodule/x86_64-apple-macos.abi.json</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			5DANUnqR0XjENfZn4SVdL/i4cP6s5HqK36060nwHqQs=
+			R7Wd05bJeDMHFnpi18p3F8UGgZKSWxfF/jrhjYoYt00=
 			</data>
 		</dict>
 		<key>Modules/FBSimulatorControl.swiftmodule/x86_64-apple-macos.private.swiftinterface</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			H5naMLbARmUkpjhKep6Na/1IuDyF9X5vv2Tv9jkBkTk=
+			H9Dg12+GXwPaTvfJ/mKHPoYn82MSEgx+4DTgPGCXCmw=
 			</data>
 		</dict>
 		<key>Modules/FBSimulatorControl.swiftmodule/x86_64-apple-macos.swiftdoc</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			Bt2DLmifoNXX09kelg1N1VR6Qvtrm7L/bs3Z5zecDLc=
+			/rTJFX1XUKRMDvbpspZnioiCgT4t7MekNO8BAG//L/0=
 			</data>
 		</dict>
 		<key>Modules/FBSimulatorControl.swiftmodule/x86_64-apple-macos.swiftinterface</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			H5naMLbARmUkpjhKep6Na/1IuDyF9X5vv2Tv9jkBkTk=
+			H9Dg12+GXwPaTvfJ/mKHPoYn82MSEgx+4DTgPGCXCmw=
 			</data>
 		</dict>
 		<key>Modules/module.modulemap</key>
