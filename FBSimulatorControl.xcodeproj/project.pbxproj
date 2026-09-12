@@ -1432,8 +1432,7 @@
 				FB4D0ED3D847A6C8448D5953 /* FBSimulatorControlTests-Bridging-Header.h */,
 				838E02659C2D98B1CDB9641E /* FBSimulatorControlTests.xcconfig */,
 			);
-			name = FBSimulatorControlTests;
-			path = "FBSimulatorControlTests";
+			path = FBSimulatorControlTests;
 			sourceTree = "<group>";
 		};
 		07B5C0BCB64DC20E875B9666 /* Utility */ = {
@@ -1567,8 +1566,7 @@
 				A7D8F44445937F1EE0693675 /* Utility */,
 				F2156DBB547BC1BC8D507963 /* FBIDBCommandExecutor.swift */,
 			);
-			name = CompanionLib;
-			path = "CompanionLib";
+			path = CompanionLib;
 			sourceTree = "<group>";
 		};
 		17CC11DC2C8FF02572C574E4 /* Utility */ = {
@@ -1699,8 +1697,7 @@
 				711127D27CCC6D5BA410360E /* FBDeviceControl.h */,
 				ABE8B6BC070EC688EEB743F0 /* FBDeviceControl.xcconfig */,
 			);
-			name = FBDeviceControl;
-			path = "FBDeviceControl";
+			path = FBDeviceControl;
 			sourceTree = "<group>";
 		};
 		27DFD9269F0FF14CAF07EF53 /* Unit */ = {
@@ -1744,8 +1741,7 @@
 				4A592F7D109A4AA69735942D /* FBControlCore.h */,
 				99AE8204E6E0C0F1A7B04335 /* FBControlCore.xcconfig */,
 			);
-			name = FBControlCore;
-			path = "FBControlCore";
+			path = FBControlCore;
 			sourceTree = "<group>";
 		};
 		30A50F3A270871E04F35CB25 /* Configuration */ = {
@@ -1952,8 +1948,7 @@
 				C3AAD2B9D4DDCB6239ED644B /* FBSimulatorControl.xcconfig */,
 				BDAAA828C122EBD27CEA0E08 /* README.md */,
 			);
-			name = FBSimulatorControl;
-			path = "FBSimulatorControl";
+			path = FBSimulatorControl;
 			sourceTree = "<group>";
 		};
 		595E6219AC99A612633C60DE /* Doubles */ = {
@@ -2143,8 +2138,7 @@
 				7B574C12D3BAF20BB4017C8F /* Tests */,
 				E598E20F388F80CFEC758F02 /* XCTestBootstrapTests.xcconfig */,
 			);
-			name = XCTestBootstrapTests;
-			path = "XCTestBootstrapTests";
+			path = XCTestBootstrapTests;
 			sourceTree = "<group>";
 		};
 		80E90F1FDD509C487D97E9E9 /* Management */ = {
@@ -2168,8 +2162,7 @@
 			children = (
 				B814D270531A1E15FF92294E /* Shared.xcconfig */,
 			);
-			name = Configuration;
-			path = "Configuration";
+			path = Configuration;
 			sourceTree = "<group>";
 		};
 		8D45C2FAE490694D920E937E /* Reporting */ = {
@@ -2194,8 +2187,7 @@
 				AFBC86C1977590F6F658C9EE /* TaskSelect.swift */,
 				7446C6B7B1A77ACCEE870761 /* TaskTimeout.swift */,
 			);
-			name = CompanionUtilities;
-			path = "CompanionUtilities";
+			path = CompanionUtilities;
 			sourceTree = "<group>";
 		};
 		926DD36A94F162B629FBB90F /* Helpers */ = {
@@ -2248,8 +2240,7 @@
 			children = (
 				7B0390B186D986DC69B2C8B1 /* Shimulator */,
 			);
-			name = Shims;
-			path = "Shims";
+			path = Shims;
 			sourceTree = "<group>";
 		};
 		A2C9015928E939F8ABE4162C /* Crashes */ = {
@@ -2394,8 +2385,7 @@
 				037A4DD9C52AA1AD61E57DED /* XCTestBootstrap.h */,
 				EB2FFBBE32446F8B933E29CE /* XCTestBootstrap.xcconfig */,
 			);
-			name = XCTestBootstrap;
-			path = "XCTestBootstrap";
+			path = XCTestBootstrap;
 			sourceTree = "<group>";
 		};
 		CAB47DE03D65F505E3FD96DB /* BridgeFuture */ = {
@@ -2437,8 +2427,7 @@
 				D422A4CA75EAF36F836B3C15 /* FBDeviceControlTests-Bridging-Header.h */,
 				F186373E567E91F16FDB54F5 /* FBDeviceControlTests.xcconfig */,
 			);
-			name = FBDeviceControlTests;
-			path = "FBDeviceControlTests";
+			path = FBDeviceControlTests;
 			sourceTree = "<group>";
 		};
 		DEC81B0FA96E91A089B282DA /* Async */ = {
@@ -2467,8 +2456,7 @@
 				1CAD28BE3FC4D27850DEF774 /* Tests */,
 				38C3E7E03FBE5965352E116A /* FBControlCoreTests.xcconfig */,
 			);
-			name = FBControlCoreTests;
-			path = "FBControlCoreTests";
+			path = FBControlCoreTests;
 			sourceTree = "<group>";
 		};
 		E3AD475BA81921C4DE4FB055 /* Request */ = {
@@ -2595,8 +2583,7 @@
 				53540B0639E1CCBB4CD5FEC8 /* CompanionUtilitiesTransientTests.swift */,
 				38B768966A2EF24AE7EC26C7 /* FIFOStreamWriterTests.swift */,
 			);
-			name = CompanionUtilitiesTests;
-			path = "CompanionUtilitiesTests";
+			path = CompanionUtilitiesTests;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
