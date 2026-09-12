@@ -9,6 +9,7 @@ import AppKit
 @_implementationOnly import CoreSimulator
 import FBControlCore
 import Foundation
+import Security
 
 // MARK: - FBSimulator (translation dispatcher construction)
 
@@ -85,6 +86,23 @@ public final class FBSimulatorAccessibilityCommands: AccessibilityOperations {
     )
   }
 
+  static var isCurrentProcessAppSandboxed: Bool {
+    if ProcessInfo.processInfo.environment["APP_SANDBOX_CONTAINER_ID"] != nil {
+      return true
+    }
+    guard
+      let task = SecTaskCreateFromSelf(nil),
+      let entitlement = SecTaskCopyValueForEntitlement(
+        task,
+        "com.apple.security.app-sandbox" as CFString,
+        nil
+      )
+    else {
+      return false
+    }
+    return entitlement as? Bool == true
+  }
+
   private weak var simulator: FBSimulator?
 
   private let translationDispatcher: FBAXTranslationDispatcher?
@@ -118,7 +136,7 @@ public final class FBSimulatorAccessibilityCommands: AccessibilityOperations {
     if let launchCtl {
       return launchCtl
     }
-    guard simulator.device.runtime.root != nil else {
+    guard !Self.isCurrentProcessAppSandboxed, simulator.device.runtime.root != nil else {
       return nil
     }
     return simulator
@@ -162,10 +180,9 @@ public final class FBSimulatorAccessibilityCommands: AccessibilityOperations {
       throw FBAccessibilityError.accessibilityUnavailable
     }
     try FBSimulatorControlFrameworkLoader.accessibilityFrameworks.loadPrivateFrameworks(simulator.logger)
-    let isAppSandboxed = ProcessInfo.processInfo.environment["APP_SANDBOX_CONTAINER_ID"] != nil
     if Self.shouldAttemptAccessibilityBootstrap(
       for: simulator.osVersion.version,
-      isAppSandboxed: isAppSandboxed
+      isAppSandboxed: Self.isCurrentProcessAppSandboxed
     ) {
       do {
         try FBSimulatorControlFrameworkLoader.bootstrapAccessibility(
