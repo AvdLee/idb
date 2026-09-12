@@ -12,10 +12,6 @@
 		<data>
 		45vjNNC+ZqiGTAQC00+vbalC5hM=
 		</data>
-		<key>Resources/SimulatorFrameworkBridge</key>
-		<data>
-		2xo2DZSKIqUltfe0S1Ys2O0di6I=
-		</data>
 		<key>Resources/package.xcworkspace/contents.xcworkspacedata</key>
 		<data>
 		hCQ4SPVLDFmD4e0m3vtB0mLOE1Q=
@@ -154,13 +150,6 @@
 			<key>hash2</key>
 			<data>
 			bTXsnixwcGyFdCsFAdh6SZXB4IK5InMP0K6viFoK0Tw=
-			</data>
-		</dict>
-		<key>Resources/SimulatorFrameworkBridge</key>
-		<dict>
-			<key>hash2</key>
-			<data>
-			3IOinoFRbgNWn4kHjMrJNoc04w1/nuWJoRvaJ6in3NQ=
 			</data>
 		</dict>
 		<key>Resources/package.xcworkspace/contents.xcworkspacedata</key>
