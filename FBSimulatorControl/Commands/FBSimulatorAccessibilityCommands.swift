@@ -146,11 +146,15 @@ public final class FBSimulatorAccessibilityCommands: AccessibilityOperations {
     }
     try FBSimulatorControlFrameworkLoader.accessibilityFrameworks.loadPrivateFrameworks(simulator.logger)
     if Self.requiresAccessibilityBootstrap(for: simulator.osVersion.version) {
-      try FBSimulatorControlFrameworkLoader.bootstrapAccessibility(
-        forSimulatorDevice: simulator.device,
-        timeout: 5,
-        logger: simulator.logger
-      )
+      do {
+        try FBSimulatorControlFrameworkLoader.bootstrapAccessibility(
+          forSimulatorDevice: simulator.device,
+          timeout: 5,
+          logger: simulator.logger
+        )
+      } catch {
+        simulator.logger?.log("Could not bootstrap simulator Accessibility; attempting the CoreSimulator accessibility bridge directly: \(error)")
+      }
     }
   }
 
