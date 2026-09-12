@@ -74,6 +74,17 @@ public final class FBSimulatorAccessibilityCommands: AccessibilityOperations {
     return runtimeVersion.majorVersion >= 27
   }
 
+  static func shouldAttemptAccessibilityBootstrap(
+    for runtimeVersion: OperatingSystemVersion,
+    isAppSandboxed: Bool,
+    hostXcodeVersion: OperatingSystemVersion = FBXcodeConfiguration.xcodeVersion
+  ) -> Bool {
+    !isAppSandboxed && requiresAccessibilityBootstrap(
+      for: runtimeVersion,
+      hostXcodeVersion: hostXcodeVersion
+    )
+  }
+
   private weak var simulator: FBSimulator?
 
   private let translationDispatcher: FBAXTranslationDispatcher?
@@ -102,9 +113,15 @@ public final class FBSimulatorAccessibilityCommands: AccessibilityOperations {
   }
 
   /// The launchctl command surface for service-liveness checks: the supplied one when
-  /// present, otherwise the simulator itself.
-  private func resolvedLaunchCtl(_ simulator: FBSimulator) -> any LaunchCtlCommands {
-    launchCtl ?? simulator
+  /// present, otherwise the simulator itself when its runtime root is available.
+  private func resolvedLaunchCtl(_ simulator: FBSimulator) -> (any LaunchCtlCommands)? {
+    if let launchCtl {
+      return launchCtl
+    }
+    guard simulator.device.runtime.root != nil else {
+      return nil
+    }
+    return simulator
   }
 
   // MARK: AccessibilityOperations
@@ -145,7 +162,11 @@ public final class FBSimulatorAccessibilityCommands: AccessibilityOperations {
       throw FBAccessibilityError.accessibilityUnavailable
     }
     try FBSimulatorControlFrameworkLoader.accessibilityFrameworks.loadPrivateFrameworks(simulator.logger)
-    if Self.requiresAccessibilityBootstrap(for: simulator.osVersion.version) {
+    let isAppSandboxed = ProcessInfo.processInfo.environment["APP_SANDBOX_CONTAINER_ID"] != nil
+    if Self.shouldAttemptAccessibilityBootstrap(
+      for: simulator.osVersion.version,
+      isAppSandboxed: isAppSandboxed
+    ) {
       do {
         try FBSimulatorControlFrameworkLoader.bootstrapAccessibility(
           forSimulatorDevice: simulator.device,
@@ -180,7 +201,10 @@ public final class FBSimulatorAccessibilityCommands: AccessibilityOperations {
       // frontmost application) is down. Re-label the error when we can confirm that; a probe
       // failure or a live reading keeps the original .noTranslationObject (e.g. a genuine
       // invalid point or a transient mid-respawn).
-      let springBoardRunning = (try? await resolvedLaunchCtl(simulator).serviceIsRunning(named: Self.springBoardServiceName)) ?? true
+      guard let launchCtl = resolvedLaunchCtl(simulator) else {
+        throw FBAccessibilityError.noTranslationObject
+      }
+      let springBoardRunning = (try? await launchCtl.serviceIsRunning(named: Self.springBoardServiceName)) ?? true
       if !springBoardRunning {
         throw FBAccessibilityError.springBoardNotRunning
       }
@@ -207,10 +231,16 @@ public final class FBSimulatorAccessibilityCommands: AccessibilityOperations {
     }
     // Otherwise the zero-framed root is stale unless its owning pid is still a live launchd
     // service. A dead pid means SpringBoard crashed; restarting CoreSimulatorBridge lets
-    // launchd bring a fresh SpringBoard (and bridge) back up. A launchctl failure is treated
-    // as "not live" so recovery is still attempted.
+    // launchd bring a fresh SpringBoard (and bridge) back up. If launchctl is unavailable,
+    // preserve the response and let the caller retry instead of attempting a recovery that
+    // cannot work in the app sandbox.
+    guard let launchCtl = resolvedLaunchCtl(simulator) else {
+      return false
+    }
     let pid = element.axTranslationPid
-    let pidIsLive = (try? await resolvedLaunchCtl(simulator).processIsRunning(withProcessIdentifier: pid)) ?? false
+    guard let pidIsLive = try? await launchCtl.processIsRunning(withProcessIdentifier: pid) else {
+      return false
+    }
     if pidIsLive {
       return false
     }
@@ -219,8 +249,11 @@ public final class FBSimulatorAccessibilityCommands: AccessibilityOperations {
   }
 
   private func remediateSpringBoard(forSimulator simulator: FBSimulator) async throws {
+    guard let launchCtl = resolvedLaunchCtl(simulator) else {
+      throw FBAccessibilityError.springBoardRemediationFailed(serviceName: Self.coreSimulatorBridgeServiceName)
+    }
     do {
-      _ = try await resolvedLaunchCtl(simulator).stopService(withName: Self.coreSimulatorBridgeServiceName)
+      _ = try await launchCtl.stopService(withName: Self.coreSimulatorBridgeServiceName)
     } catch {
       throw FBAccessibilityError.springBoardRemediationFailed(serviceName: Self.coreSimulatorBridgeServiceName)
     }
