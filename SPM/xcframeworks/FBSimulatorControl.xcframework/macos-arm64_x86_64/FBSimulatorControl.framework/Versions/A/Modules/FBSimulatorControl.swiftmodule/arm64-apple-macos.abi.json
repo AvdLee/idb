@@ -12801,6 +12801,13 @@
         "moduleName": "FBSimulatorControl"
       },
       {
+        "kind": "Import",
+        "name": "Security",
+        "printedName": "Security",
+        "declKind": "Import",
+        "moduleName": "FBSimulatorControl"
+      },
+      {
         "kind": "TypeDecl",
         "name": "FBSimulatorAccessibilityCommands",
         "printedName": "FBSimulatorAccessibilityCommands",
@@ -12880,6 +12887,51 @@
               "Final"
             ],
             "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Var",
+            "name": "isCurrentProcessAppSandboxed",
+            "printedName": "isCurrentProcessAppSandboxed",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Bool",
+                "printedName": "Swift.Bool",
+                "usr": "s:Sb"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:18FBSimulatorControl0A21AccessibilityCommandsC28isCurrentProcessAppSandboxedSbvpZ",
+            "mangledName": "$s18FBSimulatorControl0A21AccessibilityCommandsC28isCurrentProcessAppSandboxedSbvpZ",
+            "moduleName": "FBSimulatorControl",
+            "static": true,
+            "declAttributes": [
+              "Final"
+            ],
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Bool",
+                    "printedName": "Swift.Bool",
+                    "usr": "s:Sb"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:18FBSimulatorControl0A21AccessibilityCommandsC28isCurrentProcessAppSandboxedSbvgZ",
+                "mangledName": "$s18FBSimulatorControl0A21AccessibilityCommandsC28isCurrentProcessAppSandboxedSbvgZ",
+                "moduleName": "FBSimulatorControl",
+                "static": true,
+                "declAttributes": [
+                  "Final"
+                ],
+                "accessorKind": "get"
+              }
+            ]
           },
           {
             "kind": "Constructor",
@@ -63886,21 +63938,21 @@
     {
       "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Commands\/FBSimulatorAccessibilityCommands.swift",
       "kind": "StringLiteral",
-      "offset": 1836,
+      "offset": 1852,
       "length": 54,
       "value": "\"The accessibility translation runtime is unavailable\""
     },
     {
       "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Commands\/FBSimulatorAccessibilityCommands.swift",
       "kind": "StringLiteral",
-      "offset": 2752,
+      "offset": 2768,
       "length": 32,
       "value": "\"com.apple.CoreSimulator.bridge\""
     },
     {
       "filePath": "\/Users\/avanderlee\/.cursor\/worktrees\/RocketSim\/36d5\/.scratch\/idb-axbridge\/FBSimulatorControl\/Commands\/FBSimulatorAccessibilityCommands.swift",
       "kind": "StringLiteral",
-      "offset": 2831,
+      "offset": 2847,
       "length": 23,
       "value": "\"com.apple.SpringBoard\""
     },

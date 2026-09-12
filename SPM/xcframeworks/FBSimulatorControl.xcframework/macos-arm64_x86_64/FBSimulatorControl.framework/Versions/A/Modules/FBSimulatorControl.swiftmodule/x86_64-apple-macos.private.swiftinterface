@@ -20,6 +20,7 @@ import ImageIO
 import Metal
 import ObjectiveC
 import QuartzCore
+import Security
 import Swift
 import Synchronization
 import UniformTypeIdentifiers
