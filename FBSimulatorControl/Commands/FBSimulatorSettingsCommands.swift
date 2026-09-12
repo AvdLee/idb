@@ -497,7 +497,8 @@ public final class FBSimulatorSettingsCommands: NSObject, FBiOSTargetCommand {
     // to what `simctl spawn` provided.
     let output = try await simulator.launchProcessConsumingOutput(
       launchPath: helperPath,
-      arguments: [service, action] + arguments)
+      arguments: [service, action] + arguments,
+      mode: .posixSpawn)
     guard output.exitCode == 0 else {
       let stderr = String(data: output.stderr, encoding: .utf8) ?? ""
       throw FBSimulatorError.describe("SimulatorFrameworkBridge \(service) \(action) failed with exit code \(output.exitCode): \(stderr)").build()

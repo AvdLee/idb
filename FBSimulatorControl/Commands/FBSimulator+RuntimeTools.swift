@@ -73,7 +73,8 @@ extension FBSimulator {
   public func launchProcessConsumingOutput(
     launchPath: String,
     arguments: [String] = [],
-    environment: [String: String] = [:]
+    environment: [String: String] = [:],
+    mode: FBProcessSpawnMode = .default
   ) async throws -> FBInSimulatorToolOutput {
     let stdoutConsumer = FBDataBuffer.accumulatingBuffer()
     let stderrConsumer = FBDataBuffer.accumulatingBuffer()
@@ -87,7 +88,7 @@ extension FBSimulator {
       arguments: arguments,
       environment: environment,
       io: io,
-      mode: .default
+      mode: mode
     )
 
     let process = try await launchProcess(configuration)
