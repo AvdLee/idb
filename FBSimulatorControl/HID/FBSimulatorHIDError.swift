@@ -41,10 +41,14 @@ public enum FBSimulatorHIDError: Error, LocalizedError {
   case notImplementedOnIndigoTransport(operation: String)
   /// The `dtuhidd` digitizer service could not be looked up in the simulator's bootstrap namespace.
   case dtuhidDigitizerServiceUnavailable(underlying: Error?)
+  /// The requested `dtuhidd` service could not be looked up in the simulator's bootstrap namespace.
+  case dtuhidServiceUnavailable(name: String, underlying: Error?)
   /// The private `_4sim` XPC endpoint symbols could not be resolved (older toolchain).
   case dtuhidXPCSymbolsUnavailable
   /// The `dtuhidd` host XPC connection could not be created.
   case dtuhidConnectionFailed
+  /// A connection was built, but no live `dtuhidd` answered behind it.
+  case dtuhidUnresponsive(attempts: Int, underlying: Error?)
   /// A touchscreen touch was attempted on a tvOS target, which has no touchscreen.
   case touchUnsupportedOnAppleTV
 
@@ -78,12 +82,30 @@ public enum FBSimulatorHIDError: Error, LocalizedError {
       return "\(operation) is not implemented on the legacy Indigo transport"
     case .dtuhidDigitizerServiceUnavailable:
       return "Could not look up the dtuhidd digitizer service (com.apple.coredevice.feature.remote.hid.digitizer)"
+    case let .dtuhidServiceUnavailable(name, _):
+      return "Could not look up the dtuhidd service (\(name))"
     case .dtuhidXPCSymbolsUnavailable:
       return "Could not resolve the private _4sim XPC endpoint symbols required for the DTUHID transport"
     case .dtuhidConnectionFailed:
       return "Could not create the dtuhidd host XPC connection"
+    case let .dtuhidUnresponsive(attempts, underlying):
+      let detail = underlying.map { " (\($0))" } ?? ""
+      return
+        "dtuhidd did not answer a liveness probe in \(attempts) attempts\(detail) — every HID event sent to it would be discarded without error"
     case .touchUnsupportedOnAppleTV:
       return "Touch input is not supported on tvOS targets (no touchscreen)"
+    }
+  }
+}
+
+extension FBSimulatorHIDError {
+  var isTransientDTUHIDFailure: Bool {
+    switch self {
+    case .dtuhidServiceUnavailable, .dtuhidDigitizerServiceUnavailable,
+      .dtuhidConnectionFailed, .dtuhidUnresponsive:
+      return true
+    default:
+      return false
     }
   }
 }

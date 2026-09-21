@@ -256,6 +256,67 @@ final class FBSimulatorDTUHIDTransportTests: XCTestCase {
     XCTAssertEqual(xpc_dictionary_get_uint64(payload!, "value"), 7)
   }
 
+  // MARK: Reply-driven vendor delivery
+
+  func testReliableLivenessProbeCarriesInertBarrierAndSettlesColdDrain() async throws {
+    let recorder = FBSimulatorDTUHIDDrainRecorder()
+    let transport = makeReliableTransport(recorder)
+
+    try await transport.confirmLiveness()
+    try await transport.send(
+      messageType: "IndigoVendorDefinedEvent",
+      payload: try FBSimulatorHingeAngle(degrees: 180).vendorEvent())
+    try await transport.flush()
+
+    let probes = await recorder.livenessProbes
+    let sleeps = await recorder.sleeps
+    XCTAssertEqual(probes.count, 1)
+    let probe = try XCTUnwrap(probes.first)
+    XCTAssertTrue(xpc_dictionary_get_bool(probe, "isBarrier"))
+    XCTAssertEqual(messageString(probe, "messageType"), "IndigoKeyboardButtonEvent")
+    let payload = try XCTUnwrap(xpc_dictionary_get_dictionary(probe, "payload"))
+    XCTAssertEqual(xpc_dictionary_get_uint64(payload, "usageCode"), 0)
+    XCTAssertEqual(
+      sleeps,
+      [FBSimulatorDTUHIDTiming.replyTail, FBSimulatorDTUHIDTiming.drain])
+    let barrierReplies = await recorder.barrierReplies
+    XCTAssertEqual(barrierReplies, 0)
+  }
+
+  func testReliableColdAndWarmFlushesTrackSendGenerations() async throws {
+    let recorder = FBSimulatorDTUHIDDrainRecorder()
+    let transport = makeReliableTransport(recorder)
+    let payload = try FBSimulatorHingeAngle(degrees: 90).vendorEvent()
+
+    try await transport.send(messageType: "IndigoVendorDefinedEvent", payload: payload)
+    try await transport.flush()
+    try await transport.flush()
+    try await transport.send(messageType: "IndigoVendorDefinedEvent", payload: payload)
+    try await transport.flush()
+
+    let barrierReplies = await recorder.barrierReplies
+    let sleeps = await recorder.sleeps
+    XCTAssertEqual(barrierReplies, 1)
+    XCTAssertEqual(
+      sleeps,
+      [FBSimulatorDTUHIDTiming.replyTail, FBSimulatorDTUHIDTiming.drain])
+  }
+
+  func testReliableColdFlushFallsBackAfterReplyTimeout() async throws {
+    let recorder = FBSimulatorDTUHIDDrainRecorder(replyTimesOut: true)
+    let transport = makeReliableTransport(recorder)
+
+    try await transport.send(
+      messageType: "IndigoVendorDefinedEvent",
+      payload: try FBSimulatorHingeAngle(degrees: 0).vendorEvent())
+    try await transport.flush()
+
+    let barrierReplies = await recorder.barrierReplies
+    let sleeps = await recorder.sleeps
+    XCTAssertEqual(barrierReplies, 1)
+    XCTAssertEqual(sleeps, [FBSimulatorDTUHIDTiming.fallbackDrain])
+  }
+
   // MARK: Keyboard encoding
 
   func testKeyboardButtonEventEnvelope() throws {
@@ -314,6 +375,36 @@ final class FBSimulatorDTUHIDTransportTests: XCTestCase {
     return String(cString: cString)
   }
 
+  private func makeReliableTransport(
+    _ recorder: FBSimulatorDTUHIDDrainRecorder
+  ) -> FBSimulatorDTUHIDTransport {
+    let connection = xpc_connection_create(
+      "com.facebook.fbsimulatorcontrol.test.dtuhid.reliable",
+      nil)
+    xpc_connection_set_event_handler(connection) { _ in }
+    xpc_connection_resume(connection)
+    let transport = FBSimulatorDTUHIDTransport(
+      connection: connection,
+      serviceName: FBSimulatorDTUHIDTransport.vendorDefinedServiceName,
+      mainScreenSize: CGSize(width: 100, height: 200),
+      mainScreenScale: 2,
+      usesReplyDrivenDelivery: true,
+      clock: FBSimulatorDTUHIDDrainClock(
+        sleep: { duration in
+          await recorder.recordSleep(duration)
+        },
+        awaitBarrierReply: { _, message in
+          try await recorder.recordBarrierReply(message)
+        },
+        awaitLivenessReply: { _, message in
+          await recorder.recordLivenessProbe(message)
+        }))
+    addTeardownBlock {
+      transport.disconnect()
+    }
+    return transport
+  }
+
   private func assertThrowsNotImplemented(
     _ block: () async throws -> Void, file: StaticString = #filePath, line: UInt = #line
   ) async {
@@ -328,5 +419,31 @@ final class FBSimulatorDTUHIDTransportTests: XCTestCase {
     } catch {
       XCTFail("unexpected error: \(error)", file: file, line: line)
     }
+  }
+}
+
+private actor FBSimulatorDTUHIDDrainRecorder {
+  private(set) var sleeps: [Duration] = []
+  private(set) var barrierReplies = 0
+  private(set) var livenessProbes: [xpc_object_t] = []
+  private let replyTimesOut: Bool
+
+  init(replyTimesOut: Bool = false) {
+    self.replyTimesOut = replyTimesOut
+  }
+
+  func recordSleep(_ duration: Duration) {
+    sleeps.append(duration)
+  }
+
+  func recordBarrierReply(_ message: xpc_object_t) throws {
+    barrierReplies += 1
+    if replyTimesOut {
+      throw FBSimulatorDTUHIDDrainTimeout.expired
+    }
+  }
+
+  func recordLivenessProbe(_ message: xpc_object_t) {
+    livenessProbes.append(message)
   }
 }

@@ -11,7 +11,7 @@ public extension FBSimulator {
   /// Sets the hinge angle on an iPhone Duo simulator.
   func setHingeAngle(_ angle: FBSimulatorHingeAngle) async throws {
     try FBSimulatorHingeAngle.requireSupportedModel(device.deviceType.modelIdentifier)
-    let transport = try FBSimulatorDTUHIDTransport.dtuhid(
+    let transport = try await FBSimulatorDTUHIDTransport.reliableDTUHID(
       for: self,
       serviceName: FBSimulatorDTUHIDTransport.vendorDefinedServiceName)
     defer {
