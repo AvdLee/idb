@@ -53,6 +53,7 @@ struct DigitizerContactTracker {
  */
 actor FBSimulatorDTUHIDTransport: FBSimulatorHIDTransport {
 
+  static let vendorDefinedServiceName = "com.apple.coredevice.feature.remote.hid.vendordefined"
   static let digitizerServiceName = "com.apple.coredevice.feature.remote.hid.digitizer"
 
   // Private XPC endpoint functions, resolved at runtime (not in the XPC module headers).
@@ -73,6 +74,7 @@ actor FBSimulatorDTUHIDTransport: FBSimulatorHIDTransport {
   /// `nonisolated(unsafe)` to be read from the `nonisolated` `disconnect()` as well as the
   /// actor-isolated send path.
   nonisolated(unsafe) private let connection: xpc_connection_t
+  private let serviceName: String
   private let mainScreenSize: CGSize
   private let mainScreenScale: Float
   private var contact = DigitizerContactTracker()
@@ -88,6 +90,7 @@ actor FBSimulatorDTUHIDTransport: FBSimulatorHIDTransport {
   /// rather than lingering until the next boot/shutdown notification.
   static func dtuhid(
     for simulator: FBSimulator,
+    serviceName: String = digitizerServiceName,
     onInvalidated: @escaping @Sendable () -> Void = {}
   ) throws -> FBSimulatorDTUHIDTransport {
     guard let handle = dlopen(nil, RTLD_NOW) else {
@@ -102,7 +105,7 @@ actor FBSimulatorDTUHIDTransport: FBSimulatorHIDTransport {
     }
 
     var lookupError: NSError?
-    let servicePort = simulator.device.lookup(digitizerServiceName, error: &lookupError)
+    let servicePort = simulator.device.lookup(serviceName, error: &lookupError)
     if servicePort == 0 {
       throw FBSimulatorHIDError.dtuhidDigitizerServiceUnavailable(underlying: lookupError)
     }
@@ -122,12 +125,19 @@ actor FBSimulatorDTUHIDTransport: FBSimulatorHIDTransport {
 
     return FBSimulatorDTUHIDTransport(
       connection: connection,
+      serviceName: serviceName,
       mainScreenSize: simulator.device.deviceType.mainScreenSize,
       mainScreenScale: simulator.device.deviceType.mainScreenScale)
   }
 
-  init(connection: xpc_connection_t, mainScreenSize: CGSize, mainScreenScale: Float) {
+  init(
+    connection: xpc_connection_t,
+    serviceName: String = digitizerServiceName,
+    mainScreenSize: CGSize,
+    mainScreenScale: Float
+  ) {
     self.connection = connection
+    self.serviceName = serviceName
     self.mainScreenSize = mainScreenSize
     self.mainScreenScale = mainScreenScale
   }
@@ -222,7 +232,7 @@ actor FBSimulatorDTUHIDTransport: FBSimulatorHIDTransport {
   /// Pure and stateless, so the envelope shape is unit-testable without a live daemon connection.
   nonisolated func encode(messageType: String, payload: some Encodable) throws -> xpc_object_t {
     let message = DTUHIDMessage(
-      messageType: messageType, featureIdentifier: Self.digitizerServiceName, payload: payload)
+      messageType: messageType, featureIdentifier: serviceName, payload: payload)
     return try XPCEncoder().encode(message)
   }
 
