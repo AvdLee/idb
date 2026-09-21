@@ -42,6 +42,12 @@ NS_ASSUME_NONNULL_BEGIN
 @property (readonly, nonatomic) BOOL isDefault;
 
 /**
+ Identification of this screen (screenID / uniqueId / name / pixelSize / powerState).
+ Confirmed on the Xcode 27.1 runtime protocol (`@property screenProperties`).
+ */
+@property (readonly, nonatomic, nullable) id<SimScreenProperties> screenProperties;
+
+/**
  Unified per-screen callback registration (replaces the removed
  `registerCallbackWithUUID:ioSurfacesChangeCallback:` +
  `registerCallbackWithUUID:damageRectanglesCallback:`).

@@ -264,6 +264,18 @@ extension FBSimulator: SimulatorLifecycleCommands {
     try await lifecycleCommands().connectToFramebufferAsync()
   }
 
+  /// Fork addition. One framebuffer per SimScreen (Xcode 27+). Empty on the legacy path —
+  /// fall back to `connectToFramebuffer()` there. See `FBFramebuffer.allScreenSurfaces(for:logger:)`.
+  public func connectToAllScreenFramebuffers() async throws -> [FBFramebuffer] {
+    try FBFramebuffer.allScreenSurfaces(for: self, logger: logger!)
+  }
+
+  /// Fork addition. The framebuffer of the first screen whose descriptor satisfies `matching`.
+  /// See `FBFramebuffer.screenSurface(for:matching:logger:)`.
+  public func connectToScreenFramebuffer(matching: (FBFramebufferScreenDescriptor) -> Bool) async throws -> FBFramebuffer {
+    try FBFramebuffer.screenSurface(for: self, matching: matching, logger: logger!)
+  }
+
   public func open(_ url: URL) async throws {
     try await lifecycleCommands().openAsync(url)
   }
