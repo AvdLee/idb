@@ -419,8 +419,10 @@ public enum FBSimulatorHIDError : Swift::Error, Foundation::LocalizedError {
   case notImplementedOnDTUHIDTransport(operation: Swift::String)
   case notImplementedOnIndigoTransport(operation: Swift::String)
   case dtuhidDigitizerServiceUnavailable(underlying: (any Swift::Error)?)
+  case dtuhidServiceUnavailable(name: Swift::String, underlying: (any Swift::Error)?)
   case dtuhidXPCSymbolsUnavailable
   case dtuhidConnectionFailed
+  case dtuhidUnresponsive(attempts: Swift::Int, underlying: (any Swift::Error)?)
   case touchUnsupportedOnAppleTV
   public var errorDescription: Swift::String? {
     get

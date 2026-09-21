@@ -20847,6 +20847,1234 @@
       },
       {
         "kind": "TypeDecl",
+        "name": "FBSimulatorDTUHIDTiming",
+        "printedName": "FBSimulatorDTUHIDTiming",
+        "children": [
+          {
+            "kind": "Var",
+            "name": "drain",
+            "printedName": "drain",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Duration",
+                "printedName": "Swift.Duration",
+                "usr": "s:s8DurationV"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:18FBSimulatorControl0A12DTUHIDTimingO5drains8DurationVvpZ",
+            "mangledName": "$s18FBSimulatorControl0A12DTUHIDTimingO5drains8DurationVvpZ",
+            "moduleName": "FBSimulatorControl",
+            "static": true,
+            "declAttributes": [
+              "HasInitialValue",
+              "HasStorage"
+            ],
+            "isLet": true,
+            "hasStorage": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Duration",
+                    "printedName": "Swift.Duration",
+                    "usr": "s:s8DurationV"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:18FBSimulatorControl0A12DTUHIDTimingO5drains8DurationVvgZ",
+                "mangledName": "$s18FBSimulatorControl0A12DTUHIDTimingO5drains8DurationVvgZ",
+                "moduleName": "FBSimulatorControl",
+                "static": true,
+                "implicit": true,
+                "declAttributes": [
+                  "Transparent"
+                ],
+                "accessorKind": "get"
+              }
+            ]
+          },
+          {
+            "kind": "Var",
+            "name": "replyTail",
+            "printedName": "replyTail",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Duration",
+                "printedName": "Swift.Duration",
+                "usr": "s:s8DurationV"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:18FBSimulatorControl0A12DTUHIDTimingO9replyTails8DurationVvpZ",
+            "mangledName": "$s18FBSimulatorControl0A12DTUHIDTimingO9replyTails8DurationVvpZ",
+            "moduleName": "FBSimulatorControl",
+            "static": true,
+            "declAttributes": [
+              "HasInitialValue",
+              "HasStorage"
+            ],
+            "isLet": true,
+            "hasStorage": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Duration",
+                    "printedName": "Swift.Duration",
+                    "usr": "s:s8DurationV"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:18FBSimulatorControl0A12DTUHIDTimingO9replyTails8DurationVvgZ",
+                "mangledName": "$s18FBSimulatorControl0A12DTUHIDTimingO9replyTails8DurationVvgZ",
+                "moduleName": "FBSimulatorControl",
+                "static": true,
+                "implicit": true,
+                "declAttributes": [
+                  "Transparent"
+                ],
+                "accessorKind": "get"
+              }
+            ]
+          },
+          {
+            "kind": "Var",
+            "name": "replyTimeout",
+            "printedName": "replyTimeout",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "DispatchTimeInterval",
+                "printedName": "Dispatch.DispatchTimeInterval",
+                "usr": "s:8Dispatch0A12TimeIntervalO"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:18FBSimulatorControl0A12DTUHIDTimingO12replyTimeout8Dispatch0F12TimeIntervalOvpZ",
+            "mangledName": "$s18FBSimulatorControl0A12DTUHIDTimingO12replyTimeout8Dispatch0F12TimeIntervalOvpZ",
+            "moduleName": "FBSimulatorControl",
+            "static": true,
+            "declAttributes": [
+              "HasInitialValue",
+              "HasStorage"
+            ],
+            "isLet": true,
+            "hasStorage": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "DispatchTimeInterval",
+                    "printedName": "Dispatch.DispatchTimeInterval",
+                    "usr": "s:8Dispatch0A12TimeIntervalO"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:18FBSimulatorControl0A12DTUHIDTimingO12replyTimeout8Dispatch0F12TimeIntervalOvgZ",
+                "mangledName": "$s18FBSimulatorControl0A12DTUHIDTimingO12replyTimeout8Dispatch0F12TimeIntervalOvgZ",
+                "moduleName": "FBSimulatorControl",
+                "static": true,
+                "implicit": true,
+                "declAttributes": [
+                  "Transparent"
+                ],
+                "accessorKind": "get"
+              }
+            ]
+          },
+          {
+            "kind": "Var",
+            "name": "fallbackDrain",
+            "printedName": "fallbackDrain",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Duration",
+                "printedName": "Swift.Duration",
+                "usr": "s:s8DurationV"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:18FBSimulatorControl0A12DTUHIDTimingO13fallbackDrains8DurationVvpZ",
+            "mangledName": "$s18FBSimulatorControl0A12DTUHIDTimingO13fallbackDrains8DurationVvpZ",
+            "moduleName": "FBSimulatorControl",
+            "static": true,
+            "declAttributes": [
+              "HasInitialValue",
+              "HasStorage"
+            ],
+            "isLet": true,
+            "hasStorage": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Duration",
+                    "printedName": "Swift.Duration",
+                    "usr": "s:s8DurationV"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:18FBSimulatorControl0A12DTUHIDTimingO13fallbackDrains8DurationVvgZ",
+                "mangledName": "$s18FBSimulatorControl0A12DTUHIDTimingO13fallbackDrains8DurationVvgZ",
+                "moduleName": "FBSimulatorControl",
+                "static": true,
+                "implicit": true,
+                "declAttributes": [
+                  "Transparent"
+                ],
+                "accessorKind": "get"
+              }
+            ]
+          },
+          {
+            "kind": "Var",
+            "name": "livenessTimeout",
+            "printedName": "livenessTimeout",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "DispatchTimeInterval",
+                "printedName": "Dispatch.DispatchTimeInterval",
+                "usr": "s:8Dispatch0A12TimeIntervalO"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:18FBSimulatorControl0A12DTUHIDTimingO15livenessTimeout8Dispatch0F12TimeIntervalOvpZ",
+            "mangledName": "$s18FBSimulatorControl0A12DTUHIDTimingO15livenessTimeout8Dispatch0F12TimeIntervalOvpZ",
+            "moduleName": "FBSimulatorControl",
+            "static": true,
+            "declAttributes": [
+              "HasInitialValue",
+              "HasStorage"
+            ],
+            "isLet": true,
+            "hasStorage": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "DispatchTimeInterval",
+                    "printedName": "Dispatch.DispatchTimeInterval",
+                    "usr": "s:8Dispatch0A12TimeIntervalO"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:18FBSimulatorControl0A12DTUHIDTimingO15livenessTimeout8Dispatch0F12TimeIntervalOvgZ",
+                "mangledName": "$s18FBSimulatorControl0A12DTUHIDTimingO15livenessTimeout8Dispatch0F12TimeIntervalOvgZ",
+                "moduleName": "FBSimulatorControl",
+                "static": true,
+                "implicit": true,
+                "declAttributes": [
+                  "Transparent"
+                ],
+                "accessorKind": "get"
+              }
+            ]
+          },
+          {
+            "kind": "Var",
+            "name": "livenessRetryBackoff",
+            "printedName": "livenessRetryBackoff",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Duration",
+                "printedName": "Swift.Duration",
+                "usr": "s:s8DurationV"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:18FBSimulatorControl0A12DTUHIDTimingO20livenessRetryBackoffs8DurationVvpZ",
+            "mangledName": "$s18FBSimulatorControl0A12DTUHIDTimingO20livenessRetryBackoffs8DurationVvpZ",
+            "moduleName": "FBSimulatorControl",
+            "static": true,
+            "declAttributes": [
+              "HasInitialValue",
+              "HasStorage"
+            ],
+            "isLet": true,
+            "hasStorage": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Duration",
+                    "printedName": "Swift.Duration",
+                    "usr": "s:s8DurationV"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:18FBSimulatorControl0A12DTUHIDTimingO20livenessRetryBackoffs8DurationVvgZ",
+                "mangledName": "$s18FBSimulatorControl0A12DTUHIDTimingO20livenessRetryBackoffs8DurationVvgZ",
+                "moduleName": "FBSimulatorControl",
+                "static": true,
+                "implicit": true,
+                "declAttributes": [
+                  "Transparent"
+                ],
+                "accessorKind": "get"
+              }
+            ]
+          },
+          {
+            "kind": "Var",
+            "name": "livenessAttempts",
+            "printedName": "livenessAttempts",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Int",
+                "printedName": "Swift.Int",
+                "usr": "s:Si"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:18FBSimulatorControl0A12DTUHIDTimingO16livenessAttemptsSivpZ",
+            "mangledName": "$s18FBSimulatorControl0A12DTUHIDTimingO16livenessAttemptsSivpZ",
+            "moduleName": "FBSimulatorControl",
+            "static": true,
+            "declAttributes": [
+              "HasInitialValue",
+              "HasStorage"
+            ],
+            "isLet": true,
+            "hasStorage": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Int",
+                    "printedName": "Swift.Int",
+                    "usr": "s:Si"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:18FBSimulatorControl0A12DTUHIDTimingO16livenessAttemptsSivgZ",
+                "mangledName": "$s18FBSimulatorControl0A12DTUHIDTimingO16livenessAttemptsSivgZ",
+                "moduleName": "FBSimulatorControl",
+                "static": true,
+                "implicit": true,
+                "declAttributes": [
+                  "Transparent"
+                ],
+                "accessorKind": "get"
+              }
+            ]
+          }
+        ],
+        "declKind": "Enum",
+        "usr": "s:18FBSimulatorControl0A12DTUHIDTimingO",
+        "mangledName": "$s18FBSimulatorControl0A12DTUHIDTimingO",
+        "moduleName": "FBSimulatorControl",
+        "declAttributes": [
+          "RawDocComment"
+        ],
+        "isEnumExhaustive": true,
+        "conformances": [
+          {
+            "kind": "Conformance",
+            "name": "Copyable",
+            "printedName": "Copyable",
+            "usr": "s:s8CopyableP",
+            "mangledName": "$ss8CopyableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Escapable",
+            "printedName": "Escapable",
+            "usr": "s:s9EscapableP",
+            "mangledName": "$ss9EscapableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Sendable",
+            "printedName": "Sendable",
+            "usr": "s:s8SendableP",
+            "mangledName": "$ss8SendableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "BitwiseCopyable",
+            "printedName": "BitwiseCopyable",
+            "usr": "s:s15BitwiseCopyableP",
+            "mangledName": "$ss15BitwiseCopyableP"
+          }
+        ]
+      },
+      {
+        "kind": "TypeDecl",
+        "name": "FBSimulatorDTUHIDDrainClock",
+        "printedName": "FBSimulatorDTUHIDDrainClock",
+        "children": [
+          {
+            "kind": "Var",
+            "name": "sleep",
+            "printedName": "sleep",
+            "children": [
+              {
+                "kind": "TypeFunc",
+                "name": "Function",
+                "printedName": "(Swift.Duration) async throws -> ()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Duration",
+                    "printedName": "Swift.Duration",
+                    "usr": "s:s8DurationV"
+                  }
+                ]
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:18FBSimulatorControl0A16DTUHIDDrainClockV5sleepyys8DurationVYaYbKcvp",
+            "mangledName": "$s18FBSimulatorControl0A16DTUHIDDrainClockV5sleepyys8DurationVYaYbKcvp",
+            "moduleName": "FBSimulatorControl",
+            "declAttributes": [
+              "HasStorage"
+            ],
+            "fixedbinaryorder": 0,
+            "isLet": true,
+            "hasStorage": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeFunc",
+                    "name": "Function",
+                    "printedName": "(Swift.Duration) async throws -> ()",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Void",
+                        "printedName": "()"
+                      },
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Duration",
+                        "printedName": "Swift.Duration",
+                        "usr": "s:s8DurationV"
+                      }
+                    ]
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:18FBSimulatorControl0A16DTUHIDDrainClockV5sleepyys8DurationVYaYbKcvg",
+                "mangledName": "$s18FBSimulatorControl0A16DTUHIDDrainClockV5sleepyys8DurationVYaYbKcvg",
+                "moduleName": "FBSimulatorControl",
+                "implicit": true,
+                "declAttributes": [
+                  "Transparent"
+                ],
+                "accessorKind": "get"
+              }
+            ]
+          },
+          {
+            "kind": "Var",
+            "name": "awaitBarrierReply",
+            "printedName": "awaitBarrierReply",
+            "children": [
+              {
+                "kind": "TypeFunc",
+                "name": "Function",
+                "printedName": "(any XPC.OS_xpc_object, any XPC.OS_xpc_object) async throws -> ()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Tuple",
+                    "printedName": "(any XPC.OS_xpc_object, any XPC.OS_xpc_object)",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "OS_xpc_object",
+                        "printedName": "any XPC.OS_xpc_object",
+                        "usr": "c:objc(pl)OS_xpc_object"
+                      },
+                      {
+                        "kind": "TypeNominal",
+                        "name": "OS_xpc_object",
+                        "printedName": "any XPC.OS_xpc_object",
+                        "usr": "c:objc(pl)OS_xpc_object"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:18FBSimulatorControl0A16DTUHIDDrainClockV17awaitBarrierReplyyySo13OS_xpc_object_p_SoAE_ptYaYbKcvp",
+            "mangledName": "$s18FBSimulatorControl0A16DTUHIDDrainClockV17awaitBarrierReplyyySo13OS_xpc_object_p_SoAE_ptYaYbKcvp",
+            "moduleName": "FBSimulatorControl",
+            "declAttributes": [
+              "HasStorage"
+            ],
+            "fixedbinaryorder": 1,
+            "isLet": true,
+            "hasStorage": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeFunc",
+                    "name": "Function",
+                    "printedName": "(any XPC.OS_xpc_object, any XPC.OS_xpc_object) async throws -> ()",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Void",
+                        "printedName": "()"
+                      },
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Tuple",
+                        "printedName": "(any XPC.OS_xpc_object, any XPC.OS_xpc_object)",
+                        "children": [
+                          {
+                            "kind": "TypeNominal",
+                            "name": "OS_xpc_object",
+                            "printedName": "any XPC.OS_xpc_object",
+                            "usr": "c:objc(pl)OS_xpc_object"
+                          },
+                          {
+                            "kind": "TypeNominal",
+                            "name": "OS_xpc_object",
+                            "printedName": "any XPC.OS_xpc_object",
+                            "usr": "c:objc(pl)OS_xpc_object"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:18FBSimulatorControl0A16DTUHIDDrainClockV17awaitBarrierReplyyySo13OS_xpc_object_p_SoAE_ptYaYbKcvg",
+                "mangledName": "$s18FBSimulatorControl0A16DTUHIDDrainClockV17awaitBarrierReplyyySo13OS_xpc_object_p_SoAE_ptYaYbKcvg",
+                "moduleName": "FBSimulatorControl",
+                "implicit": true,
+                "declAttributes": [
+                  "Transparent"
+                ],
+                "accessorKind": "get"
+              }
+            ]
+          },
+          {
+            "kind": "Var",
+            "name": "awaitLivenessReply",
+            "printedName": "awaitLivenessReply",
+            "children": [
+              {
+                "kind": "TypeFunc",
+                "name": "Function",
+                "printedName": "(any XPC.OS_xpc_object, any XPC.OS_xpc_object) async throws -> ()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Tuple",
+                    "printedName": "(any XPC.OS_xpc_object, any XPC.OS_xpc_object)",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "OS_xpc_object",
+                        "printedName": "any XPC.OS_xpc_object",
+                        "usr": "c:objc(pl)OS_xpc_object"
+                      },
+                      {
+                        "kind": "TypeNominal",
+                        "name": "OS_xpc_object",
+                        "printedName": "any XPC.OS_xpc_object",
+                        "usr": "c:objc(pl)OS_xpc_object"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:18FBSimulatorControl0A16DTUHIDDrainClockV18awaitLivenessReplyyySo13OS_xpc_object_p_SoAE_ptYaYbKcvp",
+            "mangledName": "$s18FBSimulatorControl0A16DTUHIDDrainClockV18awaitLivenessReplyyySo13OS_xpc_object_p_SoAE_ptYaYbKcvp",
+            "moduleName": "FBSimulatorControl",
+            "declAttributes": [
+              "HasStorage"
+            ],
+            "fixedbinaryorder": 2,
+            "isLet": true,
+            "hasStorage": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeFunc",
+                    "name": "Function",
+                    "printedName": "(any XPC.OS_xpc_object, any XPC.OS_xpc_object) async throws -> ()",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Void",
+                        "printedName": "()"
+                      },
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Tuple",
+                        "printedName": "(any XPC.OS_xpc_object, any XPC.OS_xpc_object)",
+                        "children": [
+                          {
+                            "kind": "TypeNominal",
+                            "name": "OS_xpc_object",
+                            "printedName": "any XPC.OS_xpc_object",
+                            "usr": "c:objc(pl)OS_xpc_object"
+                          },
+                          {
+                            "kind": "TypeNominal",
+                            "name": "OS_xpc_object",
+                            "printedName": "any XPC.OS_xpc_object",
+                            "usr": "c:objc(pl)OS_xpc_object"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:18FBSimulatorControl0A16DTUHIDDrainClockV18awaitLivenessReplyyySo13OS_xpc_object_p_SoAE_ptYaYbKcvg",
+                "mangledName": "$s18FBSimulatorControl0A16DTUHIDDrainClockV18awaitLivenessReplyyySo13OS_xpc_object_p_SoAE_ptYaYbKcvg",
+                "moduleName": "FBSimulatorControl",
+                "implicit": true,
+                "declAttributes": [
+                  "Transparent"
+                ],
+                "accessorKind": "get"
+              }
+            ]
+          },
+          {
+            "kind": "Constructor",
+            "name": "init",
+            "printedName": "init(sleep:awaitBarrierReply:awaitLivenessReply:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "FBSimulatorDTUHIDDrainClock",
+                "printedName": "FBSimulatorControl.FBSimulatorDTUHIDDrainClock",
+                "usr": "s:18FBSimulatorControl0A16DTUHIDDrainClockV"
+              },
+              {
+                "kind": "TypeFunc",
+                "name": "Function",
+                "printedName": "(Swift.Duration) async throws -> ()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Duration",
+                    "printedName": "Swift.Duration",
+                    "usr": "s:s8DurationV"
+                  }
+                ]
+              },
+              {
+                "kind": "TypeFunc",
+                "name": "Function",
+                "printedName": "(any XPC.OS_xpc_object, any XPC.OS_xpc_object) async throws -> ()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Tuple",
+                    "printedName": "(any XPC.OS_xpc_object, any XPC.OS_xpc_object)",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "OS_xpc_object",
+                        "printedName": "any XPC.OS_xpc_object",
+                        "usr": "c:objc(pl)OS_xpc_object"
+                      },
+                      {
+                        "kind": "TypeNominal",
+                        "name": "OS_xpc_object",
+                        "printedName": "any XPC.OS_xpc_object",
+                        "usr": "c:objc(pl)OS_xpc_object"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "kind": "TypeFunc",
+                "name": "Function",
+                "printedName": "(any XPC.OS_xpc_object, any XPC.OS_xpc_object) async throws -> ()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Tuple",
+                    "printedName": "(any XPC.OS_xpc_object, any XPC.OS_xpc_object)",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "OS_xpc_object",
+                        "printedName": "any XPC.OS_xpc_object",
+                        "usr": "c:objc(pl)OS_xpc_object"
+                      },
+                      {
+                        "kind": "TypeNominal",
+                        "name": "OS_xpc_object",
+                        "printedName": "any XPC.OS_xpc_object",
+                        "usr": "c:objc(pl)OS_xpc_object"
+                      }
+                    ]
+                  }
+                ],
+                "hasDefaultArg": true
+              }
+            ],
+            "declKind": "Constructor",
+            "usr": "s:18FBSimulatorControl0A16DTUHIDDrainClockV5sleep17awaitBarrierReply0f8LivenessH0ACys8DurationVYaYbKc_ySo13OS_xpc_object_p_SoAI_ptYaYbKcySoAI_p_SoAI_ptYaYbKctcfc",
+            "mangledName": "$s18FBSimulatorControl0A16DTUHIDDrainClockV5sleep17awaitBarrierReply0f8LivenessH0ACys8DurationVYaYbKc_ySo13OS_xpc_object_p_SoAI_ptYaYbKcySoAI_p_SoAI_ptYaYbKctcfc",
+            "moduleName": "FBSimulatorControl",
+            "init_kind": "Designated"
+          },
+          {
+            "kind": "Var",
+            "name": "live",
+            "printedName": "live",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "FBSimulatorDTUHIDDrainClock",
+                "printedName": "FBSimulatorControl.FBSimulatorDTUHIDDrainClock",
+                "usr": "s:18FBSimulatorControl0A16DTUHIDDrainClockV"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:18FBSimulatorControl0A16DTUHIDDrainClockV4liveACvpZ",
+            "mangledName": "$s18FBSimulatorControl0A16DTUHIDDrainClockV4liveACvpZ",
+            "moduleName": "FBSimulatorControl",
+            "static": true,
+            "declAttributes": [
+              "HasInitialValue",
+              "HasStorage"
+            ],
+            "isLet": true,
+            "hasStorage": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "FBSimulatorDTUHIDDrainClock",
+                    "printedName": "FBSimulatorControl.FBSimulatorDTUHIDDrainClock",
+                    "usr": "s:18FBSimulatorControl0A16DTUHIDDrainClockV"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:18FBSimulatorControl0A16DTUHIDDrainClockV4liveACvgZ",
+                "mangledName": "$s18FBSimulatorControl0A16DTUHIDDrainClockV4liveACvgZ",
+                "moduleName": "FBSimulatorControl",
+                "static": true,
+                "implicit": true,
+                "declAttributes": [
+                  "Transparent"
+                ],
+                "accessorKind": "get"
+              }
+            ]
+          }
+        ],
+        "declKind": "Struct",
+        "usr": "s:18FBSimulatorControl0A16DTUHIDDrainClockV",
+        "mangledName": "$s18FBSimulatorControl0A16DTUHIDDrainClockV",
+        "moduleName": "FBSimulatorControl",
+        "conformances": [
+          {
+            "kind": "Conformance",
+            "name": "Copyable",
+            "printedName": "Copyable",
+            "usr": "s:s8CopyableP",
+            "mangledName": "$ss8CopyableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Escapable",
+            "printedName": "Escapable",
+            "usr": "s:s9EscapableP",
+            "mangledName": "$ss9EscapableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Sendable",
+            "printedName": "Sendable",
+            "usr": "s:s8SendableP",
+            "mangledName": "$ss8SendableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "SendableMetatype",
+            "printedName": "SendableMetatype",
+            "usr": "s:s16SendableMetatypeP",
+            "mangledName": "$ss16SendableMetatypeP"
+          }
+        ]
+      },
+      {
+        "kind": "TypeDecl",
+        "name": "FBSimulatorDTUHIDDrainTimeout",
+        "printedName": "FBSimulatorDTUHIDDrainTimeout",
+        "children": [
+          {
+            "kind": "Var",
+            "name": "expired",
+            "printedName": "expired",
+            "children": [
+              {
+                "kind": "TypeFunc",
+                "name": "Function",
+                "printedName": "(FBSimulatorControl.FBSimulatorDTUHIDDrainTimeout.Type) -> FBSimulatorControl.FBSimulatorDTUHIDDrainTimeout",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "FBSimulatorDTUHIDDrainTimeout",
+                    "printedName": "FBSimulatorControl.FBSimulatorDTUHIDDrainTimeout",
+                    "usr": "s:18FBSimulatorControl0A18DTUHIDDrainTimeoutO"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Metatype",
+                    "printedName": "FBSimulatorControl.FBSimulatorDTUHIDDrainTimeout.Type",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "FBSimulatorDTUHIDDrainTimeout",
+                        "printedName": "FBSimulatorControl.FBSimulatorDTUHIDDrainTimeout",
+                        "usr": "s:18FBSimulatorControl0A18DTUHIDDrainTimeoutO"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ],
+            "declKind": "EnumElement",
+            "usr": "s:18FBSimulatorControl0A18DTUHIDDrainTimeoutO7expiredyA2CmF",
+            "mangledName": "$s18FBSimulatorControl0A18DTUHIDDrainTimeoutO7expiredyA2CmF",
+            "moduleName": "FBSimulatorControl",
+            "fixedbinaryorder": 0
+          },
+          {
+            "kind": "Function",
+            "name": "==",
+            "printedName": "==(_:_:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Bool",
+                "printedName": "Swift.Bool",
+                "usr": "s:Sb"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "FBSimulatorDTUHIDDrainTimeout",
+                "printedName": "FBSimulatorControl.FBSimulatorDTUHIDDrainTimeout",
+                "usr": "s:18FBSimulatorControl0A18DTUHIDDrainTimeoutO"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "FBSimulatorDTUHIDDrainTimeout",
+                "printedName": "FBSimulatorControl.FBSimulatorDTUHIDDrainTimeout",
+                "usr": "s:18FBSimulatorControl0A18DTUHIDDrainTimeoutO"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:18FBSimulatorControl0A18DTUHIDDrainTimeoutO2eeoiySbAC_ACtFZ",
+            "mangledName": "$s18FBSimulatorControl0A18DTUHIDDrainTimeoutO2eeoiySbAC_ACtFZ",
+            "moduleName": "FBSimulatorControl",
+            "static": true,
+            "implicit": true,
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Var",
+            "name": "hashValue",
+            "printedName": "hashValue",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Int",
+                "printedName": "Swift.Int",
+                "usr": "s:Si"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:18FBSimulatorControl0A18DTUHIDDrainTimeoutO9hashValueSivp",
+            "mangledName": "$s18FBSimulatorControl0A18DTUHIDDrainTimeoutO9hashValueSivp",
+            "moduleName": "FBSimulatorControl",
+            "implicit": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Int",
+                    "printedName": "Swift.Int",
+                    "usr": "s:Si"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:18FBSimulatorControl0A18DTUHIDDrainTimeoutO9hashValueSivg",
+                "mangledName": "$s18FBSimulatorControl0A18DTUHIDDrainTimeoutO9hashValueSivg",
+                "moduleName": "FBSimulatorControl",
+                "implicit": true,
+                "accessorKind": "get"
+              }
+            ]
+          },
+          {
+            "kind": "Function",
+            "name": "hash",
+            "printedName": "hash(into:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Hasher",
+                "printedName": "Swift.Hasher",
+                "paramValueOwnership": "InOut",
+                "usr": "s:s6HasherV"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:18FBSimulatorControl0A18DTUHIDDrainTimeoutO4hash4intoys6HasherVz_tF",
+            "mangledName": "$s18FBSimulatorControl0A18DTUHIDDrainTimeoutO4hash4intoys6HasherVz_tF",
+            "moduleName": "FBSimulatorControl",
+            "implicit": true,
+            "funcSelfKind": "NonMutating"
+          }
+        ],
+        "declKind": "Enum",
+        "usr": "s:18FBSimulatorControl0A18DTUHIDDrainTimeoutO",
+        "mangledName": "$s18FBSimulatorControl0A18DTUHIDDrainTimeoutO",
+        "moduleName": "FBSimulatorControl",
+        "isEnumExhaustive": true,
+        "conformances": [
+          {
+            "kind": "Conformance",
+            "name": "BitwiseCopyable",
+            "printedName": "BitwiseCopyable",
+            "usr": "s:s15BitwiseCopyableP",
+            "mangledName": "$ss15BitwiseCopyableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Copyable",
+            "printedName": "Copyable",
+            "usr": "s:s8CopyableP",
+            "mangledName": "$ss8CopyableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Equatable",
+            "printedName": "Equatable",
+            "usr": "s:SQ",
+            "mangledName": "$sSQ"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Hashable",
+            "printedName": "Hashable",
+            "usr": "s:SH",
+            "mangledName": "$sSH"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Error",
+            "printedName": "Error",
+            "usr": "s:s5ErrorP",
+            "mangledName": "$ss5ErrorP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Escapable",
+            "printedName": "Escapable",
+            "usr": "s:s9EscapableP",
+            "mangledName": "$ss9EscapableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Sendable",
+            "printedName": "Sendable",
+            "usr": "s:s8SendableP",
+            "mangledName": "$ss8SendableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "SendableMetatype",
+            "printedName": "SendableMetatype",
+            "usr": "s:s16SendableMetatypeP",
+            "mangledName": "$ss16SendableMetatypeP"
+          }
+        ]
+      },
+      {
+        "kind": "TypeDecl",
+        "name": "FBSimulatorDTUHIDLivenessFailure",
+        "printedName": "FBSimulatorDTUHIDLivenessFailure",
+        "children": [
+          {
+            "kind": "Var",
+            "name": "timedOut",
+            "printedName": "timedOut",
+            "children": [
+              {
+                "kind": "TypeFunc",
+                "name": "Function",
+                "printedName": "(FBSimulatorControl.FBSimulatorDTUHIDLivenessFailure.Type) -> FBSimulatorControl.FBSimulatorDTUHIDLivenessFailure",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "FBSimulatorDTUHIDLivenessFailure",
+                    "printedName": "FBSimulatorControl.FBSimulatorDTUHIDLivenessFailure",
+                    "usr": "s:18FBSimulatorControl0A21DTUHIDLivenessFailureO"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Metatype",
+                    "printedName": "FBSimulatorControl.FBSimulatorDTUHIDLivenessFailure.Type",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "FBSimulatorDTUHIDLivenessFailure",
+                        "printedName": "FBSimulatorControl.FBSimulatorDTUHIDLivenessFailure",
+                        "usr": "s:18FBSimulatorControl0A21DTUHIDLivenessFailureO"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ],
+            "declKind": "EnumElement",
+            "usr": "s:18FBSimulatorControl0A21DTUHIDLivenessFailureO8timedOutyA2CmF",
+            "mangledName": "$s18FBSimulatorControl0A21DTUHIDLivenessFailureO8timedOutyA2CmF",
+            "moduleName": "FBSimulatorControl",
+            "fixedbinaryorder": 0
+          },
+          {
+            "kind": "Var",
+            "name": "peerUnavailable",
+            "printedName": "peerUnavailable",
+            "children": [
+              {
+                "kind": "TypeFunc",
+                "name": "Function",
+                "printedName": "(FBSimulatorControl.FBSimulatorDTUHIDLivenessFailure.Type) -> (Swift.String) -> FBSimulatorControl.FBSimulatorDTUHIDLivenessFailure",
+                "children": [
+                  {
+                    "kind": "TypeFunc",
+                    "name": "Function",
+                    "printedName": "(Swift.String) -> FBSimulatorControl.FBSimulatorDTUHIDLivenessFailure",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "FBSimulatorDTUHIDLivenessFailure",
+                        "printedName": "FBSimulatorControl.FBSimulatorDTUHIDLivenessFailure",
+                        "usr": "s:18FBSimulatorControl0A21DTUHIDLivenessFailureO"
+                      },
+                      {
+                        "kind": "TypeNominal",
+                        "name": "String",
+                        "printedName": "Swift.String",
+                        "usr": "s:SS"
+                      }
+                    ]
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Metatype",
+                    "printedName": "FBSimulatorControl.FBSimulatorDTUHIDLivenessFailure.Type",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "FBSimulatorDTUHIDLivenessFailure",
+                        "printedName": "FBSimulatorControl.FBSimulatorDTUHIDLivenessFailure",
+                        "usr": "s:18FBSimulatorControl0A21DTUHIDLivenessFailureO"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ],
+            "declKind": "EnumElement",
+            "usr": "s:18FBSimulatorControl0A21DTUHIDLivenessFailureO15peerUnavailableyACSScACmF",
+            "mangledName": "$s18FBSimulatorControl0A21DTUHIDLivenessFailureO15peerUnavailableyACSScACmF",
+            "moduleName": "FBSimulatorControl",
+            "fixedbinaryorder": 1
+          },
+          {
+            "kind": "Var",
+            "name": "description",
+            "printedName": "description",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "String",
+                "printedName": "Swift.String",
+                "usr": "s:SS"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:18FBSimulatorControl0A21DTUHIDLivenessFailureO11descriptionSSvp",
+            "mangledName": "$s18FBSimulatorControl0A21DTUHIDLivenessFailureO11descriptionSSvp",
+            "moduleName": "FBSimulatorControl",
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "String",
+                    "printedName": "Swift.String",
+                    "usr": "s:SS"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:18FBSimulatorControl0A21DTUHIDLivenessFailureO11descriptionSSvg",
+                "mangledName": "$s18FBSimulatorControl0A21DTUHIDLivenessFailureO11descriptionSSvg",
+                "moduleName": "FBSimulatorControl",
+                "accessorKind": "get"
+              }
+            ]
+          }
+        ],
+        "declKind": "Enum",
+        "usr": "s:18FBSimulatorControl0A21DTUHIDLivenessFailureO",
+        "mangledName": "$s18FBSimulatorControl0A21DTUHIDLivenessFailureO",
+        "moduleName": "FBSimulatorControl",
+        "isEnumExhaustive": true,
+        "conformances": [
+          {
+            "kind": "Conformance",
+            "name": "Copyable",
+            "printedName": "Copyable",
+            "usr": "s:s8CopyableP",
+            "mangledName": "$ss8CopyableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Error",
+            "printedName": "Error",
+            "usr": "s:s5ErrorP",
+            "mangledName": "$ss5ErrorP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "CustomStringConvertible",
+            "printedName": "CustomStringConvertible",
+            "usr": "s:s23CustomStringConvertibleP",
+            "mangledName": "$ss23CustomStringConvertibleP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Escapable",
+            "printedName": "Escapable",
+            "usr": "s:s9EscapableP",
+            "mangledName": "$ss9EscapableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Sendable",
+            "printedName": "Sendable",
+            "usr": "s:s8SendableP",
+            "mangledName": "$ss8SendableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "SendableMetatype",
+            "printedName": "SendableMetatype",
+            "usr": "s:s16SendableMetatypeP",
+            "mangledName": "$ss16SendableMetatypeP"
+          }
+        ]
+      },
+      {
+        "kind": "TypeDecl",
         "name": "DigitizerContactTracker",
         "printedName": "DigitizerContactTracker",
         "children": [
@@ -21175,6 +22403,58 @@
           },
           {
             "kind": "Var",
+            "name": "usesReplyDrivenDelivery",
+            "printedName": "usesReplyDrivenDelivery",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Bool",
+                "printedName": "Swift.Bool",
+                "usr": "s:Sb"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:18FBSimulatorControl0A15DTUHIDTransportC23usesReplyDrivenDelivery33_BEA208641EA3FC38343086C896F523BDLLSbvp",
+            "mangledName": "$s18FBSimulatorControl0A15DTUHIDTransportC23usesReplyDrivenDelivery33_BEA208641EA3FC38343086C896F523BDLLSbvp",
+            "moduleName": "FBSimulatorControl",
+            "isInternal": true,
+            "declAttributes": [
+              "Final",
+              "HasStorage",
+              "AccessControl"
+            ],
+            "fixedbinaryorder": 4,
+            "isLet": true,
+            "hasStorage": true
+          },
+          {
+            "kind": "Var",
+            "name": "clock",
+            "printedName": "clock",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "FBSimulatorDTUHIDDrainClock",
+                "printedName": "FBSimulatorControl.FBSimulatorDTUHIDDrainClock",
+                "usr": "s:18FBSimulatorControl0A16DTUHIDDrainClockV"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:18FBSimulatorControl0A15DTUHIDTransportC5clock33_BEA208641EA3FC38343086C896F523BDLLAA0A16DTUHIDDrainClockVvp",
+            "mangledName": "$s18FBSimulatorControl0A15DTUHIDTransportC5clock33_BEA208641EA3FC38343086C896F523BDLLAA0A16DTUHIDDrainClockVvp",
+            "moduleName": "FBSimulatorControl",
+            "isInternal": true,
+            "declAttributes": [
+              "Final",
+              "HasStorage",
+              "AccessControl"
+            ],
+            "fixedbinaryorder": 5,
+            "isLet": true,
+            "hasStorage": true
+          },
+          {
+            "kind": "Var",
             "name": "contact",
             "printedName": "contact",
             "children": [
@@ -21195,7 +22475,7 @@
               "HasStorage",
               "AccessControl"
             ],
-            "fixedbinaryorder": 4,
+            "fixedbinaryorder": 6,
             "hasStorage": true
           },
           {
@@ -21220,13 +22500,88 @@
               "HasStorage",
               "AccessControl"
             ],
-            "fixedbinaryorder": 5,
+            "fixedbinaryorder": 7,
+            "hasStorage": true
+          },
+          {
+            "kind": "Var",
+            "name": "coldDrainState",
+            "printedName": "coldDrainState",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "ColdDrainState",
+                "printedName": "FBSimulatorControl.FBSimulatorDTUHIDTransport.ColdDrainState",
+                "usr": "s:18FBSimulatorControl0A15DTUHIDTransportC14ColdDrainState33_BEA208641EA3FC38343086C896F523BDLLO"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:18FBSimulatorControl0A15DTUHIDTransportC14coldDrainState33_BEA208641EA3FC38343086C896F523BDLLAC04ColdeF0AELLOvp",
+            "mangledName": "$s18FBSimulatorControl0A15DTUHIDTransportC14coldDrainState33_BEA208641EA3FC38343086C896F523BDLLAC04ColdeF0AELLOvp",
+            "moduleName": "FBSimulatorControl",
+            "isInternal": true,
+            "declAttributes": [
+              "HasInitialValue",
+              "HasStorage",
+              "AccessControl"
+            ],
+            "fixedbinaryorder": 8,
+            "hasStorage": true
+          },
+          {
+            "kind": "Var",
+            "name": "sendGeneration",
+            "printedName": "sendGeneration",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Int",
+                "printedName": "Swift.Int",
+                "usr": "s:Si"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:18FBSimulatorControl0A15DTUHIDTransportC14sendGeneration33_BEA208641EA3FC38343086C896F523BDLLSivp",
+            "mangledName": "$s18FBSimulatorControl0A15DTUHIDTransportC14sendGeneration33_BEA208641EA3FC38343086C896F523BDLLSivp",
+            "moduleName": "FBSimulatorControl",
+            "isInternal": true,
+            "declAttributes": [
+              "HasInitialValue",
+              "HasStorage",
+              "AccessControl"
+            ],
+            "fixedbinaryorder": 9,
+            "hasStorage": true
+          },
+          {
+            "kind": "Var",
+            "name": "drainedGeneration",
+            "printedName": "drainedGeneration",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Int",
+                "printedName": "Swift.Int",
+                "usr": "s:Si"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:18FBSimulatorControl0A15DTUHIDTransportC17drainedGeneration33_BEA208641EA3FC38343086C896F523BDLLSivp",
+            "mangledName": "$s18FBSimulatorControl0A15DTUHIDTransportC17drainedGeneration33_BEA208641EA3FC38343086C896F523BDLLSivp",
+            "moduleName": "FBSimulatorControl",
+            "isInternal": true,
+            "declAttributes": [
+              "HasInitialValue",
+              "HasStorage",
+              "AccessControl"
+            ],
+            "fixedbinaryorder": 10,
             "hasStorage": true
           },
           {
             "kind": "Function",
             "name": "dtuhid",
-            "printedName": "dtuhid(for:serviceName:onInvalidated:)",
+            "printedName": "dtuhid(for:serviceName:onInvalidated:usesReplyDrivenDelivery:)",
             "children": [
               {
                 "kind": "TypeNominal",
@@ -21264,11 +22619,72 @@
                   }
                 ],
                 "hasDefaultArg": true
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Bool",
+                "printedName": "Swift.Bool",
+                "hasDefaultArg": true,
+                "usr": "s:Sb"
               }
             ],
             "declKind": "Func",
-            "usr": "s:18FBSimulatorControl0A15DTUHIDTransportC6dtuhid3for11serviceName13onInvalidatedACSo0A0C_SSyyYbctKFZ",
-            "mangledName": "$s18FBSimulatorControl0A15DTUHIDTransportC6dtuhid3for11serviceName13onInvalidatedACSo0A0C_SSyyYbctKFZ",
+            "usr": "s:18FBSimulatorControl0A15DTUHIDTransportC6dtuhid3for11serviceName13onInvalidated23usesReplyDrivenDeliveryACSo0A0C_SSyyYbcSbtKFZ",
+            "mangledName": "$s18FBSimulatorControl0A15DTUHIDTransportC6dtuhid3for11serviceName13onInvalidated23usesReplyDrivenDeliveryACSo0A0C_SSyyYbcSbtKFZ",
+            "moduleName": "FBSimulatorControl",
+            "static": true,
+            "declAttributes": [
+              "Final",
+              "RawDocComment"
+            ],
+            "throwing": true,
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "reliableDTUHID",
+            "printedName": "reliableDTUHID(for:serviceName:onInvalidated:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "FBSimulatorDTUHIDTransport",
+                "printedName": "FBSimulatorControl.FBSimulatorDTUHIDTransport",
+                "usr": "s:18FBSimulatorControl0A15DTUHIDTransportC"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "FBSimulator",
+                "printedName": "FBSimulatorControl.FBSimulator",
+                "usr": "c:objc(cs)FBSimulator"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "String",
+                "printedName": "Swift.String",
+                "usr": "s:SS"
+              },
+              {
+                "kind": "TypeFunc",
+                "name": "Function",
+                "printedName": "() -> ()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  }
+                ],
+                "hasDefaultArg": true
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:18FBSimulatorControl0A15DTUHIDTransportC14reliableDTUHID3for11serviceName13onInvalidatedACSo0A0C_SSyyYbctYaKFZ",
+            "mangledName": "$s18FBSimulatorControl0A15DTUHIDTransportC14reliableDTUHID3for11serviceName13onInvalidatedACSo0A0C_SSyyYbctYaKFZ",
             "moduleName": "FBSimulatorControl",
             "static": true,
             "declAttributes": [
@@ -21281,7 +22697,7 @@
           {
             "kind": "Constructor",
             "name": "init",
-            "printedName": "init(connection:serviceName:mainScreenSize:mainScreenScale:)",
+            "printedName": "init(connection:serviceName:mainScreenSize:mainScreenScale:usesReplyDrivenDelivery:clock:)",
             "children": [
               {
                 "kind": "TypeNominal",
@@ -21313,13 +22729,45 @@
                 "name": "Float",
                 "printedName": "Swift.Float",
                 "usr": "s:Sf"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Bool",
+                "printedName": "Swift.Bool",
+                "hasDefaultArg": true,
+                "usr": "s:Sb"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "FBSimulatorDTUHIDDrainClock",
+                "printedName": "FBSimulatorControl.FBSimulatorDTUHIDDrainClock",
+                "hasDefaultArg": true,
+                "usr": "s:18FBSimulatorControl0A16DTUHIDDrainClockV"
               }
             ],
             "declKind": "Constructor",
-            "usr": "s:18FBSimulatorControl0A15DTUHIDTransportC10connection11serviceName14mainScreenSize0gH5ScaleACSo13OS_xpc_object_p_SSSo6CGSizeVSftcfc",
-            "mangledName": "$s18FBSimulatorControl0A15DTUHIDTransportC10connection11serviceName14mainScreenSize0gH5ScaleACSo13OS_xpc_object_p_SSSo6CGSizeVSftcfc",
+            "usr": "s:18FBSimulatorControl0A15DTUHIDTransportC10connection11serviceName14mainScreenSize0gH5Scale23usesReplyDrivenDelivery5clockACSo13OS_xpc_object_p_SSSo6CGSizeVSfSbAA0A16DTUHIDDrainClockVtcfc",
+            "mangledName": "$s18FBSimulatorControl0A15DTUHIDTransportC10connection11serviceName14mainScreenSize0gH5Scale23usesReplyDrivenDelivery5clockACSo13OS_xpc_object_p_SSSo6CGSizeVSfSbAA0A16DTUHIDDrainClockVtcfc",
             "moduleName": "FBSimulatorControl",
             "init_kind": "Designated"
+          },
+          {
+            "kind": "Function",
+            "name": "confirmLiveness",
+            "printedName": "confirmLiveness()",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:18FBSimulatorControl0A15DTUHIDTransportC15confirmLivenessyyYaKF",
+            "mangledName": "$s18FBSimulatorControl0A15DTUHIDTransportC15confirmLivenessyyYaKF",
+            "moduleName": "FBSimulatorControl",
+            "throwing": true,
+            "funcSelfKind": "NonMutating"
           },
           {
             "kind": "Function",
@@ -21563,7 +23011,7 @@
           {
             "kind": "Function",
             "name": "encode",
-            "printedName": "encode(messageType:payload:)",
+            "printedName": "encode(messageType:payload:isBarrier:)",
             "children": [
               {
                 "kind": "TypeNominal",
@@ -21581,11 +23029,18 @@
                 "kind": "TypeNominal",
                 "name": "GenericTypeParam",
                 "printedName": "τ_0_0"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Bool",
+                "printedName": "Swift.Bool",
+                "hasDefaultArg": true,
+                "usr": "s:Sb"
               }
             ],
             "declKind": "Func",
-            "usr": "s:18FBSimulatorControl0A15DTUHIDTransportC6encode11messageType7payloadSo13OS_xpc_object_pSS_xtKSERzlF",
-            "mangledName": "$s18FBSimulatorControl0A15DTUHIDTransportC6encode11messageType7payloadSo13OS_xpc_object_pSS_xtKSERzlF",
+            "usr": "s:18FBSimulatorControl0A15DTUHIDTransportC6encode11messageType7payload9isBarrierSo13OS_xpc_object_pSS_xSbtKSERzlF",
+            "mangledName": "$s18FBSimulatorControl0A15DTUHIDTransportC6encode11messageType7payload9isBarrierSo13OS_xpc_object_pSS_xSbtKSERzlF",
             "moduleName": "FBSimulatorControl",
             "genericSig": "<τ_0_0 where τ_0_0 : Swift.Encodable>",
             "declAttributes": [
@@ -25513,6 +26968,80 @@
           },
           {
             "kind": "Var",
+            "name": "dtuhidServiceUnavailable",
+            "printedName": "dtuhidServiceUnavailable",
+            "children": [
+              {
+                "kind": "TypeFunc",
+                "name": "Function",
+                "printedName": "(FBSimulatorControl.FBSimulatorHIDError.Type) -> (Swift.String, (any Swift.Error)?) -> FBSimulatorControl.FBSimulatorHIDError",
+                "children": [
+                  {
+                    "kind": "TypeFunc",
+                    "name": "Function",
+                    "printedName": "(Swift.String, (any Swift.Error)?) -> FBSimulatorControl.FBSimulatorHIDError",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "FBSimulatorHIDError",
+                        "printedName": "FBSimulatorControl.FBSimulatorHIDError",
+                        "usr": "s:18FBSimulatorControl0A8HIDErrorO"
+                      },
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Tuple",
+                        "printedName": "(name: Swift.String, underlying: (any Swift.Error)?)",
+                        "children": [
+                          {
+                            "kind": "TypeNominal",
+                            "name": "String",
+                            "printedName": "Swift.String",
+                            "usr": "s:SS"
+                          },
+                          {
+                            "kind": "TypeNominal",
+                            "name": "Optional",
+                            "printedName": "(any Swift.Error)?",
+                            "children": [
+                              {
+                                "kind": "TypeNominal",
+                                "name": "Error",
+                                "printedName": "any Swift.Error",
+                                "usr": "s:s5ErrorP"
+                              }
+                            ],
+                            "usr": "s:Sq"
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Metatype",
+                    "printedName": "FBSimulatorControl.FBSimulatorHIDError.Type",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "FBSimulatorHIDError",
+                        "printedName": "FBSimulatorControl.FBSimulatorHIDError",
+                        "usr": "s:18FBSimulatorControl0A8HIDErrorO"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ],
+            "declKind": "EnumElement",
+            "usr": "s:18FBSimulatorControl0A8HIDErrorO24dtuhidServiceUnavailableyACSS_s5Error_pSgtcACmF",
+            "mangledName": "$s18FBSimulatorControl0A8HIDErrorO24dtuhidServiceUnavailableyACSS_s5Error_pSgtcACmF",
+            "moduleName": "FBSimulatorControl",
+            "declAttributes": [
+              "RawDocComment"
+            ]
+          },
+          {
+            "kind": "Var",
             "name": "dtuhidXPCSymbolsUnavailable",
             "printedName": "dtuhidXPCSymbolsUnavailable",
             "children": [
@@ -25586,6 +27115,80 @@
             "declKind": "EnumElement",
             "usr": "s:18FBSimulatorControl0A8HIDErrorO22dtuhidConnectionFailedyA2CmF",
             "mangledName": "$s18FBSimulatorControl0A8HIDErrorO22dtuhidConnectionFailedyA2CmF",
+            "moduleName": "FBSimulatorControl",
+            "declAttributes": [
+              "RawDocComment"
+            ]
+          },
+          {
+            "kind": "Var",
+            "name": "dtuhidUnresponsive",
+            "printedName": "dtuhidUnresponsive",
+            "children": [
+              {
+                "kind": "TypeFunc",
+                "name": "Function",
+                "printedName": "(FBSimulatorControl.FBSimulatorHIDError.Type) -> (Swift.Int, (any Swift.Error)?) -> FBSimulatorControl.FBSimulatorHIDError",
+                "children": [
+                  {
+                    "kind": "TypeFunc",
+                    "name": "Function",
+                    "printedName": "(Swift.Int, (any Swift.Error)?) -> FBSimulatorControl.FBSimulatorHIDError",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "FBSimulatorHIDError",
+                        "printedName": "FBSimulatorControl.FBSimulatorHIDError",
+                        "usr": "s:18FBSimulatorControl0A8HIDErrorO"
+                      },
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Tuple",
+                        "printedName": "(attempts: Swift.Int, underlying: (any Swift.Error)?)",
+                        "children": [
+                          {
+                            "kind": "TypeNominal",
+                            "name": "Int",
+                            "printedName": "Swift.Int",
+                            "usr": "s:Si"
+                          },
+                          {
+                            "kind": "TypeNominal",
+                            "name": "Optional",
+                            "printedName": "(any Swift.Error)?",
+                            "children": [
+                              {
+                                "kind": "TypeNominal",
+                                "name": "Error",
+                                "printedName": "any Swift.Error",
+                                "usr": "s:s5ErrorP"
+                              }
+                            ],
+                            "usr": "s:Sq"
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Metatype",
+                    "printedName": "FBSimulatorControl.FBSimulatorHIDError.Type",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "FBSimulatorHIDError",
+                        "printedName": "FBSimulatorControl.FBSimulatorHIDError",
+                        "usr": "s:18FBSimulatorControl0A8HIDErrorO"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ],
+            "declKind": "EnumElement",
+            "usr": "s:18FBSimulatorControl0A8HIDErrorO18dtuhidUnresponsiveyACSi_s5Error_pSgtcACmF",
+            "mangledName": "$s18FBSimulatorControl0A8HIDErrorO18dtuhidUnresponsiveyACSi_s5Error_pSgtcACmF",
             "moduleName": "FBSimulatorControl",
             "declAttributes": [
               "RawDocComment"
@@ -25683,6 +27286,45 @@
                 "usr": "s:18FBSimulatorControl0A8HIDErrorO16errorDescriptionSSSgvg",
                 "mangledName": "$s18FBSimulatorControl0A8HIDErrorO16errorDescriptionSSSgvg",
                 "moduleName": "FBSimulatorControl",
+                "accessorKind": "get"
+              }
+            ]
+          },
+          {
+            "kind": "Var",
+            "name": "isTransientDTUHIDFailure",
+            "printedName": "isTransientDTUHIDFailure",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Bool",
+                "printedName": "Swift.Bool",
+                "usr": "s:Sb"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:18FBSimulatorControl0A8HIDErrorO24isTransientDTUHIDFailureSbvp",
+            "mangledName": "$s18FBSimulatorControl0A8HIDErrorO24isTransientDTUHIDFailureSbvp",
+            "moduleName": "FBSimulatorControl",
+            "isFromExtension": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Bool",
+                    "printedName": "Swift.Bool",
+                    "usr": "s:Sb"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:18FBSimulatorControl0A8HIDErrorO24isTransientDTUHIDFailureSbvg",
+                "mangledName": "$s18FBSimulatorControl0A8HIDErrorO24isTransientDTUHIDFailureSbvg",
+                "moduleName": "FBSimulatorControl",
+                "isFromExtension": true,
                 "accessorKind": "get"
               }
             ]
@@ -68245,31 +69887,115 @@
     },
     {
       "filePath": "\/tmp\/idb\/FBSimulatorControl\/HID\/FBSimulatorDTUHIDTransport.swift",
+      "kind": "IntegerLiteral",
+      "offset": 492,
+      "length": 2,
+      "value": "80"
+    },
+    {
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/HID\/FBSimulatorDTUHIDTransport.swift",
+      "kind": "IntegerLiteral",
+      "offset": 543,
+      "length": 3,
+      "value": "200"
+    },
+    {
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/HID\/FBSimulatorDTUHIDTransport.swift",
+      "kind": "IntegerLiteral",
+      "offset": 605,
+      "length": 1,
+      "value": "2"
+    },
+    {
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/HID\/FBSimulatorDTUHIDTransport.swift",
+      "kind": "IntegerLiteral",
+      "offset": 654,
+      "length": 1,
+      "value": "1"
+    },
+    {
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/HID\/FBSimulatorDTUHIDTransport.swift",
+      "kind": "IntegerLiteral",
+      "offset": 717,
+      "length": 1,
+      "value": "4"
+    },
+    {
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/HID\/FBSimulatorDTUHIDTransport.swift",
+      "kind": "IntegerLiteral",
+      "offset": 773,
+      "length": 1,
+      "value": "4"
+    },
+    {
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/HID\/FBSimulatorDTUHIDTransport.swift",
+      "kind": "IntegerLiteral",
+      "offset": 808,
+      "length": 1,
+      "value": "5"
+    },
+    {
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/HID\/FBSimulatorDTUHIDTransport.swift",
       "kind": "BooleanLiteral",
-      "offset": 670,
+      "offset": 4445,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/tmp\/idb\/FBSimulatorControl\/HID\/FBSimulatorDTUHIDTransport.swift",
       "kind": "StringLiteral",
-      "offset": 2131,
+      "offset": 5906,
       "length": 55,
       "value": "\"com.apple.coredevice.feature.remote.hid.vendordefined\""
     },
     {
       "filePath": "\/tmp\/idb\/FBSimulatorControl\/HID\/FBSimulatorDTUHIDTransport.swift",
       "kind": "StringLiteral",
-      "offset": 2223,
+      "offset": 5998,
       "length": 51,
       "value": "\"com.apple.coredevice.feature.remote.hid.digitizer\""
     },
     {
       "filePath": "\/tmp\/idb\/FBSimulatorControl\/HID\/FBSimulatorDTUHIDTransport.swift",
       "kind": "IntegerLiteral",
-      "offset": 3383,
+      "offset": 7175,
       "length": 11,
       "value": "200000000"
+    },
+    {
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/HID\/FBSimulatorDTUHIDTransport.swift",
+      "kind": "IntegerLiteral",
+      "offset": 7880,
+      "length": 1,
+      "value": "0"
+    },
+    {
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/HID\/FBSimulatorDTUHIDTransport.swift",
+      "kind": "IntegerLiteral",
+      "offset": 7916,
+      "length": 1,
+      "value": "0"
+    },
+    {
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/HID\/FBSimulatorDTUHIDTransport.swift",
+      "kind": "BooleanLiteral",
+      "offset": 8601,
+      "length": 5,
+      "value": "false"
+    },
+    {
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/HID\/FBSimulatorDTUHIDTransport.swift",
+      "kind": "BooleanLiteral",
+      "offset": 12190,
+      "length": 5,
+      "value": "false"
+    },
+    {
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/HID\/FBSimulatorDTUHIDTransport.swift",
+      "kind": "BooleanLiteral",
+      "offset": 17167,
+      "length": 5,
+      "value": "false"
     },
     {
       "filePath": "\/tmp\/idb\/FBSimulatorControl\/Utility\/FBSimulatorError.swift",
