@@ -79,56 +79,56 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			TOY/mAOYLU46WlPdnXtd/G0L4iINUfGwTnzfrDrZ+FE=
+			Yb/4uERv2Mpa0SajD4jIb5Vj9F/mp6WrU/X1kEOSTCY=
 			</data>
 		</dict>
 		<key>Modules/FBSimulatorControl.swiftmodule/arm64-apple-macos.private.swiftinterface</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			LZ6/U5hbYRCen7aa+2b5GQaacpFCZvudQrHEA8qDci4=
+			PeixB4qsUfE/a93orJc6JThzpv8L48cWRqEe+1RyM90=
 			</data>
 		</dict>
 		<key>Modules/FBSimulatorControl.swiftmodule/arm64-apple-macos.swiftdoc</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			YmjR0niVVnTNszudezAL6vy4qS5jigejOis1ZkMTjOM=
+			RpZBebDTSzVAhhrhpLx73JywJQkEiD+GApzWizXcvhQ=
 			</data>
 		</dict>
 		<key>Modules/FBSimulatorControl.swiftmodule/arm64-apple-macos.swiftinterface</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			LZ6/U5hbYRCen7aa+2b5GQaacpFCZvudQrHEA8qDci4=
+			PeixB4qsUfE/a93orJc6JThzpv8L48cWRqEe+1RyM90=
 			</data>
 		</dict>
 		<key>Modules/FBSimulatorControl.swiftmodule/x86_64-apple-macos.abi.json</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			TOY/mAOYLU46WlPdnXtd/G0L4iINUfGwTnzfrDrZ+FE=
+			Yb/4uERv2Mpa0SajD4jIb5Vj9F/mp6WrU/X1kEOSTCY=
 			</data>
 		</dict>
 		<key>Modules/FBSimulatorControl.swiftmodule/x86_64-apple-macos.private.swiftinterface</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			W2CZYVFVn7sF/z2EEgunGpvCfQ7vuGHAklDHIvKuaPE=
+			fRWBCTQj1xqbBYA/B2NnTpx+WTSfxvedM4K+rjoFZdc=
 			</data>
 		</dict>
 		<key>Modules/FBSimulatorControl.swiftmodule/x86_64-apple-macos.swiftdoc</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			Lv3PpLvVaoRM5HHlquDw+YLqcLymMsek2t3hlFsElq4=
+			XzzffmcSA1J/lYiAhlhEjZ/n55/zbk+6iCyKbkooWfQ=
 			</data>
 		</dict>
 		<key>Modules/FBSimulatorControl.swiftmodule/x86_64-apple-macos.swiftinterface</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			W2CZYVFVn7sF/z2EEgunGpvCfQ7vuGHAklDHIvKuaPE=
+			fRWBCTQj1xqbBYA/B2NnTpx+WTSfxvedM4K+rjoFZdc=
 			</data>
 		</dict>
 		<key>Modules/module.modulemap</key>

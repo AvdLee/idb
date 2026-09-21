@@ -19708,6 +19708,918 @@
       },
       {
         "kind": "Import",
+        "name": "CoreSimulator",
+        "printedName": "CoreSimulator",
+        "declKind": "Import",
+        "moduleName": "FBSimulatorControl",
+        "declAttributes": [
+          "ImplementationOnly",
+          "RawDocComment"
+        ]
+      },
+      {
+        "kind": "Import",
+        "name": "Darwin",
+        "printedName": "Darwin",
+        "declKind": "Import",
+        "moduleName": "FBSimulatorControl"
+      },
+      {
+        "kind": "Import",
+        "name": "Foundation",
+        "printedName": "Foundation",
+        "declKind": "Import",
+        "moduleName": "FBSimulatorControl"
+      },
+      {
+        "kind": "Import",
+        "name": "XPC",
+        "printedName": "XPC",
+        "declKind": "Import",
+        "moduleName": "FBSimulatorControl"
+      },
+      {
+        "kind": "TypeDecl",
+        "name": "FBSimulatorCoreDeviceError",
+        "printedName": "FBSimulatorCoreDeviceError",
+        "children": [
+          {
+            "kind": "Var",
+            "name": "unavailable",
+            "printedName": "unavailable",
+            "children": [
+              {
+                "kind": "TypeFunc",
+                "name": "Function",
+                "printedName": "(FBSimulatorControl.FBSimulatorCoreDeviceError.Type) -> (Swift.String) -> FBSimulatorControl.FBSimulatorCoreDeviceError",
+                "children": [
+                  {
+                    "kind": "TypeFunc",
+                    "name": "Function",
+                    "printedName": "(Swift.String) -> FBSimulatorControl.FBSimulatorCoreDeviceError",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "FBSimulatorCoreDeviceError",
+                        "printedName": "FBSimulatorControl.FBSimulatorCoreDeviceError",
+                        "usr": "s:18FBSimulatorControl0A15CoreDeviceErrorO"
+                      },
+                      {
+                        "kind": "TypeNominal",
+                        "name": "String",
+                        "printedName": "Swift.String",
+                        "usr": "s:SS"
+                      }
+                    ]
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Metatype",
+                    "printedName": "FBSimulatorControl.FBSimulatorCoreDeviceError.Type",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "FBSimulatorCoreDeviceError",
+                        "printedName": "FBSimulatorControl.FBSimulatorCoreDeviceError",
+                        "usr": "s:18FBSimulatorControl0A15CoreDeviceErrorO"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ],
+            "declKind": "EnumElement",
+            "usr": "s:18FBSimulatorControl0A15CoreDeviceErrorO11unavailableyACSScACmF",
+            "mangledName": "$s18FBSimulatorControl0A15CoreDeviceErrorO11unavailableyACSScACmF",
+            "moduleName": "FBSimulatorControl",
+            "fixedbinaryorder": 0
+          },
+          {
+            "kind": "Var",
+            "name": "errorDescription",
+            "printedName": "errorDescription",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "Swift.String?",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "String",
+                    "printedName": "Swift.String",
+                    "usr": "s:SS"
+                  }
+                ],
+                "usr": "s:Sq"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:18FBSimulatorControl0A15CoreDeviceErrorO16errorDescriptionSSSgvp",
+            "mangledName": "$s18FBSimulatorControl0A15CoreDeviceErrorO16errorDescriptionSSSgvp",
+            "moduleName": "FBSimulatorControl",
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Optional",
+                    "printedName": "Swift.String?",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "String",
+                        "printedName": "Swift.String",
+                        "usr": "s:SS"
+                      }
+                    ],
+                    "usr": "s:Sq"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:18FBSimulatorControl0A15CoreDeviceErrorO16errorDescriptionSSSgvg",
+                "mangledName": "$s18FBSimulatorControl0A15CoreDeviceErrorO16errorDescriptionSSSgvg",
+                "moduleName": "FBSimulatorControl",
+                "accessorKind": "get"
+              }
+            ]
+          }
+        ],
+        "declKind": "Enum",
+        "usr": "s:18FBSimulatorControl0A15CoreDeviceErrorO",
+        "mangledName": "$s18FBSimulatorControl0A15CoreDeviceErrorO",
+        "moduleName": "FBSimulatorControl",
+        "isEnumExhaustive": true,
+        "conformances": [
+          {
+            "kind": "Conformance",
+            "name": "Copyable",
+            "printedName": "Copyable",
+            "usr": "s:s8CopyableP",
+            "mangledName": "$ss8CopyableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Error",
+            "printedName": "Error",
+            "usr": "s:s5ErrorP",
+            "mangledName": "$ss5ErrorP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "LocalizedError",
+            "printedName": "LocalizedError",
+            "usr": "s:10Foundation14LocalizedErrorP",
+            "mangledName": "$s10Foundation14LocalizedErrorP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Escapable",
+            "printedName": "Escapable",
+            "usr": "s:s9EscapableP",
+            "mangledName": "$ss9EscapableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Sendable",
+            "printedName": "Sendable",
+            "usr": "s:s8SendableP",
+            "mangledName": "$ss8SendableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "SendableMetatype",
+            "printedName": "SendableMetatype",
+            "usr": "s:s16SendableMetatypeP",
+            "mangledName": "$ss16SendableMetatypeP"
+          }
+        ]
+      },
+      {
+        "kind": "TypeDecl",
+        "name": "FBSimulatorCoreDevice",
+        "printedName": "FBSimulatorCoreDevice",
+        "children": [
+          {
+            "kind": "Var",
+            "name": "cancellationKey",
+            "printedName": "cancellationKey",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "String",
+                "printedName": "Swift.String",
+                "usr": "s:SS"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:18FBSimulatorControl0A10CoreDeviceO15cancellationKeySSvpZ",
+            "mangledName": "$s18FBSimulatorControl0A10CoreDeviceO15cancellationKeySSvpZ",
+            "moduleName": "FBSimulatorControl",
+            "static": true,
+            "declAttributes": [
+              "HasInitialValue",
+              "HasStorage"
+            ],
+            "isLet": true,
+            "hasStorage": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "String",
+                    "printedName": "Swift.String",
+                    "usr": "s:SS"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:18FBSimulatorControl0A10CoreDeviceO15cancellationKeySSvgZ",
+                "mangledName": "$s18FBSimulatorControl0A10CoreDeviceO15cancellationKeySSvgZ",
+                "moduleName": "FBSimulatorControl",
+                "static": true,
+                "implicit": true,
+                "declAttributes": [
+                  "Transparent"
+                ],
+                "accessorKind": "get"
+              }
+            ]
+          },
+          {
+            "kind": "Function",
+            "name": "installedVersion",
+            "printedName": "installedVersion()",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "String",
+                "printedName": "Swift.String",
+                "usr": "s:SS"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:18FBSimulatorControl0A10CoreDeviceO16installedVersionSSyKFZ",
+            "mangledName": "$s18FBSimulatorControl0A10CoreDeviceO16installedVersionSSyKFZ",
+            "moduleName": "FBSimulatorControl",
+            "static": true,
+            "throwing": true,
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "request",
+            "printedName": "request(action:deviceID:version:input:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "OS_xpc_object",
+                "printedName": "any XPC.OS_xpc_object",
+                "usr": "c:objc(pl)OS_xpc_object"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "String",
+                "printedName": "Swift.String",
+                "usr": "s:SS"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "String",
+                "printedName": "Swift.String",
+                "usr": "s:SS"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "String",
+                "printedName": "Swift.String",
+                "usr": "s:SS"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "OS_xpc_object",
+                "printedName": "any XPC.OS_xpc_object",
+                "usr": "c:objc(pl)OS_xpc_object"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:18FBSimulatorControl0A10CoreDeviceO7request6action8deviceID7version5inputSo13OS_xpc_object_pSS_S2SSoAI_ptKFZ",
+            "mangledName": "$s18FBSimulatorControl0A10CoreDeviceO7request6action8deviceID7version5inputSo13OS_xpc_object_pSS_S2SSoAI_ptKFZ",
+            "moduleName": "FBSimulatorControl",
+            "static": true,
+            "throwing": true,
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "dictionary",
+            "printedName": "dictionary(_:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "OS_xpc_object",
+                "printedName": "any XPC.OS_xpc_object",
+                "usr": "c:objc(pl)OS_xpc_object"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Dictionary",
+                "printedName": "[Swift.String : any XPC.OS_xpc_object]",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "String",
+                    "printedName": "Swift.String",
+                    "usr": "s:SS"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "OS_xpc_object",
+                    "printedName": "any XPC.OS_xpc_object",
+                    "usr": "c:objc(pl)OS_xpc_object"
+                  }
+                ],
+                "usr": "s:SD"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:18FBSimulatorControl0A10CoreDeviceO10dictionaryySo13OS_xpc_object_pSDySSSoAE_pGFZ",
+            "mangledName": "$s18FBSimulatorControl0A10CoreDeviceO10dictionaryySo13OS_xpc_object_pSDySSSoAE_pGFZ",
+            "moduleName": "FBSimulatorControl",
+            "static": true,
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "array",
+            "printedName": "array(_:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "OS_xpc_object",
+                "printedName": "any XPC.OS_xpc_object",
+                "usr": "c:objc(pl)OS_xpc_object"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Array",
+                "printedName": "[any XPC.OS_xpc_object]",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "OS_xpc_object",
+                    "printedName": "any XPC.OS_xpc_object",
+                    "usr": "c:objc(pl)OS_xpc_object"
+                  }
+                ],
+                "usr": "s:Sa"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:18FBSimulatorControl0A10CoreDeviceO5arrayySo13OS_xpc_object_pSaySoAE_pGFZ",
+            "mangledName": "$s18FBSimulatorControl0A10CoreDeviceO5arrayySo13OS_xpc_object_pSaySoAE_pGFZ",
+            "moduleName": "FBSimulatorControl",
+            "static": true,
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "connect",
+            "printedName": "connect(simulator:service:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "OS_xpc_object",
+                "printedName": "any XPC.OS_xpc_object",
+                "usr": "c:objc(pl)OS_xpc_object"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "FBSimulator",
+                "printedName": "FBSimulatorControl.FBSimulator",
+                "usr": "c:objc(cs)FBSimulator"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "String",
+                "printedName": "Swift.String",
+                "usr": "s:SS"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:18FBSimulatorControl0A10CoreDeviceO7connect9simulator7serviceSo13OS_xpc_object_pSo0A0C_SStKFZ",
+            "mangledName": "$s18FBSimulatorControl0A10CoreDeviceO7connect9simulator7serviceSo13OS_xpc_object_pSo0A0C_SStKFZ",
+            "moduleName": "FBSimulatorControl",
+            "static": true,
+            "throwing": true,
+            "funcSelfKind": "NonMutating"
+          }
+        ],
+        "declKind": "Enum",
+        "usr": "s:18FBSimulatorControl0A10CoreDeviceO",
+        "mangledName": "$s18FBSimulatorControl0A10CoreDeviceO",
+        "moduleName": "FBSimulatorControl",
+        "isEnumExhaustive": true,
+        "conformances": [
+          {
+            "kind": "Conformance",
+            "name": "Copyable",
+            "printedName": "Copyable",
+            "usr": "s:s8CopyableP",
+            "mangledName": "$ss8CopyableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Escapable",
+            "printedName": "Escapable",
+            "usr": "s:s9EscapableP",
+            "mangledName": "$ss9EscapableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Sendable",
+            "printedName": "Sendable",
+            "usr": "s:s8SendableP",
+            "mangledName": "$ss8SendableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "BitwiseCopyable",
+            "printedName": "BitwiseCopyable",
+            "usr": "s:s15BitwiseCopyableP",
+            "mangledName": "$ss15BitwiseCopyableP"
+          }
+        ]
+      },
+      {
+        "kind": "Import",
+        "name": "Foundation",
+        "printedName": "Foundation",
+        "declKind": "Import",
+        "moduleName": "FBSimulatorControl",
+        "declAttributes": [
+          "RawDocComment"
+        ]
+      },
+      {
+        "kind": "Import",
+        "name": "XPC",
+        "printedName": "XPC",
+        "declKind": "Import",
+        "moduleName": "FBSimulatorControl",
+        "declAttributes": [
+          "Preconcurrency"
+        ]
+      },
+      {
+        "kind": "TypeDecl",
+        "name": "FBSimulatorCoreDeviceTransport",
+        "printedName": "FBSimulatorCoreDeviceTransport",
+        "children": [
+          {
+            "kind": "Function",
+            "name": "start",
+            "printedName": "start(request:event:reply:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "OS_xpc_object",
+                "printedName": "any XPC.OS_xpc_object",
+                "usr": "c:objc(pl)OS_xpc_object"
+              },
+              {
+                "kind": "TypeFunc",
+                "name": "Function",
+                "printedName": "(any XPC.OS_xpc_object) -> ()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "OS_xpc_object",
+                    "printedName": "any XPC.OS_xpc_object",
+                    "usr": "c:objc(pl)OS_xpc_object"
+                  }
+                ]
+              },
+              {
+                "kind": "TypeFunc",
+                "name": "Function",
+                "printedName": "(any XPC.OS_xpc_object) -> ()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "OS_xpc_object",
+                    "printedName": "any XPC.OS_xpc_object",
+                    "usr": "c:objc(pl)OS_xpc_object"
+                  }
+                ]
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:18FBSimulatorControl0A19CoreDeviceTransportP5start7request5event5replyySo13OS_xpc_object_p_ySoAH_pYbcySoAH_pYbctF",
+            "mangledName": "$s18FBSimulatorControl0A19CoreDeviceTransportP5start7request5event5replyySo13OS_xpc_object_p_ySoAH_pYbcySoAH_pYbctF",
+            "moduleName": "FBSimulatorControl",
+            "genericSig": "<τ_0_0 where τ_0_0 : FBSimulatorControl.FBSimulatorCoreDeviceTransport>",
+            "sugared_genericSig": "<Self where Self : FBSimulatorControl.FBSimulatorCoreDeviceTransport>",
+            "protocolReq": true,
+            "reqNewWitnessTableEntry": true,
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "acknowledge",
+            "printedName": "acknowledge(_:cancelling:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "OS_xpc_object",
+                "printedName": "any XPC.OS_xpc_object",
+                "usr": "c:objc(pl)OS_xpc_object"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Bool",
+                "printedName": "Swift.Bool",
+                "usr": "s:Sb"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:18FBSimulatorControl0A19CoreDeviceTransportP11acknowledge_10cancellingySo13OS_xpc_object_p_SbtF",
+            "mangledName": "$s18FBSimulatorControl0A19CoreDeviceTransportP11acknowledge_10cancellingySo13OS_xpc_object_p_SbtF",
+            "moduleName": "FBSimulatorControl",
+            "genericSig": "<τ_0_0 where τ_0_0 : FBSimulatorControl.FBSimulatorCoreDeviceTransport>",
+            "sugared_genericSig": "<Self where Self : FBSimulatorControl.FBSimulatorCoreDeviceTransport>",
+            "protocolReq": true,
+            "reqNewWitnessTableEntry": true,
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "cancel",
+            "printedName": "cancel()",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:18FBSimulatorControl0A19CoreDeviceTransportP6cancelyyF",
+            "mangledName": "$s18FBSimulatorControl0A19CoreDeviceTransportP6cancelyyF",
+            "moduleName": "FBSimulatorControl",
+            "genericSig": "<τ_0_0 where τ_0_0 : FBSimulatorControl.FBSimulatorCoreDeviceTransport>",
+            "sugared_genericSig": "<Self where Self : FBSimulatorControl.FBSimulatorCoreDeviceTransport>",
+            "protocolReq": true,
+            "reqNewWitnessTableEntry": true,
+            "funcSelfKind": "NonMutating"
+          }
+        ],
+        "declKind": "Protocol",
+        "usr": "s:18FBSimulatorControl0A19CoreDeviceTransportP",
+        "mangledName": "$s18FBSimulatorControl0A19CoreDeviceTransportP",
+        "moduleName": "FBSimulatorControl",
+        "genericSig": "<τ_0_0 : Swift.Sendable>",
+        "sugared_genericSig": "<Self : Swift.Sendable>",
+        "conformances": [
+          {
+            "kind": "Conformance",
+            "name": "Escapable",
+            "printedName": "Escapable",
+            "usr": "s:s9EscapableP",
+            "mangledName": "$ss9EscapableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Copyable",
+            "printedName": "Copyable",
+            "usr": "s:s8CopyableP",
+            "mangledName": "$ss8CopyableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Sendable",
+            "printedName": "Sendable",
+            "usr": "s:s8SendableP",
+            "mangledName": "$ss8SendableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "SendableMetatype",
+            "printedName": "SendableMetatype",
+            "usr": "s:s16SendableMetatypeP",
+            "mangledName": "$ss16SendableMetatypeP"
+          }
+        ]
+      },
+      {
+        "kind": "TypeDecl",
+        "name": "FBSimulatorCoreDeviceXPCTransport",
+        "printedName": "FBSimulatorCoreDeviceXPCTransport",
+        "children": [
+          {
+            "kind": "Var",
+            "name": "connection",
+            "printedName": "connection",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "OS_xpc_object",
+                "printedName": "any XPC.OS_xpc_object",
+                "usr": "c:objc(pl)OS_xpc_object"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:18FBSimulatorControl0A22CoreDeviceXPCTransportC10connection33_D6BB5ABE8B2C7710A45C0C60D51FFFE1LLSo13OS_xpc_object_pvp",
+            "mangledName": "$s18FBSimulatorControl0A22CoreDeviceXPCTransportC10connection33_D6BB5ABE8B2C7710A45C0C60D51FFFE1LLSo13OS_xpc_object_pvp",
+            "moduleName": "FBSimulatorControl",
+            "isInternal": true,
+            "declAttributes": [
+              "Final",
+              "HasStorage",
+              "AccessControl"
+            ],
+            "fixedbinaryorder": 0,
+            "isLet": true,
+            "hasStorage": true
+          },
+          {
+            "kind": "Var",
+            "name": "queue",
+            "printedName": "queue",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "DispatchQueue",
+                "printedName": "Dispatch.DispatchQueue",
+                "usr": "c:objc(cs)OS_dispatch_queue"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:18FBSimulatorControl0A22CoreDeviceXPCTransportC5queue33_D6BB5ABE8B2C7710A45C0C60D51FFFE1LLSo012OS_dispatch_F0Cvp",
+            "mangledName": "$s18FBSimulatorControl0A22CoreDeviceXPCTransportC5queue33_D6BB5ABE8B2C7710A45C0C60D51FFFE1LLSo012OS_dispatch_F0Cvp",
+            "moduleName": "FBSimulatorControl",
+            "isInternal": true,
+            "declAttributes": [
+              "Final",
+              "HasStorage",
+              "AccessControl"
+            ],
+            "fixedbinaryorder": 1,
+            "isLet": true,
+            "hasStorage": true
+          },
+          {
+            "kind": "Var",
+            "name": "started",
+            "printedName": "started",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Bool",
+                "printedName": "Swift.Bool",
+                "usr": "s:Sb"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:18FBSimulatorControl0A22CoreDeviceXPCTransportC7started33_D6BB5ABE8B2C7710A45C0C60D51FFFE1LLSbvp",
+            "mangledName": "$s18FBSimulatorControl0A22CoreDeviceXPCTransportC7started33_D6BB5ABE8B2C7710A45C0C60D51FFFE1LLSbvp",
+            "moduleName": "FBSimulatorControl",
+            "isInternal": true,
+            "declAttributes": [
+              "HasInitialValue",
+              "Final",
+              "HasStorage",
+              "AccessControl"
+            ],
+            "fixedbinaryorder": 2,
+            "hasStorage": true
+          },
+          {
+            "kind": "Constructor",
+            "name": "init",
+            "printedName": "init(simulator:service:queue:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "FBSimulatorCoreDeviceXPCTransport",
+                "printedName": "FBSimulatorControl.FBSimulatorCoreDeviceXPCTransport",
+                "usr": "s:18FBSimulatorControl0A22CoreDeviceXPCTransportC"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "FBSimulator",
+                "printedName": "FBSimulatorControl.FBSimulator",
+                "usr": "c:objc(cs)FBSimulator"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "String",
+                "printedName": "Swift.String",
+                "usr": "s:SS"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "DispatchQueue",
+                "printedName": "Dispatch.DispatchQueue",
+                "usr": "c:objc(cs)OS_dispatch_queue"
+              }
+            ],
+            "declKind": "Constructor",
+            "usr": "s:18FBSimulatorControl0A22CoreDeviceXPCTransportC9simulator7service5queueACSo0A0C_SSSo012OS_dispatch_H0CtKcfc",
+            "mangledName": "$s18FBSimulatorControl0A22CoreDeviceXPCTransportC9simulator7service5queueACSo0A0C_SSSo012OS_dispatch_H0CtKcfc",
+            "moduleName": "FBSimulatorControl",
+            "throwing": true,
+            "init_kind": "Designated"
+          },
+          {
+            "kind": "Function",
+            "name": "start",
+            "printedName": "start(request:event:reply:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "OS_xpc_object",
+                "printedName": "any XPC.OS_xpc_object",
+                "usr": "c:objc(pl)OS_xpc_object"
+              },
+              {
+                "kind": "TypeFunc",
+                "name": "Function",
+                "printedName": "(any XPC.OS_xpc_object) -> ()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "OS_xpc_object",
+                    "printedName": "any XPC.OS_xpc_object",
+                    "usr": "c:objc(pl)OS_xpc_object"
+                  }
+                ]
+              },
+              {
+                "kind": "TypeFunc",
+                "name": "Function",
+                "printedName": "(any XPC.OS_xpc_object) -> ()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "OS_xpc_object",
+                    "printedName": "any XPC.OS_xpc_object",
+                    "usr": "c:objc(pl)OS_xpc_object"
+                  }
+                ]
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:18FBSimulatorControl0A22CoreDeviceXPCTransportC5start7request5event5replyySo13OS_xpc_object_p_ySoAH_pYbcySoAH_pYbctF",
+            "mangledName": "$s18FBSimulatorControl0A22CoreDeviceXPCTransportC5start7request5event5replyySo13OS_xpc_object_p_ySoAH_pYbcySoAH_pYbctF",
+            "moduleName": "FBSimulatorControl",
+            "declAttributes": [
+              "Final"
+            ],
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "acknowledge",
+            "printedName": "acknowledge(_:cancelling:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "OS_xpc_object",
+                "printedName": "any XPC.OS_xpc_object",
+                "usr": "c:objc(pl)OS_xpc_object"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Bool",
+                "printedName": "Swift.Bool",
+                "usr": "s:Sb"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:18FBSimulatorControl0A22CoreDeviceXPCTransportC11acknowledge_10cancellingySo13OS_xpc_object_p_SbtF",
+            "mangledName": "$s18FBSimulatorControl0A22CoreDeviceXPCTransportC11acknowledge_10cancellingySo13OS_xpc_object_p_SbtF",
+            "moduleName": "FBSimulatorControl",
+            "declAttributes": [
+              "Final"
+            ],
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "cancel",
+            "printedName": "cancel()",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:18FBSimulatorControl0A22CoreDeviceXPCTransportC6cancelyyF",
+            "mangledName": "$s18FBSimulatorControl0A22CoreDeviceXPCTransportC6cancelyyF",
+            "moduleName": "FBSimulatorControl",
+            "declAttributes": [
+              "Final"
+            ],
+            "funcSelfKind": "NonMutating"
+          }
+        ],
+        "declKind": "Class",
+        "usr": "s:18FBSimulatorControl0A22CoreDeviceXPCTransportC",
+        "mangledName": "$s18FBSimulatorControl0A22CoreDeviceXPCTransportC",
+        "moduleName": "FBSimulatorControl",
+        "declAttributes": [
+          "Final",
+          "RawDocComment"
+        ],
+        "conformances": [
+          {
+            "kind": "Conformance",
+            "name": "FBSimulatorCoreDeviceTransport",
+            "printedName": "FBSimulatorCoreDeviceTransport",
+            "usr": "s:18FBSimulatorControl0A19CoreDeviceTransportP",
+            "mangledName": "$s18FBSimulatorControl0A19CoreDeviceTransportP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Copyable",
+            "printedName": "Copyable",
+            "usr": "s:s8CopyableP",
+            "mangledName": "$ss8CopyableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Escapable",
+            "printedName": "Escapable",
+            "usr": "s:s9EscapableP",
+            "mangledName": "$ss9EscapableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Sendable",
+            "printedName": "Sendable",
+            "usr": "s:s8SendableP",
+            "mangledName": "$ss8SendableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "SendableMetatype",
+            "printedName": "SendableMetatype",
+            "usr": "s:s16SendableMetatypeP",
+            "mangledName": "$ss16SendableMetatypeP"
+          }
+        ]
+      },
+      {
+        "kind": "Import",
         "name": "FBControlCore",
         "printedName": "FBControlCore",
         "declKind": "Import",
@@ -20055,6 +20967,57 @@
         "children": [
           {
             "kind": "Var",
+            "name": "vendorDefinedServiceName",
+            "printedName": "vendorDefinedServiceName",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "String",
+                "printedName": "Swift.String",
+                "usr": "s:SS"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:18FBSimulatorControl0A15DTUHIDTransportC24vendorDefinedServiceNameSSvpZ",
+            "mangledName": "$s18FBSimulatorControl0A15DTUHIDTransportC24vendorDefinedServiceNameSSvpZ",
+            "moduleName": "FBSimulatorControl",
+            "static": true,
+            "declAttributes": [
+              "Final",
+              "HasInitialValue",
+              "HasStorage"
+            ],
+            "isLet": true,
+            "hasStorage": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "String",
+                    "printedName": "Swift.String",
+                    "usr": "s:SS"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:18FBSimulatorControl0A15DTUHIDTransportC24vendorDefinedServiceNameSSvgZ",
+                "mangledName": "$s18FBSimulatorControl0A15DTUHIDTransportC24vendorDefinedServiceNameSSvgZ",
+                "moduleName": "FBSimulatorControl",
+                "static": true,
+                "implicit": true,
+                "declAttributes": [
+                  "Transparent",
+                  "Final"
+                ],
+                "accessorKind": "get"
+              }
+            ]
+          },
+          {
+            "kind": "Var",
             "name": "digitizerServiceName",
             "printedName": "digitizerServiceName",
             "children": [
@@ -20134,6 +21097,32 @@
           },
           {
             "kind": "Var",
+            "name": "serviceName",
+            "printedName": "serviceName",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "String",
+                "printedName": "Swift.String",
+                "usr": "s:SS"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:18FBSimulatorControl0A15DTUHIDTransportC11serviceName33_BEA208641EA3FC38343086C896F523BDLLSSvp",
+            "mangledName": "$s18FBSimulatorControl0A15DTUHIDTransportC11serviceName33_BEA208641EA3FC38343086C896F523BDLLSSvp",
+            "moduleName": "FBSimulatorControl",
+            "isInternal": true,
+            "declAttributes": [
+              "Final",
+              "HasStorage",
+              "AccessControl"
+            ],
+            "fixedbinaryorder": 1,
+            "isLet": true,
+            "hasStorage": true
+          },
+          {
+            "kind": "Var",
             "name": "mainScreenSize",
             "printedName": "mainScreenSize",
             "children": [
@@ -20154,7 +21143,7 @@
               "HasStorage",
               "AccessControl"
             ],
-            "fixedbinaryorder": 1,
+            "fixedbinaryorder": 2,
             "isLet": true,
             "hasStorage": true
           },
@@ -20180,7 +21169,7 @@
               "HasStorage",
               "AccessControl"
             ],
-            "fixedbinaryorder": 2,
+            "fixedbinaryorder": 3,
             "isLet": true,
             "hasStorage": true
           },
@@ -20206,7 +21195,7 @@
               "HasStorage",
               "AccessControl"
             ],
-            "fixedbinaryorder": 3,
+            "fixedbinaryorder": 4,
             "hasStorage": true
           },
           {
@@ -20231,13 +21220,13 @@
               "HasStorage",
               "AccessControl"
             ],
-            "fixedbinaryorder": 4,
+            "fixedbinaryorder": 5,
             "hasStorage": true
           },
           {
             "kind": "Function",
             "name": "dtuhid",
-            "printedName": "dtuhid(for:onInvalidated:)",
+            "printedName": "dtuhid(for:serviceName:onInvalidated:)",
             "children": [
               {
                 "kind": "TypeNominal",
@@ -20250,6 +21239,13 @@
                 "name": "FBSimulator",
                 "printedName": "FBSimulatorControl.FBSimulator",
                 "usr": "c:objc(cs)FBSimulator"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "String",
+                "printedName": "Swift.String",
+                "hasDefaultArg": true,
+                "usr": "s:SS"
               },
               {
                 "kind": "TypeFunc",
@@ -20271,8 +21267,8 @@
               }
             ],
             "declKind": "Func",
-            "usr": "s:18FBSimulatorControl0A15DTUHIDTransportC6dtuhid3for13onInvalidatedACSo0A0C_yyYbctKFZ",
-            "mangledName": "$s18FBSimulatorControl0A15DTUHIDTransportC6dtuhid3for13onInvalidatedACSo0A0C_yyYbctKFZ",
+            "usr": "s:18FBSimulatorControl0A15DTUHIDTransportC6dtuhid3for11serviceName13onInvalidatedACSo0A0C_SSyyYbctKFZ",
+            "mangledName": "$s18FBSimulatorControl0A15DTUHIDTransportC6dtuhid3for11serviceName13onInvalidatedACSo0A0C_SSyyYbctKFZ",
             "moduleName": "FBSimulatorControl",
             "static": true,
             "declAttributes": [
@@ -20285,7 +21281,7 @@
           {
             "kind": "Constructor",
             "name": "init",
-            "printedName": "init(connection:mainScreenSize:mainScreenScale:)",
+            "printedName": "init(connection:serviceName:mainScreenSize:mainScreenScale:)",
             "children": [
               {
                 "kind": "TypeNominal",
@@ -20301,6 +21297,13 @@
               },
               {
                 "kind": "TypeNominal",
+                "name": "String",
+                "printedName": "Swift.String",
+                "hasDefaultArg": true,
+                "usr": "s:SS"
+              },
+              {
+                "kind": "TypeNominal",
                 "name": "CGSize",
                 "printedName": "CoreFoundation.CGSize",
                 "usr": "c:@S@CGSize"
@@ -20313,8 +21316,8 @@
               }
             ],
             "declKind": "Constructor",
-            "usr": "s:18FBSimulatorControl0A15DTUHIDTransportC10connection14mainScreenSize0eF5ScaleACSo13OS_xpc_object_p_So6CGSizeVSftcfc",
-            "mangledName": "$s18FBSimulatorControl0A15DTUHIDTransportC10connection14mainScreenSize0eF5ScaleACSo13OS_xpc_object_p_So6CGSizeVSftcfc",
+            "usr": "s:18FBSimulatorControl0A15DTUHIDTransportC10connection11serviceName14mainScreenSize0gH5ScaleACSo13OS_xpc_object_p_SSSo6CGSizeVSftcfc",
+            "mangledName": "$s18FBSimulatorControl0A15DTUHIDTransportC10connection11serviceName14mainScreenSize0gH5ScaleACSo13OS_xpc_object_p_SSSo6CGSizeVSftcfc",
             "moduleName": "FBSimulatorControl",
             "init_kind": "Designated"
           },
@@ -29597,6 +30600,1919 @@
             "printedName": "Equatable",
             "usr": "s:SQ",
             "mangledName": "$sSQ"
+          }
+        ]
+      },
+      {
+        "kind": "Import",
+        "name": "Foundation",
+        "printedName": "Foundation",
+        "declKind": "Import",
+        "moduleName": "FBSimulatorControl",
+        "declAttributes": [
+          "RawDocComment"
+        ]
+      },
+      {
+        "kind": "Import",
+        "name": "IOKit",
+        "printedName": "IOKit",
+        "declKind": "Import",
+        "moduleName": "FBSimulatorControl"
+      },
+      {
+        "kind": "TypeDecl",
+        "name": "FBSimulatorHingeAngle",
+        "printedName": "FBSimulatorHingeAngle",
+        "children": [
+          {
+            "kind": "Var",
+            "name": "degrees",
+            "printedName": "degrees",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Double",
+                "printedName": "Swift.Double",
+                "usr": "s:Sd"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:18FBSimulatorControl0A10HingeAngleV7degreesSdvp",
+            "mangledName": "$s18FBSimulatorControl0A10HingeAngleV7degreesSdvp",
+            "moduleName": "FBSimulatorControl",
+            "declAttributes": [
+              "HasStorage",
+              "AccessControl"
+            ],
+            "isLet": true,
+            "hasStorage": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Double",
+                    "printedName": "Swift.Double",
+                    "usr": "s:Sd"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:18FBSimulatorControl0A10HingeAngleV7degreesSdvg",
+                "mangledName": "$s18FBSimulatorControl0A10HingeAngleV7degreesSdvg",
+                "moduleName": "FBSimulatorControl",
+                "implicit": true,
+                "accessorKind": "get"
+              }
+            ]
+          },
+          {
+            "kind": "Constructor",
+            "name": "init",
+            "printedName": "init(degrees:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "FBSimulatorHingeAngle",
+                "printedName": "FBSimulatorControl.FBSimulatorHingeAngle",
+                "usr": "s:18FBSimulatorControl0A10HingeAngleV"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Double",
+                "printedName": "Swift.Double",
+                "usr": "s:Sd"
+              }
+            ],
+            "declKind": "Constructor",
+            "usr": "s:18FBSimulatorControl0A10HingeAngleV7degreesACSd_tKcfc",
+            "mangledName": "$s18FBSimulatorControl0A10HingeAngleV7degreesACSd_tKcfc",
+            "moduleName": "FBSimulatorControl",
+            "declAttributes": [
+              "AccessControl"
+            ],
+            "throwing": true,
+            "init_kind": "Designated"
+          },
+          {
+            "kind": "Function",
+            "name": "requireSupportedModel",
+            "printedName": "requireSupportedModel(_:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "Swift.String?",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "String",
+                    "printedName": "Swift.String",
+                    "usr": "s:SS"
+                  }
+                ],
+                "usr": "s:Sq"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:18FBSimulatorControl0A10HingeAngleV21requireSupportedModelyySSSgKFZ",
+            "mangledName": "$s18FBSimulatorControl0A10HingeAngleV21requireSupportedModelyySSSgKFZ",
+            "moduleName": "FBSimulatorControl",
+            "static": true,
+            "throwing": true,
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "vendorEvent",
+            "printedName": "vendorEvent()",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "FBSimulatorIndigoVendorDefinedEvent",
+                "printedName": "FBSimulatorControl.FBSimulatorIndigoVendorDefinedEvent",
+                "usr": "s:18FBSimulatorControl0A24IndigoVendorDefinedEventV"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:18FBSimulatorControl0A10HingeAngleV11vendorEventAA0a19IndigoVendorDefinedF0VyKF",
+            "mangledName": "$s18FBSimulatorControl0A10HingeAngleV11vendorEventAA0a19IndigoVendorDefinedF0VyKF",
+            "moduleName": "FBSimulatorControl",
+            "throwing": true,
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "==",
+            "printedName": "==(_:_:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Bool",
+                "printedName": "Swift.Bool",
+                "usr": "s:Sb"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "FBSimulatorHingeAngle",
+                "printedName": "FBSimulatorControl.FBSimulatorHingeAngle",
+                "usr": "s:18FBSimulatorControl0A10HingeAngleV"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "FBSimulatorHingeAngle",
+                "printedName": "FBSimulatorControl.FBSimulatorHingeAngle",
+                "usr": "s:18FBSimulatorControl0A10HingeAngleV"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:18FBSimulatorControl0A10HingeAngleV2eeoiySbAC_ACtFZ",
+            "mangledName": "$s18FBSimulatorControl0A10HingeAngleV2eeoiySbAC_ACtFZ",
+            "moduleName": "FBSimulatorControl",
+            "static": true,
+            "implicit": true,
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Var",
+            "name": "hashValue",
+            "printedName": "hashValue",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Int",
+                "printedName": "Swift.Int",
+                "usr": "s:Si"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:18FBSimulatorControl0A10HingeAngleV9hashValueSivp",
+            "mangledName": "$s18FBSimulatorControl0A10HingeAngleV9hashValueSivp",
+            "moduleName": "FBSimulatorControl",
+            "implicit": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Int",
+                    "printedName": "Swift.Int",
+                    "usr": "s:Si"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:18FBSimulatorControl0A10HingeAngleV9hashValueSivg",
+                "mangledName": "$s18FBSimulatorControl0A10HingeAngleV9hashValueSivg",
+                "moduleName": "FBSimulatorControl",
+                "implicit": true,
+                "accessorKind": "get"
+              }
+            ]
+          },
+          {
+            "kind": "Function",
+            "name": "hash",
+            "printedName": "hash(into:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Hasher",
+                "printedName": "Swift.Hasher",
+                "paramValueOwnership": "InOut",
+                "usr": "s:s6HasherV"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:18FBSimulatorControl0A10HingeAngleV4hash4intoys6HasherVz_tF",
+            "mangledName": "$s18FBSimulatorControl0A10HingeAngleV4hash4intoys6HasherVz_tF",
+            "moduleName": "FBSimulatorControl",
+            "implicit": true,
+            "funcSelfKind": "NonMutating"
+          }
+        ],
+        "declKind": "Struct",
+        "usr": "s:18FBSimulatorControl0A10HingeAngleV",
+        "mangledName": "$s18FBSimulatorControl0A10HingeAngleV",
+        "moduleName": "FBSimulatorControl",
+        "declAttributes": [
+          "AccessControl",
+          "RawDocComment"
+        ],
+        "conformances": [
+          {
+            "kind": "Conformance",
+            "name": "Copyable",
+            "printedName": "Copyable",
+            "usr": "s:s8CopyableP",
+            "mangledName": "$ss8CopyableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Equatable",
+            "printedName": "Equatable",
+            "usr": "s:SQ",
+            "mangledName": "$sSQ"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Escapable",
+            "printedName": "Escapable",
+            "usr": "s:s9EscapableP",
+            "mangledName": "$ss9EscapableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Hashable",
+            "printedName": "Hashable",
+            "usr": "s:SH",
+            "mangledName": "$sSH"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Sendable",
+            "printedName": "Sendable",
+            "usr": "s:s8SendableP",
+            "mangledName": "$ss8SendableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "SendableMetatype",
+            "printedName": "SendableMetatype",
+            "usr": "s:s16SendableMetatypeP",
+            "mangledName": "$ss16SendableMetatypeP"
+          }
+        ]
+      },
+      {
+        "kind": "TypeDecl",
+        "name": "FBSimulatorHingeError",
+        "printedName": "FBSimulatorHingeError",
+        "children": [
+          {
+            "kind": "Var",
+            "name": "invalidAngle",
+            "printedName": "invalidAngle",
+            "children": [
+              {
+                "kind": "TypeFunc",
+                "name": "Function",
+                "printedName": "(FBSimulatorControl.FBSimulatorHingeError.Type) -> FBSimulatorControl.FBSimulatorHingeError",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "FBSimulatorHingeError",
+                    "printedName": "FBSimulatorControl.FBSimulatorHingeError",
+                    "usr": "s:18FBSimulatorControl0A10HingeErrorO"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Metatype",
+                    "printedName": "FBSimulatorControl.FBSimulatorHingeError.Type",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "FBSimulatorHingeError",
+                        "printedName": "FBSimulatorControl.FBSimulatorHingeError",
+                        "usr": "s:18FBSimulatorControl0A10HingeErrorO"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ],
+            "declKind": "EnumElement",
+            "usr": "s:18FBSimulatorControl0A10HingeErrorO12invalidAngleyA2CmF",
+            "mangledName": "$s18FBSimulatorControl0A10HingeErrorO12invalidAngleyA2CmF",
+            "moduleName": "FBSimulatorControl",
+            "fixedbinaryorder": 0
+          },
+          {
+            "kind": "Var",
+            "name": "unsupportedModel",
+            "printedName": "unsupportedModel",
+            "children": [
+              {
+                "kind": "TypeFunc",
+                "name": "Function",
+                "printedName": "(FBSimulatorControl.FBSimulatorHingeError.Type) -> FBSimulatorControl.FBSimulatorHingeError",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "FBSimulatorHingeError",
+                    "printedName": "FBSimulatorControl.FBSimulatorHingeError",
+                    "usr": "s:18FBSimulatorControl0A10HingeErrorO"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Metatype",
+                    "printedName": "FBSimulatorControl.FBSimulatorHingeError.Type",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "FBSimulatorHingeError",
+                        "printedName": "FBSimulatorControl.FBSimulatorHingeError",
+                        "usr": "s:18FBSimulatorControl0A10HingeErrorO"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ],
+            "declKind": "EnumElement",
+            "usr": "s:18FBSimulatorControl0A10HingeErrorO16unsupportedModelyA2CmF",
+            "mangledName": "$s18FBSimulatorControl0A10HingeErrorO16unsupportedModelyA2CmF",
+            "moduleName": "FBSimulatorControl",
+            "fixedbinaryorder": 1
+          },
+          {
+            "kind": "Var",
+            "name": "serializationFailed",
+            "printedName": "serializationFailed",
+            "children": [
+              {
+                "kind": "TypeFunc",
+                "name": "Function",
+                "printedName": "(FBSimulatorControl.FBSimulatorHingeError.Type) -> FBSimulatorControl.FBSimulatorHingeError",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "FBSimulatorHingeError",
+                    "printedName": "FBSimulatorControl.FBSimulatorHingeError",
+                    "usr": "s:18FBSimulatorControl0A10HingeErrorO"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Metatype",
+                    "printedName": "FBSimulatorControl.FBSimulatorHingeError.Type",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "FBSimulatorHingeError",
+                        "printedName": "FBSimulatorControl.FBSimulatorHingeError",
+                        "usr": "s:18FBSimulatorControl0A10HingeErrorO"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ],
+            "declKind": "EnumElement",
+            "usr": "s:18FBSimulatorControl0A10HingeErrorO19serializationFailedyA2CmF",
+            "mangledName": "$s18FBSimulatorControl0A10HingeErrorO19serializationFailedyA2CmF",
+            "moduleName": "FBSimulatorControl",
+            "fixedbinaryorder": 2
+          },
+          {
+            "kind": "Var",
+            "name": "errorDescription",
+            "printedName": "errorDescription",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "Swift.String?",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "String",
+                    "printedName": "Swift.String",
+                    "usr": "s:SS"
+                  }
+                ],
+                "usr": "s:Sq"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:18FBSimulatorControl0A10HingeErrorO16errorDescriptionSSSgvp",
+            "mangledName": "$s18FBSimulatorControl0A10HingeErrorO16errorDescriptionSSSgvp",
+            "moduleName": "FBSimulatorControl",
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Optional",
+                    "printedName": "Swift.String?",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "String",
+                        "printedName": "Swift.String",
+                        "usr": "s:SS"
+                      }
+                    ],
+                    "usr": "s:Sq"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:18FBSimulatorControl0A10HingeErrorO16errorDescriptionSSSgvg",
+                "mangledName": "$s18FBSimulatorControl0A10HingeErrorO16errorDescriptionSSSgvg",
+                "moduleName": "FBSimulatorControl",
+                "accessorKind": "get"
+              }
+            ]
+          },
+          {
+            "kind": "Function",
+            "name": "==",
+            "printedName": "==(_:_:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Bool",
+                "printedName": "Swift.Bool",
+                "usr": "s:Sb"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "FBSimulatorHingeError",
+                "printedName": "FBSimulatorControl.FBSimulatorHingeError",
+                "usr": "s:18FBSimulatorControl0A10HingeErrorO"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "FBSimulatorHingeError",
+                "printedName": "FBSimulatorControl.FBSimulatorHingeError",
+                "usr": "s:18FBSimulatorControl0A10HingeErrorO"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:18FBSimulatorControl0A10HingeErrorO2eeoiySbAC_ACtFZ",
+            "mangledName": "$s18FBSimulatorControl0A10HingeErrorO2eeoiySbAC_ACtFZ",
+            "moduleName": "FBSimulatorControl",
+            "static": true,
+            "implicit": true,
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Var",
+            "name": "hashValue",
+            "printedName": "hashValue",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Int",
+                "printedName": "Swift.Int",
+                "usr": "s:Si"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:18FBSimulatorControl0A10HingeErrorO9hashValueSivp",
+            "mangledName": "$s18FBSimulatorControl0A10HingeErrorO9hashValueSivp",
+            "moduleName": "FBSimulatorControl",
+            "implicit": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Int",
+                    "printedName": "Swift.Int",
+                    "usr": "s:Si"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:18FBSimulatorControl0A10HingeErrorO9hashValueSivg",
+                "mangledName": "$s18FBSimulatorControl0A10HingeErrorO9hashValueSivg",
+                "moduleName": "FBSimulatorControl",
+                "implicit": true,
+                "accessorKind": "get"
+              }
+            ]
+          },
+          {
+            "kind": "Function",
+            "name": "hash",
+            "printedName": "hash(into:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Hasher",
+                "printedName": "Swift.Hasher",
+                "paramValueOwnership": "InOut",
+                "usr": "s:s6HasherV"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:18FBSimulatorControl0A10HingeErrorO4hash4intoys6HasherVz_tF",
+            "mangledName": "$s18FBSimulatorControl0A10HingeErrorO4hash4intoys6HasherVz_tF",
+            "moduleName": "FBSimulatorControl",
+            "implicit": true,
+            "funcSelfKind": "NonMutating"
+          }
+        ],
+        "declKind": "Enum",
+        "usr": "s:18FBSimulatorControl0A10HingeErrorO",
+        "mangledName": "$s18FBSimulatorControl0A10HingeErrorO",
+        "moduleName": "FBSimulatorControl",
+        "isEnumExhaustive": true,
+        "conformances": [
+          {
+            "kind": "Conformance",
+            "name": "LocalizedError",
+            "printedName": "LocalizedError",
+            "usr": "s:10Foundation14LocalizedErrorP",
+            "mangledName": "$s10Foundation14LocalizedErrorP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "BitwiseCopyable",
+            "printedName": "BitwiseCopyable",
+            "usr": "s:s15BitwiseCopyableP",
+            "mangledName": "$ss15BitwiseCopyableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Copyable",
+            "printedName": "Copyable",
+            "usr": "s:s8CopyableP",
+            "mangledName": "$ss8CopyableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Hashable",
+            "printedName": "Hashable",
+            "usr": "s:SH",
+            "mangledName": "$sSH"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Error",
+            "printedName": "Error",
+            "usr": "s:s5ErrorP",
+            "mangledName": "$ss5ErrorP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Equatable",
+            "printedName": "Equatable",
+            "usr": "s:SQ",
+            "mangledName": "$sSQ"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Escapable",
+            "printedName": "Escapable",
+            "usr": "s:s9EscapableP",
+            "mangledName": "$ss9EscapableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Sendable",
+            "printedName": "Sendable",
+            "usr": "s:s8SendableP",
+            "mangledName": "$ss8SendableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "SendableMetatype",
+            "printedName": "SendableMetatype",
+            "usr": "s:s16SendableMetatypeP",
+            "mangledName": "$ss16SendableMetatypeP"
+          }
+        ]
+      },
+      {
+        "kind": "TypeDecl",
+        "name": "FBSimulatorIndigoVendorDefinedEvent",
+        "printedName": "FBSimulatorIndigoVendorDefinedEvent",
+        "children": [
+          {
+            "kind": "Var",
+            "name": "usagePage",
+            "printedName": "usagePage",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "UInt16",
+                "printedName": "Swift.UInt16",
+                "usr": "s:s6UInt16V"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:18FBSimulatorControl0A24IndigoVendorDefinedEventV9usagePages6UInt16Vvp",
+            "mangledName": "$s18FBSimulatorControl0A24IndigoVendorDefinedEventV9usagePages6UInt16Vvp",
+            "moduleName": "FBSimulatorControl",
+            "declAttributes": [
+              "HasStorage"
+            ],
+            "fixedbinaryorder": 0,
+            "isLet": true,
+            "hasStorage": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "UInt16",
+                    "printedName": "Swift.UInt16",
+                    "usr": "s:s6UInt16V"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:18FBSimulatorControl0A24IndigoVendorDefinedEventV9usagePages6UInt16Vvg",
+                "mangledName": "$s18FBSimulatorControl0A24IndigoVendorDefinedEventV9usagePages6UInt16Vvg",
+                "moduleName": "FBSimulatorControl",
+                "implicit": true,
+                "declAttributes": [
+                  "Transparent"
+                ],
+                "accessorKind": "get"
+              }
+            ]
+          },
+          {
+            "kind": "Var",
+            "name": "usage",
+            "printedName": "usage",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "UInt16",
+                "printedName": "Swift.UInt16",
+                "usr": "s:s6UInt16V"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:18FBSimulatorControl0A24IndigoVendorDefinedEventV5usages6UInt16Vvp",
+            "mangledName": "$s18FBSimulatorControl0A24IndigoVendorDefinedEventV5usages6UInt16Vvp",
+            "moduleName": "FBSimulatorControl",
+            "declAttributes": [
+              "HasStorage"
+            ],
+            "fixedbinaryorder": 1,
+            "isLet": true,
+            "hasStorage": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "UInt16",
+                    "printedName": "Swift.UInt16",
+                    "usr": "s:s6UInt16V"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:18FBSimulatorControl0A24IndigoVendorDefinedEventV5usages6UInt16Vvg",
+                "mangledName": "$s18FBSimulatorControl0A24IndigoVendorDefinedEventV5usages6UInt16Vvg",
+                "moduleName": "FBSimulatorControl",
+                "implicit": true,
+                "declAttributes": [
+                  "Transparent"
+                ],
+                "accessorKind": "get"
+              }
+            ]
+          },
+          {
+            "kind": "Var",
+            "name": "version",
+            "printedName": "version",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "UInt32",
+                "printedName": "Swift.UInt32",
+                "usr": "s:s6UInt32V"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:18FBSimulatorControl0A24IndigoVendorDefinedEventV7versions6UInt32Vvp",
+            "mangledName": "$s18FBSimulatorControl0A24IndigoVendorDefinedEventV7versions6UInt32Vvp",
+            "moduleName": "FBSimulatorControl",
+            "declAttributes": [
+              "HasStorage"
+            ],
+            "fixedbinaryorder": 2,
+            "isLet": true,
+            "hasStorage": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "UInt32",
+                    "printedName": "Swift.UInt32",
+                    "usr": "s:s6UInt32V"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:18FBSimulatorControl0A24IndigoVendorDefinedEventV7versions6UInt32Vvg",
+                "mangledName": "$s18FBSimulatorControl0A24IndigoVendorDefinedEventV7versions6UInt32Vvg",
+                "moduleName": "FBSimulatorControl",
+                "implicit": true,
+                "declAttributes": [
+                  "Transparent"
+                ],
+                "accessorKind": "get"
+              }
+            ]
+          },
+          {
+            "kind": "Var",
+            "name": "data",
+            "printedName": "data",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Data",
+                "printedName": "Foundation.Data",
+                "usr": "s:10Foundation4DataV"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:18FBSimulatorControl0A24IndigoVendorDefinedEventV4data10Foundation4DataVvp",
+            "mangledName": "$s18FBSimulatorControl0A24IndigoVendorDefinedEventV4data10Foundation4DataVvp",
+            "moduleName": "FBSimulatorControl",
+            "declAttributes": [
+              "HasStorage"
+            ],
+            "fixedbinaryorder": 3,
+            "isLet": true,
+            "hasStorage": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Data",
+                    "printedName": "Foundation.Data",
+                    "usr": "s:10Foundation4DataV"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:18FBSimulatorControl0A24IndigoVendorDefinedEventV4data10Foundation4DataVvg",
+                "mangledName": "$s18FBSimulatorControl0A24IndigoVendorDefinedEventV4data10Foundation4DataVvg",
+                "moduleName": "FBSimulatorControl",
+                "implicit": true,
+                "declAttributes": [
+                  "Transparent"
+                ],
+                "accessorKind": "get"
+              }
+            ]
+          },
+          {
+            "kind": "Constructor",
+            "name": "init",
+            "printedName": "init(usagePage:usage:version:data:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "FBSimulatorIndigoVendorDefinedEvent",
+                "printedName": "FBSimulatorControl.FBSimulatorIndigoVendorDefinedEvent",
+                "usr": "s:18FBSimulatorControl0A24IndigoVendorDefinedEventV"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "UInt16",
+                "printedName": "Swift.UInt16",
+                "usr": "s:s6UInt16V"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "UInt16",
+                "printedName": "Swift.UInt16",
+                "usr": "s:s6UInt16V"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "UInt32",
+                "printedName": "Swift.UInt32",
+                "usr": "s:s6UInt32V"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Data",
+                "printedName": "Foundation.Data",
+                "usr": "s:10Foundation4DataV"
+              }
+            ],
+            "declKind": "Constructor",
+            "usr": "s:18FBSimulatorControl0A24IndigoVendorDefinedEventV9usagePage0G07version4dataACs6UInt16V_AIs6UInt32V10Foundation4DataVtcfc",
+            "mangledName": "$s18FBSimulatorControl0A24IndigoVendorDefinedEventV9usagePage0G07version4dataACs6UInt16V_AIs6UInt32V10Foundation4DataVtcfc",
+            "moduleName": "FBSimulatorControl",
+            "implicit": true,
+            "init_kind": "Designated"
+          },
+          {
+            "kind": "Function",
+            "name": "encode",
+            "printedName": "encode(to:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Encoder",
+                "printedName": "any Swift.Encoder",
+                "usr": "s:s7EncoderP"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:18FBSimulatorControl0A24IndigoVendorDefinedEventV6encode2toys7Encoder_p_tKF",
+            "mangledName": "$s18FBSimulatorControl0A24IndigoVendorDefinedEventV6encode2toys7Encoder_p_tKF",
+            "moduleName": "FBSimulatorControl",
+            "implicit": true,
+            "throwing": true,
+            "funcSelfKind": "NonMutating"
+          }
+        ],
+        "declKind": "Struct",
+        "usr": "s:18FBSimulatorControl0A24IndigoVendorDefinedEventV",
+        "mangledName": "$s18FBSimulatorControl0A24IndigoVendorDefinedEventV",
+        "moduleName": "FBSimulatorControl",
+        "conformances": [
+          {
+            "kind": "Conformance",
+            "name": "Copyable",
+            "printedName": "Copyable",
+            "usr": "s:s8CopyableP",
+            "mangledName": "$ss8CopyableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Encodable",
+            "printedName": "Encodable",
+            "usr": "s:SE",
+            "mangledName": "$sSE"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Escapable",
+            "printedName": "Escapable",
+            "usr": "s:s9EscapableP",
+            "mangledName": "$ss9EscapableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Sendable",
+            "printedName": "Sendable",
+            "usr": "s:s8SendableP",
+            "mangledName": "$ss8SendableP"
+          }
+        ]
+      },
+      {
+        "kind": "Import",
+        "name": "Foundation",
+        "printedName": "Foundation",
+        "declKind": "Import",
+        "moduleName": "FBSimulatorControl",
+        "declAttributes": [
+          "RawDocComment"
+        ]
+      },
+      {
+        "kind": "Import",
+        "name": "Foundation",
+        "printedName": "Foundation",
+        "declKind": "Import",
+        "moduleName": "FBSimulatorControl",
+        "declAttributes": [
+          "RawDocComment"
+        ]
+      },
+      {
+        "kind": "Import",
+        "name": "XPC",
+        "printedName": "XPC",
+        "declKind": "Import",
+        "moduleName": "FBSimulatorControl"
+      },
+      {
+        "kind": "TypeDecl",
+        "name": "FBSimulatorHingeReadError",
+        "printedName": "FBSimulatorHingeReadError",
+        "children": [
+          {
+            "kind": "Var",
+            "name": "unavailable",
+            "printedName": "unavailable",
+            "children": [
+              {
+                "kind": "TypeFunc",
+                "name": "Function",
+                "printedName": "(FBSimulatorControl.FBSimulatorHingeReadError.Type) -> (Swift.String) -> FBSimulatorControl.FBSimulatorHingeReadError",
+                "children": [
+                  {
+                    "kind": "TypeFunc",
+                    "name": "Function",
+                    "printedName": "(Swift.String) -> FBSimulatorControl.FBSimulatorHingeReadError",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "FBSimulatorHingeReadError",
+                        "printedName": "FBSimulatorControl.FBSimulatorHingeReadError",
+                        "usr": "s:18FBSimulatorControl0A14HingeReadErrorO"
+                      },
+                      {
+                        "kind": "TypeNominal",
+                        "name": "String",
+                        "printedName": "Swift.String",
+                        "usr": "s:SS"
+                      }
+                    ]
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Metatype",
+                    "printedName": "FBSimulatorControl.FBSimulatorHingeReadError.Type",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "FBSimulatorHingeReadError",
+                        "printedName": "FBSimulatorControl.FBSimulatorHingeReadError",
+                        "usr": "s:18FBSimulatorControl0A14HingeReadErrorO"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ],
+            "declKind": "EnumElement",
+            "usr": "s:18FBSimulatorControl0A14HingeReadErrorO11unavailableyACSScACmF",
+            "mangledName": "$s18FBSimulatorControl0A14HingeReadErrorO11unavailableyACSScACmF",
+            "moduleName": "FBSimulatorControl",
+            "fixedbinaryorder": 0
+          },
+          {
+            "kind": "Var",
+            "name": "malformed",
+            "printedName": "malformed",
+            "children": [
+              {
+                "kind": "TypeFunc",
+                "name": "Function",
+                "printedName": "(FBSimulatorControl.FBSimulatorHingeReadError.Type) -> (Swift.String) -> FBSimulatorControl.FBSimulatorHingeReadError",
+                "children": [
+                  {
+                    "kind": "TypeFunc",
+                    "name": "Function",
+                    "printedName": "(Swift.String) -> FBSimulatorControl.FBSimulatorHingeReadError",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "FBSimulatorHingeReadError",
+                        "printedName": "FBSimulatorControl.FBSimulatorHingeReadError",
+                        "usr": "s:18FBSimulatorControl0A14HingeReadErrorO"
+                      },
+                      {
+                        "kind": "TypeNominal",
+                        "name": "String",
+                        "printedName": "Swift.String",
+                        "usr": "s:SS"
+                      }
+                    ]
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Metatype",
+                    "printedName": "FBSimulatorControl.FBSimulatorHingeReadError.Type",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "FBSimulatorHingeReadError",
+                        "printedName": "FBSimulatorControl.FBSimulatorHingeReadError",
+                        "usr": "s:18FBSimulatorControl0A14HingeReadErrorO"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ],
+            "declKind": "EnumElement",
+            "usr": "s:18FBSimulatorControl0A14HingeReadErrorO9malformedyACSScACmF",
+            "mangledName": "$s18FBSimulatorControl0A14HingeReadErrorO9malformedyACSScACmF",
+            "moduleName": "FBSimulatorControl",
+            "fixedbinaryorder": 1
+          },
+          {
+            "kind": "Var",
+            "name": "timedOut",
+            "printedName": "timedOut",
+            "children": [
+              {
+                "kind": "TypeFunc",
+                "name": "Function",
+                "printedName": "(FBSimulatorControl.FBSimulatorHingeReadError.Type) -> FBSimulatorControl.FBSimulatorHingeReadError",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "FBSimulatorHingeReadError",
+                    "printedName": "FBSimulatorControl.FBSimulatorHingeReadError",
+                    "usr": "s:18FBSimulatorControl0A14HingeReadErrorO"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Metatype",
+                    "printedName": "FBSimulatorControl.FBSimulatorHingeReadError.Type",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "FBSimulatorHingeReadError",
+                        "printedName": "FBSimulatorControl.FBSimulatorHingeReadError",
+                        "usr": "s:18FBSimulatorControl0A14HingeReadErrorO"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ],
+            "declKind": "EnumElement",
+            "usr": "s:18FBSimulatorControl0A14HingeReadErrorO8timedOutyA2CmF",
+            "mangledName": "$s18FBSimulatorControl0A14HingeReadErrorO8timedOutyA2CmF",
+            "moduleName": "FBSimulatorControl",
+            "fixedbinaryorder": 2
+          },
+          {
+            "kind": "Var",
+            "name": "endedWithoutSample",
+            "printedName": "endedWithoutSample",
+            "children": [
+              {
+                "kind": "TypeFunc",
+                "name": "Function",
+                "printedName": "(FBSimulatorControl.FBSimulatorHingeReadError.Type) -> FBSimulatorControl.FBSimulatorHingeReadError",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "FBSimulatorHingeReadError",
+                    "printedName": "FBSimulatorControl.FBSimulatorHingeReadError",
+                    "usr": "s:18FBSimulatorControl0A14HingeReadErrorO"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Metatype",
+                    "printedName": "FBSimulatorControl.FBSimulatorHingeReadError.Type",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "FBSimulatorHingeReadError",
+                        "printedName": "FBSimulatorControl.FBSimulatorHingeReadError",
+                        "usr": "s:18FBSimulatorControl0A14HingeReadErrorO"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ],
+            "declKind": "EnumElement",
+            "usr": "s:18FBSimulatorControl0A14HingeReadErrorO18endedWithoutSampleyA2CmF",
+            "mangledName": "$s18FBSimulatorControl0A14HingeReadErrorO18endedWithoutSampleyA2CmF",
+            "moduleName": "FBSimulatorControl",
+            "fixedbinaryorder": 3
+          },
+          {
+            "kind": "Var",
+            "name": "errorDescription",
+            "printedName": "errorDescription",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "Swift.String?",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "String",
+                    "printedName": "Swift.String",
+                    "usr": "s:SS"
+                  }
+                ],
+                "usr": "s:Sq"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:18FBSimulatorControl0A14HingeReadErrorO16errorDescriptionSSSgvp",
+            "mangledName": "$s18FBSimulatorControl0A14HingeReadErrorO16errorDescriptionSSSgvp",
+            "moduleName": "FBSimulatorControl",
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Optional",
+                    "printedName": "Swift.String?",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "String",
+                        "printedName": "Swift.String",
+                        "usr": "s:SS"
+                      }
+                    ],
+                    "usr": "s:Sq"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:18FBSimulatorControl0A14HingeReadErrorO16errorDescriptionSSSgvg",
+                "mangledName": "$s18FBSimulatorControl0A14HingeReadErrorO16errorDescriptionSSSgvg",
+                "moduleName": "FBSimulatorControl",
+                "accessorKind": "get"
+              }
+            ]
+          }
+        ],
+        "declKind": "Enum",
+        "usr": "s:18FBSimulatorControl0A14HingeReadErrorO",
+        "mangledName": "$s18FBSimulatorControl0A14HingeReadErrorO",
+        "moduleName": "FBSimulatorControl",
+        "isEnumExhaustive": true,
+        "conformances": [
+          {
+            "kind": "Conformance",
+            "name": "Copyable",
+            "printedName": "Copyable",
+            "usr": "s:s8CopyableP",
+            "mangledName": "$ss8CopyableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Error",
+            "printedName": "Error",
+            "usr": "s:s5ErrorP",
+            "mangledName": "$ss5ErrorP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "LocalizedError",
+            "printedName": "LocalizedError",
+            "usr": "s:10Foundation14LocalizedErrorP",
+            "mangledName": "$s10Foundation14LocalizedErrorP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Escapable",
+            "printedName": "Escapable",
+            "usr": "s:s9EscapableP",
+            "mangledName": "$ss9EscapableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Sendable",
+            "printedName": "Sendable",
+            "usr": "s:s8SendableP",
+            "mangledName": "$ss8SendableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "SendableMetatype",
+            "printedName": "SendableMetatype",
+            "usr": "s:s16SendableMetatypeP",
+            "mangledName": "$ss16SendableMetatypeP"
+          }
+        ]
+      },
+      {
+        "kind": "TypeDecl",
+        "name": "FBSimulatorHingeProtocol",
+        "printedName": "FBSimulatorHingeProtocol",
+        "children": [
+          {
+            "kind": "Var",
+            "name": "service",
+            "printedName": "service",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "String",
+                "printedName": "Swift.String",
+                "usr": "s:SS"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:18FBSimulatorControl0A13HingeProtocolO7serviceSSvpZ",
+            "mangledName": "$s18FBSimulatorControl0A13HingeProtocolO7serviceSSvpZ",
+            "moduleName": "FBSimulatorControl",
+            "static": true,
+            "declAttributes": [
+              "HasInitialValue",
+              "HasStorage"
+            ],
+            "isLet": true,
+            "hasStorage": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "String",
+                    "printedName": "Swift.String",
+                    "usr": "s:SS"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:18FBSimulatorControl0A13HingeProtocolO7serviceSSvgZ",
+                "mangledName": "$s18FBSimulatorControl0A13HingeProtocolO7serviceSSvgZ",
+                "moduleName": "FBSimulatorControl",
+                "static": true,
+                "implicit": true,
+                "declAttributes": [
+                  "Transparent"
+                ],
+                "accessorKind": "get"
+              }
+            ]
+          },
+          {
+            "kind": "Function",
+            "name": "request",
+            "printedName": "request(deviceID:version:channel:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "OS_xpc_object",
+                "printedName": "any XPC.OS_xpc_object",
+                "usr": "c:objc(pl)OS_xpc_object"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "String",
+                "printedName": "Swift.String",
+                "usr": "s:SS"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "String",
+                "printedName": "Swift.String",
+                "usr": "s:SS"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "UUID",
+                "printedName": "Foundation.UUID",
+                "usr": "s:10Foundation4UUIDV"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:18FBSimulatorControl0A13HingeProtocolO7request8deviceID7version7channelSo13OS_xpc_object_pSS_SS10Foundation4UUIDVtKFZ",
+            "mangledName": "$s18FBSimulatorControl0A13HingeProtocolO7request8deviceID7version7channelSo13OS_xpc_object_pSS_SS10Foundation4UUIDVtKFZ",
+            "moduleName": "FBSimulatorControl",
+            "static": true,
+            "throwing": true,
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "sample",
+            "printedName": "sample(_:channel:notBefore:now:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "FBSimulatorControl.FBSimulatorHingeAngle?",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "FBSimulatorHingeAngle",
+                    "printedName": "FBSimulatorControl.FBSimulatorHingeAngle",
+                    "usr": "s:18FBSimulatorControl0A10HingeAngleV"
+                  }
+                ],
+                "usr": "s:Sq"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "OS_xpc_object",
+                "printedName": "any XPC.OS_xpc_object",
+                "usr": "c:objc(pl)OS_xpc_object"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "UUID",
+                "printedName": "Foundation.UUID",
+                "usr": "s:10Foundation4UUIDV"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Double",
+                "printedName": "Swift.Double",
+                "usr": "s:Sd"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Double",
+                "printedName": "Swift.Double",
+                "usr": "s:Sd"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:18FBSimulatorControl0A13HingeProtocolO6sample_7channel9notBefore3nowAA0aC5AngleVSgSo13OS_xpc_object_p_10Foundation4UUIDVS2dtKFZ",
+            "mangledName": "$s18FBSimulatorControl0A13HingeProtocolO6sample_7channel9notBefore3nowAA0aC5AngleVSgSo13OS_xpc_object_p_10Foundation4UUIDVS2dtKFZ",
+            "moduleName": "FBSimulatorControl",
+            "static": true,
+            "throwing": true,
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "checkReply",
+            "printedName": "checkReply(_:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "OS_xpc_object",
+                "printedName": "any XPC.OS_xpc_object",
+                "usr": "c:objc(pl)OS_xpc_object"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:18FBSimulatorControl0A13HingeProtocolO10checkReplyyySo13OS_xpc_object_pKFZ",
+            "mangledName": "$s18FBSimulatorControl0A13HingeProtocolO10checkReplyyySo13OS_xpc_object_pKFZ",
+            "moduleName": "FBSimulatorControl",
+            "static": true,
+            "throwing": true,
+            "funcSelfKind": "NonMutating"
+          }
+        ],
+        "declKind": "Enum",
+        "usr": "s:18FBSimulatorControl0A13HingeProtocolO",
+        "mangledName": "$s18FBSimulatorControl0A13HingeProtocolO",
+        "moduleName": "FBSimulatorControl",
+        "isEnumExhaustive": true,
+        "conformances": [
+          {
+            "kind": "Conformance",
+            "name": "Copyable",
+            "printedName": "Copyable",
+            "usr": "s:s8CopyableP",
+            "mangledName": "$ss8CopyableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Escapable",
+            "printedName": "Escapable",
+            "usr": "s:s9EscapableP",
+            "mangledName": "$ss9EscapableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Sendable",
+            "printedName": "Sendable",
+            "usr": "s:s8SendableP",
+            "mangledName": "$ss8SendableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "BitwiseCopyable",
+            "printedName": "BitwiseCopyable",
+            "usr": "s:s15BitwiseCopyableP",
+            "mangledName": "$ss15BitwiseCopyableP"
+          }
+        ]
+      },
+      {
+        "kind": "Import",
+        "name": "Foundation",
+        "printedName": "Foundation",
+        "declKind": "Import",
+        "moduleName": "FBSimulatorControl",
+        "declAttributes": [
+          "RawDocComment"
+        ]
+      },
+      {
+        "kind": "Import",
+        "name": "XPC",
+        "printedName": "XPC",
+        "declKind": "Import",
+        "moduleName": "FBSimulatorControl",
+        "declAttributes": [
+          "Preconcurrency"
+        ]
+      },
+      {
+        "kind": "TypeDecl",
+        "name": "FBSimulatorHingeReadSession",
+        "printedName": "FBSimulatorHingeReadSession",
+        "children": [
+          {
+            "kind": "Var",
+            "name": "transport",
+            "printedName": "transport",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "FBSimulatorCoreDeviceTransport",
+                "printedName": "any FBSimulatorControl.FBSimulatorCoreDeviceTransport",
+                "usr": "s:18FBSimulatorControl0A19CoreDeviceTransportP"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:18FBSimulatorControl0A16HingeReadSessionC9transport33_0A8FD15DD9F225EAB6CC2466FAD85269LLAA0A19CoreDeviceTransport_pvp",
+            "mangledName": "$s18FBSimulatorControl0A16HingeReadSessionC9transport33_0A8FD15DD9F225EAB6CC2466FAD85269LLAA0A19CoreDeviceTransport_pvp",
+            "moduleName": "FBSimulatorControl",
+            "isInternal": true,
+            "declAttributes": [
+              "Final",
+              "HasStorage",
+              "AccessControl"
+            ],
+            "fixedbinaryorder": 0,
+            "isLet": true,
+            "hasStorage": true
+          },
+          {
+            "kind": "Var",
+            "name": "queue",
+            "printedName": "queue",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "DispatchQueue",
+                "printedName": "Dispatch.DispatchQueue",
+                "usr": "c:objc(cs)OS_dispatch_queue"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:18FBSimulatorControl0A16HingeReadSessionC5queue33_0A8FD15DD9F225EAB6CC2466FAD85269LLSo012OS_dispatch_F0Cvp",
+            "mangledName": "$s18FBSimulatorControl0A16HingeReadSessionC5queue33_0A8FD15DD9F225EAB6CC2466FAD85269LLSo012OS_dispatch_F0Cvp",
+            "moduleName": "FBSimulatorControl",
+            "isInternal": true,
+            "declAttributes": [
+              "Final",
+              "HasStorage",
+              "AccessControl"
+            ],
+            "fixedbinaryorder": 1,
+            "isLet": true,
+            "hasStorage": true
+          },
+          {
+            "kind": "Var",
+            "name": "timeout",
+            "printedName": "timeout",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "DispatchTimeInterval",
+                "printedName": "Dispatch.DispatchTimeInterval",
+                "usr": "s:8Dispatch0A12TimeIntervalO"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:18FBSimulatorControl0A16HingeReadSessionC7timeout33_0A8FD15DD9F225EAB6CC2466FAD85269LL8Dispatch0N12TimeIntervalOvp",
+            "mangledName": "$s18FBSimulatorControl0A16HingeReadSessionC7timeout33_0A8FD15DD9F225EAB6CC2466FAD85269LL8Dispatch0N12TimeIntervalOvp",
+            "moduleName": "FBSimulatorControl",
+            "isInternal": true,
+            "declAttributes": [
+              "Final",
+              "HasStorage",
+              "AccessControl"
+            ],
+            "fixedbinaryorder": 2,
+            "isLet": true,
+            "hasStorage": true
+          },
+          {
+            "kind": "Var",
+            "name": "now",
+            "printedName": "now",
+            "children": [
+              {
+                "kind": "TypeFunc",
+                "name": "Function",
+                "printedName": "() -> Swift.Double",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Double",
+                    "printedName": "Swift.Double",
+                    "usr": "s:Sd"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  }
+                ]
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:18FBSimulatorControl0A16HingeReadSessionC3now33_0A8FD15DD9F225EAB6CC2466FAD85269LLSdyYbcvp",
+            "mangledName": "$s18FBSimulatorControl0A16HingeReadSessionC3now33_0A8FD15DD9F225EAB6CC2466FAD85269LLSdyYbcvp",
+            "moduleName": "FBSimulatorControl",
+            "isInternal": true,
+            "declAttributes": [
+              "Final",
+              "HasStorage",
+              "AccessControl"
+            ],
+            "fixedbinaryorder": 3,
+            "isLet": true,
+            "hasStorage": true
+          },
+          {
+            "kind": "Var",
+            "name": "channel",
+            "printedName": "channel",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "UUID",
+                "printedName": "Foundation.UUID",
+                "usr": "s:10Foundation4UUIDV"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:18FBSimulatorControl0A16HingeReadSessionC7channel33_0A8FD15DD9F225EAB6CC2466FAD85269LL10Foundation4UUIDVvp",
+            "mangledName": "$s18FBSimulatorControl0A16HingeReadSessionC7channel33_0A8FD15DD9F225EAB6CC2466FAD85269LL10Foundation4UUIDVvp",
+            "moduleName": "FBSimulatorControl",
+            "isInternal": true,
+            "declAttributes": [
+              "Final",
+              "HasStorage",
+              "AccessControl"
+            ],
+            "fixedbinaryorder": 4,
+            "isLet": true,
+            "hasStorage": true
+          },
+          {
+            "kind": "Var",
+            "name": "continuation",
+            "printedName": "continuation",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "_Concurrency.CheckedContinuation<FBSimulatorControl.FBSimulatorHingeAngle, any Swift.Error>?",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "CheckedContinuation",
+                    "printedName": "_Concurrency.CheckedContinuation<FBSimulatorControl.FBSimulatorHingeAngle, any Swift.Error>",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "FBSimulatorHingeAngle",
+                        "printedName": "FBSimulatorControl.FBSimulatorHingeAngle",
+                        "usr": "s:18FBSimulatorControl0A10HingeAngleV"
+                      },
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Error",
+                        "printedName": "any Swift.Error",
+                        "usr": "s:s5ErrorP"
+                      }
+                    ],
+                    "usr": "s:ScC"
+                  }
+                ],
+                "usr": "s:Sq"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:18FBSimulatorControl0A16HingeReadSessionC12continuation33_0A8FD15DD9F225EAB6CC2466FAD85269LLScCyAA0aC5AngleVs5Error_pGSgvp",
+            "mangledName": "$s18FBSimulatorControl0A16HingeReadSessionC12continuation33_0A8FD15DD9F225EAB6CC2466FAD85269LLScCyAA0aC5AngleVs5Error_pGSgvp",
+            "moduleName": "FBSimulatorControl",
+            "isInternal": true,
+            "declAttributes": [
+              "HasInitialValue",
+              "Final",
+              "HasStorage",
+              "AccessControl"
+            ],
+            "fixedbinaryorder": 5,
+            "hasStorage": true
+          },
+          {
+            "kind": "Var",
+            "name": "result",
+            "printedName": "result",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "Swift.Result<FBSimulatorControl.FBSimulatorHingeAngle, any Swift.Error>?",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Result",
+                    "printedName": "Swift.Result<FBSimulatorControl.FBSimulatorHingeAngle, any Swift.Error>",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "FBSimulatorHingeAngle",
+                        "printedName": "FBSimulatorControl.FBSimulatorHingeAngle",
+                        "usr": "s:18FBSimulatorControl0A10HingeAngleV"
+                      },
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Error",
+                        "printedName": "any Swift.Error",
+                        "usr": "s:s5ErrorP"
+                      }
+                    ],
+                    "usr": "s:s6ResultO"
+                  }
+                ],
+                "usr": "s:Sq"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:18FBSimulatorControl0A16HingeReadSessionC6result33_0A8FD15DD9F225EAB6CC2466FAD85269LLs6ResultOyAA0aC5AngleVs5Error_pGSgvp",
+            "mangledName": "$s18FBSimulatorControl0A16HingeReadSessionC6result33_0A8FD15DD9F225EAB6CC2466FAD85269LLs6ResultOyAA0aC5AngleVs5Error_pGSgvp",
+            "moduleName": "FBSimulatorControl",
+            "isInternal": true,
+            "declAttributes": [
+              "HasInitialValue",
+              "Final",
+              "HasStorage",
+              "AccessControl"
+            ],
+            "fixedbinaryorder": 6,
+            "hasStorage": true
+          },
+          {
+            "kind": "Var",
+            "name": "selectedAngle",
+            "printedName": "selectedAngle",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "FBSimulatorControl.FBSimulatorHingeAngle?",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "FBSimulatorHingeAngle",
+                    "printedName": "FBSimulatorControl.FBSimulatorHingeAngle",
+                    "usr": "s:18FBSimulatorControl0A10HingeAngleV"
+                  }
+                ],
+                "usr": "s:Sq"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:18FBSimulatorControl0A16HingeReadSessionC13selectedAngle33_0A8FD15DD9F225EAB6CC2466FAD85269LLAA0acG0VSgvp",
+            "mangledName": "$s18FBSimulatorControl0A16HingeReadSessionC13selectedAngle33_0A8FD15DD9F225EAB6CC2466FAD85269LLAA0acG0VSgvp",
+            "moduleName": "FBSimulatorControl",
+            "isInternal": true,
+            "declAttributes": [
+              "HasInitialValue",
+              "Final",
+              "HasStorage",
+              "AccessControl"
+            ],
+            "fixedbinaryorder": 7,
+            "hasStorage": true
+          },
+          {
+            "kind": "Var",
+            "name": "startedAt",
+            "printedName": "startedAt",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Double",
+                "printedName": "Swift.Double",
+                "usr": "s:Sd"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:18FBSimulatorControl0A16HingeReadSessionC9startedAt33_0A8FD15DD9F225EAB6CC2466FAD85269LLSdvp",
+            "mangledName": "$s18FBSimulatorControl0A16HingeReadSessionC9startedAt33_0A8FD15DD9F225EAB6CC2466FAD85269LLSdvp",
+            "moduleName": "FBSimulatorControl",
+            "isInternal": true,
+            "declAttributes": [
+              "HasInitialValue",
+              "Final",
+              "HasStorage",
+              "AccessControl"
+            ],
+            "fixedbinaryorder": 8,
+            "hasStorage": true
+          },
+          {
+            "kind": "Constructor",
+            "name": "init",
+            "printedName": "init(transport:queue:timeout:channel:now:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "FBSimulatorHingeReadSession",
+                "printedName": "FBSimulatorControl.FBSimulatorHingeReadSession",
+                "usr": "s:18FBSimulatorControl0A16HingeReadSessionC"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "FBSimulatorCoreDeviceTransport",
+                "printedName": "any FBSimulatorControl.FBSimulatorCoreDeviceTransport",
+                "usr": "s:18FBSimulatorControl0A19CoreDeviceTransportP"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "DispatchQueue",
+                "printedName": "Dispatch.DispatchQueue",
+                "usr": "c:objc(cs)OS_dispatch_queue"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "DispatchTimeInterval",
+                "printedName": "Dispatch.DispatchTimeInterval",
+                "hasDefaultArg": true,
+                "usr": "s:8Dispatch0A12TimeIntervalO"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "UUID",
+                "printedName": "Foundation.UUID",
+                "hasDefaultArg": true,
+                "usr": "s:10Foundation4UUIDV"
+              },
+              {
+                "kind": "TypeFunc",
+                "name": "Function",
+                "printedName": "() -> Swift.Double",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Double",
+                    "printedName": "Swift.Double",
+                    "usr": "s:Sd"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  }
+                ],
+                "hasDefaultArg": true
+              }
+            ],
+            "declKind": "Constructor",
+            "usr": "s:18FBSimulatorControl0A16HingeReadSessionC9transport5queue7timeout7channel3nowAcA0A19CoreDeviceTransport_p_So012OS_dispatch_G0C8Dispatch0P12TimeIntervalO10Foundation4UUIDVSdyYbctcfc",
+            "mangledName": "$s18FBSimulatorControl0A16HingeReadSessionC9transport5queue7timeout7channel3nowAcA0A19CoreDeviceTransport_p_So012OS_dispatch_G0C8Dispatch0P12TimeIntervalO10Foundation4UUIDVSdyYbctcfc",
+            "moduleName": "FBSimulatorControl",
+            "init_kind": "Designated"
+          },
+          {
+            "kind": "Function",
+            "name": "read",
+            "printedName": "read(deviceID:version:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "FBSimulatorHingeAngle",
+                "printedName": "FBSimulatorControl.FBSimulatorHingeAngle",
+                "usr": "s:18FBSimulatorControl0A10HingeAngleV"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "String",
+                "printedName": "Swift.String",
+                "usr": "s:SS"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "String",
+                "printedName": "Swift.String",
+                "usr": "s:SS"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:18FBSimulatorControl0A16HingeReadSessionC4read8deviceID7versionAA0aC5AngleVSS_SStYaKF",
+            "mangledName": "$s18FBSimulatorControl0A16HingeReadSessionC4read8deviceID7versionAA0aC5AngleVSS_SStYaKF",
+            "moduleName": "FBSimulatorControl",
+            "declAttributes": [
+              "Final"
+            ],
+            "throwing": true,
+            "funcSelfKind": "NonMutating"
+          }
+        ],
+        "declKind": "Class",
+        "usr": "s:18FBSimulatorControl0A16HingeReadSessionC",
+        "mangledName": "$s18FBSimulatorControl0A16HingeReadSessionC",
+        "moduleName": "FBSimulatorControl",
+        "declAttributes": [
+          "Final",
+          "RawDocComment"
+        ],
+        "conformances": [
+          {
+            "kind": "Conformance",
+            "name": "Copyable",
+            "printedName": "Copyable",
+            "usr": "s:s8CopyableP",
+            "mangledName": "$ss8CopyableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Escapable",
+            "printedName": "Escapable",
+            "usr": "s:s9EscapableP",
+            "mangledName": "$ss9EscapableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Sendable",
+            "printedName": "Sendable",
+            "usr": "s:s8SendableP",
+            "mangledName": "$ss8SendableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "SendableMetatype",
+            "printedName": "SendableMetatype",
+            "usr": "s:s16SendableMetatypeP",
+            "mangledName": "$ss16SendableMetatypeP"
           }
         ]
       },
@@ -62128,6 +65044,59 @@
           },
           {
             "kind": "Function",
+            "name": "setHingeAngle",
+            "printedName": "setHingeAngle(_:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "FBSimulatorHingeAngle",
+                "printedName": "FBSimulatorControl.FBSimulatorHingeAngle",
+                "usr": "s:18FBSimulatorControl0A10HingeAngleV"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:So11FBSimulatorC0A7ControlE13setHingeAngleyyAC0adE0VYaKF",
+            "mangledName": "$sSo11FBSimulatorC0A7ControlE13setHingeAngleyyAC0adE0VYaKF",
+            "moduleName": "FBSimulatorControl",
+            "isOpen": true,
+            "declAttributes": [
+              "RawDocComment"
+            ],
+            "isFromExtension": true,
+            "throwing": true,
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "hingeAngle",
+            "printedName": "hingeAngle()",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "FBSimulatorHingeAngle",
+                "printedName": "FBSimulatorControl.FBSimulatorHingeAngle",
+                "usr": "s:18FBSimulatorControl0A10HingeAngleV"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:So11FBSimulatorC0A7ControlE10hingeAngleAC0a5HingeD0VyYaKF",
+            "mangledName": "$sSo11FBSimulatorC0A7ControlE10hingeAngleAC0a5HingeD0VyYaKF",
+            "moduleName": "FBSimulatorControl",
+            "isOpen": true,
+            "declAttributes": [
+              "RawDocComment"
+            ],
+            "isFromExtension": true,
+            "throwing": true,
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
             "name": "clearKeychain",
             "printedName": "clearKeychain()",
             "children": [
@@ -64388,6 +67357,41 @@
         "conformances": [
           {
             "kind": "Conformance",
+            "name": "SendableMetatype",
+            "printedName": "SendableMetatype",
+            "usr": "s:s16SendableMetatypeP",
+            "mangledName": "$ss16SendableMetatypeP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "FBiOSTarget",
+            "printedName": "FBiOSTarget",
+            "usr": "c:@M@FBControlCore@objc(pl)FBiOSTarget",
+            "mangledName": "$s13FBControlCore11FBiOSTargetP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "FBiOSTargetInfo",
+            "printedName": "FBiOSTargetInfo",
+            "usr": "c:@M@FBControlCore@objc(pl)FBiOSTargetInfo",
+            "mangledName": "$s13FBControlCore15FBiOSTargetInfoP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "FBiOSTargetCommand",
+            "printedName": "FBiOSTargetCommand",
+            "usr": "c:@M@FBControlCore@objc(pl)FBiOSTargetCommand",
+            "mangledName": "$s13FBControlCore18FBiOSTargetCommandP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Sendable",
+            "printedName": "Sendable",
+            "usr": "s:s8SendableP",
+            "mangledName": "$ss8SendableP"
+          },
+          {
+            "kind": "Conformance",
             "name": "AccessibilityCommands",
             "printedName": "AccessibilityCommands",
             "usr": "s:18FBSimulatorControl21AccessibilityCommandsP",
@@ -64591,41 +67595,6 @@
           },
           {
             "kind": "Conformance",
-            "name": "FBiOSTargetCommand",
-            "printedName": "FBiOSTargetCommand",
-            "usr": "c:@M@FBControlCore@objc(pl)FBiOSTargetCommand",
-            "mangledName": "$s13FBControlCore18FBiOSTargetCommandP"
-          },
-          {
-            "kind": "Conformance",
-            "name": "FBiOSTargetInfo",
-            "printedName": "FBiOSTargetInfo",
-            "usr": "c:@M@FBControlCore@objc(pl)FBiOSTargetInfo",
-            "mangledName": "$s13FBControlCore15FBiOSTargetInfoP"
-          },
-          {
-            "kind": "Conformance",
-            "name": "FBiOSTarget",
-            "printedName": "FBiOSTarget",
-            "usr": "c:@M@FBControlCore@objc(pl)FBiOSTarget",
-            "mangledName": "$s13FBControlCore11FBiOSTargetP"
-          },
-          {
-            "kind": "Conformance",
-            "name": "Sendable",
-            "printedName": "Sendable",
-            "usr": "s:s8SendableP",
-            "mangledName": "$ss8SendableP"
-          },
-          {
-            "kind": "Conformance",
-            "name": "SendableMetatype",
-            "printedName": "SendableMetatype",
-            "usr": "s:s16SendableMetatypeP",
-            "mangledName": "$ss16SendableMetatypeP"
-          },
-          {
-            "kind": "Conformance",
             "name": "_KeyValueCodingAndObserving",
             "printedName": "_KeyValueCodingAndObserving",
             "usr": "s:10Foundation27_KeyValueCodingAndObservingP",
@@ -64694,1514 +67663,1556 @@
   },
   "ConstValues": [
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Commands\/AXRoleVocabulary.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/AXRoleVocabulary.swift",
       "kind": "StringLiteral",
       "offset": 466,
       "length": 4,
       "value": "\"AX\""
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Commands\/AXRoleVocabulary.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/AXRoleVocabulary.swift",
       "kind": "StringLiteral",
       "offset": 798,
       "length": 5,
       "value": "\"Any\""
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Commands\/AXRoleVocabulary.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/AXRoleVocabulary.swift",
       "kind": "Array",
       "offset": 2780,
       "length": 266,
       "value": "[\"Button\", \"Cell\", \"TextField\", \"SecureTextField\", \"SearchField\", \"Switch\", \"Toggle\", \"Link\", \"MenuItem\", \"Slider\", \"CheckBox\", \"RadioButton\", \"SegmentedControl\", \"Stepper\", \"PopUpButton\", \"Picker\", \"PickerWheel\", \"Tab\", \"Key\", \"DisclosureTriangle\"]"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Commands\/AXRoleVocabulary.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/AXRoleVocabulary.swift",
       "kind": "Dictionary",
       "offset": 4113,
       "length": 350,
       "value": "[(1, \"Application\"), (2, \"Button\"), (3, \"CheckBox\"), (4, \"GenericElement\"), (5, \"Group\"), (6, \"Heading\"), (7, \"Image\"), (8, \"Link\"), (9, \"RadioButton\"), (10, \"ScrollArea\"), (11, \"ScrollBar\"), (12, \"TabGroup\"), (13, \"Slider\"), (14, \"StaticText\"), (15, \"TextField\"), (16, \"WebArea\"), (17, \"TextArea\"), (18, \"Splitter\"), (19, \"PopUpButton\"), (20, \"Sheet\"), (21, \"Grid\")]"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Commands\/AXRoleVocabulary.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/AXRoleVocabulary.swift",
       "kind": "Dictionary",
       "offset": 5885,
       "length": 110,
       "value": "[(1, \"SearchField\"), (2, \"TabButton\"), (3, \"Switch\"), (4, \"MapArea\"), (5, \"SecureTextField\"), (6, \"MapItem\")]"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Commands\/AXRoleVocabulary.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/AXRoleVocabulary.swift",
       "kind": "Dictionary",
       "offset": 6153,
       "length": 1444,
       "value": "[(0, \"Any\"), (1, \"Other\"), (2, \"Application\"), (3, \"Group\"), (4, \"Window\"), (5, \"Sheet\"), (6, \"Drawer\"), (7, \"Alert\"), (8, \"Dialog\"), (9, \"Button\"), (10, \"RadioButton\"), (11, \"RadioGroup\"), (12, \"CheckBox\"), (13, \"DisclosureTriangle\"), (14, \"PopUpButton\"), (15, \"ComboBox\"), (16, \"MenuButton\"), (17, \"ToolbarButton\"), (18, \"Popover\"), (19, \"Keyboard\"), (20, \"Key\"), (21, \"NavigationBar\"), (22, \"TabBar\"), (23, \"TabGroup\"), (24, \"Toolbar\"), (25, \"StatusBar\"), (26, \"Table\"), (27, \"TableRow\"), (28, \"TableColumn\"), (29, \"Outline\"), (30, \"OutlineRow\"), (31, \"Browser\"), (32, \"CollectionView\"), (33, \"Slider\"), (34, \"PageIndicator\"), (35, \"ProgressIndicator\"), (36, \"ActivityIndicator\"), (37, \"SegmentedControl\"), (38, \"Picker\"), (39, \"PickerWheel\"), (40, \"Switch\"), (41, \"Toggle\"), (42, \"Link\"), (43, \"Image\"), (44, \"Icon\"), (45, \"SearchField\"), (46, \"ScrollView\"), (47, \"ScrollBar\"), (48, \"StaticText\"), (49, \"TextField\"), (50, \"SecureTextField\"), (51, \"DatePicker\"), (52, \"TextView\"), (53, \"Menu\"), (54, \"MenuItem\"), (55, \"MenuBar\"), (56, \"MenuBarItem\"), (57, \"Map\"), (58, \"WebView\"), (59, \"IncrementArrow\"), (60, \"DecrementArrow\"), (61, \"Timeline\"), (62, \"RatingIndicator\"), (63, \"ValueIndicator\"), (64, \"SplitGroup\"), (65, \"Splitter\"), (66, \"RelevanceIndicator\"), (67, \"ColorWell\"), (68, \"HelpTag\"), (69, \"Matte\"), (70, \"DockItem\"), (71, \"Ruler\"), (72, \"RulerMarker\"), (73, \"Grid\"), (74, \"LevelIndicator\"), (75, \"Cell\"), (76, \"LayoutArea\"), (77, \"LayoutItem\"), (78, \"Handle\"), (79, \"Stepper\"), (80, \"Tab\"), (81, \"TouchBar\"), (82, \"StatusItem\")]"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Commands\/AXWire.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/AXWire.swift",
       "kind": "StringLiteral",
       "offset": 59,
       "length": 30,
       "value": "\"XC_kAXXCAttributeElementType\""
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Commands\/AXWire.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/AXWire.swift",
       "kind": "StringLiteral",
       "offset": 107,
       "length": 24,
       "value": "\"XC_kAXXCAttributeLabel\""
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Commands\/AXWire.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/AXWire.swift",
       "kind": "StringLiteral",
       "offset": 149,
       "length": 24,
       "value": "\"XC_kAXXCAttributeValue\""
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Commands\/AXWire.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/AXWire.swift",
       "kind": "StringLiteral",
       "offset": 196,
       "length": 29,
       "value": "\"XC_kAXXCAttributeIdentifier\""
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Commands\/AXWire.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/AXWire.swift",
       "kind": "StringLiteral",
       "offset": 243,
       "length": 24,
       "value": "\"XC_kAXXCAttributeFrame\""
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Commands\/AXWire.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/AXWire.swift",
       "kind": "StringLiteral",
       "offset": 294,
       "length": 33,
       "value": "\"XC_kAXXCAttributeAutomationType\""
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Commands\/AXWire.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/AXWire.swift",
       "kind": "StringLiteral",
       "offset": 348,
       "length": 27,
       "value": "\"XC_kAXXCAttributeChildren\""
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Commands\/AXWire.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/AXWire.swift",
       "kind": "StringLiteral",
       "offset": 397,
       "length": 28,
       "value": "\"XC_kAXXCAttributeIsVisible\""
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Commands\/AXWire.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/AXWire.swift",
       "kind": "StringLiteral",
       "offset": 450,
       "length": 31,
       "value": "\"XC_kAXXCAttributeVisiblePoint\""
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Commands\/AXWire.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/AXWire.swift",
       "kind": "StringLiteral",
       "offset": 505,
       "length": 30,
       "value": "\"XC_kAXXCAttributeCenterPoint\""
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Commands\/AXWire.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/AXWire.swift",
       "kind": "StringLiteral",
       "offset": 570,
       "length": 43,
       "value": "\"XC_kAXXCAttributeIsUserInteractionEnabled\""
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Commands\/AXWire.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/AXWire.swift",
       "kind": "StringLiteral",
       "offset": 637,
       "length": 15,
       "value": "\"FBExplainedBy\""
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Commands\/AXWire.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/AXWire.swift",
       "kind": "StringLiteral",
       "offset": 674,
       "length": 13,
       "value": "\"FBIsEnabled\""
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Commands\/AXWire.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/AXWire.swift",
       "kind": "StringLiteral",
       "offset": 714,
       "length": 18,
       "value": "\"FBTranslatorRole\""
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Commands\/AXWire.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/AXWire.swift",
       "kind": "StringLiteral",
       "offset": 762,
       "length": 21,
       "value": "\"FBTranslatorSubrole\""
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/HID\/DTUHIDModels.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/HID\/DTUHIDModels.swift",
       "kind": "BooleanLiteral",
       "offset": 1000,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/HID\/DTUHIDModels.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/HID\/DTUHIDModels.swift",
       "kind": "IntegerLiteral",
       "offset": 1567,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/HID\/DTUHIDModels.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/HID\/DTUHIDModels.swift",
       "kind": "IntegerLiteral",
       "offset": 1587,
       "length": 1,
       "value": "1"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/HID\/DTUHIDModels.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/HID\/DTUHIDModels.swift",
       "kind": "IntegerLiteral",
       "offset": 1602,
       "length": 1,
       "value": "2"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/HID\/DTUHIDModels.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/HID\/DTUHIDModels.swift",
       "kind": "IntegerLiteral",
       "offset": 2299,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/HID\/DTUHIDModels.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/HID\/DTUHIDModels.swift",
       "kind": "IntegerLiteral",
       "offset": 2323,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/HID\/DTUHIDModels.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/HID\/DTUHIDModels.swift",
       "kind": "IntegerLiteral",
       "offset": 2808,
       "length": 1,
       "value": "1"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/HID\/DTUHIDModels.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/HID\/DTUHIDModels.swift",
       "kind": "IntegerLiteral",
       "offset": 2822,
       "length": 1,
       "value": "2"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Commands\/FBAXTranslationDispatcher.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBAXTranslationDispatcher.swift",
       "kind": "IntegerLiteral",
       "offset": 1334,
       "length": 1,
       "value": "2"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Commands\/FBAXTranslationDispatcher.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBAXTranslationDispatcher.swift",
       "kind": "Dictionary",
       "offset": 1559,
       "length": 3,
       "value": "[]"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Commands\/FBAXTranslationRequest.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBAXTranslationRequest.swift",
       "kind": "FloatLiteral",
       "offset": 1558,
       "length": 3,
       "value": "5.0"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Commands\/FBAccessibilityCoverageGrid.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBAccessibilityCoverageGrid.swift",
       "kind": "FloatLiteral",
       "offset": 885,
       "length": 4,
       "value": "10.0"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Commands\/FBAccessibilityElement.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBAccessibilityElement.swift",
       "kind": "BooleanLiteral",
       "offset": 1067,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Commands\/FBAccessibilityProfilingCollector.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBAccessibilityProfilingCollector.swift",
       "kind": "IntegerLiteral",
       "offset": 949,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Commands\/FBAccessibilityProfilingCollector.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBAccessibilityProfilingCollector.swift",
       "kind": "IntegerLiteral",
       "offset": 1008,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Commands\/FBAccessibilityProfilingCollector.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBAccessibilityProfilingCollector.swift",
       "kind": "IntegerLiteral",
       "offset": 1063,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Commands\/FBAccessibilityProfilingCollector.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBAccessibilityProfilingCollector.swift",
       "kind": "IntegerLiteral",
       "offset": 1133,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Commands\/FBAccessibilityProfilingCollector.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBAccessibilityProfilingCollector.swift",
       "kind": "IntegerLiteral",
       "offset": 1179,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Commands\/FBAccessibilityProfilingCollector.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBAccessibilityProfilingCollector.swift",
       "kind": "IntegerLiteral",
       "offset": 1218,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Commands\/FBAccessibilityProfilingCollector.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBAccessibilityProfilingCollector.swift",
       "kind": "IntegerLiteral",
       "offset": 1270,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Strategies\/FBDefaultsModificationStrategy.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Strategies\/FBDefaultsModificationStrategy.swift",
       "kind": "StringLiteral",
       "offset": 7043,
       "length": 21,
       "value": "\"Apple Global Domain\""
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Commands\/FBSimulator+RuntimeTools.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBSimulator+RuntimeTools.swift",
       "kind": "Array",
       "offset": 1968,
       "length": 2,
       "value": "[]"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Commands\/FBSimulator+RuntimeTools.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBSimulator+RuntimeTools.swift",
       "kind": "Dictionary",
       "offset": 2008,
       "length": 3,
       "value": "[]"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Commands\/FBSimulator+RuntimeTools.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBSimulator+RuntimeTools.swift",
       "kind": "Array",
       "offset": 3101,
       "length": 2,
       "value": "[]"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Commands\/FBSimulator+RuntimeTools.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBSimulator+RuntimeTools.swift",
       "kind": "Dictionary",
       "offset": 3141,
       "length": 3,
       "value": "[]"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Commands\/FBSimulatorAccessibilityCommands.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBSimulatorAccessibilityCommands.swift",
       "kind": "StringLiteral",
       "offset": 1852,
       "length": 54,
       "value": "\"The accessibility translation runtime is unavailable\""
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Commands\/FBSimulatorAccessibilityCommands.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBSimulatorAccessibilityCommands.swift",
       "kind": "StringLiteral",
       "offset": 2768,
       "length": 32,
       "value": "\"com.apple.CoreSimulator.bridge\""
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Commands\/FBSimulatorAccessibilityCommands.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBSimulatorAccessibilityCommands.swift",
       "kind": "StringLiteral",
       "offset": 2847,
       "length": 23,
       "value": "\"com.apple.SpringBoard\""
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Commands\/FBSimulatorAccessibilitySerializer.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBSimulatorAccessibilitySerializer.swift",
       "kind": "Array",
       "offset": 520,
       "length": 2,
       "value": "[]"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Commands\/FBSimulatorAccessibilitySerializer.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBSimulatorAccessibilitySerializer.swift",
       "kind": "StringLiteral",
       "offset": 1082,
       "length": 4,
       "value": "\"AX\""
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Commands\/FBSimulatorAccessibilitySerializer.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBSimulatorAccessibilitySerializer.swift",
       "kind": "StringLiteral",
       "offset": 1135,
       "length": 11,
       "value": "\"recursive\""
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Commands\/FBSimulatorAccessibilitySerializer.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBSimulatorAccessibilitySerializer.swift",
       "kind": "StringLiteral",
       "offset": 1195,
       "length": 12,
       "value": "\"point_grid\""
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Commands\/FBSimulatorAccessibilitySerializer.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBSimulatorAccessibilitySerializer.swift",
       "kind": "IntegerLiteral",
       "offset": 2193,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Commands\/FBSimulatorAccessibilitySerializer.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBSimulatorAccessibilitySerializer.swift",
       "kind": "IntegerLiteral",
       "offset": 2939,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Commands\/FBSimulatorAccessibilitySerializer.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBSimulatorAccessibilitySerializer.swift",
       "kind": "IntegerLiteral",
       "offset": 8321,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Commands\/FBSimulatorAccessibilitySerializer.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBSimulatorAccessibilitySerializer.swift",
       "kind": "IntegerLiteral",
       "offset": 8345,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Commands\/FBSimulatorAccessibilitySerializer.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBSimulatorAccessibilitySerializer.swift",
       "kind": "IntegerLiteral",
       "offset": 9306,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Commands\/FBSimulatorAccessibilitySerializer.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBSimulatorAccessibilitySerializer.swift",
       "kind": "IntegerLiteral",
       "offset": 9330,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Commands\/FBSimulatorApplicationCommands.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBSimulatorApplicationCommands.swift",
       "kind": "StringLiteral",
       "offset": 6804,
       "length": 19,
       "value": "\"UIKitApplication:\""
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Commands\/FBSimulatorApplicationCommands.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBSimulatorApplicationCommands.swift",
       "kind": "Array",
       "offset": 6834,
       "length": 2,
       "value": "[]"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Commands\/FBSimulatorApplicationCommands.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBSimulatorApplicationCommands.swift",
       "kind": "StringLiteral",
       "offset": 11113,
       "length": 15,
       "value": "\"DataContainer\""
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Configuration\/FBSimulatorBootConfiguration.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Configuration\/FBSimulatorBootConfiguration.swift",
       "kind": "Dictionary",
       "offset": 623,
       "length": 3,
       "value": "[]"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Configuration\/FBSimulatorBootConfiguration.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Configuration\/FBSimulatorBootConfiguration.swift",
       "kind": "StringLiteral",
       "offset": 1356,
       "length": 34,
       "value": "\"Boot Environment %@ | Options %@\""
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Configuration\/FBSimulatorBootConfiguration.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Configuration\/FBSimulatorBootConfiguration.swift",
       "kind": "StringLiteral",
       "offset": 1665,
       "length": 15,
       "value": "\"Direct Launch\""
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Strategies\/FBSimulatorBootVerificationStrategy.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Strategies\/FBSimulatorBootVerificationStrategy.swift",
       "kind": "FloatLiteral",
       "offset": 640,
       "length": 3,
       "value": "0.5"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Strategies\/FBSimulatorBootVerificationStrategy.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Strategies\/FBSimulatorBootVerificationStrategy.swift",
       "kind": "FloatLiteral",
       "offset": 720,
       "length": 3,
       "value": "1.5"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Configuration\/FBSimulatorConfiguration.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Configuration\/FBSimulatorConfiguration.swift",
       "kind": "StringLiteral",
       "offset": 2835,
       "length": 10,
       "value": "\"iPhone 6\""
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Configuration\/FBSimulatorConfiguration.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Configuration\/FBSimulatorConfiguration.swift",
       "kind": "StringLiteral",
       "offset": 6223,
       "length": 70,
       "value": "\"Device '\""
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Configuration\/FBSimulatorConfiguration.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Configuration\/FBSimulatorConfiguration.swift",
       "kind": "StringLiteral",
       "offset": 6256,
       "length": 16,
       "value": "\"' | OS Version '\""
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Configuration\/FBSimulatorConfiguration.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Configuration\/FBSimulatorConfiguration.swift",
       "kind": "StringLiteral",
       "offset": 6291,
       "length": 2,
       "value": "\"'\""
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Configuration\/FBSimulatorControlConfiguration.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Configuration\/FBSimulatorControlConfiguration.swift",
       "kind": "IntegerLiteral",
       "offset": 1605,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Configuration\/FBSimulatorControlConfiguration.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Configuration\/FBSimulatorControlConfiguration.swift",
       "kind": "StringLiteral",
       "offset": 1867,
       "length": 53,
       "value": "\"Pool Config | Set Path \""
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Configuration\/FBSimulatorControlConfiguration.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Configuration\/FBSimulatorControlConfiguration.swift",
       "kind": "StringLiteral",
       "offset": 1910,
       "length": 8,
       "value": "\"(null)\""
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Configuration\/FBSimulatorControlConfiguration.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Configuration\/FBSimulatorControlConfiguration.swift",
       "kind": "StringLiteral",
       "offset": 1919,
       "length": 1,
       "value": "\"\""
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Configuration\/FBSimulatorControlConfiguration.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Configuration\/FBSimulatorControlConfiguration.swift",
       "kind": "StringLiteral",
       "offset": 2104,
       "length": 14,
       "value": "\"SimDeviceSet\""
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Configuration\/FBSimulatorControlConfiguration.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Configuration\/FBSimulatorControlConfiguration.swift",
       "kind": "StringLiteral",
       "offset": 2154,
       "length": 36,
       "value": "\"Expected SimDeviceSet to be loaded\""
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Configuration\/FBSimulatorControlConfiguration.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Configuration\/FBSimulatorControlConfiguration.swift",
       "kind": "StringLiteral",
       "offset": 2284,
       "length": 16,
       "value": "\"defaultSetPath\""
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Configuration\/FBSimulatorControlConfiguration.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Configuration\/FBSimulatorControlConfiguration.swift",
       "kind": "StringLiteral",
       "offset": 2460,
       "length": 12,
       "value": "\"defaultSet\""
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Configuration\/FBSimulatorControlConfiguration.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Configuration\/FBSimulatorControlConfiguration.swift",
       "kind": "StringLiteral",
       "offset": 2516,
       "length": 9,
       "value": "\"setPath\""
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Commands\/FBSimulatorCrashLogCommands.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/CoreDevice\/FBSimulatorCoreDevice.swift",
+      "kind": "StringLiteral",
+      "offset": 589,
+      "length": 48,
+      "value": "\"CoreDevice.XPCMessageKey.cancellationRequested\""
+    },
+    {
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/CoreDevice\/FBSimulatorCoreDeviceTransport.swift",
+      "kind": "BooleanLiteral",
+      "offset": 789,
+      "length": 5,
+      "value": "false"
+    },
+    {
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBSimulatorCrashLogCommands.swift",
       "kind": "BooleanLiteral",
       "offset": 506,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/HID\/FBSimulatorDTUHIDTransport.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/HID\/FBSimulatorDTUHIDTransport.swift",
       "kind": "BooleanLiteral",
       "offset": 670,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/HID\/FBSimulatorDTUHIDTransport.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/HID\/FBSimulatorDTUHIDTransport.swift",
       "kind": "StringLiteral",
-      "offset": 2127,
+      "offset": 2131,
+      "length": 55,
+      "value": "\"com.apple.coredevice.feature.remote.hid.vendordefined\""
+    },
+    {
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/HID\/FBSimulatorDTUHIDTransport.swift",
+      "kind": "StringLiteral",
+      "offset": 2223,
       "length": 51,
       "value": "\"com.apple.coredevice.feature.remote.hid.digitizer\""
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/HID\/FBSimulatorDTUHIDTransport.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/HID\/FBSimulatorDTUHIDTransport.swift",
       "kind": "IntegerLiteral",
-      "offset": 3287,
+      "offset": 3383,
       "length": 11,
       "value": "200000000"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Utility\/FBSimulatorError.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Utility\/FBSimulatorError.swift",
       "kind": "StringLiteral",
       "offset": 253,
       "length": 33,
       "value": "\"com.facebook.FBSimulatorControl\""
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/HID\/FBSimulatorHID.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/HID\/FBSimulatorHID.swift",
       "kind": "IntegerLiteral",
       "offset": 1555,
       "length": 4,
       "value": "2000"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/HID\/FBSimulatorHIDEvent.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/HID\/FBSimulatorHIDEvent.swift",
       "kind": "FloatLiteral",
       "offset": 292,
       "length": 4,
       "value": "10.0"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/HID\/FBSimulatorHIDEvent.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/HID\/FBSimulatorHIDEvent.swift",
       "kind": "StringLiteral",
       "offset": 336,
       "length": 32,
       "value": "\"com.apple.UIKit.SimulatorShake\""
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/HID\/FBSimulatorHIDEvent.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/HID\/FBSimulatorHIDEvent.swift",
       "kind": "StringLiteral",
       "offset": 411,
       "length": 49,
       "value": "\"com.apple.iphonesimulator.toggleincallstatusbar\""
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/HID\/FBSimulatorHIDSessionCache.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/HID\/FBSimulatorHIDSessionCache.swift",
       "kind": "IntegerLiteral",
       "offset": 351,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
       "kind": "IntegerLiteral",
       "offset": 674,
       "length": 1,
       "value": "1"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
       "kind": "IntegerLiteral",
       "offset": 688,
       "length": 1,
       "value": "2"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
       "kind": "IntegerLiteral",
       "offset": 981,
       "length": 1,
       "value": "1"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
       "kind": "IntegerLiteral",
       "offset": 1003,
       "length": 1,
       "value": "2"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
       "kind": "IntegerLiteral",
       "offset": 1019,
       "length": 1,
       "value": "3"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
       "kind": "IntegerLiteral",
       "offset": 1041,
       "length": 1,
       "value": "4"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
       "kind": "IntegerLiteral",
       "offset": 1057,
       "length": 1,
       "value": "5"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
       "kind": "IntegerLiteral",
       "offset": 1078,
       "length": 1,
       "value": "6"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
       "kind": "IntegerLiteral",
       "offset": 1761,
       "length": 1,
       "value": "1"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
       "kind": "IntegerLiteral",
       "offset": 1777,
       "length": 1,
       "value": "2"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
       "kind": "IntegerLiteral",
       "offset": 1793,
       "length": 1,
       "value": "3"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
       "kind": "IntegerLiteral",
       "offset": 1810,
       "length": 1,
       "value": "4"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
       "kind": "IntegerLiteral",
       "offset": 1828,
       "length": 1,
       "value": "5"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
       "kind": "IntegerLiteral",
       "offset": 1844,
       "length": 1,
       "value": "6"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
       "kind": "IntegerLiteral",
       "offset": 2971,
       "length": 1,
       "value": "1"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
       "kind": "IntegerLiteral",
       "offset": 3001,
       "length": 1,
       "value": "2"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
       "kind": "IntegerLiteral",
       "offset": 3027,
       "length": 1,
       "value": "3"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
       "kind": "IntegerLiteral",
       "offset": 3052,
       "length": 1,
       "value": "4"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/HID\/FBSimulatorIndigoHID.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBSimulatorHingeProtocol.swift",
+      "kind": "StringLiteral",
+      "offset": 864,
+      "length": 44,
+      "value": "\"com.apple.coredevice.feature.monitormotion\""
+    },
+    {
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBSimulatorHingeReadSession.swift",
+      "kind": "IntegerLiteral",
+      "offset": 837,
+      "length": 1,
+      "value": "0"
+    },
+    {
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBSimulatorHingeReadSession.swift",
+      "kind": "IntegerLiteral",
+      "offset": 970,
+      "length": 1,
+      "value": "5"
+    },
+    {
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/HID\/FBSimulatorIndigoHID.swift",
       "kind": "IntegerLiteral",
       "offset": 4450,
       "length": 4,
       "value": "0x16"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/HID\/FBSimulatorIndigoHID.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/HID\/FBSimulatorIndigoHID.swift",
       "kind": "IntegerLiteral",
       "offset": 4817,
       "length": 4,
       "value": "0xC0"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/HID\/FBSimulatorIndigoHID.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/HID\/FBSimulatorIndigoHID.swift",
       "kind": "IntegerLiteral",
       "offset": 5049,
       "length": 4,
       "value": "0xA0"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/HID\/FBSimulatorIndigoHIDClient.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/HID\/FBSimulatorIndigoHIDClient.swift",
       "kind": "StringLiteral",
       "offset": 2097,
       "length": 39,
       "value": "\"SimulatorKit.SimDeviceLegacyHIDClient\""
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/HID\/FBSimulatorIndigoHIDClient.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/HID\/FBSimulatorIndigoHIDClient.swift",
       "kind": "IntegerLiteral",
       "offset": 2481,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/HID\/FBSimulatorIndigoHIDClient.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/HID\/FBSimulatorIndigoHIDClient.swift",
       "kind": "BooleanLiteral",
       "offset": 2519,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/HID\/FBSimulatorIndigoHIDClient.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/HID\/FBSimulatorIndigoHIDClient.swift",
       "kind": "BooleanLiteral",
       "offset": 2562,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Commands\/FBSimulatorLaunchCtlCommands.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBSimulatorLaunchCtlCommands.swift",
       "kind": "StringLiteral",
       "offset": 5290,
       "length": 30,
       "value": "\"UIKitApplication:([^\\[]*).*\""
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Utility\/FBSimulatorLaunchedApplication.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Utility\/FBSimulatorLaunchedApplication.swift",
       "kind": "StringLiteral",
       "offset": 4247,
       "length": 112,
       "value": "\"Application Operation \""
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Utility\/FBSimulatorLaunchedApplication.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Utility\/FBSimulatorLaunchedApplication.swift",
       "kind": "StringLiteral",
       "offset": 4298,
       "length": 1,
       "value": "\" | pid \""
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Utility\/FBSimulatorLaunchedApplication.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Utility\/FBSimulatorLaunchedApplication.swift",
       "kind": "StringLiteral",
       "offset": 4325,
       "length": 1,
       "value": "\" | State \""
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Utility\/FBSimulatorLaunchedApplication.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Utility\/FBSimulatorLaunchedApplication.swift",
       "kind": "StringLiteral",
       "offset": 4358,
       "length": 1,
       "value": "\"\""
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Commands\/FBSimulatorLifecycleCommands.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBSimulatorLifecycleCommands.swift",
       "kind": "IntegerLiteral",
       "offset": 398,
       "length": 1,
       "value": "2"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Commands\/FBSimulatorProcessSpawnCommands.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBSimulatorProcessSpawnCommands.swift",
       "kind": "IntegerLiteral",
       "offset": 4224,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/HID\/FBSimulatorPurpleHID.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/HID\/FBSimulatorPurpleHID.swift",
       "kind": "IntegerLiteral",
       "offset": 993,
       "length": 2,
       "value": "50"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/HID\/FBSimulatorPurpleHID.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/HID\/FBSimulatorPurpleHID.swift",
       "kind": "IntegerLiteral",
       "offset": 1049,
       "length": 4,
       "value": "1014"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/HID\/FBSimulatorPurpleHID.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/HID\/FBSimulatorPurpleHID.swift",
       "kind": "IntegerLiteral",
       "offset": 1101,
       "length": 8,
       "value": "0x20000"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/HID\/FBSimulatorPurpleHID.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/HID\/FBSimulatorPurpleHID.swift",
       "kind": "IntegerLiteral",
       "offset": 1162,
       "length": 4,
       "value": "0x7B"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Management\/FBSimulatorServiceContext.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Management\/FBSimulatorServiceContext.swift",
       "kind": "Dictionary",
       "offset": 892,
       "length": 3,
       "value": "[]"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
       "kind": "IntegerLiteral",
       "offset": 655,
       "length": 14,
       "value": "1"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
       "kind": "IntegerLiteral",
       "offset": 677,
       "length": 16,
       "value": "2"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
       "kind": "IntegerLiteral",
       "offset": 887,
       "length": 1,
       "value": "1"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
       "kind": "IntegerLiteral",
       "offset": 932,
       "length": 1,
       "value": "2"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
       "kind": "IntegerLiteral",
       "offset": 1181,
       "length": 1,
       "value": "1"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
       "kind": "IntegerLiteral",
       "offset": 1198,
       "length": 1,
       "value": "2"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
       "kind": "IntegerLiteral",
       "offset": 1216,
       "length": 1,
       "value": "3"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
       "kind": "IntegerLiteral",
       "offset": 1233,
       "length": 1,
       "value": "4"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
       "kind": "IntegerLiteral",
       "offset": 1255,
       "length": 1,
       "value": "5"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
       "kind": "IntegerLiteral",
       "offset": 1282,
       "length": 1,
       "value": "6"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
       "kind": "IntegerLiteral",
       "offset": 1314,
       "length": 1,
       "value": "7"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
       "kind": "IntegerLiteral",
       "offset": 1345,
       "length": 1,
       "value": "8"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
       "kind": "IntegerLiteral",
       "offset": 1375,
       "length": 1,
       "value": "9"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
       "kind": "IntegerLiteral",
       "offset": 1410,
       "length": 2,
       "value": "10"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
       "kind": "IntegerLiteral",
       "offset": 1451,
       "length": 2,
       "value": "11"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
       "kind": "IntegerLiteral",
       "offset": 1497,
       "length": 2,
       "value": "12"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
       "kind": "StringLiteral",
       "offset": 1544,
       "length": 51,
       "value": "\"com.apple.UIKit.SimulatorSlowMotionAnimationState\""
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
       "kind": "Array",
       "offset": 20942,
       "length": 2,
       "value": "[]"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
       "kind": "StringLiteral",
       "offset": 26791,
       "length": 24,
       "value": "\"kTCCServiceAddressBook\""
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
       "kind": "StringLiteral",
       "offset": 26853,
       "length": 19,
       "value": "\"kTCCServicePhotos\""
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
       "kind": "StringLiteral",
       "offset": 26910,
       "length": 19,
       "value": "\"kTCCServiceCamera\""
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
       "kind": "StringLiteral",
       "offset": 26971,
       "length": 23,
       "value": "\"kTCCServiceMicrophone\""
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
       "kind": "StringLiteral",
       "offset": 27135,
       "length": 25,
       "value": "\"kTCCServiceContactsFull\""
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
       "kind": "StringLiteral",
       "offset": 27198,
       "length": 19,
       "value": "\"kTCCServicePhotos\""
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
       "kind": "StringLiteral",
       "offset": 27255,
       "length": 8,
       "value": "\"camera\""
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
       "kind": "StringLiteral",
       "offset": 27303,
       "length": 22,
       "value": "\"__CoreLocationAlways\""
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
       "kind": "StringLiteral",
       "offset": 27367,
       "length": 23,
       "value": "\"kTCCServiceMicrophone\""
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
       "kind": "StringLiteral",
       "offset": 27532,
       "length": 22,
       "value": "\"__CoreLocationAlways\""
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
       "kind": "Array",
       "offset": 27630,
       "length": 207,
       "value": "[\"AddressBook.sqlitedb\", \"AddressBook.sqlitedb-shm\", \"AddressBook.sqlitedb-wal\", \"AddressBookImages.sqlitedb\", \"AddressBookImages.sqlitedb-shm\", \"AddressBookImages.sqlitedb-wal\"]"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Strategies\/FBSimulatorShutdownStrategy.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Strategies\/FBSimulatorShutdownStrategy.swift",
       "kind": "IntegerLiteral",
       "offset": 1937,
       "length": 3,
       "value": "164"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideo.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideo.swift",
       "kind": "BooleanLiteral",
       "offset": 1400,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideo.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideo.swift",
       "kind": "IntegerLiteral",
       "offset": 1632,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideo.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideo.swift",
       "kind": "IntegerLiteral",
       "offset": 1643,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideo.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideo.swift",
       "kind": "IntegerLiteral",
       "offset": 1652,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideo.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideo.swift",
       "kind": "IntegerLiteral",
       "offset": 1662,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideo.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideo.swift",
       "kind": "BooleanLiteral",
       "offset": 1690,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "IntegerLiteral",
       "offset": 14120,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "BooleanLiteral",
       "offset": 14145,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "BooleanLiteral",
       "offset": 14183,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "FloatLiteral",
       "offset": 14317,
       "length": 3,
       "value": "5.0"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "IntegerLiteral",
       "offset": 34265,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "IntegerLiteral",
       "offset": 34306,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "IntegerLiteral",
       "offset": 34334,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "IntegerLiteral",
       "offset": 34934,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "IntegerLiteral",
       "offset": 34966,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "IntegerLiteral",
       "offset": 36789,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "IntegerLiteral",
       "offset": 36800,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "IntegerLiteral",
       "offset": 36809,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "IntegerLiteral",
       "offset": 36819,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "IntegerLiteral",
       "offset": 37436,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "IntegerLiteral",
       "offset": 37447,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "IntegerLiteral",
       "offset": 37456,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "IntegerLiteral",
       "offset": 37466,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "BooleanLiteral",
       "offset": 70104,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "BooleanLiteral",
       "offset": 73243,
       "length": 4,
       "value": "true"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "IntegerLiteral",
       "offset": 75610,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "IntegerLiteral",
       "offset": 75649,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "IntegerLiteral",
       "offset": 75687,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "FloatLiteral",
       "offset": 75714,
       "length": 3,
       "value": "0.0"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "FloatLiteral",
       "offset": 75773,
       "length": 3,
       "value": "0.0"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Commands\/FBSimulatorXCTestCommands.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBSimulatorXCTestCommands.swift",
       "kind": "IntegerLiteral",
       "offset": 422,
       "length": 1,
       "value": "5"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Commands\/FBSimulatorXCTestCommands.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBSimulatorXCTestCommands.swift",
       "kind": "StringLiteral",
       "offset": 452,
       "length": 23,
       "value": "\"TESTMANAGERD_SIM_SOCK\""
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Commands\/FBSimulatorXCTestCommands.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBSimulatorXCTestCommands.swift",
       "kind": "BooleanLiteral",
       "offset": 674,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Commands\/FBSimulatorXCTestCommands.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBSimulatorXCTestCommands.swift",
       "kind": "StringLiteral",
       "offset": 4231,
       "length": 74,
       "value": "\"Platforms\/iPhoneSimulator.platform\/Developer\/Library\/Xcode\/Agents\/xctest\""
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Framebuffer\/FBSurfaceImageGenerator.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Framebuffer\/FBSurfaceImageGenerator.swift",
       "kind": "IntegerLiteral",
       "offset": 559,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Framebuffer\/FBVideoFileWriter.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Framebuffer\/FBVideoFileWriter.swift",
       "kind": "BooleanLiteral",
       "offset": 2651,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Framebuffer\/FBVideoFileWriter.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Framebuffer\/FBVideoFileWriter.swift",
       "kind": "Array",
       "offset": 2942,
       "length": 2,
       "value": "[]"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Framebuffer\/FBVideoFileWriter.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Framebuffer\/FBVideoFileWriter.swift",
       "kind": "BooleanLiteral",
       "offset": 3133,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayCoordinateTransform.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayCoordinateTransform.swift",
       "kind": "IntegerLiteral",
       "offset": 5608,
       "length": 2,
       "value": "24"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
       "kind": "Array",
       "offset": 2991,
       "length": 2,
       "value": "[]"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
       "kind": "StringLiteral",
       "offset": 3091,
       "length": 37,
       "value": "\"com.facebook.sime2e.overlay-effects\""
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
       "kind": "Dictionary",
       "offset": 3912,
       "length": 3,
       "value": "[]"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
       "kind": "Dictionary",
       "offset": 4148,
       "length": 3,
       "value": "[]"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
       "kind": "Dictionary",
       "offset": 4462,
       "length": 3,
       "value": "[]"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
       "kind": "Dictionary",
       "offset": 4868,
       "length": 3,
       "value": "[]"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
       "kind": "FloatLiteral",
       "offset": 5031,
       "length": 3,
       "value": "1.0"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
       "kind": "IntegerLiteral",
       "offset": 19193,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
       "kind": "IntegerLiteral",
       "offset": 19202,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
       "kind": "FloatLiteral",
       "offset": 19207,
       "length": 5,
       "value": "255.0"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
       "kind": "IntegerLiteral",
       "offset": 19215,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
       "kind": "IntegerLiteral",
       "offset": 19291,
       "length": 1,
       "value": "1"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
       "kind": "IntegerLiteral",
       "offset": 19300,
       "length": 1,
       "value": "1"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
       "kind": "FloatLiteral",
       "offset": 19305,
       "length": 5,
       "value": "255.0"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
       "kind": "IntegerLiteral",
       "offset": 19313,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
       "kind": "IntegerLiteral",
       "offset": 19388,
       "length": 1,
       "value": "2"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
       "kind": "IntegerLiteral",
       "offset": 19397,
       "length": 1,
       "value": "2"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
       "kind": "FloatLiteral",
       "offset": 19402,
       "length": 5,
       "value": "255.0"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
       "kind": "IntegerLiteral",
       "offset": 19410,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/spike-idb\/idb\/FBSimulatorControl\/HID\/XPCEncoder.swift",
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/HID\/XPCEncoder.swift",
       "kind": "Array",
-      "offset": 1807,
+      "offset": 1803,
       "length": 2,
       "value": "[]"
     }

@@ -15,6 +15,7 @@ import Darwin
 @preconcurrency import FBControlCore
 @_exported import FBSimulatorControl
 @preconcurrency import Foundation
+import IOKit
 import IOSurface
 import ImageIO
 import Metal
@@ -26,7 +27,7 @@ import Synchronization
 import UniformTypeIdentifiers
 import VideoToolbox
 @preconcurrency import XCTestBootstrap
-import XPC
+@preconcurrency import XPC
 import _Concurrency
 import _StringProcessing
 import _SwiftConcurrencyShims
@@ -568,6 +569,19 @@ public enum FBSimulatorHIDDeviceOrientation : Swift::Int32, Swift::Sendable, Swi
   public var rawValue: Swift::Int32 {
     get
   }
+}
+public struct FBSimulatorHingeAngle : Swift::Equatable, Swift::Hashable, Swift::Sendable {
+  public let degrees: Swift::Double
+  public init(degrees: Swift::Double) throws
+  public static func == (a: FBSimulatorControl::FBSimulatorHingeAngle, b: FBSimulatorControl::FBSimulatorHingeAngle) -> Swift::Bool
+  public func hash(into hasher: inout Swift::Hasher)
+  public var hashValue: Swift::Int {
+    get
+  }
+}
+extension FBSimulatorControl::FBSimulator {
+  public func setHingeAngle(_ angle: FBSimulatorControl::FBSimulatorHingeAngle) async throws
+  public func hingeAngle() async throws -> FBSimulatorControl::FBSimulatorHingeAngle
 }
 @_hasMissingDesignatedInitializers @objc(FBSimulatorImage) final public class FBSimulatorImage : ObjectiveC::NSObject {
   @objc(imageWithFramebuffer:logger:) final public class func image(with framebuffer: FBSimulatorControl::FBFramebuffer, logger: (any FBControlCore::FBControlCoreLogger)?) -> FBSimulatorControl::FBSimulatorImage
