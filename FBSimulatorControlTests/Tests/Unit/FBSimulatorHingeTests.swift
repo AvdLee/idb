@@ -8,6 +8,7 @@
 @testable import FBSimulatorControl
 import Foundation
 import IOKit
+import Synchronization
 import XCTest
 @preconcurrency import XPC
 
@@ -85,6 +86,40 @@ private final class FBSimulatorHingeTransportStub:
   }
 }
 
+private final class FBSimulatorHingeWriteTransportStub:
+  FBSimulatorHingeWriteTransport, @unchecked Sendable
+{
+  struct State {
+    var angles: [Double] = []
+    var finishes = 0
+    var disconnects = 0
+  }
+
+  private let state = Mutex(State())
+
+  func setAngle(_ angle: FBSimulatorHingeAngle) async throws {
+    state.withLock {
+      $0.angles.append(angle.degrees)
+    }
+  }
+
+  func finish() async throws {
+    state.withLock {
+      $0.finishes += 1
+    }
+  }
+
+  func disconnect() {
+    state.withLock {
+      $0.disconnects += 1
+    }
+  }
+
+  func snapshot() -> State {
+    state.withLock { $0 }
+  }
+}
+
 final class FBSimulatorHingeTests: XCTestCase {
   func testAngleValidationAndModelGate() throws {
     for degrees in [-1, 181, Double.nan, .infinity, -.infinity] {
@@ -124,6 +159,54 @@ final class FBSimulatorHingeTests: XCTestCase {
     XCTAssertEqual(decoded["source"] as? String, "hinge-slider-control")
     XCTAssertEqual(decoded["type"] as? String, "range")
     XCTAssertEqual(decoded["value"] as? Double, degrees)
+  }
+
+  func testPersistentWriteSessionUsesOneTransportAndOneDrain() async throws {
+    let transport = FBSimulatorHingeWriteTransportStub()
+    let session = FBSimulatorHingeSession(transport: transport)
+
+    for degrees in [0.0, 90.0, 180.0] {
+      try await session.setAngle(FBSimulatorHingeAngle(degrees: degrees))
+    }
+    var state = transport.snapshot()
+    XCTAssertEqual(state.angles, [0, 90, 180])
+    XCTAssertEqual(state.finishes, 0)
+    XCTAssertEqual(state.disconnects, 0)
+
+    try await session.finish()
+    try await session.finish()
+    state = transport.snapshot()
+    XCTAssertEqual(state.finishes, 1)
+    XCTAssertEqual(state.disconnects, 1)
+  }
+
+  func testPersistentWriteSessionRejectsSamplesAfterFinish() async throws {
+    let transport = FBSimulatorHingeWriteTransportStub()
+    let session = FBSimulatorHingeSession(transport: transport)
+    try await session.finish()
+
+    do {
+      try await session.setAngle(FBSimulatorHingeAngle(degrees: 90))
+      XCTFail("Expected a finished-session error")
+    } catch {
+      guard case FBSimulatorHingeSessionError.finished = error else {
+        return XCTFail("Unexpected error: \(error)")
+      }
+    }
+    let state = transport.snapshot()
+    XCTAssertEqual(state.angles, [])
+    XCTAssertEqual(state.finishes, 1)
+    XCTAssertEqual(state.disconnects, 1)
+  }
+
+  func testPersistentWriteSessionDeinitDisconnects() async {
+    let transport = FBSimulatorHingeWriteTransportStub()
+    var session: FBSimulatorHingeSession? = FBSimulatorHingeSession(transport: transport)
+    XCTAssertNotNil(session)
+    session = nil
+    await Task.yield()
+
+    XCTAssertEqual(transport.snapshot().disconnects, 1)
   }
 
   func testReadProtocolSelectsFreshSample() throws {

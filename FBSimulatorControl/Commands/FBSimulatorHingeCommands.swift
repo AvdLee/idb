@@ -8,19 +8,20 @@
 import Foundation
 
 public extension FBSimulator {
-  /// Sets the hinge angle on an iPhone Duo simulator.
-  func setHingeAngle(_ angle: FBSimulatorHingeAngle) async throws {
+  /// Creates one activated vendor-HID connection for streaming many hinge-angle samples.
+  func makeHingeSession() async throws -> FBSimulatorHingeSession {
     try FBSimulatorHingeAngle.requireSupportedModel(device.deviceType.modelIdentifier)
     let transport = try await FBSimulatorDTUHIDTransport.reliableDTUHID(
       for: self,
       serviceName: FBSimulatorDTUHIDTransport.vendorDefinedServiceName)
-    defer {
-      transport.disconnect()
-    }
-    try await transport.send(
-      messageType: "IndigoVendorDefinedEvent",
-      payload: angle.vendorEvent())
-    try await transport.flush()
+    return FBSimulatorHingeSession(transport: transport)
+  }
+
+  /// Sets the hinge angle on an iPhone Duo simulator.
+  func setHingeAngle(_ angle: FBSimulatorHingeAngle) async throws {
+    let session = try await makeHingeSession()
+    try await session.setAngle(angle)
+    try await session.finish()
   }
 
   /// Reads a fresh measured hinge angle through CoreDevice's motion stream.
