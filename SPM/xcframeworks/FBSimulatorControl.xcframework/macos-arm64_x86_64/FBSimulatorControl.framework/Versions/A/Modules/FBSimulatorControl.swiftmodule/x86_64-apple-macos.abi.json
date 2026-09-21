@@ -23150,6 +23150,50 @@
                 "accessorKind": "get"
               }
             ]
+          },
+          {
+            "kind": "Function",
+            "name": "setAngle",
+            "printedName": "setAngle(_:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "FBSimulatorHingeAngle",
+                "printedName": "FBSimulatorControl.FBSimulatorHingeAngle",
+                "usr": "s:18FBSimulatorControl0A10HingeAngleV"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:18FBSimulatorControl0A15DTUHIDTransportC8setAngleyyAA0a5HingeE0VYaKF",
+            "mangledName": "$s18FBSimulatorControl0A15DTUHIDTransportC8setAngleyyAA0a5HingeE0VYaKF",
+            "moduleName": "FBSimulatorControl",
+            "isFromExtension": true,
+            "throwing": true,
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "finish",
+            "printedName": "finish()",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:18FBSimulatorControl0A15DTUHIDTransportC6finishyyYaKF",
+            "mangledName": "$s18FBSimulatorControl0A15DTUHIDTransportC6finishyyYaKF",
+            "moduleName": "FBSimulatorControl",
+            "isFromExtension": true,
+            "throwing": true,
+            "funcSelfKind": "NonMutating"
           }
         ],
         "declKind": "Class",
@@ -23160,6 +23204,13 @@
           "RawDocComment"
         ],
         "conformances": [
+          {
+            "kind": "Conformance",
+            "name": "FBSimulatorHingeWriteTransport",
+            "printedName": "FBSimulatorHingeWriteTransport",
+            "usr": "s:18FBSimulatorControl0A19HingeWriteTransportP",
+            "mangledName": "$s18FBSimulatorControl0A19HingeWriteTransportP"
+          },
           {
             "kind": "Conformance",
             "name": "Copyable",
@@ -34141,6 +34192,568 @@
             "printedName": "Escapable",
             "usr": "s:s9EscapableP",
             "mangledName": "$ss9EscapableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Sendable",
+            "printedName": "Sendable",
+            "usr": "s:s8SendableP",
+            "mangledName": "$ss8SendableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "SendableMetatype",
+            "printedName": "SendableMetatype",
+            "usr": "s:s16SendableMetatypeP",
+            "mangledName": "$ss16SendableMetatypeP"
+          }
+        ]
+      },
+      {
+        "kind": "Import",
+        "name": "Foundation",
+        "printedName": "Foundation",
+        "declKind": "Import",
+        "moduleName": "FBSimulatorControl",
+        "declAttributes": [
+          "RawDocComment"
+        ]
+      },
+      {
+        "kind": "TypeDecl",
+        "name": "FBSimulatorHingeWriteTransport",
+        "printedName": "FBSimulatorHingeWriteTransport",
+        "children": [
+          {
+            "kind": "Function",
+            "name": "setAngle",
+            "printedName": "setAngle(_:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "FBSimulatorHingeAngle",
+                "printedName": "FBSimulatorControl.FBSimulatorHingeAngle",
+                "usr": "s:18FBSimulatorControl0A10HingeAngleV"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:18FBSimulatorControl0A19HingeWriteTransportP8setAngleyyAA0acG0VYaKF",
+            "mangledName": "$s18FBSimulatorControl0A19HingeWriteTransportP8setAngleyyAA0acG0VYaKF",
+            "moduleName": "FBSimulatorControl",
+            "genericSig": "<τ_0_0 where τ_0_0 : FBSimulatorControl.FBSimulatorHingeWriteTransport>",
+            "sugared_genericSig": "<Self where Self : FBSimulatorControl.FBSimulatorHingeWriteTransport>",
+            "protocolReq": true,
+            "throwing": true,
+            "reqNewWitnessTableEntry": true,
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "finish",
+            "printedName": "finish()",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:18FBSimulatorControl0A19HingeWriteTransportP6finishyyYaKF",
+            "mangledName": "$s18FBSimulatorControl0A19HingeWriteTransportP6finishyyYaKF",
+            "moduleName": "FBSimulatorControl",
+            "genericSig": "<τ_0_0 where τ_0_0 : FBSimulatorControl.FBSimulatorHingeWriteTransport>",
+            "sugared_genericSig": "<Self where Self : FBSimulatorControl.FBSimulatorHingeWriteTransport>",
+            "protocolReq": true,
+            "throwing": true,
+            "reqNewWitnessTableEntry": true,
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "disconnect",
+            "printedName": "disconnect()",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:18FBSimulatorControl0A19HingeWriteTransportP10disconnectyyF",
+            "mangledName": "$s18FBSimulatorControl0A19HingeWriteTransportP10disconnectyyF",
+            "moduleName": "FBSimulatorControl",
+            "genericSig": "<τ_0_0 where τ_0_0 : FBSimulatorControl.FBSimulatorHingeWriteTransport>",
+            "sugared_genericSig": "<Self where Self : FBSimulatorControl.FBSimulatorHingeWriteTransport>",
+            "protocolReq": true,
+            "reqNewWitnessTableEntry": true,
+            "funcSelfKind": "NonMutating"
+          }
+        ],
+        "declKind": "Protocol",
+        "usr": "s:18FBSimulatorControl0A19HingeWriteTransportP",
+        "mangledName": "$s18FBSimulatorControl0A19HingeWriteTransportP",
+        "moduleName": "FBSimulatorControl",
+        "genericSig": "<τ_0_0 : Swift.Sendable>",
+        "sugared_genericSig": "<Self : Swift.Sendable>",
+        "conformances": [
+          {
+            "kind": "Conformance",
+            "name": "Escapable",
+            "printedName": "Escapable",
+            "usr": "s:s9EscapableP",
+            "mangledName": "$ss9EscapableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Copyable",
+            "printedName": "Copyable",
+            "usr": "s:s8CopyableP",
+            "mangledName": "$ss8CopyableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Sendable",
+            "printedName": "Sendable",
+            "usr": "s:s8SendableP",
+            "mangledName": "$ss8SendableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "SendableMetatype",
+            "printedName": "SendableMetatype",
+            "usr": "s:s16SendableMetatypeP",
+            "mangledName": "$ss16SendableMetatypeP"
+          }
+        ]
+      },
+      {
+        "kind": "TypeDecl",
+        "name": "FBSimulatorHingeSessionError",
+        "printedName": "FBSimulatorHingeSessionError",
+        "children": [
+          {
+            "kind": "Var",
+            "name": "finished",
+            "printedName": "finished",
+            "children": [
+              {
+                "kind": "TypeFunc",
+                "name": "Function",
+                "printedName": "(FBSimulatorControl.FBSimulatorHingeSessionError.Type) -> FBSimulatorControl.FBSimulatorHingeSessionError",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "FBSimulatorHingeSessionError",
+                    "printedName": "FBSimulatorControl.FBSimulatorHingeSessionError",
+                    "usr": "s:18FBSimulatorControl0A17HingeSessionErrorO"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Metatype",
+                    "printedName": "FBSimulatorControl.FBSimulatorHingeSessionError.Type",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "FBSimulatorHingeSessionError",
+                        "printedName": "FBSimulatorControl.FBSimulatorHingeSessionError",
+                        "usr": "s:18FBSimulatorControl0A17HingeSessionErrorO"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ],
+            "declKind": "EnumElement",
+            "usr": "s:18FBSimulatorControl0A17HingeSessionErrorO8finishedyA2CmF",
+            "mangledName": "$s18FBSimulatorControl0A17HingeSessionErrorO8finishedyA2CmF",
+            "moduleName": "FBSimulatorControl",
+            "fixedbinaryorder": 0
+          },
+          {
+            "kind": "Var",
+            "name": "errorDescription",
+            "printedName": "errorDescription",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "Swift.String?",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "String",
+                    "printedName": "Swift.String",
+                    "usr": "s:SS"
+                  }
+                ],
+                "usr": "s:Sq"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:18FBSimulatorControl0A17HingeSessionErrorO16errorDescriptionSSSgvp",
+            "mangledName": "$s18FBSimulatorControl0A17HingeSessionErrorO16errorDescriptionSSSgvp",
+            "moduleName": "FBSimulatorControl",
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Optional",
+                    "printedName": "Swift.String?",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "String",
+                        "printedName": "Swift.String",
+                        "usr": "s:SS"
+                      }
+                    ],
+                    "usr": "s:Sq"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:18FBSimulatorControl0A17HingeSessionErrorO16errorDescriptionSSSgvg",
+                "mangledName": "$s18FBSimulatorControl0A17HingeSessionErrorO16errorDescriptionSSSgvg",
+                "moduleName": "FBSimulatorControl",
+                "accessorKind": "get"
+              }
+            ]
+          },
+          {
+            "kind": "Function",
+            "name": "==",
+            "printedName": "==(_:_:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Bool",
+                "printedName": "Swift.Bool",
+                "usr": "s:Sb"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "FBSimulatorHingeSessionError",
+                "printedName": "FBSimulatorControl.FBSimulatorHingeSessionError",
+                "usr": "s:18FBSimulatorControl0A17HingeSessionErrorO"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "FBSimulatorHingeSessionError",
+                "printedName": "FBSimulatorControl.FBSimulatorHingeSessionError",
+                "usr": "s:18FBSimulatorControl0A17HingeSessionErrorO"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:18FBSimulatorControl0A17HingeSessionErrorO2eeoiySbAC_ACtFZ",
+            "mangledName": "$s18FBSimulatorControl0A17HingeSessionErrorO2eeoiySbAC_ACtFZ",
+            "moduleName": "FBSimulatorControl",
+            "static": true,
+            "implicit": true,
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Var",
+            "name": "hashValue",
+            "printedName": "hashValue",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Int",
+                "printedName": "Swift.Int",
+                "usr": "s:Si"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:18FBSimulatorControl0A17HingeSessionErrorO9hashValueSivp",
+            "mangledName": "$s18FBSimulatorControl0A17HingeSessionErrorO9hashValueSivp",
+            "moduleName": "FBSimulatorControl",
+            "implicit": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Int",
+                    "printedName": "Swift.Int",
+                    "usr": "s:Si"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:18FBSimulatorControl0A17HingeSessionErrorO9hashValueSivg",
+                "mangledName": "$s18FBSimulatorControl0A17HingeSessionErrorO9hashValueSivg",
+                "moduleName": "FBSimulatorControl",
+                "implicit": true,
+                "accessorKind": "get"
+              }
+            ]
+          },
+          {
+            "kind": "Function",
+            "name": "hash",
+            "printedName": "hash(into:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Hasher",
+                "printedName": "Swift.Hasher",
+                "paramValueOwnership": "InOut",
+                "usr": "s:s6HasherV"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:18FBSimulatorControl0A17HingeSessionErrorO4hash4intoys6HasherVz_tF",
+            "mangledName": "$s18FBSimulatorControl0A17HingeSessionErrorO4hash4intoys6HasherVz_tF",
+            "moduleName": "FBSimulatorControl",
+            "implicit": true,
+            "funcSelfKind": "NonMutating"
+          }
+        ],
+        "declKind": "Enum",
+        "usr": "s:18FBSimulatorControl0A17HingeSessionErrorO",
+        "mangledName": "$s18FBSimulatorControl0A17HingeSessionErrorO",
+        "moduleName": "FBSimulatorControl",
+        "isEnumExhaustive": true,
+        "conformances": [
+          {
+            "kind": "Conformance",
+            "name": "LocalizedError",
+            "printedName": "LocalizedError",
+            "usr": "s:10Foundation14LocalizedErrorP",
+            "mangledName": "$s10Foundation14LocalizedErrorP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "BitwiseCopyable",
+            "printedName": "BitwiseCopyable",
+            "usr": "s:s15BitwiseCopyableP",
+            "mangledName": "$ss15BitwiseCopyableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Copyable",
+            "printedName": "Copyable",
+            "usr": "s:s8CopyableP",
+            "mangledName": "$ss8CopyableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Hashable",
+            "printedName": "Hashable",
+            "usr": "s:SH",
+            "mangledName": "$sSH"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Error",
+            "printedName": "Error",
+            "usr": "s:s5ErrorP",
+            "mangledName": "$ss5ErrorP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Equatable",
+            "printedName": "Equatable",
+            "usr": "s:SQ",
+            "mangledName": "$sSQ"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Escapable",
+            "printedName": "Escapable",
+            "usr": "s:s9EscapableP",
+            "mangledName": "$ss9EscapableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Sendable",
+            "printedName": "Sendable",
+            "usr": "s:s8SendableP",
+            "mangledName": "$ss8SendableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "SendableMetatype",
+            "printedName": "SendableMetatype",
+            "usr": "s:s16SendableMetatypeP",
+            "mangledName": "$ss16SendableMetatypeP"
+          }
+        ]
+      },
+      {
+        "kind": "TypeDecl",
+        "name": "FBSimulatorHingeSession",
+        "printedName": "FBSimulatorHingeSession",
+        "children": [
+          {
+            "kind": "Constructor",
+            "name": "init",
+            "printedName": "init(transport:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "FBSimulatorHingeSession",
+                "printedName": "FBSimulatorControl.FBSimulatorHingeSession",
+                "usr": "s:18FBSimulatorControl0A12HingeSessionC"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "FBSimulatorHingeWriteTransport",
+                "printedName": "any FBSimulatorControl.FBSimulatorHingeWriteTransport",
+                "usr": "s:18FBSimulatorControl0A19HingeWriteTransportP"
+              }
+            ],
+            "declKind": "Constructor",
+            "usr": "s:18FBSimulatorControl0A12HingeSessionC9transportAcA0aC14WriteTransport_p_tcfc",
+            "mangledName": "$s18FBSimulatorControl0A12HingeSessionC9transportAcA0aC14WriteTransport_p_tcfc",
+            "moduleName": "FBSimulatorControl",
+            "init_kind": "Designated"
+          },
+          {
+            "kind": "Function",
+            "name": "setAngle",
+            "printedName": "setAngle(_:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "FBSimulatorHingeAngle",
+                "printedName": "FBSimulatorControl.FBSimulatorHingeAngle",
+                "usr": "s:18FBSimulatorControl0A10HingeAngleV"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:18FBSimulatorControl0A12HingeSessionC8setAngleyyAA0acF0VYaKF",
+            "mangledName": "$s18FBSimulatorControl0A12HingeSessionC8setAngleyyAA0acF0VYaKF",
+            "moduleName": "FBSimulatorControl",
+            "declAttributes": [
+              "AccessControl",
+              "RawDocComment"
+            ],
+            "throwing": true,
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "finish",
+            "printedName": "finish()",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:18FBSimulatorControl0A12HingeSessionC6finishyyYaKF",
+            "mangledName": "$s18FBSimulatorControl0A12HingeSessionC6finishyyYaKF",
+            "moduleName": "FBSimulatorControl",
+            "declAttributes": [
+              "AccessControl",
+              "RawDocComment"
+            ],
+            "throwing": true,
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Var",
+            "name": "unownedExecutor",
+            "printedName": "unownedExecutor",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "UnownedSerialExecutor",
+                "printedName": "_Concurrency.UnownedSerialExecutor",
+                "usr": "s:Sce"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:18FBSimulatorControl0A12HingeSessionC15unownedExecutorScevp",
+            "mangledName": "$s18FBSimulatorControl0A12HingeSessionC15unownedExecutorScevp",
+            "moduleName": "FBSimulatorControl",
+            "implicit": true,
+            "declAttributes": [
+              "Final",
+              "Nonisolated",
+              "Semantics"
+            ],
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "UnownedSerialExecutor",
+                    "printedName": "_Concurrency.UnownedSerialExecutor",
+                    "usr": "s:Sce"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:18FBSimulatorControl0A12HingeSessionC15unownedExecutorScevg",
+                "mangledName": "$s18FBSimulatorControl0A12HingeSessionC15unownedExecutorScevg",
+                "moduleName": "FBSimulatorControl",
+                "implicit": true,
+                "declAttributes": [
+                  "Final"
+                ],
+                "accessorKind": "get"
+              }
+            ]
+          }
+        ],
+        "declKind": "Class",
+        "usr": "s:18FBSimulatorControl0A12HingeSessionC",
+        "mangledName": "$s18FBSimulatorControl0A12HingeSessionC",
+        "moduleName": "FBSimulatorControl",
+        "declAttributes": [
+          "AccessControl",
+          "RawDocComment"
+        ],
+        "hasMissingDesignatedInitializers": true,
+        "conformances": [
+          {
+            "kind": "Conformance",
+            "name": "Copyable",
+            "printedName": "Copyable",
+            "usr": "s:s8CopyableP",
+            "mangledName": "$ss8CopyableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Escapable",
+            "printedName": "Escapable",
+            "usr": "s:s9EscapableP",
+            "mangledName": "$ss9EscapableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Actor",
+            "printedName": "Actor",
+            "usr": "s:ScA",
+            "mangledName": "$sScA"
           },
           {
             "kind": "Conformance",
@@ -66686,6 +67299,30 @@
           },
           {
             "kind": "Function",
+            "name": "makeHingeSession",
+            "printedName": "makeHingeSession()",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "FBSimulatorHingeSession",
+                "printedName": "FBSimulatorControl.FBSimulatorHingeSession",
+                "usr": "s:18FBSimulatorControl0A12HingeSessionC"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:So11FBSimulatorC0A7ControlE16makeHingeSessionAC0adE0CyYaKF",
+            "mangledName": "$sSo11FBSimulatorC0A7ControlE16makeHingeSessionAC0adE0CyYaKF",
+            "moduleName": "FBSimulatorControl",
+            "isOpen": true,
+            "declAttributes": [
+              "RawDocComment"
+            ],
+            "isFromExtension": true,
+            "throwing": true,
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
             "name": "setHingeAngle",
             "printedName": "setHingeAngle(_:)",
             "children": [
@@ -70185,6 +70822,13 @@
       "offset": 970,
       "length": 1,
       "value": "5"
+    },
+    {
+      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBSimulatorHingeSession.swift",
+      "kind": "BooleanLiteral",
+      "offset": 1364,
+      "length": 5,
+      "value": "false"
     },
     {
       "filePath": "\/tmp\/idb\/FBSimulatorControl\/HID\/FBSimulatorIndigoHID.swift",

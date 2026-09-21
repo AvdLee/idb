@@ -582,8 +582,17 @@ public struct FBSimulatorHingeAngle : Swift::Equatable, Swift::Hashable, Swift::
   }
 }
 extension FBSimulatorControl::FBSimulator {
+  public func makeHingeSession() async throws -> FBSimulatorControl::FBSimulatorHingeSession
   public func setHingeAngle(_ angle: FBSimulatorControl::FBSimulatorHingeAngle) async throws
   public func hingeAngle() async throws -> FBSimulatorControl::FBSimulatorHingeAngle
+}
+@_hasMissingDesignatedInitializers public actor FBSimulatorHingeSession {
+  @objc deinit
+  public func setAngle(_ angle: FBSimulatorControl::FBSimulatorHingeAngle) async throws
+  public func finish() async throws
+  @_semantics("defaultActor") nonisolated final public var unownedExecutor: _Concurrency::UnownedSerialExecutor {
+    get
+  }
 }
 @_hasMissingDesignatedInitializers @objc(FBSimulatorImage) final public class FBSimulatorImage : ObjectiveC::NSObject {
   @objc(imageWithFramebuffer:logger:) final public class func image(with framebuffer: FBSimulatorControl::FBFramebuffer, logger: (any FBControlCore::FBControlCoreLogger)?) -> FBSimulatorControl::FBSimulatorImage
