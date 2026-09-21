@@ -133,8 +133,33 @@ final public class FBAccessibilityProfilingCollector {
   @objc(didChangeIOSurface:) func didChange(_ surface: IOSurface::IOSurface?)
   @objc func didReceiveDamageRect()
 }
+public struct FBFramebufferScreenDescriptor : Swift::Sendable, Swift::Hashable, Swift::CustomStringConvertible {
+  public let screenID: Swift::UInt32
+  public let uniqueID: Swift::String?
+  public let name: Swift::String?
+  public let pixelSize: CoreFoundation::CGSize
+  public let isDefault: Swift::Bool
+  public let powerState: Swift::Int32?
+  public let screenType: Swift::UInt64?
+  public let backlightState: Swift::Int32?
+  public var description: Swift::String {
+    get
+  }
+  public static func == (a: FBSimulatorControl::FBFramebufferScreenDescriptor, b: FBSimulatorControl::FBFramebufferScreenDescriptor) -> Swift::Bool
+  public func hash(into hasher: inout Swift::Hasher)
+  public var hashValue: Swift::Int {
+    get
+  }
+}
 @_hasMissingDesignatedInitializers @objc(FBFramebuffer) final public class FBFramebuffer : ObjectiveC::NSObject, @unchecked Swift::Sendable {
   @objc(mainScreenSurfaceForSimulator:logger:error:) final public class func mainScreenSurface(for simulator: FBSimulatorControl::FBSimulator, logger: any FBControlCore::FBControlCoreLogger) throws -> FBSimulatorControl::FBFramebuffer
+  final public class func allScreenSurfaces(for simulator: FBSimulatorControl::FBSimulator, logger: any FBControlCore::FBControlCoreLogger) throws -> [FBSimulatorControl::FBFramebuffer]
+  final public class func screenSurface(for simulator: FBSimulatorControl::FBSimulator, matching: (FBSimulatorControl::FBFramebufferScreenDescriptor) -> Swift::Bool, logger: any FBControlCore::FBControlCoreLogger) throws -> FBSimulatorControl::FBFramebuffer
+  final public class func screenSurface(for simulator: FBSimulatorControl::FBSimulator, screenID: Swift::UInt32, logger: any FBControlCore::FBControlCoreLogger) throws -> FBSimulatorControl::FBFramebuffer
+  final public class func screenSurface(for simulator: FBSimulatorControl::FBSimulator, pixelSize: CoreFoundation::CGSize, logger: any FBControlCore::FBControlCoreLogger) throws -> FBSimulatorControl::FBFramebuffer
+  final public var screenDescriptor: FBSimulatorControl::FBFramebufferScreenDescriptor? {
+    get
+  }
   @objc(attachConsumer:onQueue:) final public func attach(_ consumer: any FBSimulatorControl::FBFramebufferConsumer, on queue: Dispatch::DispatchQueue) -> IOSurface::IOSurface?
   @objc(detachConsumer:) final public func detach(_ consumer: any FBSimulatorControl::FBFramebufferConsumer)
   @objc(isConsumerAttached:) final public func isConsumerAttached(_ consumer: any FBSimulatorControl::FBFramebufferConsumer) -> Swift::Bool
@@ -628,6 +653,8 @@ extension FBSimulatorControl::FBSimulator : FBSimulatorControl::SimulatorLifecyc
   public func focus() async throws
   public func disconnect(withTimeout timeout: Foundation::TimeInterval, logger: (any FBControlCore::FBControlCoreLogger)?) async throws
   public func connectToFramebuffer() async throws -> FBSimulatorControl::FBFramebuffer
+  public func connectToAllScreenFramebuffers() async throws -> [FBSimulatorControl::FBFramebuffer]
+  public func connectToScreenFramebuffer(matching: (FBSimulatorControl::FBFramebufferScreenDescriptor) -> Swift::Bool) async throws -> FBSimulatorControl::FBFramebuffer
   public func open(_ url: Foundation::URL) async throws
   public func connectToHID() async throws -> FBSimulatorControl::FBSimulatorHID
 }

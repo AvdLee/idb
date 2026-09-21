@@ -6,7 +6,7 @@
 	<dict>
 		<key>Resources/Info.plist</key>
 		<data>
-		XJctuFf19ROcFDIuy4dcPC8S5mc=
+		k62FHUdby8HhH3Fb3ulSCSMmzwc=
 		</data>
 		<key>Resources/README.md</key>
 		<data>
@@ -79,56 +79,56 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			LU1xBK1td3tQHdv0PqURYxzm+I8l0TRlq+QTsdu3EvI=
+			TOY/mAOYLU46WlPdnXtd/G0L4iINUfGwTnzfrDrZ+FE=
 			</data>
 		</dict>
 		<key>Modules/FBSimulatorControl.swiftmodule/arm64-apple-macos.private.swiftinterface</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			k22imUGTQMJxffp/VlLoFImL0jl9IcWALDuVGU2eP1g=
+			LZ6/U5hbYRCen7aa+2b5GQaacpFCZvudQrHEA8qDci4=
 			</data>
 		</dict>
 		<key>Modules/FBSimulatorControl.swiftmodule/arm64-apple-macos.swiftdoc</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			LAPhcA2VkbUSehsxzuqHwAJyBSrVWawrxMSHpPyHZ88=
+			YmjR0niVVnTNszudezAL6vy4qS5jigejOis1ZkMTjOM=
 			</data>
 		</dict>
 		<key>Modules/FBSimulatorControl.swiftmodule/arm64-apple-macos.swiftinterface</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			k22imUGTQMJxffp/VlLoFImL0jl9IcWALDuVGU2eP1g=
+			LZ6/U5hbYRCen7aa+2b5GQaacpFCZvudQrHEA8qDci4=
 			</data>
 		</dict>
 		<key>Modules/FBSimulatorControl.swiftmodule/x86_64-apple-macos.abi.json</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			LU1xBK1td3tQHdv0PqURYxzm+I8l0TRlq+QTsdu3EvI=
+			TOY/mAOYLU46WlPdnXtd/G0L4iINUfGwTnzfrDrZ+FE=
 			</data>
 		</dict>
 		<key>Modules/FBSimulatorControl.swiftmodule/x86_64-apple-macos.private.swiftinterface</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			Lj0ocMb1bMc6Gny/muSVzc6DUbmJyIrmxJnTgV6ILAo=
+			W2CZYVFVn7sF/z2EEgunGpvCfQ7vuGHAklDHIvKuaPE=
 			</data>
 		</dict>
 		<key>Modules/FBSimulatorControl.swiftmodule/x86_64-apple-macos.swiftdoc</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			/rTJFX1XUKRMDvbpspZnioiCgT4t7MekNO8BAG//L/0=
+			Lv3PpLvVaoRM5HHlquDw+YLqcLymMsek2t3hlFsElq4=
 			</data>
 		</dict>
 		<key>Modules/FBSimulatorControl.swiftmodule/x86_64-apple-macos.swiftinterface</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			Lj0ocMb1bMc6Gny/muSVzc6DUbmJyIrmxJnTgV6ILAo=
+			W2CZYVFVn7sF/z2EEgunGpvCfQ7vuGHAklDHIvKuaPE=
 			</data>
 		</dict>
 		<key>Modules/module.modulemap</key>
@@ -142,7 +142,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			kmpUPNMLyTI1nLXJ9hSuqHijgUtVGjtU/G7LqvI5Igs=
+			6oNbLd13PGs13XJOe9j7sPmQ5UDm07C2ncf5ShXccac=
 			</data>
 		</dict>
 		<key>Resources/README.md</key>
