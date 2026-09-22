@@ -142,6 +142,7 @@ public struct FBFramebufferScreenDescriptor : Swift::Sendable, Swift::Hashable, 
   public let isDefault: Swift::Bool
   public let powerState: Swift::Int32?
   public let screenType: Swift::UInt64?
+  public let uiOrientation: Swift::UInt32?
   public let backlightState: Swift::Int32?
   public var description: Swift::String {
     get
@@ -151,6 +152,10 @@ public struct FBFramebufferScreenDescriptor : Swift::Sendable, Swift::Hashable, 
   public var hashValue: Swift::Int {
     get
   }
+}
+@_hasMissingDesignatedInitializers final public class FBScreenPropertiesObservation : @unchecked Swift::Sendable {
+  final public func invalidate()
+  @objc deinit
 }
 @_hasMissingDesignatedInitializers @objc(FBFramebuffer) final public class FBFramebuffer : ObjectiveC::NSObject, @unchecked Swift::Sendable {
   @objc(mainScreenSurfaceForSimulator:logger:error:) final public class func mainScreenSurface(for simulator: FBSimulatorControl::FBSimulator, logger: any FBControlCore::FBControlCoreLogger) throws -> FBSimulatorControl::FBFramebuffer
@@ -164,6 +169,7 @@ public struct FBFramebufferScreenDescriptor : Swift::Sendable, Swift::Hashable, 
   @objc(attachConsumer:onQueue:) final public func attach(_ consumer: any FBSimulatorControl::FBFramebufferConsumer, on queue: Dispatch::DispatchQueue) -> IOSurface::IOSurface?
   @objc(detachConsumer:) final public func detach(_ consumer: any FBSimulatorControl::FBFramebufferConsumer)
   @objc(isConsumerAttached:) final public func isConsumerAttached(_ consumer: any FBSimulatorControl::FBFramebufferConsumer) -> Swift::Bool
+  final public func observeScreenProperties(queue: Dispatch::DispatchQueue, handler: @escaping @Sendable (FBSimulatorControl::FBFramebufferScreenDescriptor) -> Swift::Void) -> FBSimulatorControl::FBScreenPropertiesObservation
   @objc final public func currentStats() -> FBSimulatorControl::FBFramebufferStats
   @objc final public var statsStartTime: CoreFoundation::CFTimeInterval {
     @objc get

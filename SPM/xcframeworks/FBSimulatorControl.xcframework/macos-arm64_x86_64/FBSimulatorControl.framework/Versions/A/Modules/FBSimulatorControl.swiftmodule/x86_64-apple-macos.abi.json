@@ -12517,6 +12517,67 @@
           },
           {
             "kind": "Var",
+            "name": "uiOrientation",
+            "printedName": "uiOrientation",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "Swift.UInt32?",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "UInt32",
+                    "printedName": "Swift.UInt32",
+                    "usr": "s:s6UInt32V"
+                  }
+                ],
+                "usr": "s:Sq"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:18FBSimulatorControl29FBFramebufferScreenDescriptorV13uiOrientations6UInt32VSgvp",
+            "mangledName": "$s18FBSimulatorControl29FBFramebufferScreenDescriptorV13uiOrientations6UInt32VSgvp",
+            "moduleName": "FBSimulatorControl",
+            "declAttributes": [
+              "HasStorage",
+              "AccessControl",
+              "RawDocComment"
+            ],
+            "isLet": true,
+            "hasStorage": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Optional",
+                    "printedName": "Swift.UInt32?",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "UInt32",
+                        "printedName": "Swift.UInt32",
+                        "usr": "s:s6UInt32V"
+                      }
+                    ],
+                    "usr": "s:Sq"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:18FBSimulatorControl29FBFramebufferScreenDescriptorV13uiOrientations6UInt32VSgvg",
+                "mangledName": "$s18FBSimulatorControl29FBFramebufferScreenDescriptorV13uiOrientations6UInt32VSgvg",
+                "moduleName": "FBSimulatorControl",
+                "implicit": true,
+                "accessorKind": "get"
+              }
+            ]
+          },
+          {
+            "kind": "Var",
             "name": "backlightState",
             "printedName": "backlightState",
             "children": [
@@ -12619,7 +12680,7 @@
           {
             "kind": "Constructor",
             "name": "init",
-            "printedName": "init(screenID:uniqueID:name:pixelSize:isDefault:powerState:screenType:backlightState:)",
+            "printedName": "init(screenID:uniqueID:name:pixelSize:isDefault:powerState:screenType:uiOrientation:backlightState:)",
             "children": [
               {
                 "kind": "TypeNominal",
@@ -12704,6 +12765,20 @@
               {
                 "kind": "TypeNominal",
                 "name": "Optional",
+                "printedName": "Swift.UInt32?",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "UInt32",
+                    "printedName": "Swift.UInt32",
+                    "usr": "s:s6UInt32V"
+                  }
+                ],
+                "usr": "s:Sq"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
                 "printedName": "Swift.Int32?",
                 "children": [
                   {
@@ -12717,8 +12792,8 @@
               }
             ],
             "declKind": "Constructor",
-            "usr": "s:18FBSimulatorControl29FBFramebufferScreenDescriptorV8screenID06uniqueG04name9pixelSize9isDefault10powerState0F4Type09backlightO0ACs6UInt32V_SSSgANSo6CGSizeVSbs5Int32VSgs6UInt64VSgAStcfc",
-            "mangledName": "$s18FBSimulatorControl29FBFramebufferScreenDescriptorV8screenID06uniqueG04name9pixelSize9isDefault10powerState0F4Type09backlightO0ACs6UInt32V_SSSgANSo6CGSizeVSbs5Int32VSgs6UInt64VSgAStcfc",
+            "usr": "s:18FBSimulatorControl29FBFramebufferScreenDescriptorV8screenID06uniqueG04name9pixelSize9isDefault10powerState0F4Type13uiOrientation09backlightO0ACs6UInt32V_SSSgAOSo6CGSizeVSbs5Int32VSgs6UInt64VSgANSgATtcfc",
+            "mangledName": "$s18FBSimulatorControl29FBFramebufferScreenDescriptorV8screenID06uniqueG04name9pixelSize9isDefault10powerState0F4Type13uiOrientation09backlightO0ACs6UInt32V_SSSgAOSo6CGSizeVSbs5Int32VSgs6UInt64VSgANSgATtcfc",
             "moduleName": "FBSimulatorControl",
             "implicit": true,
             "init_kind": "Designated"
@@ -12877,6 +12952,75 @@
             "printedName": "Equatable",
             "usr": "s:SQ",
             "mangledName": "$sSQ"
+          }
+        ]
+      },
+      {
+        "kind": "TypeDecl",
+        "name": "FBScreenPropertiesObservation",
+        "printedName": "FBScreenPropertiesObservation",
+        "children": [
+          {
+            "kind": "Function",
+            "name": "invalidate",
+            "printedName": "invalidate()",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:18FBSimulatorControl29FBScreenPropertiesObservationC10invalidateyyF",
+            "mangledName": "$s18FBSimulatorControl29FBScreenPropertiesObservationC10invalidateyyF",
+            "moduleName": "FBSimulatorControl",
+            "declAttributes": [
+              "Final",
+              "AccessControl",
+              "RawDocComment"
+            ],
+            "funcSelfKind": "NonMutating"
+          }
+        ],
+        "declKind": "Class",
+        "usr": "s:18FBSimulatorControl29FBScreenPropertiesObservationC",
+        "mangledName": "$s18FBSimulatorControl29FBScreenPropertiesObservationC",
+        "moduleName": "FBSimulatorControl",
+        "declAttributes": [
+          "Final",
+          "AccessControl",
+          "RawDocComment"
+        ],
+        "hasMissingDesignatedInitializers": true,
+        "conformances": [
+          {
+            "kind": "Conformance",
+            "name": "Copyable",
+            "printedName": "Copyable",
+            "usr": "s:s8CopyableP",
+            "mangledName": "$ss8CopyableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Escapable",
+            "printedName": "Escapable",
+            "usr": "s:s9EscapableP",
+            "mangledName": "$ss9EscapableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Sendable",
+            "printedName": "Sendable",
+            "usr": "s:s8SendableP",
+            "mangledName": "$ss8SendableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "SendableMetatype",
+            "printedName": "SendableMetatype",
+            "usr": "s:s16SendableMetatypeP",
+            "mangledName": "$ss16SendableMetatypeP"
           }
         ]
       },
@@ -13276,6 +13420,53 @@
               "Final",
               "AccessControl",
               "ObjC"
+            ],
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "observeScreenProperties",
+            "printedName": "observeScreenProperties(queue:handler:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "FBScreenPropertiesObservation",
+                "printedName": "FBSimulatorControl.FBScreenPropertiesObservation",
+                "usr": "s:18FBSimulatorControl29FBScreenPropertiesObservationC"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "DispatchQueue",
+                "printedName": "Dispatch.DispatchQueue",
+                "usr": "c:objc(cs)OS_dispatch_queue"
+              },
+              {
+                "kind": "TypeFunc",
+                "name": "Function",
+                "printedName": "(FBSimulatorControl.FBFramebufferScreenDescriptor) -> ()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "FBFramebufferScreenDescriptor",
+                    "printedName": "FBSimulatorControl.FBFramebufferScreenDescriptor",
+                    "usr": "s:18FBSimulatorControl29FBFramebufferScreenDescriptorV"
+                  }
+                ]
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:18FBSimulatorControl13FBFramebufferC23observeScreenProperties5queue7handlerAA08FBScreenF11ObservationCSo012OS_dispatch_G0C_yAA0cE10DescriptorVYbctF",
+            "mangledName": "$s18FBSimulatorControl13FBFramebufferC23observeScreenProperties5queue7handlerAA08FBScreenF11ObservationCSo012OS_dispatch_G0C_yAA0cE10DescriptorVYbctF",
+            "moduleName": "FBSimulatorControl",
+            "declAttributes": [
+              "Final",
+              "AccessControl",
+              "RawDocComment"
             ],
             "funcSelfKind": "NonMutating"
           },
@@ -69636,41 +69827,6 @@
         "conformances": [
           {
             "kind": "Conformance",
-            "name": "SendableMetatype",
-            "printedName": "SendableMetatype",
-            "usr": "s:s16SendableMetatypeP",
-            "mangledName": "$ss16SendableMetatypeP"
-          },
-          {
-            "kind": "Conformance",
-            "name": "FBiOSTarget",
-            "printedName": "FBiOSTarget",
-            "usr": "c:@M@FBControlCore@objc(pl)FBiOSTarget",
-            "mangledName": "$s13FBControlCore11FBiOSTargetP"
-          },
-          {
-            "kind": "Conformance",
-            "name": "FBiOSTargetInfo",
-            "printedName": "FBiOSTargetInfo",
-            "usr": "c:@M@FBControlCore@objc(pl)FBiOSTargetInfo",
-            "mangledName": "$s13FBControlCore15FBiOSTargetInfoP"
-          },
-          {
-            "kind": "Conformance",
-            "name": "FBiOSTargetCommand",
-            "printedName": "FBiOSTargetCommand",
-            "usr": "c:@M@FBControlCore@objc(pl)FBiOSTargetCommand",
-            "mangledName": "$s13FBControlCore18FBiOSTargetCommandP"
-          },
-          {
-            "kind": "Conformance",
-            "name": "Sendable",
-            "printedName": "Sendable",
-            "usr": "s:s8SendableP",
-            "mangledName": "$ss8SendableP"
-          },
-          {
-            "kind": "Conformance",
             "name": "AccessibilityCommands",
             "printedName": "AccessibilityCommands",
             "usr": "s:18FBSimulatorControl21AccessibilityCommandsP",
@@ -69874,6 +70030,41 @@
           },
           {
             "kind": "Conformance",
+            "name": "FBiOSTargetCommand",
+            "printedName": "FBiOSTargetCommand",
+            "usr": "c:@M@FBControlCore@objc(pl)FBiOSTargetCommand",
+            "mangledName": "$s13FBControlCore18FBiOSTargetCommandP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "FBiOSTargetInfo",
+            "printedName": "FBiOSTargetInfo",
+            "usr": "c:@M@FBControlCore@objc(pl)FBiOSTargetInfo",
+            "mangledName": "$s13FBControlCore15FBiOSTargetInfoP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "FBiOSTarget",
+            "printedName": "FBiOSTarget",
+            "usr": "c:@M@FBControlCore@objc(pl)FBiOSTarget",
+            "mangledName": "$s13FBControlCore11FBiOSTargetP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Sendable",
+            "printedName": "Sendable",
+            "usr": "s:s8SendableP",
+            "mangledName": "$ss8SendableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "SendableMetatype",
+            "printedName": "SendableMetatype",
+            "usr": "s:s16SendableMetatypeP",
+            "mangledName": "$ss16SendableMetatypeP"
+          },
+          {
+            "kind": "Conformance",
             "name": "_KeyValueCodingAndObserving",
             "printedName": "_KeyValueCodingAndObserving",
             "usr": "s:10Foundation27_KeyValueCodingAndObservingP",
@@ -69942,1645 +70133,1645 @@
   },
   "ConstValues": [
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/AXRoleVocabulary.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Commands\/AXRoleVocabulary.swift",
       "kind": "StringLiteral",
       "offset": 466,
       "length": 4,
       "value": "\"AX\""
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/AXRoleVocabulary.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Commands\/AXRoleVocabulary.swift",
       "kind": "StringLiteral",
       "offset": 798,
       "length": 5,
       "value": "\"Any\""
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/AXRoleVocabulary.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Commands\/AXRoleVocabulary.swift",
       "kind": "Array",
       "offset": 2780,
       "length": 266,
       "value": "[\"Button\", \"Cell\", \"TextField\", \"SecureTextField\", \"SearchField\", \"Switch\", \"Toggle\", \"Link\", \"MenuItem\", \"Slider\", \"CheckBox\", \"RadioButton\", \"SegmentedControl\", \"Stepper\", \"PopUpButton\", \"Picker\", \"PickerWheel\", \"Tab\", \"Key\", \"DisclosureTriangle\"]"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/AXRoleVocabulary.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Commands\/AXRoleVocabulary.swift",
       "kind": "Dictionary",
       "offset": 4113,
       "length": 350,
       "value": "[(1, \"Application\"), (2, \"Button\"), (3, \"CheckBox\"), (4, \"GenericElement\"), (5, \"Group\"), (6, \"Heading\"), (7, \"Image\"), (8, \"Link\"), (9, \"RadioButton\"), (10, \"ScrollArea\"), (11, \"ScrollBar\"), (12, \"TabGroup\"), (13, \"Slider\"), (14, \"StaticText\"), (15, \"TextField\"), (16, \"WebArea\"), (17, \"TextArea\"), (18, \"Splitter\"), (19, \"PopUpButton\"), (20, \"Sheet\"), (21, \"Grid\")]"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/AXRoleVocabulary.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Commands\/AXRoleVocabulary.swift",
       "kind": "Dictionary",
       "offset": 5885,
       "length": 110,
       "value": "[(1, \"SearchField\"), (2, \"TabButton\"), (3, \"Switch\"), (4, \"MapArea\"), (5, \"SecureTextField\"), (6, \"MapItem\")]"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/AXRoleVocabulary.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Commands\/AXRoleVocabulary.swift",
       "kind": "Dictionary",
       "offset": 6153,
       "length": 1444,
       "value": "[(0, \"Any\"), (1, \"Other\"), (2, \"Application\"), (3, \"Group\"), (4, \"Window\"), (5, \"Sheet\"), (6, \"Drawer\"), (7, \"Alert\"), (8, \"Dialog\"), (9, \"Button\"), (10, \"RadioButton\"), (11, \"RadioGroup\"), (12, \"CheckBox\"), (13, \"DisclosureTriangle\"), (14, \"PopUpButton\"), (15, \"ComboBox\"), (16, \"MenuButton\"), (17, \"ToolbarButton\"), (18, \"Popover\"), (19, \"Keyboard\"), (20, \"Key\"), (21, \"NavigationBar\"), (22, \"TabBar\"), (23, \"TabGroup\"), (24, \"Toolbar\"), (25, \"StatusBar\"), (26, \"Table\"), (27, \"TableRow\"), (28, \"TableColumn\"), (29, \"Outline\"), (30, \"OutlineRow\"), (31, \"Browser\"), (32, \"CollectionView\"), (33, \"Slider\"), (34, \"PageIndicator\"), (35, \"ProgressIndicator\"), (36, \"ActivityIndicator\"), (37, \"SegmentedControl\"), (38, \"Picker\"), (39, \"PickerWheel\"), (40, \"Switch\"), (41, \"Toggle\"), (42, \"Link\"), (43, \"Image\"), (44, \"Icon\"), (45, \"SearchField\"), (46, \"ScrollView\"), (47, \"ScrollBar\"), (48, \"StaticText\"), (49, \"TextField\"), (50, \"SecureTextField\"), (51, \"DatePicker\"), (52, \"TextView\"), (53, \"Menu\"), (54, \"MenuItem\"), (55, \"MenuBar\"), (56, \"MenuBarItem\"), (57, \"Map\"), (58, \"WebView\"), (59, \"IncrementArrow\"), (60, \"DecrementArrow\"), (61, \"Timeline\"), (62, \"RatingIndicator\"), (63, \"ValueIndicator\"), (64, \"SplitGroup\"), (65, \"Splitter\"), (66, \"RelevanceIndicator\"), (67, \"ColorWell\"), (68, \"HelpTag\"), (69, \"Matte\"), (70, \"DockItem\"), (71, \"Ruler\"), (72, \"RulerMarker\"), (73, \"Grid\"), (74, \"LevelIndicator\"), (75, \"Cell\"), (76, \"LayoutArea\"), (77, \"LayoutItem\"), (78, \"Handle\"), (79, \"Stepper\"), (80, \"Tab\"), (81, \"TouchBar\"), (82, \"StatusItem\")]"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/AXWire.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Commands\/AXWire.swift",
       "kind": "StringLiteral",
       "offset": 59,
       "length": 30,
       "value": "\"XC_kAXXCAttributeElementType\""
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/AXWire.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Commands\/AXWire.swift",
       "kind": "StringLiteral",
       "offset": 107,
       "length": 24,
       "value": "\"XC_kAXXCAttributeLabel\""
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/AXWire.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Commands\/AXWire.swift",
       "kind": "StringLiteral",
       "offset": 149,
       "length": 24,
       "value": "\"XC_kAXXCAttributeValue\""
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/AXWire.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Commands\/AXWire.swift",
       "kind": "StringLiteral",
       "offset": 196,
       "length": 29,
       "value": "\"XC_kAXXCAttributeIdentifier\""
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/AXWire.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Commands\/AXWire.swift",
       "kind": "StringLiteral",
       "offset": 243,
       "length": 24,
       "value": "\"XC_kAXXCAttributeFrame\""
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/AXWire.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Commands\/AXWire.swift",
       "kind": "StringLiteral",
       "offset": 294,
       "length": 33,
       "value": "\"XC_kAXXCAttributeAutomationType\""
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/AXWire.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Commands\/AXWire.swift",
       "kind": "StringLiteral",
       "offset": 348,
       "length": 27,
       "value": "\"XC_kAXXCAttributeChildren\""
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/AXWire.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Commands\/AXWire.swift",
       "kind": "StringLiteral",
       "offset": 397,
       "length": 28,
       "value": "\"XC_kAXXCAttributeIsVisible\""
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/AXWire.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Commands\/AXWire.swift",
       "kind": "StringLiteral",
       "offset": 450,
       "length": 31,
       "value": "\"XC_kAXXCAttributeVisiblePoint\""
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/AXWire.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Commands\/AXWire.swift",
       "kind": "StringLiteral",
       "offset": 505,
       "length": 30,
       "value": "\"XC_kAXXCAttributeCenterPoint\""
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/AXWire.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Commands\/AXWire.swift",
       "kind": "StringLiteral",
       "offset": 570,
       "length": 43,
       "value": "\"XC_kAXXCAttributeIsUserInteractionEnabled\""
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/AXWire.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Commands\/AXWire.swift",
       "kind": "StringLiteral",
       "offset": 637,
       "length": 15,
       "value": "\"FBExplainedBy\""
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/AXWire.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Commands\/AXWire.swift",
       "kind": "StringLiteral",
       "offset": 674,
       "length": 13,
       "value": "\"FBIsEnabled\""
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/AXWire.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Commands\/AXWire.swift",
       "kind": "StringLiteral",
       "offset": 714,
       "length": 18,
       "value": "\"FBTranslatorRole\""
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/AXWire.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Commands\/AXWire.swift",
       "kind": "StringLiteral",
       "offset": 762,
       "length": 21,
       "value": "\"FBTranslatorSubrole\""
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/HID\/DTUHIDModels.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/HID\/DTUHIDModels.swift",
       "kind": "BooleanLiteral",
       "offset": 1000,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/HID\/DTUHIDModels.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/HID\/DTUHIDModels.swift",
       "kind": "IntegerLiteral",
       "offset": 1567,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/HID\/DTUHIDModels.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/HID\/DTUHIDModels.swift",
       "kind": "IntegerLiteral",
       "offset": 1587,
       "length": 1,
       "value": "1"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/HID\/DTUHIDModels.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/HID\/DTUHIDModels.swift",
       "kind": "IntegerLiteral",
       "offset": 1602,
       "length": 1,
       "value": "2"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/HID\/DTUHIDModels.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/HID\/DTUHIDModels.swift",
       "kind": "IntegerLiteral",
       "offset": 2299,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/HID\/DTUHIDModels.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/HID\/DTUHIDModels.swift",
       "kind": "IntegerLiteral",
       "offset": 2323,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/HID\/DTUHIDModels.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/HID\/DTUHIDModels.swift",
       "kind": "IntegerLiteral",
       "offset": 2808,
       "length": 1,
       "value": "1"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/HID\/DTUHIDModels.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/HID\/DTUHIDModels.swift",
       "kind": "IntegerLiteral",
       "offset": 2822,
       "length": 1,
       "value": "2"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBAXTranslationDispatcher.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Commands\/FBAXTranslationDispatcher.swift",
       "kind": "IntegerLiteral",
       "offset": 1334,
       "length": 1,
       "value": "2"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBAXTranslationDispatcher.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Commands\/FBAXTranslationDispatcher.swift",
       "kind": "Dictionary",
       "offset": 1559,
       "length": 3,
       "value": "[]"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBAXTranslationRequest.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Commands\/FBAXTranslationRequest.swift",
       "kind": "FloatLiteral",
       "offset": 1558,
       "length": 3,
       "value": "5.0"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBAccessibilityCoverageGrid.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Commands\/FBAccessibilityCoverageGrid.swift",
       "kind": "FloatLiteral",
       "offset": 885,
       "length": 4,
       "value": "10.0"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBAccessibilityElement.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Commands\/FBAccessibilityElement.swift",
       "kind": "BooleanLiteral",
       "offset": 1067,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBAccessibilityProfilingCollector.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Commands\/FBAccessibilityProfilingCollector.swift",
       "kind": "IntegerLiteral",
       "offset": 949,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBAccessibilityProfilingCollector.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Commands\/FBAccessibilityProfilingCollector.swift",
       "kind": "IntegerLiteral",
       "offset": 1008,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBAccessibilityProfilingCollector.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Commands\/FBAccessibilityProfilingCollector.swift",
       "kind": "IntegerLiteral",
       "offset": 1063,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBAccessibilityProfilingCollector.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Commands\/FBAccessibilityProfilingCollector.swift",
       "kind": "IntegerLiteral",
       "offset": 1133,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBAccessibilityProfilingCollector.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Commands\/FBAccessibilityProfilingCollector.swift",
       "kind": "IntegerLiteral",
       "offset": 1179,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBAccessibilityProfilingCollector.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Commands\/FBAccessibilityProfilingCollector.swift",
       "kind": "IntegerLiteral",
       "offset": 1218,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBAccessibilityProfilingCollector.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Commands\/FBAccessibilityProfilingCollector.swift",
       "kind": "IntegerLiteral",
       "offset": 1270,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Strategies\/FBDefaultsModificationStrategy.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Strategies\/FBDefaultsModificationStrategy.swift",
       "kind": "StringLiteral",
       "offset": 7043,
       "length": 21,
       "value": "\"Apple Global Domain\""
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBSimulator+RuntimeTools.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Commands\/FBSimulator+RuntimeTools.swift",
       "kind": "Array",
       "offset": 1968,
       "length": 2,
       "value": "[]"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBSimulator+RuntimeTools.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Commands\/FBSimulator+RuntimeTools.swift",
       "kind": "Dictionary",
       "offset": 2008,
       "length": 3,
       "value": "[]"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBSimulator+RuntimeTools.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Commands\/FBSimulator+RuntimeTools.swift",
       "kind": "Array",
       "offset": 3101,
       "length": 2,
       "value": "[]"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBSimulator+RuntimeTools.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Commands\/FBSimulator+RuntimeTools.swift",
       "kind": "Dictionary",
       "offset": 3141,
       "length": 3,
       "value": "[]"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBSimulatorAccessibilityCommands.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Commands\/FBSimulatorAccessibilityCommands.swift",
       "kind": "StringLiteral",
       "offset": 1852,
       "length": 54,
       "value": "\"The accessibility translation runtime is unavailable\""
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBSimulatorAccessibilityCommands.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Commands\/FBSimulatorAccessibilityCommands.swift",
       "kind": "StringLiteral",
       "offset": 2768,
       "length": 32,
       "value": "\"com.apple.CoreSimulator.bridge\""
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBSimulatorAccessibilityCommands.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Commands\/FBSimulatorAccessibilityCommands.swift",
       "kind": "StringLiteral",
       "offset": 2847,
       "length": 23,
       "value": "\"com.apple.SpringBoard\""
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBSimulatorAccessibilitySerializer.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Commands\/FBSimulatorAccessibilitySerializer.swift",
       "kind": "Array",
       "offset": 520,
       "length": 2,
       "value": "[]"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBSimulatorAccessibilitySerializer.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Commands\/FBSimulatorAccessibilitySerializer.swift",
       "kind": "StringLiteral",
       "offset": 1082,
       "length": 4,
       "value": "\"AX\""
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBSimulatorAccessibilitySerializer.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Commands\/FBSimulatorAccessibilitySerializer.swift",
       "kind": "StringLiteral",
       "offset": 1135,
       "length": 11,
       "value": "\"recursive\""
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBSimulatorAccessibilitySerializer.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Commands\/FBSimulatorAccessibilitySerializer.swift",
       "kind": "StringLiteral",
       "offset": 1195,
       "length": 12,
       "value": "\"point_grid\""
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBSimulatorAccessibilitySerializer.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Commands\/FBSimulatorAccessibilitySerializer.swift",
       "kind": "IntegerLiteral",
       "offset": 2193,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBSimulatorAccessibilitySerializer.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Commands\/FBSimulatorAccessibilitySerializer.swift",
       "kind": "IntegerLiteral",
       "offset": 2939,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBSimulatorAccessibilitySerializer.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Commands\/FBSimulatorAccessibilitySerializer.swift",
       "kind": "IntegerLiteral",
       "offset": 8321,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBSimulatorAccessibilitySerializer.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Commands\/FBSimulatorAccessibilitySerializer.swift",
       "kind": "IntegerLiteral",
       "offset": 8345,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBSimulatorAccessibilitySerializer.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Commands\/FBSimulatorAccessibilitySerializer.swift",
       "kind": "IntegerLiteral",
       "offset": 9306,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBSimulatorAccessibilitySerializer.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Commands\/FBSimulatorAccessibilitySerializer.swift",
       "kind": "IntegerLiteral",
       "offset": 9330,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBSimulatorApplicationCommands.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Commands\/FBSimulatorApplicationCommands.swift",
       "kind": "StringLiteral",
       "offset": 6804,
       "length": 19,
       "value": "\"UIKitApplication:\""
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBSimulatorApplicationCommands.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Commands\/FBSimulatorApplicationCommands.swift",
       "kind": "Array",
       "offset": 6834,
       "length": 2,
       "value": "[]"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBSimulatorApplicationCommands.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Commands\/FBSimulatorApplicationCommands.swift",
       "kind": "StringLiteral",
       "offset": 11113,
       "length": 15,
       "value": "\"DataContainer\""
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Configuration\/FBSimulatorBootConfiguration.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Configuration\/FBSimulatorBootConfiguration.swift",
       "kind": "Dictionary",
       "offset": 623,
       "length": 3,
       "value": "[]"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Configuration\/FBSimulatorBootConfiguration.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Configuration\/FBSimulatorBootConfiguration.swift",
       "kind": "StringLiteral",
       "offset": 1356,
       "length": 34,
       "value": "\"Boot Environment %@ | Options %@\""
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Configuration\/FBSimulatorBootConfiguration.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Configuration\/FBSimulatorBootConfiguration.swift",
       "kind": "StringLiteral",
       "offset": 1665,
       "length": 15,
       "value": "\"Direct Launch\""
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Strategies\/FBSimulatorBootVerificationStrategy.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Strategies\/FBSimulatorBootVerificationStrategy.swift",
       "kind": "FloatLiteral",
       "offset": 640,
       "length": 3,
       "value": "0.5"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Strategies\/FBSimulatorBootVerificationStrategy.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Strategies\/FBSimulatorBootVerificationStrategy.swift",
       "kind": "FloatLiteral",
       "offset": 720,
       "length": 3,
       "value": "1.5"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Configuration\/FBSimulatorConfiguration.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Configuration\/FBSimulatorConfiguration.swift",
       "kind": "StringLiteral",
       "offset": 2835,
       "length": 10,
       "value": "\"iPhone 6\""
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Configuration\/FBSimulatorConfiguration.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Configuration\/FBSimulatorConfiguration.swift",
       "kind": "StringLiteral",
       "offset": 6223,
       "length": 70,
       "value": "\"Device '\""
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Configuration\/FBSimulatorConfiguration.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Configuration\/FBSimulatorConfiguration.swift",
       "kind": "StringLiteral",
       "offset": 6256,
       "length": 16,
       "value": "\"' | OS Version '\""
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Configuration\/FBSimulatorConfiguration.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Configuration\/FBSimulatorConfiguration.swift",
       "kind": "StringLiteral",
       "offset": 6291,
       "length": 2,
       "value": "\"'\""
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Configuration\/FBSimulatorControlConfiguration.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Configuration\/FBSimulatorControlConfiguration.swift",
       "kind": "IntegerLiteral",
       "offset": 1605,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Configuration\/FBSimulatorControlConfiguration.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Configuration\/FBSimulatorControlConfiguration.swift",
       "kind": "StringLiteral",
       "offset": 1867,
       "length": 53,
       "value": "\"Pool Config | Set Path \""
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Configuration\/FBSimulatorControlConfiguration.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Configuration\/FBSimulatorControlConfiguration.swift",
       "kind": "StringLiteral",
       "offset": 1910,
       "length": 8,
       "value": "\"(null)\""
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Configuration\/FBSimulatorControlConfiguration.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Configuration\/FBSimulatorControlConfiguration.swift",
       "kind": "StringLiteral",
       "offset": 1919,
       "length": 1,
       "value": "\"\""
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Configuration\/FBSimulatorControlConfiguration.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Configuration\/FBSimulatorControlConfiguration.swift",
       "kind": "StringLiteral",
       "offset": 2104,
       "length": 14,
       "value": "\"SimDeviceSet\""
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Configuration\/FBSimulatorControlConfiguration.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Configuration\/FBSimulatorControlConfiguration.swift",
       "kind": "StringLiteral",
       "offset": 2154,
       "length": 36,
       "value": "\"Expected SimDeviceSet to be loaded\""
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Configuration\/FBSimulatorControlConfiguration.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Configuration\/FBSimulatorControlConfiguration.swift",
       "kind": "StringLiteral",
       "offset": 2284,
       "length": 16,
       "value": "\"defaultSetPath\""
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Configuration\/FBSimulatorControlConfiguration.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Configuration\/FBSimulatorControlConfiguration.swift",
       "kind": "StringLiteral",
       "offset": 2460,
       "length": 12,
       "value": "\"defaultSet\""
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Configuration\/FBSimulatorControlConfiguration.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Configuration\/FBSimulatorControlConfiguration.swift",
       "kind": "StringLiteral",
       "offset": 2516,
       "length": 9,
       "value": "\"setPath\""
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/CoreDevice\/FBSimulatorCoreDevice.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/CoreDevice\/FBSimulatorCoreDevice.swift",
       "kind": "StringLiteral",
       "offset": 589,
       "length": 48,
       "value": "\"CoreDevice.XPCMessageKey.cancellationRequested\""
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/CoreDevice\/FBSimulatorCoreDeviceTransport.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/CoreDevice\/FBSimulatorCoreDeviceTransport.swift",
       "kind": "BooleanLiteral",
       "offset": 789,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBSimulatorCrashLogCommands.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Commands\/FBSimulatorCrashLogCommands.swift",
       "kind": "BooleanLiteral",
       "offset": 506,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/HID\/FBSimulatorDTUHIDTransport.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/HID\/FBSimulatorDTUHIDTransport.swift",
       "kind": "IntegerLiteral",
       "offset": 492,
       "length": 2,
       "value": "80"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/HID\/FBSimulatorDTUHIDTransport.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/HID\/FBSimulatorDTUHIDTransport.swift",
       "kind": "IntegerLiteral",
       "offset": 543,
       "length": 3,
       "value": "200"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/HID\/FBSimulatorDTUHIDTransport.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/HID\/FBSimulatorDTUHIDTransport.swift",
       "kind": "IntegerLiteral",
       "offset": 605,
       "length": 1,
       "value": "2"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/HID\/FBSimulatorDTUHIDTransport.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/HID\/FBSimulatorDTUHIDTransport.swift",
       "kind": "IntegerLiteral",
       "offset": 654,
       "length": 1,
       "value": "1"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/HID\/FBSimulatorDTUHIDTransport.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/HID\/FBSimulatorDTUHIDTransport.swift",
       "kind": "IntegerLiteral",
       "offset": 717,
       "length": 1,
       "value": "4"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/HID\/FBSimulatorDTUHIDTransport.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/HID\/FBSimulatorDTUHIDTransport.swift",
       "kind": "IntegerLiteral",
       "offset": 773,
       "length": 1,
       "value": "4"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/HID\/FBSimulatorDTUHIDTransport.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/HID\/FBSimulatorDTUHIDTransport.swift",
       "kind": "IntegerLiteral",
       "offset": 808,
       "length": 1,
       "value": "5"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/HID\/FBSimulatorDTUHIDTransport.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/HID\/FBSimulatorDTUHIDTransport.swift",
       "kind": "BooleanLiteral",
       "offset": 4445,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/HID\/FBSimulatorDTUHIDTransport.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/HID\/FBSimulatorDTUHIDTransport.swift",
       "kind": "StringLiteral",
       "offset": 5906,
       "length": 55,
       "value": "\"com.apple.coredevice.feature.remote.hid.vendordefined\""
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/HID\/FBSimulatorDTUHIDTransport.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/HID\/FBSimulatorDTUHIDTransport.swift",
       "kind": "StringLiteral",
       "offset": 5998,
       "length": 51,
       "value": "\"com.apple.coredevice.feature.remote.hid.digitizer\""
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/HID\/FBSimulatorDTUHIDTransport.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/HID\/FBSimulatorDTUHIDTransport.swift",
       "kind": "IntegerLiteral",
       "offset": 7175,
       "length": 11,
       "value": "200000000"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/HID\/FBSimulatorDTUHIDTransport.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/HID\/FBSimulatorDTUHIDTransport.swift",
       "kind": "IntegerLiteral",
       "offset": 7880,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/HID\/FBSimulatorDTUHIDTransport.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/HID\/FBSimulatorDTUHIDTransport.swift",
       "kind": "IntegerLiteral",
       "offset": 7916,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/HID\/FBSimulatorDTUHIDTransport.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/HID\/FBSimulatorDTUHIDTransport.swift",
       "kind": "BooleanLiteral",
       "offset": 8601,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/HID\/FBSimulatorDTUHIDTransport.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/HID\/FBSimulatorDTUHIDTransport.swift",
       "kind": "BooleanLiteral",
       "offset": 12190,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/HID\/FBSimulatorDTUHIDTransport.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/HID\/FBSimulatorDTUHIDTransport.swift",
       "kind": "BooleanLiteral",
       "offset": 17167,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Utility\/FBSimulatorError.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Utility\/FBSimulatorError.swift",
       "kind": "StringLiteral",
       "offset": 253,
       "length": 33,
       "value": "\"com.facebook.FBSimulatorControl\""
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/HID\/FBSimulatorHID.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/HID\/FBSimulatorHID.swift",
       "kind": "IntegerLiteral",
       "offset": 1555,
       "length": 4,
       "value": "2000"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/HID\/FBSimulatorHIDEvent.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/HID\/FBSimulatorHIDEvent.swift",
       "kind": "FloatLiteral",
       "offset": 292,
       "length": 4,
       "value": "10.0"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/HID\/FBSimulatorHIDEvent.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/HID\/FBSimulatorHIDEvent.swift",
       "kind": "StringLiteral",
       "offset": 336,
       "length": 32,
       "value": "\"com.apple.UIKit.SimulatorShake\""
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/HID\/FBSimulatorHIDEvent.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/HID\/FBSimulatorHIDEvent.swift",
       "kind": "StringLiteral",
       "offset": 411,
       "length": 49,
       "value": "\"com.apple.iphonesimulator.toggleincallstatusbar\""
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/HID\/FBSimulatorHIDSessionCache.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/HID\/FBSimulatorHIDSessionCache.swift",
       "kind": "IntegerLiteral",
       "offset": 351,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
       "kind": "IntegerLiteral",
       "offset": 674,
       "length": 1,
       "value": "1"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
       "kind": "IntegerLiteral",
       "offset": 688,
       "length": 1,
       "value": "2"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
       "kind": "IntegerLiteral",
       "offset": 981,
       "length": 1,
       "value": "1"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
       "kind": "IntegerLiteral",
       "offset": 1003,
       "length": 1,
       "value": "2"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
       "kind": "IntegerLiteral",
       "offset": 1019,
       "length": 1,
       "value": "3"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
       "kind": "IntegerLiteral",
       "offset": 1041,
       "length": 1,
       "value": "4"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
       "kind": "IntegerLiteral",
       "offset": 1057,
       "length": 1,
       "value": "5"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
       "kind": "IntegerLiteral",
       "offset": 1078,
       "length": 1,
       "value": "6"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
       "kind": "IntegerLiteral",
       "offset": 1761,
       "length": 1,
       "value": "1"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
       "kind": "IntegerLiteral",
       "offset": 1777,
       "length": 1,
       "value": "2"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
       "kind": "IntegerLiteral",
       "offset": 1793,
       "length": 1,
       "value": "3"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
       "kind": "IntegerLiteral",
       "offset": 1810,
       "length": 1,
       "value": "4"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
       "kind": "IntegerLiteral",
       "offset": 1828,
       "length": 1,
       "value": "5"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
       "kind": "IntegerLiteral",
       "offset": 1844,
       "length": 1,
       "value": "6"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
       "kind": "IntegerLiteral",
       "offset": 2971,
       "length": 1,
       "value": "1"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
       "kind": "IntegerLiteral",
       "offset": 3001,
       "length": 1,
       "value": "2"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
       "kind": "IntegerLiteral",
       "offset": 3027,
       "length": 1,
       "value": "3"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
       "kind": "IntegerLiteral",
       "offset": 3052,
       "length": 1,
       "value": "4"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBSimulatorHingeProtocol.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Commands\/FBSimulatorHingeProtocol.swift",
       "kind": "StringLiteral",
       "offset": 864,
       "length": 44,
       "value": "\"com.apple.coredevice.feature.monitormotion\""
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBSimulatorHingeReadSession.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Commands\/FBSimulatorHingeReadSession.swift",
       "kind": "IntegerLiteral",
       "offset": 837,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBSimulatorHingeReadSession.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Commands\/FBSimulatorHingeReadSession.swift",
       "kind": "IntegerLiteral",
       "offset": 970,
       "length": 1,
       "value": "5"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBSimulatorHingeSession.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Commands\/FBSimulatorHingeSession.swift",
       "kind": "BooleanLiteral",
       "offset": 1364,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/HID\/FBSimulatorIndigoHID.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/HID\/FBSimulatorIndigoHID.swift",
       "kind": "IntegerLiteral",
       "offset": 4450,
       "length": 4,
       "value": "0x16"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/HID\/FBSimulatorIndigoHID.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/HID\/FBSimulatorIndigoHID.swift",
       "kind": "IntegerLiteral",
       "offset": 4817,
       "length": 4,
       "value": "0xC0"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/HID\/FBSimulatorIndigoHID.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/HID\/FBSimulatorIndigoHID.swift",
       "kind": "IntegerLiteral",
       "offset": 5049,
       "length": 4,
       "value": "0xA0"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/HID\/FBSimulatorIndigoHIDClient.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/HID\/FBSimulatorIndigoHIDClient.swift",
       "kind": "StringLiteral",
       "offset": 2097,
       "length": 39,
       "value": "\"SimulatorKit.SimDeviceLegacyHIDClient\""
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/HID\/FBSimulatorIndigoHIDClient.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/HID\/FBSimulatorIndigoHIDClient.swift",
       "kind": "IntegerLiteral",
       "offset": 2481,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/HID\/FBSimulatorIndigoHIDClient.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/HID\/FBSimulatorIndigoHIDClient.swift",
       "kind": "BooleanLiteral",
       "offset": 2519,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/HID\/FBSimulatorIndigoHIDClient.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/HID\/FBSimulatorIndigoHIDClient.swift",
       "kind": "BooleanLiteral",
       "offset": 2562,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBSimulatorLaunchCtlCommands.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Commands\/FBSimulatorLaunchCtlCommands.swift",
       "kind": "StringLiteral",
       "offset": 5290,
       "length": 30,
       "value": "\"UIKitApplication:([^\\[]*).*\""
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Utility\/FBSimulatorLaunchedApplication.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Utility\/FBSimulatorLaunchedApplication.swift",
       "kind": "StringLiteral",
       "offset": 4247,
       "length": 112,
       "value": "\"Application Operation \""
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Utility\/FBSimulatorLaunchedApplication.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Utility\/FBSimulatorLaunchedApplication.swift",
       "kind": "StringLiteral",
       "offset": 4298,
       "length": 1,
       "value": "\" | pid \""
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Utility\/FBSimulatorLaunchedApplication.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Utility\/FBSimulatorLaunchedApplication.swift",
       "kind": "StringLiteral",
       "offset": 4325,
       "length": 1,
       "value": "\" | State \""
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Utility\/FBSimulatorLaunchedApplication.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Utility\/FBSimulatorLaunchedApplication.swift",
       "kind": "StringLiteral",
       "offset": 4358,
       "length": 1,
       "value": "\"\""
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBSimulatorLifecycleCommands.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Commands\/FBSimulatorLifecycleCommands.swift",
       "kind": "IntegerLiteral",
       "offset": 398,
       "length": 1,
       "value": "2"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBSimulatorProcessSpawnCommands.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Commands\/FBSimulatorProcessSpawnCommands.swift",
       "kind": "IntegerLiteral",
       "offset": 4224,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/HID\/FBSimulatorPurpleHID.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/HID\/FBSimulatorPurpleHID.swift",
       "kind": "IntegerLiteral",
       "offset": 993,
       "length": 2,
       "value": "50"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/HID\/FBSimulatorPurpleHID.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/HID\/FBSimulatorPurpleHID.swift",
       "kind": "IntegerLiteral",
       "offset": 1049,
       "length": 4,
       "value": "1014"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/HID\/FBSimulatorPurpleHID.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/HID\/FBSimulatorPurpleHID.swift",
       "kind": "IntegerLiteral",
       "offset": 1101,
       "length": 8,
       "value": "0x20000"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/HID\/FBSimulatorPurpleHID.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/HID\/FBSimulatorPurpleHID.swift",
       "kind": "IntegerLiteral",
       "offset": 1162,
       "length": 4,
       "value": "0x7B"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Management\/FBSimulatorServiceContext.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Management\/FBSimulatorServiceContext.swift",
       "kind": "Dictionary",
       "offset": 892,
       "length": 3,
       "value": "[]"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
       "kind": "IntegerLiteral",
       "offset": 655,
       "length": 14,
       "value": "1"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
       "kind": "IntegerLiteral",
       "offset": 677,
       "length": 16,
       "value": "2"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
       "kind": "IntegerLiteral",
       "offset": 887,
       "length": 1,
       "value": "1"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
       "kind": "IntegerLiteral",
       "offset": 932,
       "length": 1,
       "value": "2"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
       "kind": "IntegerLiteral",
       "offset": 1181,
       "length": 1,
       "value": "1"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
       "kind": "IntegerLiteral",
       "offset": 1198,
       "length": 1,
       "value": "2"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
       "kind": "IntegerLiteral",
       "offset": 1216,
       "length": 1,
       "value": "3"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
       "kind": "IntegerLiteral",
       "offset": 1233,
       "length": 1,
       "value": "4"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
       "kind": "IntegerLiteral",
       "offset": 1255,
       "length": 1,
       "value": "5"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
       "kind": "IntegerLiteral",
       "offset": 1282,
       "length": 1,
       "value": "6"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
       "kind": "IntegerLiteral",
       "offset": 1314,
       "length": 1,
       "value": "7"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
       "kind": "IntegerLiteral",
       "offset": 1345,
       "length": 1,
       "value": "8"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
       "kind": "IntegerLiteral",
       "offset": 1375,
       "length": 1,
       "value": "9"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
       "kind": "IntegerLiteral",
       "offset": 1410,
       "length": 2,
       "value": "10"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
       "kind": "IntegerLiteral",
       "offset": 1451,
       "length": 2,
       "value": "11"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
       "kind": "IntegerLiteral",
       "offset": 1497,
       "length": 2,
       "value": "12"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
       "kind": "StringLiteral",
       "offset": 1544,
       "length": 51,
       "value": "\"com.apple.UIKit.SimulatorSlowMotionAnimationState\""
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
       "kind": "Array",
       "offset": 20942,
       "length": 2,
       "value": "[]"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
       "kind": "StringLiteral",
       "offset": 26791,
       "length": 24,
       "value": "\"kTCCServiceAddressBook\""
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
       "kind": "StringLiteral",
       "offset": 26853,
       "length": 19,
       "value": "\"kTCCServicePhotos\""
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
       "kind": "StringLiteral",
       "offset": 26910,
       "length": 19,
       "value": "\"kTCCServiceCamera\""
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
       "kind": "StringLiteral",
       "offset": 26971,
       "length": 23,
       "value": "\"kTCCServiceMicrophone\""
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
       "kind": "StringLiteral",
       "offset": 27135,
       "length": 25,
       "value": "\"kTCCServiceContactsFull\""
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
       "kind": "StringLiteral",
       "offset": 27198,
       "length": 19,
       "value": "\"kTCCServicePhotos\""
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
       "kind": "StringLiteral",
       "offset": 27255,
       "length": 8,
       "value": "\"camera\""
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
       "kind": "StringLiteral",
       "offset": 27303,
       "length": 22,
       "value": "\"__CoreLocationAlways\""
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
       "kind": "StringLiteral",
       "offset": 27367,
       "length": 23,
       "value": "\"kTCCServiceMicrophone\""
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
       "kind": "StringLiteral",
       "offset": 27532,
       "length": 22,
       "value": "\"__CoreLocationAlways\""
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
       "kind": "Array",
       "offset": 27630,
       "length": 207,
       "value": "[\"AddressBook.sqlitedb\", \"AddressBook.sqlitedb-shm\", \"AddressBook.sqlitedb-wal\", \"AddressBookImages.sqlitedb\", \"AddressBookImages.sqlitedb-shm\", \"AddressBookImages.sqlitedb-wal\"]"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Strategies\/FBSimulatorShutdownStrategy.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Strategies\/FBSimulatorShutdownStrategy.swift",
       "kind": "IntegerLiteral",
       "offset": 1937,
       "length": 3,
       "value": "164"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideo.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideo.swift",
       "kind": "BooleanLiteral",
       "offset": 1400,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideo.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideo.swift",
       "kind": "IntegerLiteral",
       "offset": 1632,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideo.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideo.swift",
       "kind": "IntegerLiteral",
       "offset": 1643,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideo.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideo.swift",
       "kind": "IntegerLiteral",
       "offset": 1652,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideo.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideo.swift",
       "kind": "IntegerLiteral",
       "offset": 1662,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideo.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideo.swift",
       "kind": "BooleanLiteral",
       "offset": 1690,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "IntegerLiteral",
       "offset": 14120,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "BooleanLiteral",
       "offset": 14145,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "BooleanLiteral",
       "offset": 14183,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "FloatLiteral",
       "offset": 14317,
       "length": 3,
       "value": "5.0"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "IntegerLiteral",
       "offset": 34265,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "IntegerLiteral",
       "offset": 34306,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "IntegerLiteral",
       "offset": 34334,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "IntegerLiteral",
       "offset": 34934,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "IntegerLiteral",
       "offset": 34966,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "IntegerLiteral",
       "offset": 36789,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "IntegerLiteral",
       "offset": 36800,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "IntegerLiteral",
       "offset": 36809,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "IntegerLiteral",
       "offset": 36819,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "IntegerLiteral",
       "offset": 37436,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "IntegerLiteral",
       "offset": 37447,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "IntegerLiteral",
       "offset": 37456,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "IntegerLiteral",
       "offset": 37466,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "BooleanLiteral",
       "offset": 70104,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "BooleanLiteral",
       "offset": 73243,
       "length": 4,
       "value": "true"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "IntegerLiteral",
       "offset": 75610,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "IntegerLiteral",
       "offset": 75649,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "IntegerLiteral",
       "offset": 75687,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "FloatLiteral",
       "offset": 75714,
       "length": 3,
       "value": "0.0"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "FloatLiteral",
       "offset": 75773,
       "length": 3,
       "value": "0.0"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBSimulatorXCTestCommands.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Commands\/FBSimulatorXCTestCommands.swift",
       "kind": "IntegerLiteral",
       "offset": 422,
       "length": 1,
       "value": "5"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBSimulatorXCTestCommands.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Commands\/FBSimulatorXCTestCommands.swift",
       "kind": "StringLiteral",
       "offset": 452,
       "length": 23,
       "value": "\"TESTMANAGERD_SIM_SOCK\""
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBSimulatorXCTestCommands.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Commands\/FBSimulatorXCTestCommands.swift",
       "kind": "BooleanLiteral",
       "offset": 674,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Commands\/FBSimulatorXCTestCommands.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Commands\/FBSimulatorXCTestCommands.swift",
       "kind": "StringLiteral",
       "offset": 4231,
       "length": 74,
       "value": "\"Platforms\/iPhoneSimulator.platform\/Developer\/Library\/Xcode\/Agents\/xctest\""
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Framebuffer\/FBSurfaceImageGenerator.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Framebuffer\/FBSurfaceImageGenerator.swift",
       "kind": "IntegerLiteral",
       "offset": 559,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Framebuffer\/FBVideoFileWriter.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Framebuffer\/FBVideoFileWriter.swift",
       "kind": "BooleanLiteral",
       "offset": 2651,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Framebuffer\/FBVideoFileWriter.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Framebuffer\/FBVideoFileWriter.swift",
       "kind": "Array",
       "offset": 2942,
       "length": 2,
       "value": "[]"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Framebuffer\/FBVideoFileWriter.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Framebuffer\/FBVideoFileWriter.swift",
       "kind": "BooleanLiteral",
       "offset": 3133,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayCoordinateTransform.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayCoordinateTransform.swift",
       "kind": "IntegerLiteral",
       "offset": 5608,
       "length": 2,
       "value": "24"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
       "kind": "Array",
       "offset": 2991,
       "length": 2,
       "value": "[]"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
       "kind": "StringLiteral",
       "offset": 3091,
       "length": 37,
       "value": "\"com.facebook.sime2e.overlay-effects\""
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
       "kind": "Dictionary",
       "offset": 3912,
       "length": 3,
       "value": "[]"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
       "kind": "Dictionary",
       "offset": 4148,
       "length": 3,
       "value": "[]"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
       "kind": "Dictionary",
       "offset": 4462,
       "length": 3,
       "value": "[]"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
       "kind": "Dictionary",
       "offset": 4868,
       "length": 3,
       "value": "[]"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
       "kind": "FloatLiteral",
       "offset": 5031,
       "length": 3,
       "value": "1.0"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
       "kind": "IntegerLiteral",
       "offset": 19193,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
       "kind": "IntegerLiteral",
       "offset": 19202,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
       "kind": "FloatLiteral",
       "offset": 19207,
       "length": 5,
       "value": "255.0"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
       "kind": "IntegerLiteral",
       "offset": 19215,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
       "kind": "IntegerLiteral",
       "offset": 19291,
       "length": 1,
       "value": "1"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
       "kind": "IntegerLiteral",
       "offset": 19300,
       "length": 1,
       "value": "1"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
       "kind": "FloatLiteral",
       "offset": 19305,
       "length": 5,
       "value": "255.0"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
       "kind": "IntegerLiteral",
       "offset": 19313,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
       "kind": "IntegerLiteral",
       "offset": 19388,
       "length": 1,
       "value": "2"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
       "kind": "IntegerLiteral",
       "offset": 19397,
       "length": 1,
       "value": "2"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
       "kind": "FloatLiteral",
       "offset": 19402,
       "length": 5,
       "value": "255.0"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
       "kind": "IntegerLiteral",
       "offset": 19410,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/idb\/FBSimulatorControl\/HID\/XPCEncoder.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/HID\/XPCEncoder.swift",
       "kind": "Array",
       "offset": 1803,
       "length": 2,
