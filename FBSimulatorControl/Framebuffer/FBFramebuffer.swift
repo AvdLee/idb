@@ -48,12 +48,37 @@ public struct FBFramebufferScreenDescriptor: Sendable, Hashable, CustomStringCon
   public let powerState: Int32?
   /// Raw `SimScreenProperties.screenType`, if vended (0 == main display class on iOS).
   public let screenType: UInt64?
+  /// Raw `SimScreenProperties.uiOrientation`, if vended.
+  public let uiOrientation: UInt32?
   /// Raw `SimScreenProperties.backlight.state`, if vended. On iPhone Duo the folded-away
   /// (inactive) panel reports its backlight off while the active panel reports it on.
   public let backlightState: Int32?
 
   public var description: String {
-    "Screen(id=\(screenID) name=\(name ?? "-") unique=\(uniqueID ?? "-") size=\(Int(pixelSize.width))x\(Int(pixelSize.height)) default=\(isDefault) power=\(powerState.map(String.init) ?? "-") type=\(screenType.map(String.init) ?? "-") backlight=\(backlightState.map(String.init) ?? "-"))"
+    "Screen(id=\(screenID) name=\(name ?? "-") unique=\(uniqueID ?? "-") size=\(Int(pixelSize.width))x\(Int(pixelSize.height)) default=\(isDefault) power=\(powerState.map(String.init) ?? "-") type=\(screenType.map(String.init) ?? "-") orientation=\(uiOrientation.map(String.init) ?? "-") backlight=\(backlightState.map(String.init) ?? "-"))"
+  }
+}
+
+/// A cancellable observation of Xcode 27+ `SimScreenProperties` changes.
+public final class FBScreenPropertiesObservation: @unchecked Sendable {
+  private let lock = NSLock()
+  private var invalidation: (@Sendable () -> Void)?
+
+  fileprivate init(invalidation: @escaping @Sendable () -> Void) {
+    self.invalidation = invalidation
+  }
+
+  /// Stops delivering changes. Safe to call more than once.
+  public func invalidate() {
+    lock.lock()
+    let invalidation = self.invalidation
+    self.invalidation = nil
+    lock.unlock()
+    invalidation?()
+  }
+
+  deinit {
+    invalidate()
   }
 }
 
@@ -251,8 +276,17 @@ public final class FBFramebuffer: NSObject, @unchecked Sendable {
     }
     guard let properties else {
       return FBFramebufferScreenDescriptor(
-        screenID: 0, uniqueID: nil, name: nil, pixelSize: .zero, isDefault: isDefault, powerState: nil, screenType: nil, backlightState: nil)
+        screenID: 0, uniqueID: nil, name: nil, pixelSize: .zero, isDefault: isDefault, powerState: nil, screenType: nil, uiOrientation: nil, backlightState: nil)
     }
+    return descriptor(for: screen, properties: properties)
+  }
+
+  /// Fork addition. Defensive projection using properties delivered by a screen callback.
+  private class func descriptor(
+    for screen: any SimScreen,
+    properties: any SimScreenProperties
+  ) -> FBFramebufferScreenDescriptor {
+    let isDefault = screen.responds(to: #selector(getter: SimScreen.isDefault)) && screen.isDefault
     func has(_ selector: Selector) -> Bool { properties.responds(to: selector) }
     let pixelSize: CGSize
     if has(#selector(getter: SimScreenProperties.pixelSize)) {
@@ -277,6 +311,7 @@ public final class FBFramebuffer: NSObject, @unchecked Sendable {
       isDefault: isDefault,
       powerState: has(#selector(getter: SimScreenProperties.powerState)) ? properties.powerState : nil,
       screenType: has(#selector(getter: SimScreenProperties.screenType)) ? properties.screenType : nil,
+      uiOrientation: has(#selector(getter: SimScreenProperties.uiOrientation)) ? properties.uiOrientation : nil,
       backlightState: backlightState)
   }
 
@@ -370,6 +405,61 @@ public final class FBFramebuffer: NSObject, @unchecked Sendable {
       }
     }
     return false
+  }
+
+  /**
+   Observes screen-property changes for Xcode 27+ `SimScreen` framebuffers.
+
+   The current descriptor is delivered once on `queue`, followed by changed descriptors.
+   Calling `invalidate()` unregisters this observation. True legacy framebuffers (whose backing
+   object does not also conform to `SimScreen`) return a no-op observation because their display
+   API has no equivalent properties callback. Xcode 27 screen proxies can use a legacy surface
+   backing while still supporting the `SimScreen` properties callback.
+   */
+  public func observeScreenProperties(
+    queue: DispatchQueue,
+    handler: @escaping @Sendable (FBFramebufferScreenDescriptor) -> Void
+  ) -> FBScreenPropertiesObservation {
+    let screen: any SimScreen
+    switch backing {
+    case .screen(let screenBacking):
+      screen = screenBacking
+    case .legacy(let legacy) where legacy.conforms(to: SimScreen.self):
+      guard let screenBacking = legacy as? any SimScreen else {
+        return FBScreenPropertiesObservation(invalidation: {})
+      }
+      screen = screenBacking
+    case .legacy:
+      return FBScreenPropertiesObservation(invalidation: {})
+    }
+
+    let currentDescriptor = Self.descriptor(for: screen)
+    queue.async {
+      handler(currentDescriptor)
+    }
+
+    let uuid = UUID()
+    _ = try? FBObjCExceptionGuard.guarded {
+      screen.registerScreenCallbacks(
+        uuid: uuid,
+        callbackQueue: queue,
+        frameCallback: {},
+        surfacesChangedCallback: { _, _ in },
+        propertiesChangedCallback: { properties in
+          handler(Self.descriptor(for: screen, properties: properties))
+        })
+    }
+
+    return FBScreenPropertiesObservation { [weak screen] in
+      guard let screen,
+        screen.responds(to: #selector(SimScreen.unregisterScreenCallbacks(uuid:)))
+      else {
+        return
+      }
+      _ = try? FBObjCExceptionGuard.guarded {
+        screen.unregisterScreenCallbacks(uuid: uuid)
+      }
+    }
   }
 
   // MARK: - Stats
