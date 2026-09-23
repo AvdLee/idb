@@ -134,6 +134,9 @@ final public class FBAccessibilityProfilingCollector {
   @objc(didChangeIOSurface:) func didChange(_ surface: IOSurface::IOSurface?)
   @objc func didReceiveDamageRect()
 }
+public protocol FBFramebufferPresentationTimeConsumer : FBSimulatorControl::FBFramebufferConsumer {
+  func didReceiveDamageRect(atUptime uptime: Foundation::TimeInterval)
+}
 public struct FBFramebufferScreenDescriptor : Swift::Sendable, Swift::Hashable, Swift::CustomStringConvertible {
   public let screenID: Swift::UInt32
   public let uniqueID: Swift::String?
@@ -938,9 +941,9 @@ public struct FBVideoEncoderStats {
   public init(callbackCount: Swift::UInt, writeCount: Swift::UInt, dropCount: Swift::UInt, writeFailureCount: Swift::UInt, encodeErrorCount: Swift::UInt, tornFrameCount: Swift::UInt, totalEncodedBytes: Swift::UInt, totalEncodeSubmitSeconds: CoreFoundation::CFTimeInterval)
 }
 public protocol RSPixelBufferConsumer : AnyObject {
-  func writeEncodedFrame(_ pixelBuffer: CoreVideo::CVPixelBuffer, frameNumber: Swift::UInt, timeAtFirstFrame: CoreFoundation::CFTimeInterval) throws
+  func writeEncodedFrame(_ pixelBuffer: CoreVideo::CVPixelBuffer, frameNumber: Swift::UInt, timeAtFirstFrame: CoreFoundation::CFTimeInterval, frameUptime: Foundation::TimeInterval) throws
 }
-@_hasMissingDesignatedInitializers @objc(FBSimulatorVideoStream) public class FBSimulatorVideoStream : ObjectiveC::NSObject, FBSimulatorControl::FBFramebufferConsumer, FBControlCore::FBVideoStream, @unchecked Swift::Sendable {
+@_hasMissingDesignatedInitializers @objc(FBSimulatorVideoStream) public class FBSimulatorVideoStream : ObjectiveC::NSObject, FBSimulatorControl::FBFramebufferPresentationTimeConsumer, FBControlCore::FBVideoStream, @unchecked Swift::Sendable {
   public class func make(framebuffer: FBSimulatorControl::FBFramebuffer, configuration: FBControlCore::FBVideoStreamConfiguration, logger: any FBControlCore::FBControlCoreLogger) -> FBSimulatorControl::FBSimulatorVideoStream
   public class func make(framebuffer: FBSimulatorControl::FBFramebuffer, configuration: FBControlCore::FBVideoStreamConfiguration, edgeInsets: FBSimulatorControl::FBVideoStreamEdgeInsets, logger: any FBControlCore::FBControlCoreLogger) -> FBSimulatorControl::FBSimulatorVideoStream
   public class func start(framebuffer: FBSimulatorControl::FBFramebuffer, configuration: FBControlCore::FBVideoStreamConfiguration, edgeInsets: FBSimulatorControl::FBVideoStreamEdgeInsets = FBVideoStreamEdgeInsets(top: 0, bottom: 0, left: 0, right: 0), to consumer: any FBControlCore::FBDataConsumer, logger: any FBControlCore::FBControlCoreLogger) async throws -> FBSimulatorControl::FBSimulatorVideoStream
@@ -949,6 +952,7 @@ public protocol RSPixelBufferConsumer : AnyObject {
   @objc public func stopStreaming() -> FBControlCore::FBFuture<Foundation::NSNull>
   @objc(didChangeIOSurface:) public func didChange(_ surface: IOSurface::IOSurface?)
   @objc public func didReceiveDamageRect()
+  public func didReceiveDamageRect(atUptime uptime: Foundation::TimeInterval)
   public class func compressionSessionProperties(for configuration: FBControlCore::FBVideoStreamConfiguration, callerProperties: [Swift::String : Any]) -> [Swift::String : Any]
   public func writeTimedMetadata(_ text: Swift::String)
   public func updateOverlayBuffer(_ overlayBuffer: CoreVideo::CVPixelBuffer?)

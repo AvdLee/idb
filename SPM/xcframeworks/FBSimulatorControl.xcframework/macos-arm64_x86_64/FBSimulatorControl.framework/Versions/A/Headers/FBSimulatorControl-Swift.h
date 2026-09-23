@@ -804,7 +804,7 @@ SWIFT_CLASS("_TtC18FBSimulatorControl33FBSimulatorVideoRecordingCommands")
 /// <code>.eager</code> runs a cadence <code>Task</code> that, at a fixed frame rate, dispatches <code>pushFrame</code> back onto
 /// <code>writeQueue</code> and awaits it before sleeping until the next deadline.
 SWIFT_CLASS_NAMED("FBSimulatorVideoStream")
-@interface FBSimulatorVideoStream : NSObject <FBFramebufferConsumer>
+@interface FBSimulatorVideoStream : NSObject
 - (FBFuture<NSNull *> * _Nonnull)startStreaming:(id <FBDataConsumer> _Nonnull)consumer SWIFT_WARN_UNUSED_RESULT;
 - (FBFuture<NSNull *> * _Nonnull)stopStreaming SWIFT_WARN_UNUSED_RESULT;
 - (void)didChangeIOSurface:(IOSurface * _Nullable)surface;
@@ -1677,7 +1677,7 @@ SWIFT_CLASS("_TtC18FBSimulatorControl33FBSimulatorVideoRecordingCommands")
 /// <code>.eager</code> runs a cadence <code>Task</code> that, at a fixed frame rate, dispatches <code>pushFrame</code> back onto
 /// <code>writeQueue</code> and awaits it before sleeping until the next deadline.
 SWIFT_CLASS_NAMED("FBSimulatorVideoStream")
-@interface FBSimulatorVideoStream : NSObject <FBFramebufferConsumer>
+@interface FBSimulatorVideoStream : NSObject
 - (FBFuture<NSNull *> * _Nonnull)startStreaming:(id <FBDataConsumer> _Nonnull)consumer SWIFT_WARN_UNUSED_RESULT;
 - (FBFuture<NSNull *> * _Nonnull)stopStreaming SWIFT_WARN_UNUSED_RESULT;
 - (void)didChangeIOSurface:(IOSurface * _Nullable)surface;

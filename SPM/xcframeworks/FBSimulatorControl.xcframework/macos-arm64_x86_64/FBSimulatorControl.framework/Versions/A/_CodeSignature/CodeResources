@@ -62,7 +62,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			RfXSIbhF7hKd0kK4v5SnxV117tpyLA/1tr3/5wOFm2k=
+			MgxHHRZT4D+xdVTHfoOeP131BFTeVd6RzLefkUg9yc0=
 			</data>
 		</dict>
 		<key>Headers/FBSimulatorControl.h</key>
@@ -83,56 +83,56 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			4uXnlOSjd6NEcxl7V7e/egjeeH78cNKYRWuQ8vUKasQ=
+			mwmrF3nRdolVA9fScEU5MloQkHIRZ1zw4y31gqiQDTU=
 			</data>
 		</dict>
 		<key>Modules/FBSimulatorControl.swiftmodule/arm64-apple-macos.private.swiftinterface</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			/3Cb950poJsjGy6AVfEOdJ88yHkEKair1/IhmSueoUA=
+			HjC+F575RLgAFTdsqWFdA0WvO3UGfWw/poepYbgliCs=
 			</data>
 		</dict>
 		<key>Modules/FBSimulatorControl.swiftmodule/arm64-apple-macos.swiftdoc</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			TC7XNxiZa30pVYQ6Unbz4UBNkVlxyw/xdEu8QSvWJUw=
+			8XQN1rQvtD7MBRUPq/XTvREj5En8n2tYMMv5YDDnK/0=
 			</data>
 		</dict>
 		<key>Modules/FBSimulatorControl.swiftmodule/arm64-apple-macos.swiftinterface</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			/3Cb950poJsjGy6AVfEOdJ88yHkEKair1/IhmSueoUA=
+			HjC+F575RLgAFTdsqWFdA0WvO3UGfWw/poepYbgliCs=
 			</data>
 		</dict>
 		<key>Modules/FBSimulatorControl.swiftmodule/x86_64-apple-macos.abi.json</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			4uXnlOSjd6NEcxl7V7e/egjeeH78cNKYRWuQ8vUKasQ=
+			mwmrF3nRdolVA9fScEU5MloQkHIRZ1zw4y31gqiQDTU=
 			</data>
 		</dict>
 		<key>Modules/FBSimulatorControl.swiftmodule/x86_64-apple-macos.private.swiftinterface</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			M+E5cdfe7cc4PcFIgEZWvX4PsfyTNWlXHSXAoTRopHQ=
+			j/aW5SbBGIhuqO694nWeprCEibCi5HIv+0cbv87ikOY=
 			</data>
 		</dict>
 		<key>Modules/FBSimulatorControl.swiftmodule/x86_64-apple-macos.swiftdoc</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			urBK0Jr9cRO0tRZaK3abuQBskjEjDh0CIvE2Qqr6+YU=
+			gf1H82nngAA9EE0HU0hjyGIB5+B7MyfA+xfbVXiUNDY=
 			</data>
 		</dict>
 		<key>Modules/FBSimulatorControl.swiftmodule/x86_64-apple-macos.swiftinterface</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			M+E5cdfe7cc4PcFIgEZWvX4PsfyTNWlXHSXAoTRopHQ=
+			j/aW5SbBGIhuqO694nWeprCEibCi5HIv+0cbv87ikOY=
 			</data>
 		</dict>
 		<key>Modules/module.modulemap</key>

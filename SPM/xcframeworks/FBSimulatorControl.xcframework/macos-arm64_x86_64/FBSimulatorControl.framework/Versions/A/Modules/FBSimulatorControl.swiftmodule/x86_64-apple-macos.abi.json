@@ -12133,6 +12133,73 @@
       },
       {
         "kind": "TypeDecl",
+        "name": "FBFramebufferPresentationTimeConsumer",
+        "printedName": "FBFramebufferPresentationTimeConsumer",
+        "children": [
+          {
+            "kind": "Function",
+            "name": "didReceiveDamageRect",
+            "printedName": "didReceiveDamageRect(atUptime:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Double",
+                "printedName": "Swift.Double",
+                "usr": "s:Sd"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:18FBSimulatorControl37FBFramebufferPresentationTimeConsumerP20didReceiveDamageRect8atUptimeySd_tF",
+            "mangledName": "$s18FBSimulatorControl37FBFramebufferPresentationTimeConsumerP20didReceiveDamageRect8atUptimeySd_tF",
+            "moduleName": "FBSimulatorControl",
+            "genericSig": "<τ_0_0 where τ_0_0 : FBSimulatorControl.FBFramebufferPresentationTimeConsumer>",
+            "sugared_genericSig": "<Self where Self : FBSimulatorControl.FBFramebufferPresentationTimeConsumer>",
+            "protocolReq": true,
+            "reqNewWitnessTableEntry": true,
+            "funcSelfKind": "NonMutating"
+          }
+        ],
+        "declKind": "Protocol",
+        "usr": "s:18FBSimulatorControl37FBFramebufferPresentationTimeConsumerP",
+        "mangledName": "$s18FBSimulatorControl37FBFramebufferPresentationTimeConsumerP",
+        "moduleName": "FBSimulatorControl",
+        "genericSig": "<τ_0_0 : FBSimulatorControl.FBFramebufferConsumer>",
+        "sugared_genericSig": "<Self : FBSimulatorControl.FBFramebufferConsumer>",
+        "declAttributes": [
+          "AccessControl",
+          "RawDocComment"
+        ],
+        "conformances": [
+          {
+            "kind": "Conformance",
+            "name": "Escapable",
+            "printedName": "Escapable",
+            "usr": "s:s9EscapableP",
+            "mangledName": "$ss9EscapableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Copyable",
+            "printedName": "Copyable",
+            "usr": "s:s8CopyableP",
+            "mangledName": "$ss8CopyableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "FBFramebufferConsumer",
+            "printedName": "FBFramebufferConsumer",
+            "usr": "c:@M@FBSimulatorControl@objc(pl)FBFramebufferConsumer",
+            "mangledName": "$s18FBSimulatorControl21FBFramebufferConsumerP"
+          }
+        ]
+      },
+      {
+        "kind": "TypeDecl",
         "name": "FBFramebufferScreenDescriptor",
         "printedName": "FBFramebufferScreenDescriptor",
         "children": [
@@ -47450,7 +47517,7 @@
           {
             "kind": "Function",
             "name": "writeEncodedFrame",
-            "printedName": "writeEncodedFrame(_:frameNumber:timeAtFirstFrame:)",
+            "printedName": "writeEncodedFrame(_:frameNumber:timeAtFirstFrame:frameUptime:)",
             "children": [
               {
                 "kind": "TypeNominal",
@@ -47474,11 +47541,17 @@
                 "name": "Double",
                 "printedName": "Swift.Double",
                 "usr": "s:Sd"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Double",
+                "printedName": "Swift.Double",
+                "usr": "s:Sd"
               }
             ],
             "declKind": "Func",
-            "usr": "s:18FBSimulatorControl21RSPixelBufferConsumerP17writeEncodedFrame_11frameNumber011timeAtFirstH0ySo11CVBufferRefa_SuSdtKF",
-            "mangledName": "$s18FBSimulatorControl21RSPixelBufferConsumerP17writeEncodedFrame_11frameNumber011timeAtFirstH0ySo11CVBufferRefa_SuSdtKF",
+            "usr": "s:18FBSimulatorControl21RSPixelBufferConsumerP17writeEncodedFrame_11frameNumber011timeAtFirstH00I6UptimeySo11CVBufferRefa_SuS2dtKF",
+            "mangledName": "$s18FBSimulatorControl21RSPixelBufferConsumerP17writeEncodedFrame_11frameNumber011timeAtFirstH00I6UptimeySo11CVBufferRefa_SuS2dtKF",
             "moduleName": "FBSimulatorControl",
             "genericSig": "<τ_0_0 where τ_0_0 : FBSimulatorControl.RSPixelBufferConsumer>",
             "sugared_genericSig": "<Self where Self : FBSimulatorControl.RSPixelBufferConsumer>",
@@ -47579,7 +47652,7 @@
           {
             "kind": "Function",
             "name": "writeEncodedFrame",
-            "printedName": "writeEncodedFrame(_:frameNumber:timeAtFirstFrame:frameDuration:forceKeyFrame:)",
+            "printedName": "writeEncodedFrame(_:frameNumber:timeAtFirstFrame:frameUptime:frameDuration:forceKeyFrame:)",
             "children": [
               {
                 "kind": "TypeNominal",
@@ -47612,14 +47685,20 @@
               },
               {
                 "kind": "TypeNominal",
+                "name": "Double",
+                "printedName": "Swift.Double",
+                "usr": "s:Sd"
+              },
+              {
+                "kind": "TypeNominal",
                 "name": "Bool",
                 "printedName": "Swift.Bool",
                 "usr": "s:Sb"
               }
             ],
             "declKind": "Func",
-            "usr": "s:18FBSimulatorControl0A22VideoStreamFramePusherP012writeEncodedE0_11frameNumber011timeAtFirstE00I8Duration08forceKeyE0ySo11CVBufferRefa_SuS2dSbtKF",
-            "mangledName": "$s18FBSimulatorControl0A22VideoStreamFramePusherP012writeEncodedE0_11frameNumber011timeAtFirstE00I8Duration08forceKeyE0ySo11CVBufferRefa_SuS2dSbtKF",
+            "usr": "s:18FBSimulatorControl0A22VideoStreamFramePusherP012writeEncodedE0_11frameNumber011timeAtFirstE00I6Uptime0I8Duration08forceKeyE0ySo11CVBufferRefa_SuS3dSbtKF",
+            "mangledName": "$s18FBSimulatorControl0A22VideoStreamFramePusherP012writeEncodedE0_11frameNumber011timeAtFirstE00I6Uptime0I8Duration08forceKeyE0ySo11CVBufferRefa_SuS3dSbtKF",
             "moduleName": "FBSimulatorControl",
             "genericSig": "<τ_0_0 where τ_0_0 : FBSimulatorControl.FBSimulatorVideoStreamFramePusher>",
             "sugared_genericSig": "<Self where Self : FBSimulatorControl.FBSimulatorVideoStreamFramePusher>",
@@ -48446,7 +48525,7 @@
           {
             "kind": "Function",
             "name": "writeEncodedFrame",
-            "printedName": "writeEncodedFrame(_:frameNumber:timeAtFirstFrame:frameDuration:forceKeyFrame:)",
+            "printedName": "writeEncodedFrame(_:frameNumber:timeAtFirstFrame:frameUptime:frameDuration:forceKeyFrame:)",
             "children": [
               {
                 "kind": "TypeNominal",
@@ -48479,14 +48558,20 @@
               },
               {
                 "kind": "TypeNominal",
+                "name": "Double",
+                "printedName": "Swift.Double",
+                "usr": "s:Sd"
+              },
+              {
+                "kind": "TypeNominal",
                 "name": "Bool",
                 "printedName": "Swift.Bool",
                 "usr": "s:Sb"
               }
             ],
             "declKind": "Func",
-            "usr": "s:18FBSimulatorControl0A29VideoStreamFramePusher_BitmapC012writeEncodedE0_11frameNumber011timeAtFirstE00J8Duration08forceKeyE0ySo11CVBufferRefa_SuS2dSbtKF",
-            "mangledName": "$s18FBSimulatorControl0A29VideoStreamFramePusher_BitmapC012writeEncodedE0_11frameNumber011timeAtFirstE00J8Duration08forceKeyE0ySo11CVBufferRefa_SuS2dSbtKF",
+            "usr": "s:18FBSimulatorControl0A29VideoStreamFramePusher_BitmapC012writeEncodedE0_11frameNumber011timeAtFirstE00J6Uptime0J8Duration08forceKeyE0ySo11CVBufferRefa_SuS3dSbtKF",
+            "mangledName": "$s18FBSimulatorControl0A29VideoStreamFramePusher_BitmapC012writeEncodedE0_11frameNumber011timeAtFirstE00J6Uptime0J8Duration08forceKeyE0ySo11CVBufferRefa_SuS3dSbtKF",
             "moduleName": "FBSimulatorControl",
             "declAttributes": [
               "Final"
@@ -50233,7 +50318,7 @@
           {
             "kind": "Function",
             "name": "writeEncodedFrame",
-            "printedName": "writeEncodedFrame(_:frameNumber:timeAtFirstFrame:frameDuration:forceKeyFrame:)",
+            "printedName": "writeEncodedFrame(_:frameNumber:timeAtFirstFrame:frameUptime:frameDuration:forceKeyFrame:)",
             "children": [
               {
                 "kind": "TypeNominal",
@@ -50266,14 +50351,20 @@
               },
               {
                 "kind": "TypeNominal",
+                "name": "Double",
+                "printedName": "Swift.Double",
+                "usr": "s:Sd"
+              },
+              {
+                "kind": "TypeNominal",
                 "name": "Bool",
                 "printedName": "Swift.Bool",
                 "usr": "s:Sb"
               }
             ],
             "declKind": "Func",
-            "usr": "s:18FBSimulatorControl0a23VideoStreamFramePusher_C7ToolboxC012writeEncodedE0_11frameNumber011timeAtFirstE00J8Duration08forceKeyE0ySo11CVBufferRefa_SuS2dSbtKF",
-            "mangledName": "$s18FBSimulatorControl0a23VideoStreamFramePusher_C7ToolboxC012writeEncodedE0_11frameNumber011timeAtFirstE00J8Duration08forceKeyE0ySo11CVBufferRefa_SuS2dSbtKF",
+            "usr": "s:18FBSimulatorControl0a23VideoStreamFramePusher_C7ToolboxC012writeEncodedE0_11frameNumber011timeAtFirstE00J6Uptime0J8Duration08forceKeyE0ySo11CVBufferRefa_SuS3dSbtKF",
+            "mangledName": "$s18FBSimulatorControl0a23VideoStreamFramePusher_C7ToolboxC012writeEncodedE0_11frameNumber011timeAtFirstE00J6Uptime0J8Duration08forceKeyE0ySo11CVBufferRefa_SuS3dSbtKF",
             "moduleName": "FBSimulatorControl",
             "declAttributes": [
               "Final"
@@ -51200,6 +51291,209 @@
                 "declKind": "Accessor",
                 "usr": "s:18FBSimulatorControl0A11VideoStreamC14timeAtLastPushSdvM",
                 "mangledName": "$s18FBSimulatorControl0A11VideoStreamC14timeAtLastPushSdvM",
+                "moduleName": "FBSimulatorControl",
+                "implicit": true,
+                "isOpen": true,
+                "accessorKind": "_modify"
+              }
+            ]
+          },
+          {
+            "kind": "Var",
+            "name": "pendingPresentationUptime",
+            "printedName": "pendingPresentationUptime",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "Swift.Double?",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Double",
+                    "printedName": "Swift.Double",
+                    "usr": "s:Sd"
+                  }
+                ],
+                "usr": "s:Sq"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:18FBSimulatorControl0A11VideoStreamC25pendingPresentationUptimeSdSgvp",
+            "mangledName": "$s18FBSimulatorControl0A11VideoStreamC25pendingPresentationUptimeSdSgvp",
+            "moduleName": "FBSimulatorControl",
+            "isOpen": true,
+            "declAttributes": [
+              "HasInitialValue",
+              "HasStorage",
+              "RawDocComment"
+            ],
+            "hasStorage": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Optional",
+                    "printedName": "Swift.Double?",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Double",
+                        "printedName": "Swift.Double",
+                        "usr": "s:Sd"
+                      }
+                    ],
+                    "usr": "s:Sq"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:18FBSimulatorControl0A11VideoStreamC25pendingPresentationUptimeSdSgvg",
+                "mangledName": "$s18FBSimulatorControl0A11VideoStreamC25pendingPresentationUptimeSdSgvg",
+                "moduleName": "FBSimulatorControl",
+                "implicit": true,
+                "isOpen": true,
+                "accessorKind": "get"
+              },
+              {
+                "kind": "Accessor",
+                "name": "Set",
+                "printedName": "Set()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Optional",
+                    "printedName": "Swift.Double?",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Double",
+                        "printedName": "Swift.Double",
+                        "usr": "s:Sd"
+                      }
+                    ],
+                    "usr": "s:Sq"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:18FBSimulatorControl0A11VideoStreamC25pendingPresentationUptimeSdSgvs",
+                "mangledName": "$s18FBSimulatorControl0A11VideoStreamC25pendingPresentationUptimeSdSgvs",
+                "moduleName": "FBSimulatorControl",
+                "implicit": true,
+                "isOpen": true,
+                "accessorKind": "set"
+              },
+              {
+                "kind": "Accessor",
+                "name": "Modify",
+                "printedName": "Modify()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:18FBSimulatorControl0A11VideoStreamC25pendingPresentationUptimeSdSgvM",
+                "mangledName": "$s18FBSimulatorControl0A11VideoStreamC25pendingPresentationUptimeSdSgvM",
+                "moduleName": "FBSimulatorControl",
+                "implicit": true,
+                "isOpen": true,
+                "accessorKind": "_modify"
+              }
+            ]
+          },
+          {
+            "kind": "Var",
+            "name": "lastFrameUptime",
+            "printedName": "lastFrameUptime",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Double",
+                "printedName": "Swift.Double",
+                "usr": "s:Sd"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:18FBSimulatorControl0A11VideoStreamC15lastFrameUptimeSdvp",
+            "mangledName": "$s18FBSimulatorControl0A11VideoStreamC15lastFrameUptimeSdvp",
+            "moduleName": "FBSimulatorControl",
+            "isOpen": true,
+            "declAttributes": [
+              "HasInitialValue",
+              "HasStorage"
+            ],
+            "hasStorage": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Double",
+                    "printedName": "Swift.Double",
+                    "usr": "s:Sd"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:18FBSimulatorControl0A11VideoStreamC15lastFrameUptimeSdvg",
+                "mangledName": "$s18FBSimulatorControl0A11VideoStreamC15lastFrameUptimeSdvg",
+                "moduleName": "FBSimulatorControl",
+                "implicit": true,
+                "isOpen": true,
+                "accessorKind": "get"
+              },
+              {
+                "kind": "Accessor",
+                "name": "Set",
+                "printedName": "Set()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Double",
+                    "printedName": "Swift.Double",
+                    "usr": "s:Sd"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:18FBSimulatorControl0A11VideoStreamC15lastFrameUptimeSdvs",
+                "mangledName": "$s18FBSimulatorControl0A11VideoStreamC15lastFrameUptimeSdvs",
+                "moduleName": "FBSimulatorControl",
+                "implicit": true,
+                "isOpen": true,
+                "accessorKind": "set"
+              },
+              {
+                "kind": "Accessor",
+                "name": "Modify",
+                "printedName": "Modify()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:18FBSimulatorControl0A11VideoStreamC15lastFrameUptimeSdvM",
+                "mangledName": "$s18FBSimulatorControl0A11VideoStreamC15lastFrameUptimeSdvM",
                 "moduleName": "FBSimulatorControl",
                 "implicit": true,
                 "isOpen": true,
@@ -52861,6 +53155,33 @@
           },
           {
             "kind": "Function",
+            "name": "didReceiveDamageRect",
+            "printedName": "didReceiveDamageRect(atUptime:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Double",
+                "printedName": "Swift.Double",
+                "usr": "s:Sd"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:18FBSimulatorControl0A11VideoStreamC20didReceiveDamageRect8atUptimeySd_tF",
+            "mangledName": "$s18FBSimulatorControl0A11VideoStreamC20didReceiveDamageRect8atUptimeySd_tF",
+            "moduleName": "FBSimulatorControl",
+            "isOpen": true,
+            "declAttributes": [
+              "AccessControl"
+            ],
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
             "name": "mountSurface",
             "printedName": "mountSurface(_:)",
             "children": [
@@ -52945,6 +53266,55 @@
             "mangledName": "$s18FBSimulatorControl0A11VideoStreamC9pushFrame08forceKeyF0ySb_tF",
             "moduleName": "FBSimulatorControl",
             "isOpen": true,
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "frameUptime",
+            "printedName": "frameUptime(pendingPresentationUptime:lastFrameUptime:pushUptime:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Double",
+                "printedName": "Swift.Double",
+                "usr": "s:Sd"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "Swift.Double?",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Double",
+                    "printedName": "Swift.Double",
+                    "usr": "s:Sd"
+                  }
+                ],
+                "usr": "s:Sq"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Double",
+                "printedName": "Swift.Double",
+                "usr": "s:Sd"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Double",
+                "printedName": "Swift.Double",
+                "usr": "s:Sd"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:18FBSimulatorControl0A11VideoStreamC11frameUptime019pendingPresentationF009lastFrameF004pushF0S2dSg_S2dtFZ",
+            "mangledName": "$s18FBSimulatorControl0A11VideoStreamC11frameUptime019pendingPresentationF009lastFrameF004pushF0S2dSg_S2dtFZ",
+            "moduleName": "FBSimulatorControl",
+            "static": true,
+            "declAttributes": [
+              "Final",
+              "RawDocComment"
+            ],
             "funcSelfKind": "NonMutating"
           },
           {
@@ -53565,6 +53935,13 @@
         "conformances": [
           {
             "kind": "Conformance",
+            "name": "FBVideoStream",
+            "printedName": "FBVideoStream",
+            "usr": "s:13FBControlCore13FBVideoStreamP",
+            "mangledName": "$s13FBControlCore13FBVideoStreamP"
+          },
+          {
+            "kind": "Conformance",
             "name": "FBFramebufferConsumer",
             "printedName": "FBFramebufferConsumer",
             "usr": "c:@M@FBSimulatorControl@objc(pl)FBFramebufferConsumer",
@@ -53572,10 +53949,10 @@
           },
           {
             "kind": "Conformance",
-            "name": "FBVideoStream",
-            "printedName": "FBVideoStream",
-            "usr": "s:13FBControlCore13FBVideoStreamP",
-            "mangledName": "$s13FBControlCore13FBVideoStreamP"
+            "name": "FBFramebufferPresentationTimeConsumer",
+            "printedName": "FBFramebufferPresentationTimeConsumer",
+            "usr": "s:18FBSimulatorControl37FBFramebufferPresentationTimeConsumerP",
+            "mangledName": "$s18FBSimulatorControl37FBFramebufferPresentationTimeConsumerP"
           },
           {
             "kind": "Conformance",
@@ -71409,168 +71786,175 @@
     {
       "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "IntegerLiteral",
-      "offset": 14120,
+      "offset": 14473,
       "length": 1,
       "value": "0"
     },
     {
       "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "BooleanLiteral",
-      "offset": 14145,
+      "offset": 14498,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "BooleanLiteral",
-      "offset": 14183,
+      "offset": 14536,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "FloatLiteral",
-      "offset": 14317,
+      "offset": 14670,
       "length": 3,
       "value": "5.0"
     },
     {
       "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "IntegerLiteral",
-      "offset": 34265,
+      "offset": 34665,
       "length": 1,
       "value": "0"
     },
     {
       "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "IntegerLiteral",
-      "offset": 34306,
+      "offset": 34706,
       "length": 1,
       "value": "0"
     },
     {
       "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "IntegerLiteral",
-      "offset": 34334,
+      "offset": 34881,
       "length": 1,
       "value": "0"
     },
     {
       "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "IntegerLiteral",
-      "offset": 34934,
+      "offset": 34909,
       "length": 1,
       "value": "0"
     },
     {
       "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "IntegerLiteral",
-      "offset": 34966,
+      "offset": 35509,
       "length": 1,
       "value": "0"
     },
     {
       "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "IntegerLiteral",
-      "offset": 36789,
+      "offset": 35541,
       "length": 1,
       "value": "0"
     },
     {
       "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "IntegerLiteral",
-      "offset": 36800,
+      "offset": 37364,
       "length": 1,
       "value": "0"
     },
     {
       "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "IntegerLiteral",
-      "offset": 36809,
+      "offset": 37375,
       "length": 1,
       "value": "0"
     },
     {
       "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "IntegerLiteral",
-      "offset": 36819,
+      "offset": 37384,
       "length": 1,
       "value": "0"
     },
     {
       "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "IntegerLiteral",
-      "offset": 37436,
+      "offset": 37394,
       "length": 1,
       "value": "0"
     },
     {
       "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "IntegerLiteral",
-      "offset": 37447,
+      "offset": 38011,
       "length": 1,
       "value": "0"
     },
     {
       "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "IntegerLiteral",
-      "offset": 37456,
+      "offset": 38022,
       "length": 1,
       "value": "0"
     },
     {
       "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "IntegerLiteral",
-      "offset": 37466,
+      "offset": 38031,
+      "length": 1,
+      "value": "0"
+    },
+    {
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
+      "kind": "IntegerLiteral",
+      "offset": 38041,
       "length": 1,
       "value": "0"
     },
     {
       "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "BooleanLiteral",
-      "offset": 70104,
+      "offset": 71836,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "BooleanLiteral",
-      "offset": 73243,
+      "offset": 74975,
       "length": 4,
       "value": "true"
     },
     {
       "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "IntegerLiteral",
-      "offset": 75610,
+      "offset": 77342,
       "length": 1,
       "value": "0"
     },
     {
       "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "IntegerLiteral",
-      "offset": 75649,
+      "offset": 77381,
       "length": 1,
       "value": "0"
     },
     {
       "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "IntegerLiteral",
-      "offset": 75687,
+      "offset": 77419,
       "length": 1,
       "value": "0"
     },
     {
       "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "FloatLiteral",
-      "offset": 75714,
+      "offset": 77446,
       "length": 3,
       "value": "0.0"
     },
     {
       "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "FloatLiteral",
-      "offset": 75773,
+      "offset": 77505,
       "length": 3,
       "value": "0.0"
     },
