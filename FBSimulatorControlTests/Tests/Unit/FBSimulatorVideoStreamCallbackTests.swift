@@ -317,6 +317,7 @@ final class FBSimulatorVideoStreamBitmapPusherTests: XCTestCase {
       buffer,
       frameNumber: 0,
       timeAtFirstFrame: 0,
+      frameUptime: 0,
       frameDuration: 0,
       forceKeyFrame: false
     )
@@ -342,6 +343,7 @@ final class FBSimulatorVideoStreamBitmapPusherTests: XCTestCase {
       buffer,
       frameNumber: 0,
       timeAtFirstFrame: 0,
+      frameUptime: 0,
       frameDuration: 0,
       forceKeyFrame: false
     )
@@ -350,5 +352,27 @@ final class FBSimulatorVideoStreamBitmapPusherTests: XCTestCase {
     XCTAssertEqual(consumer.data().count, CVPixelBufferGetDataSize(buffer))
 
     try pusher.tearDown()
+  }
+
+  // MARK: - Frame presentation time
+
+  func testFrameUptimeUsesTheLatestDamageSinceThePreviousFrame() {
+    let frameUptime = FBSimulatorVideoStream.frameUptime(pendingPresentationUptime: 10.02, lastFrameUptime: 10.0, pushUptime: 10.3)
+    XCTAssertEqual(frameUptime, 10.02)
+  }
+
+  func testFrameUptimeFallsBackToThePushWithoutDamage() {
+    let frameUptime = FBSimulatorVideoStream.frameUptime(pendingPresentationUptime: nil, lastFrameUptime: 10.0, pushUptime: 10.3)
+    XCTAssertEqual(frameUptime, 10.3)
+  }
+
+  func testFrameUptimeIgnoresDamageAlreadyCapturedByThePreviousFrame() {
+    let frameUptime = FBSimulatorVideoStream.frameUptime(pendingPresentationUptime: 9.9, lastFrameUptime: 10.0, pushUptime: 10.3)
+    XCTAssertEqual(frameUptime, 10.3)
+  }
+
+  func testFrameUptimeStrictlyIncreasesWhenThePushClockStalls() {
+    let frameUptime = FBSimulatorVideoStream.frameUptime(pendingPresentationUptime: nil, lastFrameUptime: 10.0, pushUptime: 10.0)
+    XCTAssertGreaterThan(frameUptime, 10.0)
   }
 }

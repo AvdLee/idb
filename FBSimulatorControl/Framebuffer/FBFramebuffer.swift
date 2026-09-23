@@ -24,6 +24,13 @@ import IOSurface
   func didReceiveDamageRect()
 }
 
+/// Fork addition: consumers that need the moment a frame was presented. The framebuffer stamps
+/// `ProcessInfo.systemUptime` inside its own callback, before the hop onto the consumer queue, so a
+/// busy consumer queue doesn't delay the timestamp.
+public protocol FBFramebufferPresentationTimeConsumer: FBFramebufferConsumer {
+  func didReceiveDamageRect(atUptime uptime: TimeInterval)
+}
+
 /**
  Fork addition. Identification of a single simulator screen on Xcode 27+ (SimScreen-backed
  framebuffers). Multi-display devices such as iPhone Duo expose one entry per panel; callers use
@@ -515,10 +522,11 @@ public final class FBFramebuffer: NSObject, @unchecked Sendable {
         callbackQueue: queue,
         frameCallback: { [weak self] in
           guard let self else { return }
+          let presentationUptime = ProcessInfo.processInfo.systemUptime
           self.stats.damageCallbackCount += 1
           self.logStatsIfNeeded()
           queue.async {
-            consumerRef.didReceiveDamageRect()
+            Self.notifyDamage(consumerRef, atUptime: presentationUptime)
           }
         },
         surfacesChangedCallback: { [weak self] (unmaskedSurface: IOSurface?, maskedSurface: IOSurface?) in
@@ -534,6 +542,14 @@ public final class FBFramebuffer: NSObject, @unchecked Sendable {
           }
         },
         propertiesChangedCallback: { _ in })
+    }
+  }
+
+  private static func notifyDamage(_ consumer: any FBFramebufferConsumer, atUptime uptime: TimeInterval) {
+    if let timedConsumer = consumer as? any FBFramebufferPresentationTimeConsumer {
+      timedConsumer.didReceiveDamageRect(atUptime: uptime)
+    } else {
+      consumer.didReceiveDamageRect()
     }
   }
 
@@ -563,6 +579,7 @@ public final class FBFramebuffer: NSObject, @unchecked Sendable {
     let displayRenderable = surface as! SimDisplayRenderable
     let damageCallback: ([Any]?) -> Void = { [weak self] frames in
       guard let self else { return }
+      let presentationUptime = ProcessInfo.processInfo.systemUptime
       let frameArray = frames ?? []
       self.stats.damageCallbackCount += 1
       self.stats.damageRectCount += UInt(frameArray.count)
@@ -571,7 +588,7 @@ public final class FBFramebuffer: NSObject, @unchecked Sendable {
       }
       self.logStatsIfNeeded()
       queue.async {
-        consumerRef.didReceiveDamageRect()
+        Self.notifyDamage(consumerRef, atUptime: presentationUptime)
       }
     }
     _ = try? FBObjCExceptionGuard.guarded {
