@@ -489,8 +489,26 @@ final class FBSimulatorVideoStreamEncodedFrameConsumerTests: XCTestCase {
     XCTAssertEqual(consumer.data(), Data(segments.joined()), "Consumers without RSEncodedFrameConsumer keep the existing byte stream")
   }
 
-  /// End-to-end through VideoToolbox. Depends on a JPEG encoder satisfying the pusher's encoder
-  /// specification (hardware required on macOS 12.1+), so it skips where `setup` fails.
+  func testJPEGEncoderSpecificationsOmitLowLatencyRateControl() {
+    let specifications = FBSimulatorVideoStreamFramePusher_VideoToolbox.encoderSpecifications(for: kCMVideoCodecType_JPEG)
+    XCTAssertEqual(specifications.count, 2, "JPEG requires the hardware encoder first, then falls back without the requirement")
+    XCTAssertEqual(specifications[0].specification[kVTVideoEncoderSpecification_RequireHardwareAcceleratedVideoEncoder as String] as? Bool, true)
+    XCTAssertNil(specifications[1].specification[kVTVideoEncoderSpecification_RequireHardwareAcceleratedVideoEncoder as String])
+    for candidate in specifications {
+      XCTAssertNil(candidate.specification[kVTVideoEncoderSpecification_EnableLowLatencyRateControl as String], "VideoToolbox rejects low-latency rate control for JPEG")
+    }
+  }
+
+  func testH264AndHEVCEncoderSpecificationsAreUnchanged() {
+    for codec in [kCMVideoCodecType_H264, kCMVideoCodecType_HEVC] {
+      let specifications = FBSimulatorVideoStreamFramePusher_VideoToolbox.encoderSpecifications(for: codec)
+      XCTAssertEqual(specifications.count, 1)
+      XCTAssertEqual(specifications[0].specification[kVTVideoEncoderSpecification_RequireHardwareAcceleratedVideoEncoder as String] as? Bool, true)
+      XCTAssertEqual(specifications[0].specification[kVTVideoEncoderSpecification_EnableLowLatencyRateControl as String] as? Bool, true)
+    }
+  }
+
+  /// End-to-end through VideoToolbox: session setup, encode, and whole-frame delivery.
   func testMJPEGEncodeDeliversWholeJPEGToEncodedFrameConsumer() throws {
     let attributes: [String: Any] = [kCVPixelBufferIOSurfacePropertiesKey as String: [String: Any]()]
     var pixelBuffer: CVPixelBuffer?
@@ -500,13 +518,13 @@ final class FBSimulatorVideoStreamEncodedFrameConsumerTests: XCTestCase {
     let consumer = CapturingEncodedFrameConsumer()
     let frameDelivered = expectation(description: "JPEG delivered")
     consumer.onEncodedFrame = { _ in frameDelivered.fulfill() }
-    let pusher = makeMJPEGPusher(consumer: consumer)
-    do {
-      try pusher.setup(with: buffer, edgeInsets: FBVideoStreamEdgeInsets(top: 0, bottom: 0, left: 0, right: 0))
-    } catch {
-      throw XCTSkip("No JPEG encoder satisfies the MJPEG encoder specification on this machine: \(error)")
-    }
+    let logger = FBCapturingLogger()
+    let pusher = makeMJPEGPusher(consumer: consumer, logger: logger)
+    try pusher.setup(with: buffer, edgeInsets: FBVideoStreamEdgeInsets(top: 0, bottom: 0, left: 0, right: 0))
     defer { try? pusher.tearDown() }
+    XCTAssertTrue(
+      logger.messages.contains { ($0 as! String).hasPrefix("Created jpeg compression session") },
+      "Setup should log which encoder specification was used")
 
     try pusher.writeEncodedFrame(buffer, frameNumber: 0, timeAtFirstFrame: CFAbsoluteTimeGetCurrent(), frameUptime: ProcessInfo.processInfo.systemUptime, frameDuration: 0, forceKeyFrame: false)
     wait(for: [frameDelivered], timeout: 5)

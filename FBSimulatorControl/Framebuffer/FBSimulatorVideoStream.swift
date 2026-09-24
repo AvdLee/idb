@@ -556,17 +556,38 @@ final class FBSimulatorVideoStreamFramePusher_VideoToolbox: NSObject, FBSimulato
     }
   }
 
-  func setup(with pixelBuffer: CVPixelBuffer, edgeInsets: FBVideoStreamEdgeInsets) throws {
-    var encoderSpecification: [String: Any] = [
-      kVTVideoEncoderSpecification_EnableHardwareAcceleratedVideoEncoder as String: true
-    ]
-    if #available(macOS 12.1, *) {
-      encoderSpecification = [
-        kVTVideoEncoderSpecification_RequireHardwareAcceleratedVideoEncoder as String: true,
-        kVTVideoEncoderSpecification_EnableLowLatencyRateControl as String: true,
+  /// Encoder specifications to try, in order, with a description for logging.
+  ///
+  /// H.264/HEVC: a single attempt. On macOS 12.1+ it requires the hardware encoder with low-latency
+  /// rate control. JPEG: low-latency rate control only applies to H.264/HEVC, and VideoToolbox rejects
+  /// it for JPEG with `kVTParameterErr` (-12902). So JPEG requires the hardware encoder first, then
+  /// falls back to preferring it without the requirement.
+  static func encoderSpecifications(for videoCodec: CMVideoCodecType) -> [(description: String, specification: [String: Any])] {
+    let enableHardware: (description: String, specification: [String: Any]) = (
+      "hardware encoder preferred",
+      [kVTVideoEncoderSpecification_EnableHardwareAcceleratedVideoEncoder as String: true]
+    )
+    guard #available(macOS 12.1, *) else {
+      return [enableHardware]
+    }
+    if videoCodec == kCMVideoCodecType_JPEG {
+      return [
+        ("hardware encoder required", [kVTVideoEncoderSpecification_RequireHardwareAcceleratedVideoEncoder as String: true]),
+        enableHardware,
       ]
     }
+    return [
+      (
+        "hardware encoder required, low-latency rate control",
+        [
+          kVTVideoEncoderSpecification_RequireHardwareAcceleratedVideoEncoder as String: true,
+          kVTVideoEncoderSpecification_EnableLowLatencyRateControl as String: true,
+        ]
+      )
+    ]
+  }
 
+  func setup(with pixelBuffer: CVPixelBuffer, edgeInsets: FBVideoStreamEdgeInsets) throws {
     let sourceWidth = CVPixelBufferGetWidth(pixelBuffer)
     let sourceHeight = CVPixelBufferGetHeight(pixelBuffer)
     var destinationWidth = sourceWidth
@@ -609,18 +630,30 @@ final class FBSimulatorVideoStreamFramePusher_VideoToolbox: NSObject, FBSimulato
     // `VTCompressionSessionEncodeFrame(...outputHandler:)` overload (see `writeEncodedFrame`),
     // so the session needs neither an `outputCallback` nor a `refcon`.
     var compressionSession: VTCompressionSession?
-    let status = VTCompressionSessionCreate(
-      allocator: nil,
-      width: Int32(destinationWidth),
-      height: Int32(destinationHeight),
-      codecType: videoCodec,
-      encoderSpecification: encoderSpecification as CFDictionary,
-      imageBufferAttributes: sourceImageBufferAttributes as CFDictionary,
-      compressedDataAllocator: nil,
-      outputCallback: nil,
-      refcon: nil,
-      compressionSessionOut: &compressionSession
-    )
+    var status: OSStatus = noErr
+    let candidates = Self.encoderSpecifications(for: videoCodec)
+    for (index, candidate) in candidates.enumerated() {
+      compressionSession = nil
+      status = VTCompressionSessionCreate(
+        allocator: nil,
+        width: Int32(destinationWidth),
+        height: Int32(destinationHeight),
+        codecType: videoCodec,
+        encoderSpecification: candidate.specification as CFDictionary,
+        imageBufferAttributes: sourceImageBufferAttributes as CFDictionary,
+        compressedDataAllocator: nil,
+        outputCallback: nil,
+        refcon: nil,
+        compressionSessionOut: &compressionSession
+      )
+      if status == noErr {
+        logger.info().log("Created \(fourCharCodeString(videoCodec)) compression session (\(candidate.description))")
+        break
+      }
+      if index < candidates.count - 1 {
+        logger.log("Failed to create \(fourCharCodeString(videoCodec)) compression session (\(candidate.description)): \(status), retrying with \(candidates[index + 1].description)")
+      }
+    }
     if status != noErr {
       throw FBSimulatorError.describe("Failed to start Compression Session \(status)").build()
     }
@@ -1013,7 +1046,11 @@ public class FBSimulatorVideoStream: NSObject, FBFramebufferPresentationTimeCons
   @objc(didChangeIOSurface:)
   public func didChange(_ surface: IOSurface?) {
     guard let surface else { return }
-    try? mountSurface(surface)
+    do {
+      try mountSurface(surface)
+    } catch {
+      logger.log("Failed to mount surface: \(error)")
+    }
     pushFrame(forceKeyFrame: false)
   }
 
