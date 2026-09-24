@@ -389,6 +389,104 @@ final class FBSimulatorVideoStreamFrameRateCapTests: XCTestCase {
   }
 }
 
+/// Tests for the `.eager` cadence clock (`FrameCadence.Iterator`), driven by a fake Mach clock whose
+/// sleep jumps straight to the requested deadline, so timing is exact and nothing really sleeps.
+final class FBSimulatorVideoStreamFrameCadenceTests: XCTestCase {
+
+  private final class FakeClock: @unchecked Sendable {
+    var now: UInt64 = 1_000_000_000
+    var sleepDeadlines: [UInt64] = []
+  }
+
+  private func makeIterator(clock: FakeClock, logger: FBControlCoreLogger = FBCapturingLogger()) -> FrameCadence.Iterator {
+    FrameCadence.Iterator(
+      framesPerSecond: 60,
+      logger: logger,
+      now: { clock.now },
+      sleepUntil: { deadline in
+        clock.sleepDeadlines.append(deadline)
+        clock.now = deadline
+      })
+  }
+
+  func testFirstTickIsImmediate() async throws {
+    let clock = FakeClock()
+    var iterator = makeIterator(clock: clock)
+
+    let triggerResult = await iterator.next()
+
+    let trigger = try XCTUnwrap(triggerResult)
+
+    XCTAssertFalse(trigger.overran)
+    XCTAssertEqual(trigger.droppedTicks, 0)
+    XCTAssertTrue(clock.sleepDeadlines.isEmpty, "The first tick must not wait")
+  }
+
+  func testSteadyStateSleepsToEachAlignedDeadline() async throws {
+    let clock = FakeClock()
+    let start = clock.now
+    var iterator = makeIterator(clock: clock)
+    let interval = iterator.frameIntervalMach
+
+    _ = await iterator.next()
+    for _ in 0..<5 {
+      let triggerResult = await iterator.next()
+      let trigger = try XCTUnwrap(triggerResult)
+      XCTAssertFalse(trigger.overran)
+      XCTAssertEqual(trigger.droppedTicks, 0)
+    }
+
+    XCTAssertEqual(clock.sleepDeadlines, (1...5).map { start + UInt64($0) * interval })
+  }
+
+  func testStallDropsMissedTicksInsteadOfBursting() async throws {
+    let clock = FakeClock()
+    let logger = FBCapturingLogger()
+    let start = clock.now
+    var iterator = makeIterator(clock: clock, logger: logger)
+    let interval = iterator.frameIntervalMach
+
+    _ = await iterator.next()
+    // The first push stalls until 5.5 intervals past its successor's deadline (start + interval).
+    clock.now = start + interval + 5 * interval + interval / 2
+
+    let lateResult = await iterator.next()
+
+    let late = try XCTUnwrap(lateResult)
+    XCTAssertTrue(late.overran)
+    XCTAssertEqual(late.droppedTicks, 5)
+    XCTAssertTrue(clock.sleepDeadlines.isEmpty, "The late tick fires immediately")
+
+    let nextResult = await iterator.next()
+
+    let next = try XCTUnwrap(nextResult)
+    XCTAssertFalse(next.overran, "Missed ticks must not be caught up back-to-back")
+    XCTAssertEqual(clock.sleepDeadlines, [start + 7 * interval], "The next tick waits for the first phase-aligned deadline after the stall")
+
+    let overrunLogs = logger.messages.compactMap { $0 as? String }.filter { $0.hasPrefix("Frame push exceeded budget") }
+    XCTAssertEqual(overrunLogs.count, 1, "One overrun line per stall, not one per missed tick")
+    XCTAssertTrue(overrunLogs.first?.hasSuffix("dropped 5 ticks") ?? false, "\(overrunLogs)")
+  }
+
+  func testOverrunWithinOneIntervalDropsNothing() async throws {
+    let clock = FakeClock()
+    let start = clock.now
+    var iterator = makeIterator(clock: clock)
+    let interval = iterator.frameIntervalMach
+
+    _ = await iterator.next()
+    clock.now = start + interval + interval / 2
+
+    let lateResult = await iterator.next()
+
+    let late = try XCTUnwrap(lateResult)
+    XCTAssertTrue(late.overran)
+    XCTAssertEqual(late.droppedTicks, 0)
+    _ = await iterator.next()
+    XCTAssertEqual(clock.sleepDeadlines, [start + 2 * interval])
+  }
+}
+
 /// Tests for whole-frame MJPEG delivery to `RSEncodedFrameConsumer`.
 final class FBSimulatorVideoStreamEncodedFrameConsumerTests: XCTestCase {
 
