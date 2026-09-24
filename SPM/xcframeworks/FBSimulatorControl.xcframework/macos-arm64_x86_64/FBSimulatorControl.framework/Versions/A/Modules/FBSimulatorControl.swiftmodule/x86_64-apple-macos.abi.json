@@ -54504,9 +54504,57 @@
             ]
           },
           {
+            "kind": "Var",
+            "name": "droppedTicks",
+            "printedName": "droppedTicks",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "UInt64",
+                "printedName": "Swift.UInt64",
+                "usr": "s:s6UInt64V"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:18FBSimulatorControl12FrameTriggerV12droppedTickss6UInt64Vvp",
+            "mangledName": "$s18FBSimulatorControl12FrameTriggerV12droppedTickss6UInt64Vvp",
+            "moduleName": "FBSimulatorControl",
+            "declAttributes": [
+              "HasStorage",
+              "RawDocComment"
+            ],
+            "fixedbinaryorder": 2,
+            "isLet": true,
+            "hasStorage": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "UInt64",
+                    "printedName": "Swift.UInt64",
+                    "usr": "s:s6UInt64V"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:18FBSimulatorControl12FrameTriggerV12droppedTickss6UInt64Vvg",
+                "mangledName": "$s18FBSimulatorControl12FrameTriggerV12droppedTickss6UInt64Vvg",
+                "moduleName": "FBSimulatorControl",
+                "implicit": true,
+                "declAttributes": [
+                  "Transparent"
+                ],
+                "accessorKind": "get"
+              }
+            ]
+          },
+          {
             "kind": "Constructor",
             "name": "init",
-            "printedName": "init(forceKeyFrame:overran:)",
+            "printedName": "init(forceKeyFrame:overran:droppedTicks:)",
             "children": [
               {
                 "kind": "TypeNominal",
@@ -54525,13 +54573,19 @@
                 "name": "Bool",
                 "printedName": "Swift.Bool",
                 "usr": "s:Sb"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "UInt64",
+                "printedName": "Swift.UInt64",
+                "hasDefaultArg": true,
+                "usr": "s:s6UInt64V"
               }
             ],
             "declKind": "Constructor",
-            "usr": "s:18FBSimulatorControl12FrameTriggerV08forceKeyC07overranACSb_Sbtcfc",
-            "mangledName": "$s18FBSimulatorControl12FrameTriggerV08forceKeyC07overranACSb_Sbtcfc",
+            "usr": "s:18FBSimulatorControl12FrameTriggerV08forceKeyC07overran12droppedTicksACSb_Sbs6UInt64Vtcfc",
+            "mangledName": "$s18FBSimulatorControl12FrameTriggerV08forceKeyC07overran12droppedTicksACSb_Sbs6UInt64Vtcfc",
             "moduleName": "FBSimulatorControl",
-            "implicit": true,
             "init_kind": "Designated"
           }
         ],
@@ -55670,17 +55724,39 @@
                   }
                 ],
                 "declKind": "Var",
-                "usr": "s:18FBSimulatorControl12FrameCadenceV8IteratorV17frameIntervalMach33_78E0E20C0B035A84E6F147AF5F85744FLLs6UInt64Vvp",
-                "mangledName": "$s18FBSimulatorControl12FrameCadenceV8IteratorV17frameIntervalMach33_78E0E20C0B035A84E6F147AF5F85744FLLs6UInt64Vvp",
+                "usr": "s:18FBSimulatorControl12FrameCadenceV8IteratorV17frameIntervalMachs6UInt64Vvp",
+                "mangledName": "$s18FBSimulatorControl12FrameCadenceV8IteratorV17frameIntervalMachs6UInt64Vvp",
                 "moduleName": "FBSimulatorControl",
-                "isInternal": true,
                 "declAttributes": [
-                  "HasStorage",
-                  "AccessControl"
+                  "HasStorage"
                 ],
                 "fixedbinaryorder": 0,
                 "isLet": true,
-                "hasStorage": true
+                "hasStorage": true,
+                "accessors": [
+                  {
+                    "kind": "Accessor",
+                    "name": "Get",
+                    "printedName": "Get()",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "UInt64",
+                        "printedName": "Swift.UInt64",
+                        "usr": "s:s6UInt64V"
+                      }
+                    ],
+                    "declKind": "Accessor",
+                    "usr": "s:18FBSimulatorControl12FrameCadenceV8IteratorV17frameIntervalMachs6UInt64Vvg",
+                    "mangledName": "$s18FBSimulatorControl12FrameCadenceV8IteratorV17frameIntervalMachs6UInt64Vvg",
+                    "moduleName": "FBSimulatorControl",
+                    "implicit": true,
+                    "declAttributes": [
+                      "Transparent"
+                    ],
+                    "accessorKind": "get"
+                  }
+                ]
               },
               {
                 "kind": "Var",
@@ -55784,6 +55860,82 @@
               },
               {
                 "kind": "Var",
+                "name": "now",
+                "printedName": "now",
+                "children": [
+                  {
+                    "kind": "TypeFunc",
+                    "name": "Function",
+                    "printedName": "() -> Swift.UInt64",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "UInt64",
+                        "printedName": "Swift.UInt64",
+                        "usr": "s:s6UInt64V"
+                      },
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Void",
+                        "printedName": "()"
+                      }
+                    ]
+                  }
+                ],
+                "declKind": "Var",
+                "usr": "s:18FBSimulatorControl12FrameCadenceV8IteratorV3now33_78E0E20C0B035A84E6F147AF5F85744FLLs6UInt64Vycvp",
+                "mangledName": "$s18FBSimulatorControl12FrameCadenceV8IteratorV3now33_78E0E20C0B035A84E6F147AF5F85744FLLs6UInt64Vycvp",
+                "moduleName": "FBSimulatorControl",
+                "isInternal": true,
+                "declAttributes": [
+                  "HasStorage",
+                  "AccessControl",
+                  "RawDocComment"
+                ],
+                "fixedbinaryorder": 5,
+                "isLet": true,
+                "hasStorage": true
+              },
+              {
+                "kind": "Var",
+                "name": "sleepUntil",
+                "printedName": "sleepUntil",
+                "children": [
+                  {
+                    "kind": "TypeFunc",
+                    "name": "Function",
+                    "printedName": "(Swift.UInt64) async throws -> ()",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Void",
+                        "printedName": "()"
+                      },
+                      {
+                        "kind": "TypeNominal",
+                        "name": "UInt64",
+                        "printedName": "Swift.UInt64",
+                        "usr": "s:s6UInt64V"
+                      }
+                    ]
+                  }
+                ],
+                "declKind": "Var",
+                "usr": "s:18FBSimulatorControl12FrameCadenceV8IteratorV10sleepUntil33_78E0E20C0B035A84E6F147AF5F85744FLLyys6UInt64VYaKcvp",
+                "mangledName": "$s18FBSimulatorControl12FrameCadenceV8IteratorV10sleepUntil33_78E0E20C0B035A84E6F147AF5F85744FLLyys6UInt64VYaKcvp",
+                "moduleName": "FBSimulatorControl",
+                "isInternal": true,
+                "declAttributes": [
+                  "HasStorage",
+                  "AccessControl",
+                  "RawDocComment"
+                ],
+                "fixedbinaryorder": 6,
+                "isLet": true,
+                "hasStorage": true
+              },
+              {
+                "kind": "Var",
                 "name": "nextTargetTime",
                 "printedName": "nextTargetTime",
                 "children": [
@@ -55803,7 +55955,7 @@
                   "HasStorage",
                   "AccessControl"
                 ],
-                "fixedbinaryorder": 5,
+                "fixedbinaryorder": 7,
                 "hasStorage": true
               },
               {
@@ -55828,13 +55980,13 @@
                   "HasStorage",
                   "AccessControl"
                 ],
-                "fixedbinaryorder": 6,
+                "fixedbinaryorder": 8,
                 "hasStorage": true
               },
               {
                 "kind": "Constructor",
                 "name": "init",
-                "printedName": "init(framesPerSecond:logger:)",
+                "printedName": "init(framesPerSecond:logger:now:sleepUntil:)",
                 "children": [
                   {
                     "kind": "TypeNominal",
@@ -55853,13 +56005,79 @@
                     "name": "FBControlCoreLogger",
                     "printedName": "any FBControlCore.FBControlCoreLogger",
                     "usr": "c:@M@FBControlCore@objc(pl)FBControlCoreLogger"
+                  },
+                  {
+                    "kind": "TypeFunc",
+                    "name": "Function",
+                    "printedName": "() -> Swift.UInt64",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "UInt64",
+                        "printedName": "Swift.UInt64",
+                        "usr": "s:s6UInt64V"
+                      },
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Void",
+                        "printedName": "()"
+                      }
+                    ],
+                    "hasDefaultArg": true
+                  },
+                  {
+                    "kind": "TypeFunc",
+                    "name": "Function",
+                    "printedName": "(Swift.UInt64) async throws -> ()",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Void",
+                        "printedName": "()"
+                      },
+                      {
+                        "kind": "TypeNominal",
+                        "name": "UInt64",
+                        "printedName": "Swift.UInt64",
+                        "usr": "s:s6UInt64V"
+                      }
+                    ],
+                    "hasDefaultArg": true
                   }
                 ],
                 "declKind": "Constructor",
-                "usr": "s:18FBSimulatorControl12FrameCadenceV8IteratorV15framesPerSecond6loggerAESu_13FBControlCore0jK6Logger_ptcfc",
-                "mangledName": "$s18FBSimulatorControl12FrameCadenceV8IteratorV15framesPerSecond6loggerAESu_13FBControlCore0jK6Logger_ptcfc",
+                "usr": "s:18FBSimulatorControl12FrameCadenceV8IteratorV15framesPerSecond6logger3now10sleepUntilAESu_13FBControlCore0mN6Logger_ps6UInt64VycyAMYaKctcfc",
+                "mangledName": "$s18FBSimulatorControl12FrameCadenceV8IteratorV15framesPerSecond6logger3now10sleepUntilAESu_13FBControlCore0mN6Logger_ps6UInt64VycyAMYaKctcfc",
                 "moduleName": "FBSimulatorControl",
                 "init_kind": "Designated"
+              },
+              {
+                "kind": "Function",
+                "name": "sleepUntilMachTime",
+                "printedName": "sleepUntilMachTime(_:)",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "UInt64",
+                    "printedName": "Swift.UInt64",
+                    "usr": "s:s6UInt64V"
+                  }
+                ],
+                "declKind": "Func",
+                "usr": "s:18FBSimulatorControl12FrameCadenceV8IteratorV18sleepUntilMachTimeyys6UInt64VYaKFZ",
+                "mangledName": "$s18FBSimulatorControl12FrameCadenceV8IteratorV18sleepUntilMachTimeyys6UInt64VYaKFZ",
+                "moduleName": "FBSimulatorControl",
+                "static": true,
+                "declAttributes": [
+                  "RawDocComment"
+                ],
+                "throwing": true,
+                "funcSelfKind": "NonMutating"
               },
               {
                 "kind": "Function",
@@ -56232,6 +56450,31 @@
           },
           {
             "kind": "Var",
+            "name": "droppedTickCount",
+            "printedName": "droppedTickCount",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "UInt64",
+                "printedName": "Swift.UInt64",
+                "usr": "s:s6UInt64V"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:18FBSimulatorControl12CadenceStatsV16droppedTickCount33_78E0E20C0B035A84E6F147AF5F85744FLLs6UInt64Vvp",
+            "mangledName": "$s18FBSimulatorControl12CadenceStatsV16droppedTickCount33_78E0E20C0B035A84E6F147AF5F85744FLLs6UInt64Vvp",
+            "moduleName": "FBSimulatorControl",
+            "isInternal": true,
+            "declAttributes": [
+              "HasInitialValue",
+              "HasStorage",
+              "AccessControl"
+            ],
+            "fixedbinaryorder": 7,
+            "hasStorage": true
+          },
+          {
+            "kind": "Var",
             "name": "maxPushMach",
             "printedName": "maxPushMach",
             "children": [
@@ -56252,7 +56495,7 @@
               "HasStorage",
               "AccessControl"
             ],
-            "fixedbinaryorder": 7,
+            "fixedbinaryorder": 8,
             "hasStorage": true
           },
           {
@@ -56277,7 +56520,7 @@
               "HasStorage",
               "AccessControl"
             ],
-            "fixedbinaryorder": 8,
+            "fixedbinaryorder": 9,
             "hasStorage": true
           },
           {
@@ -56303,7 +56546,7 @@
               "AccessControl",
               "RawDocComment"
             ],
-            "fixedbinaryorder": 9,
+            "fixedbinaryorder": 10,
             "hasStorage": true
           },
           {
@@ -56342,7 +56585,7 @@
           {
             "kind": "Function",
             "name": "record",
-            "printedName": "record(pushDurationMach:overran:)",
+            "printedName": "record(pushDurationMach:overran:droppedTicks:)",
             "children": [
               {
                 "kind": "TypeNominal",
@@ -56360,11 +56603,18 @@
                 "name": "Bool",
                 "printedName": "Swift.Bool",
                 "usr": "s:Sb"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "UInt64",
+                "printedName": "Swift.UInt64",
+                "hasDefaultArg": true,
+                "usr": "s:s6UInt64V"
               }
             ],
             "declKind": "Func",
-            "usr": "s:18FBSimulatorControl12CadenceStatsV6record16pushDurationMach7overranys6UInt64V_SbtF",
-            "mangledName": "$s18FBSimulatorControl12CadenceStatsV6record16pushDurationMach7overranys6UInt64V_SbtF",
+            "usr": "s:18FBSimulatorControl12CadenceStatsV6record16pushDurationMach7overran12droppedTicksys6UInt64V_SbAItF",
+            "mangledName": "$s18FBSimulatorControl12CadenceStatsV6record16pushDurationMach7overran12droppedTicksys6UInt64V_SbAItF",
             "moduleName": "FBSimulatorControl",
             "declAttributes": [
               "Mutating"
@@ -72671,59 +72921,80 @@
     },
     {
       "filePath": "\/tmp\/idb-perf\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
+      "kind": "IntegerLiteral",
+      "offset": 76322,
+      "length": 1,
+      "value": "0"
+    },
+    {
+      "filePath": "\/tmp\/idb-perf\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "BooleanLiteral",
-      "offset": 78050,
+      "offset": 78436,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/tmp\/idb-perf\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "FloatLiteral",
-      "offset": 81454,
+      "offset": 81840,
       "length": 3,
       "value": "1.0"
     },
     {
       "filePath": "\/tmp\/idb-perf\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "BooleanLiteral",
-      "offset": 83333,
+      "offset": 84150,
       "length": 4,
       "value": "true"
     },
     {
       "filePath": "\/tmp\/idb-perf\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "IntegerLiteral",
-      "offset": 85700,
+      "offset": 87391,
       "length": 1,
       "value": "0"
     },
     {
       "filePath": "\/tmp\/idb-perf\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "IntegerLiteral",
-      "offset": 85739,
+      "offset": 87430,
       "length": 1,
       "value": "0"
     },
     {
       "filePath": "\/tmp\/idb-perf\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "IntegerLiteral",
-      "offset": 85777,
+      "offset": 87473,
+      "length": 1,
+      "value": "0"
+    },
+    {
+      "filePath": "\/tmp\/idb-perf\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
+      "kind": "IntegerLiteral",
+      "offset": 87511,
       "length": 1,
       "value": "0"
     },
     {
       "filePath": "\/tmp\/idb-perf\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "FloatLiteral",
-      "offset": 85804,
+      "offset": 87538,
       "length": 3,
       "value": "0.0"
     },
     {
       "filePath": "\/tmp\/idb-perf\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "FloatLiteral",
-      "offset": 85863,
+      "offset": 87597,
       "length": 3,
       "value": "0.0"
+    },
+    {
+      "filePath": "\/tmp\/idb-perf\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
+      "kind": "IntegerLiteral",
+      "offset": 88231,
+      "length": 1,
+      "value": "0"
     },
     {
       "filePath": "\/tmp\/idb-perf\/FBSimulatorControl\/Commands\/FBSimulatorXCTestCommands.swift",
