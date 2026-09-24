@@ -283,6 +283,242 @@ final class FBSimulatorVideoStreamCallbackTests: XCTestCase {
   }
 }
 
+/// Tests for the `.lazy` cadence frame-rate cap (`FrameRateLimiter` + `LazyFrameTriggers`).
+/// The push loop awaits each push before pulling the next trigger, so iterating the triggers directly
+/// and stamping each yield (`lastTriggerInstant`) models the push start times exactly.
+final class FBSimulatorVideoStreamFrameRateCapTests: XCTestCase {
+
+  func testCappedTriggersAreSpacedByTheIntervalAndDeliverTheTrailingFrame() async throws {
+    let triggers = LazyFrameTriggers(frameRateLimiter: FrameRateLimiter(maximumFramesPerSecond: 20))
+    let interval = Duration.milliseconds(50)
+    var iterator = triggers.makeAsyncIterator()
+    var pushInstants: [ContinuousClock.Instant] = []
+    var lastDamageInstant = ContinuousClock.now
+
+    triggers.signalDamage()
+    while await iterator.next() != nil {
+      pushInstants.append(try XCTUnwrap(iterator.lastTriggerInstant))
+      guard pushInstants.count < 5 else { continue }
+      // A burst of damage right after each push lands during the following wait and coalesces.
+      lastDamageInstant = .now
+      for _ in 0..<10 {
+        triggers.signalDamage()
+      }
+      if pushInstants.count == 4 {
+        // Stop signalling: the burst above is the trailing damage and must still be pushed.
+        triggers.finish()
+      }
+    }
+
+    XCTAssertEqual(pushInstants.count, 5, "Each burst should coalesce into exactly one push, including the trailing one")
+    for (previous, next) in zip(pushInstants, pushInstants.dropFirst()) {
+      XCTAssertGreaterThanOrEqual(next - previous, interval, "Pushes must be spaced by at least the minimum frame interval")
+    }
+    XCTAssertGreaterThanOrEqual(try XCTUnwrap(pushInstants.last), lastDamageInstant, "The final push must follow the trailing damage")
+  }
+
+  func testRuntimeCapChangeAppliesFromTheNextWait() async throws {
+    let limiter = FrameRateLimiter(maximumFramesPerSecond: 20)
+    let triggers = LazyFrameTriggers(frameRateLimiter: limiter)
+    var iterator = triggers.makeAsyncIterator()
+    var pushInstants: [ContinuousClock.Instant] = []
+
+    triggers.signalDamage()
+    while await iterator.next() != nil {
+      pushInstants.append(try XCTUnwrap(iterator.lastTriggerInstant))
+      switch pushInstants.count {
+      case 2:
+        limiter.setMaximumFramesPerSecond(10)
+      case 4:
+        limiter.setMaximumFramesPerSecond(nil)
+      case 5:
+        triggers.finish()
+        continue
+      default:
+        break
+      }
+      triggers.signalDamage()
+    }
+
+    XCTAssertEqual(pushInstants.count, 5)
+    XCTAssertGreaterThanOrEqual(pushInstants[1] - pushInstants[0], .milliseconds(50), "The initial 20 fps cap applies")
+    XCTAssertGreaterThanOrEqual(pushInstants[2] - pushInstants[1], .milliseconds(100), "Lowering to 10 fps applies from the next wait")
+    XCTAssertGreaterThanOrEqual(pushInstants[3] - pushInstants[2], .milliseconds(100))
+    XCTAssertLessThan(pushInstants[4] - pushInstants[3], .milliseconds(100), "Removing the cap stops waiting")
+  }
+
+  func testUncappedTriggersDoNotWait() async throws {
+    let triggers = LazyFrameTriggers()
+    var iterator = triggers.makeAsyncIterator()
+    var pushInstants: [ContinuousClock.Instant] = []
+
+    triggers.signalDamage()
+    while await iterator.next() != nil {
+      pushInstants.append(try XCTUnwrap(iterator.lastTriggerInstant))
+      if pushInstants.count == 3 {
+        triggers.finish()
+      } else {
+        triggers.signalDamage()
+      }
+    }
+
+    XCTAssertEqual(pushInstants.count, 3)
+    XCTAssertLessThan(try XCTUnwrap(pushInstants.last) - pushInstants[0], .milliseconds(100), "No cap means no wait between pushes")
+  }
+
+  func testFrameRateLimiterNormalizesTheCap() {
+    let limiter = FrameRateLimiter()
+    XCTAssertNil(limiter.maximumFramesPerSecond)
+    XCTAssertNil(limiter.minimumFrameInterval)
+
+    limiter.setMaximumFramesPerSecond(30)
+    XCTAssertEqual(limiter.maximumFramesPerSecond, 30)
+    XCTAssertEqual(limiter.minimumFrameInterval, .seconds(1.0 / 30.0))
+
+    for invalid in [0, -15, Double.infinity, Double.nan] {
+      limiter.setMaximumFramesPerSecond(30)
+      limiter.setMaximumFramesPerSecond(invalid)
+      XCTAssertNil(limiter.maximumFramesPerSecond, "\(invalid) should remove the cap")
+    }
+  }
+
+  func testWriteQueueQoS() {
+    XCTAssertEqual(FBSimulatorVideoStream.makeWriteQueue().qos, .unspecified, "The default matches a queue created without a QoS")
+    XCTAssertEqual(FBSimulatorVideoStream.makeWriteQueue(qos: .userInitiated).qos, .userInitiated)
+  }
+}
+
+/// Tests for whole-frame MJPEG delivery to `RSEncodedFrameConsumer`.
+final class FBSimulatorVideoStreamEncodedFrameConsumerTests: XCTestCase {
+
+  private final class CapturingEncodedFrameConsumer: NSObject, RSEncodedFrameConsumer, @unchecked Sendable {
+    private let lock = NSLock()
+    private var _encodedFrames: [Data] = []
+    private var _consumedData: [Data] = []
+    var onEncodedFrame: ((Data) -> Void)?
+
+    var encodedFrames: [Data] { lock.withLock { _encodedFrames } }
+    var consumedData: [Data] { lock.withLock { _consumedData } }
+
+    func consumeEncodedFrame(_ data: Data) {
+      lock.withLock { _encodedFrames.append(data) }
+      onEncodedFrame?(data)
+    }
+
+    func consumeData(_ data: Data) {
+      lock.withLock { _consumedData.append(data) }
+    }
+
+    func consumeEndOfFile() {}
+  }
+
+  // MARK: - Helpers
+
+  private let segments: [[UInt8]] = [[0xFF, 0xD8, 0x01, 0x02], [0x03, 0x04, 0xFF, 0xD9]]
+
+  /// A block buffer backed by one memory block per segment, so it is not contiguous.
+  private func makeSegmentedBlockBuffer() throws -> CMBlockBuffer {
+    var blockBuffer: CMBlockBuffer?
+    XCTAssertEqual(CMBlockBufferCreateEmpty(allocator: nil, capacity: UInt32(segments.count), flags: 0, blockBufferOut: &blockBuffer), kCMBlockBufferNoErr)
+    let buffer = try XCTUnwrap(blockBuffer)
+    var offset = 0
+    for segment in segments {
+      XCTAssertEqual(
+        CMBlockBufferAppendMemoryBlock(
+          buffer, memoryBlock: nil, length: segment.count, blockAllocator: nil, customBlockSource: nil,
+          offsetToData: 0, dataLength: segment.count, flags: kCMBlockBufferAssureMemoryNowFlag),
+        kCMBlockBufferNoErr)
+      segment.withUnsafeBytes { bytes in
+        XCTAssertEqual(CMBlockBufferReplaceDataBytes(with: bytes.baseAddress!, blockBuffer: buffer, offsetIntoDestination: offset, dataLength: segment.count), kCMBlockBufferNoErr)
+      }
+      offset += segment.count
+    }
+    XCTAssertFalse(CMBlockBufferIsRangeContiguous(buffer, atOffset: 0, length: 0), "The fixture must span multiple memory blocks")
+    return buffer
+  }
+
+  private func makeJPEGSampleBuffer(dataBuffer: CMBlockBuffer) throws -> CMSampleBuffer {
+    var formatDescription: CMVideoFormatDescription?
+    XCTAssertEqual(CMVideoFormatDescriptionCreate(allocator: nil, codecType: kCMVideoCodecType_JPEG, width: 2, height: 2, extensions: nil, formatDescriptionOut: &formatDescription), noErr)
+    var sampleBuffer: CMSampleBuffer?
+    var sampleSize = CMBlockBufferGetDataLength(dataBuffer)
+    XCTAssertEqual(
+      CMSampleBufferCreate(
+        allocator: nil, dataBuffer: dataBuffer, dataReady: true, makeDataReadyCallback: nil, refcon: nil,
+        formatDescription: formatDescription, sampleCount: 1, sampleTimingEntryCount: 0, sampleTimingArray: nil,
+        sampleSizeEntryCount: 1, sampleSizeArray: &sampleSize, sampleBufferOut: &sampleBuffer),
+      noErr)
+    return try XCTUnwrap(sampleBuffer)
+  }
+
+  private func makeMJPEGPusher(consumer: any FBDataConsumer, logger: FBControlCoreLogger = FBCapturingLogger()) -> FBSimulatorVideoStreamFramePusher_VideoToolbox {
+    let configuration = FBVideoStreamConfiguration(format: .mjpeg, framesPerSecond: nil, rateControl: nil, scaleFactor: nil, keyFrameRate: nil)
+    return FBSimulatorVideoStreamFramePusher_VideoToolbox(
+      configuration: configuration,
+      compressionSessionProperties: FBSimulatorVideoStream.compressionSessionProperties(for: configuration, callerProperties: [:]),
+      videoCodec: kCMVideoCodecType_JPEG,
+      consumer: consumer,
+      outputMode: .mjpeg,
+      encodedSampleConsumer: nil,
+      logger: logger)
+  }
+
+  // MARK: - Tests
+
+  func testContiguousDataCopiesEverySegment() throws {
+    let data = try contiguousData(from: makeSegmentedBlockBuffer())
+    XCTAssertEqual(data, Data(segments.joined()))
+  }
+
+  func testMJPEGDeliversOneWholeFrameToEncodedFrameConsumer() throws {
+    let consumer = CapturingEncodedFrameConsumer()
+    let pusher = makeMJPEGPusher(consumer: consumer)
+
+    pusher.handleMJPEGSampleBuffer(try makeJPEGSampleBuffer(dataBuffer: makeSegmentedBlockBuffer()))
+
+    XCTAssertEqual(consumer.encodedFrames, [Data(segments.joined())], "A segmented JPEG must arrive as exactly one Data")
+    XCTAssertTrue(consumer.consumedData.isEmpty, "Whole-frame consumers must not also receive the piecewise bytes")
+  }
+
+  func testMJPEGWritesPiecewiseToPlainConsumer() throws {
+    let consumer = FBDataBuffer.accumulatingBuffer()
+    let pusher = makeMJPEGPusher(consumer: consumer)
+
+    pusher.handleMJPEGSampleBuffer(try makeJPEGSampleBuffer(dataBuffer: makeSegmentedBlockBuffer()))
+
+    XCTAssertEqual(consumer.data(), Data(segments.joined()), "Consumers without RSEncodedFrameConsumer keep the existing byte stream")
+  }
+
+  /// End-to-end through VideoToolbox. Depends on a JPEG encoder satisfying the pusher's encoder
+  /// specification (hardware required on macOS 12.1+), so it skips where `setup` fails.
+  func testMJPEGEncodeDeliversWholeJPEGToEncodedFrameConsumer() throws {
+    let attributes: [String: Any] = [kCVPixelBufferIOSurfacePropertiesKey as String: [String: Any]()]
+    var pixelBuffer: CVPixelBuffer?
+    XCTAssertEqual(CVPixelBufferCreate(nil, 64, 64, kCVPixelFormatType_32BGRA, attributes as CFDictionary, &pixelBuffer), kCVReturnSuccess)
+    let buffer = try XCTUnwrap(pixelBuffer)
+
+    let consumer = CapturingEncodedFrameConsumer()
+    let frameDelivered = expectation(description: "JPEG delivered")
+    consumer.onEncodedFrame = { _ in frameDelivered.fulfill() }
+    let pusher = makeMJPEGPusher(consumer: consumer)
+    do {
+      try pusher.setup(with: buffer, edgeInsets: FBVideoStreamEdgeInsets(top: 0, bottom: 0, left: 0, right: 0))
+    } catch {
+      throw XCTSkip("No JPEG encoder satisfies the MJPEG encoder specification on this machine: \(error)")
+    }
+    defer { try? pusher.tearDown() }
+
+    try pusher.writeEncodedFrame(buffer, frameNumber: 0, timeAtFirstFrame: CFAbsoluteTimeGetCurrent(), frameUptime: ProcessInfo.processInfo.systemUptime, frameDuration: 0, forceKeyFrame: false)
+    wait(for: [frameDelivered], timeout: 5)
+
+    let frame = try XCTUnwrap(consumer.encodedFrames.first)
+    XCTAssertEqual(consumer.encodedFrames.count, 1)
+    XCTAssertEqual(Array(frame.prefix(2)), [0xFF, 0xD8], "Frame should start with the JPEG SOI marker")
+    XCTAssertEqual(Array(frame.suffix(2)), [0xFF, 0xD9], "Frame should end with the JPEG EOI marker")
+    XCTAssertTrue(consumer.consumedData.isEmpty)
+  }
+}
+
 /// Tests for the bitmap (BGRA) frame pusher's raw byte contract.
 final class FBSimulatorVideoStreamBitmapPusherTests: XCTestCase {
 

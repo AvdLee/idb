@@ -120,6 +120,32 @@ public protocol RSPixelBufferConsumer: AnyObject {
   func writeEncodedFrame(_ pixelBuffer: CVPixelBuffer, frameNumber: UInt, timeAtFirstFrame: CFTimeInterval, frameUptime: TimeInterval) throws
 }
 
+// MARK: - Encoded Frame Consumer (RocketSim addition)
+
+/// RocketSim addition: consumers of an MJPEG stream that conform to this protocol receive each JPEG
+/// as exactly one contiguous `Data` via `consumeEncodedFrame(_:)`, instead of the block buffer's
+/// segments being written piecemeal through `consumeData(_:)`. This lets a consumer forward whole
+/// frames (e.g. one WebSocket message per JPEG) without reassembling them.
+@objc public protocol RSEncodedFrameConsumer: FBDataConsumer {
+  func consumeEncodedFrame(_ data: Data)
+}
+
+/// Copy the full contents of `blockBuffer` into a single contiguous `Data`, regardless of how many
+/// memory blocks back it.
+func contiguousData(from blockBuffer: CMBlockBuffer) throws -> Data {
+  let dataLength = CMBlockBufferGetDataLength(blockBuffer)
+  guard dataLength > 0 else { return Data() }
+  var data = Data(count: dataLength)
+  let status = data.withUnsafeMutableBytes { bytes -> OSStatus in
+    guard let baseAddress = bytes.baseAddress else { return kCMBlockBufferBadPointerParameterErr }
+    return CMBlockBufferCopyDataBytes(blockBuffer, atOffset: 0, dataLength: dataLength, destination: baseAddress)
+  }
+  if status != kCMBlockBufferNoErr {
+    throw FBControlCoreError.describe("Failed to copy block buffer data: \(status)").build()
+  }
+  return data
+}
+
 // MARK: - Frame Pusher Protocol
 
 /// Frame pusher abstraction. Concrete pushers convert + write frames to the consumer.
@@ -489,10 +515,19 @@ final class FBSimulatorVideoStreamFramePusher_VideoToolbox: NSObject, FBSimulato
     }
   }
 
-  /// MJPEG output: write the encoded sample's JPEG block buffer straight to the MJPEG stream.
+  /// MJPEG output: write the encoded sample's JPEG block buffer straight to the MJPEG stream, or, for an
+  /// `RSEncodedFrameConsumer`, deliver it as one contiguous `Data` per JPEG.
   /// Ignores encode status/flags, matching the former `MJPEGCompressorCallback`.
-  private func handleMJPEGSampleBuffer(_ sampleBuffer: CMSampleBuffer?) {
+  func handleMJPEGSampleBuffer(_ sampleBuffer: CMSampleBuffer?) {
     guard let sampleBuffer, let blockBuffer = CMSampleBufferGetDataBuffer(sampleBuffer) else { return }
+    if let encodedFrameConsumer = consumer as? RSEncodedFrameConsumer {
+      do {
+        encodedFrameConsumer.consumeEncodedFrame(try contiguousData(from: blockBuffer))
+      } catch {
+        logger.log("Failed to write MJPEG frame: \(error)")
+      }
+      return
+    }
     var error: NSError?
     if !WriteJPEGDataToMJPEGStream(blockBuffer, consumer, logger, &error) {
       logger.log("Failed to write MJPEG frame: \(String(describing: error))")
@@ -767,6 +802,9 @@ public class FBSimulatorVideoStream: NSObject, FBFramebufferPresentationTimeCons
   /// finished in `cadenceTeardown`. Nil in `.eager` mode (the cadence clock drives pushes there).
   private var lazyTriggers: LazyFrameTriggers?
 
+  /// Caps the `.lazy` push rate (see `setMaximumFrameRate(_:)`). Uncapped by default.
+  let frameRateLimiter = FrameRateLimiter()
+
   /// CVPixelBuffer is ARC-managed; held strong and released automatically.
   var pixelBuffer: CVPixelBuffer?
   var timeAtFirstFrame: CFTimeInterval = 0
@@ -792,27 +830,29 @@ public class FBSimulatorVideoStream: NSObject, FBFramebufferPresentationTimeCons
 
   // MARK: - Initializers
 
-  class func makeWriteQueue() -> DispatchQueue {
-    DispatchQueue(label: "com.facebook.FBSimulatorControl.BitmapStream")
+  /// `qos` defaults to `.unspecified`, the QoS of a queue created without one.
+  class func makeWriteQueue(qos: DispatchQoS = .unspecified) -> DispatchQueue {
+    DispatchQueue(label: "com.facebook.FBSimulatorControl.BitmapStream", qos: qos)
   }
 
   /// Constructs a Bitmap Stream.
   /// Bitmaps will only be written when there is a new bitmap available.
+  /// `writeQueueQoS` sets the QoS of the queue that serializes framebuffer callbacks and frame pushes.
   ///
   /// Static factories (rather than initializers) since they must derive the cadence strategy.
-  public class func make(framebuffer: FBFramebuffer, configuration: FBVideoStreamConfiguration, logger: any FBControlCoreLogger) -> FBSimulatorVideoStream {
-    make(framebuffer: framebuffer, configuration: configuration, edgeInsets: FBVideoStreamEdgeInsets(top: 0, bottom: 0, left: 0, right: 0), logger: logger)
+  public class func make(framebuffer: FBFramebuffer, configuration: FBVideoStreamConfiguration, writeQueueQoS: DispatchQoS = .unspecified, logger: any FBControlCoreLogger) -> FBSimulatorVideoStream {
+    make(framebuffer: framebuffer, configuration: configuration, edgeInsets: FBVideoStreamEdgeInsets(top: 0, bottom: 0, left: 0, right: 0), writeQueueQoS: writeQueueQoS, logger: logger)
   }
 
   /// Constructs a Bitmap Stream with edge insets for overlay content.
   /// Insets extend the output frame dimensions, pushing video content inward.
-  public class func make(framebuffer: FBFramebuffer, configuration: FBVideoStreamConfiguration, edgeInsets: FBVideoStreamEdgeInsets, logger: any FBControlCoreLogger) -> FBSimulatorVideoStream {
+  public class func make(framebuffer: FBFramebuffer, configuration: FBVideoStreamConfiguration, edgeInsets: FBVideoStreamEdgeInsets, writeQueueQoS: DispatchQoS = .unspecified, logger: any FBControlCoreLogger) -> FBSimulatorVideoStream {
     FBSimulatorVideoStream(
       framebuffer: framebuffer,
       configuration: configuration,
       edgeInsets: edgeInsets,
       cadence: cadence(for: configuration),
-      writeQueue: makeWriteQueue(),
+      writeQueue: makeWriteQueue(qos: writeQueueQoS),
       logger: logger)
   }
 
@@ -832,8 +872,8 @@ public class FBSimulatorVideoStream: NSObject, FBFramebufferPresentationTimeCons
   }
 
   /// Starts a Bitmap Stream to `consumer` and returns the running handle.
-  public class func start(framebuffer: FBFramebuffer, configuration: FBVideoStreamConfiguration, edgeInsets: FBVideoStreamEdgeInsets = FBVideoStreamEdgeInsets(top: 0, bottom: 0, left: 0, right: 0), to consumer: any FBDataConsumer, logger: any FBControlCoreLogger) async throws -> FBSimulatorVideoStream {
-    let stream = make(framebuffer: framebuffer, configuration: configuration, edgeInsets: edgeInsets, logger: logger)
+  public class func start(framebuffer: FBFramebuffer, configuration: FBVideoStreamConfiguration, edgeInsets: FBVideoStreamEdgeInsets = FBVideoStreamEdgeInsets(top: 0, bottom: 0, left: 0, right: 0), writeQueueQoS: DispatchQoS = .unspecified, to consumer: any FBDataConsumer, logger: any FBControlCoreLogger) async throws -> FBSimulatorVideoStream {
+    let stream = make(framebuffer: framebuffer, configuration: configuration, edgeInsets: edgeInsets, writeQueueQoS: writeQueueQoS, logger: logger)
     try await bridgeFBFutureVoid(stream.startStreaming(consumer))
     return stream
   }
@@ -1101,7 +1141,7 @@ public class FBSimulatorVideoStream: NSObject, FBFramebufferPresentationTimeCons
         await runFramePushLoop(stimulus: FrameCadence(framesPerSecond: framesPerSecond, logger: logger), stats: stats)
       }
     case .lazy:
-      let triggers = LazyFrameTriggers()
+      let triggers = LazyFrameTriggers(frameRateLimiter: frameRateLimiter)
       lazyTriggers = triggers
       framePusherTask = Task { [self] in
         await runFramePushLoop(stimulus: triggers, stats: nil)
@@ -1375,6 +1415,23 @@ public class FBSimulatorVideoStream: NSObject, FBFramebufferPresentationTimeCons
     }
   }
 
+  // MARK: - Frame Rate Cap
+
+  /// Cap the `.lazy` (VFR) push rate at `framesPerSecond`; nil (or a non-positive value) removes the cap.
+  /// After each push the loop waits until `1 / framesPerSecond` has elapsed since that push before
+  /// taking the next damage trigger. Damage that arrives during the wait is coalesced, so the final
+  /// frame of an animation is still pushed once the interval elapses.
+  ///
+  /// Safe to call from any thread, before or after `startStreaming`; a change applies from the next
+  /// wait. Ignored in `.eager` mode, where `configuration.framesPerSecond` sets the rate. Explicit
+  /// pushes (`requestKeyFrame()`, surface changes) are not capped.
+  public func setMaximumFrameRate(_ framesPerSecond: Double?) {
+    frameRateLimiter.setMaximumFramesPerSecond(framesPerSecond)
+  }
+
+  /// The current `.lazy` push-rate cap, or nil when uncapped.
+  public var maximumFrameRate: Double? { frameRateLimiter.maximumFramesPerSecond }
+
   // MARK: - Keyframe Requests
 
   /// Request that the next encoded frame be a keyframe (IDR).
@@ -1542,19 +1599,26 @@ struct FrameTrigger {
 /// are dropped and only the latest screen state is pushed — the correct semantics for VFR. A keyframe
 /// must survive that coalescing, so it is not carried on a (droppable) trigger but held as a sticky
 /// flag that `signalKeyFrame()` sets and the iterator reads-and-clears as it pulls each trigger.
+///
+/// When `frameRateLimiter` has a cap, the iterator waits until the minimum frame interval has elapsed
+/// since it yielded the previous trigger before pulling the next one. Because the loop awaits each push
+/// before calling `next()`, that spaces pushes by at least the interval; triggers signalled during the
+/// wait coalesce into the single buffered one, so a trailing damage event still yields a final push.
 // @unchecked Sendable: `pendingKeyFrame` is mutable across threads but guarded by `lock`; the stream
-// and its continuation are Sendable.
+// and its continuation are Sendable, and `FrameRateLimiter` is internally locked.
 final class LazyFrameTriggers: AsyncSequence, @unchecked Sendable {
   typealias Element = FrameTrigger
 
   private let stream: AsyncStream<Void>
   private let continuation: AsyncStream<Void>.Continuation
+  private let frameRateLimiter: FrameRateLimiter
   private let lock = NSLock()
   /// Whether the next pushed frame must be a keyframe. Guarded by `lock`; set by `signalKeyFrame`,
   /// read-and-cleared by the iterator, so coalescing never drops a pending keyframe.
   private var pendingKeyFrame = false
 
-  init() {
+  init(frameRateLimiter: FrameRateLimiter = FrameRateLimiter()) {
+    self.frameRateLimiter = frameRateLimiter
     // The `AsyncStream` builder hands back the continuation synchronously during init, so the IUO is
     // always assigned before use. This is the pre-`makeStream` idiom (`makeStream` needs a newer
     // deployment target than our macOS 12 floor).
@@ -1599,11 +1663,63 @@ final class LazyFrameTriggers: AsyncSequence, @unchecked Sendable {
   struct AsyncIterator: AsyncIteratorProtocol {
     var base: AsyncStream<Void>.Iterator
     let source: LazyFrameTriggers
+    /// When the previous trigger was yielded (i.e. when its push started); nil before the first.
+    private(set) var lastTriggerInstant: ContinuousClock.Instant?
+
+    init(base: AsyncStream<Void>.Iterator, source: LazyFrameTriggers) {
+      self.base = base
+      self.source = source
+    }
 
     mutating func next() async -> FrameTrigger? {
+      if let lastTriggerInstant, let minimumFrameInterval = source.frameRateLimiter.minimumFrameInterval {
+        let deadline = lastTriggerInstant + minimumFrameInterval
+        if deadline > .now {
+          do {
+            try await Task.sleep(until: deadline, clock: .continuous)
+          } catch {
+            return nil // cancelled while waiting
+          }
+        }
+      }
       guard await base.next() != nil else { return nil }
+      lastTriggerInstant = .now
       return FrameTrigger(forceKeyFrame: source.takePendingKeyFrame(), overran: false)
     }
+  }
+}
+
+/// A thread-safe cap on the `.lazy` push rate, shared between `FBSimulatorVideoStream` (which updates it
+/// from any thread via `setMaximumFrameRate(_:)`) and `LazyFrameTriggers` (which reads it before each
+/// wait, so a change applies from the next wait).
+// @unchecked Sendable: `framesPerSecond` is guarded by `lock`.
+final class FrameRateLimiter: @unchecked Sendable {
+  private let lock = NSLock()
+  private var framesPerSecond: Double?
+
+  init(maximumFramesPerSecond: Double? = nil) {
+    self.framesPerSecond = Self.normalized(maximumFramesPerSecond)
+  }
+
+  /// The cap in frames per second, or nil when uncapped.
+  var maximumFramesPerSecond: Double? {
+    lock.withLock { framesPerSecond }
+  }
+
+  /// The minimum spacing between pushes, or nil when uncapped.
+  var minimumFrameInterval: Duration? {
+    maximumFramesPerSecond.map { .seconds(1.0 / $0) }
+  }
+
+  /// Set the cap; nil, non-positive, and non-finite values remove it.
+  func setMaximumFramesPerSecond(_ maximumFramesPerSecond: Double?) {
+    let normalized = Self.normalized(maximumFramesPerSecond)
+    lock.withLock { framesPerSecond = normalized }
+  }
+
+  private static func normalized(_ framesPerSecond: Double?) -> Double? {
+    guard let framesPerSecond, framesPerSecond.isFinite, framesPerSecond > 0 else { return nil }
+    return framesPerSecond
   }
 }
 
