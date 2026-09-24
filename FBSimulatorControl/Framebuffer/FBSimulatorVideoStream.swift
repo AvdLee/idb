@@ -615,6 +615,14 @@ final class FBSimulatorVideoStreamFramePusher_VideoToolbox: NSObject, FBSimulato
       throw FBSimulatorError.describe("Failed to create VTPixelTransferSession: \(transferStatus)").build()
     }
     self.pixelTransferSession = transferSession
+    // JPEG decoders (JFIF) assume BT.601 YCbCr; VT's default BT.709 conversion shifts saturated colours.
+    // H.264/HEVC stay BT.709, which recordings and players expect.
+    if videoCodec == kCMVideoCodecType_JPEG, let transferSession {
+      let matrixStatus = VTSessionSetProperty(transferSession, key: kVTPixelTransferPropertyKey_DestinationYCbCrMatrix, value: kCVImageBufferYCbCrMatrix_ITU_R_601_4)
+      if matrixStatus != noErr {
+        throw FBSimulatorError.describe("Failed to set the JPEG YCbCr matrix on VTPixelTransferSession: \(matrixStatus)").build()
+      }
+    }
     self.nv12PixelBufferPool = createNV12PixelBufferPool(width: destinationWidth, height: destinationHeight)
     logger.info().log("Created BGRA→NV12 conversion pipeline at w=\(destinationWidth)/h=\(destinationHeight) (GPU via VTPixelTransferSession)")
 
@@ -714,6 +722,9 @@ final class FBSimulatorVideoStreamFramePusher_VideoToolbox: NSObject, FBSimulato
       if returnStatus == kCVReturnSuccess, let nv12Buffer {
         let transferStatus = VTPixelTransferSessionTransferImage(pixelTransferSession, from: pixelBuffer, to: nv12Buffer)
         if transferStatus == noErr {
+          if videoCodec == kCMVideoCodecType_JPEG {
+            CVBufferSetAttachment(nv12Buffer, kCVImageBufferYCbCrMatrixKey, kCVImageBufferYCbCrMatrix_ITU_R_601_4, .shouldPropagate)
+          }
           bufferToWrite = nv12Buffer
         } else {
           logger.log("VTPixelTransferSession BGRA→NV12 failed: \(transferStatus) — falling back to BGRA input")

@@ -9,6 +9,7 @@ import CoreMedia
 import CoreVideo
 import FBControlCore
 @testable import FBSimulatorControl
+import ImageIO
 import VideoToolbox
 import XCTest
 
@@ -534,6 +535,71 @@ final class FBSimulatorVideoStreamEncodedFrameConsumerTests: XCTestCase {
     XCTAssertEqual(Array(frame.prefix(2)), [0xFF, 0xD8], "Frame should start with the JPEG SOI marker")
     XCTAssertEqual(Array(frame.suffix(2)), [0xFF, 0xD9], "Frame should end with the JPEG EOI marker")
     XCTAssertTrue(consumer.consumedData.isEmpty)
+  }
+
+  /// JPEG decoders (JFIF, browsers, ImageIO) decode with BT.601 coefficients, so saturated colours must
+  /// survive the real `.mjpeg` pipeline within JPEG quantization error.
+  func testMJPEGPreservesSaturatedColours() throws {
+    let colours: [(name: String, rgb: [UInt8])] = [
+      ("red", [255, 0, 0]),
+      ("green", [0, 255, 0]),
+      ("blue", [0, 0, 255]),
+      ("sky blue", [135, 206, 235]),
+      ("grey", [128, 128, 128]),
+    ]
+    for colour in colours {
+      let decoded = try encodeAndDecodeSolidFrame(rgb: colour.rgb)
+      for channel in 0..<3 {
+        XCTAssertLessThanOrEqual(
+          abs(Int(decoded[channel]) - Int(colour.rgb[channel])), 6,
+          "\(colour.name) \(colour.rgb) decoded as \(decoded)")
+      }
+    }
+  }
+
+  /// Encodes a solid 64x64 BGRA frame through the `.mjpeg` pusher and returns the decoded centre pixel as sRGB.
+  private func encodeAndDecodeSolidFrame(rgb: [UInt8]) throws -> [UInt8] {
+    let attributes: [String: Any] = [kCVPixelBufferIOSurfacePropertiesKey as String: [String: Any]()]
+    var pixelBuffer: CVPixelBuffer?
+    XCTAssertEqual(CVPixelBufferCreate(nil, 64, 64, kCVPixelFormatType_32BGRA, attributes as CFDictionary, &pixelBuffer), kCVReturnSuccess)
+    let buffer = try XCTUnwrap(pixelBuffer)
+    CVPixelBufferLockBaseAddress(buffer, [])
+    let base = try XCTUnwrap(CVPixelBufferGetBaseAddress(buffer)).assumingMemoryBound(to: UInt8.self)
+    let bytesPerRow = CVPixelBufferGetBytesPerRow(buffer)
+    for y in 0..<64 {
+      for x in 0..<64 {
+        let pixel = base + y * bytesPerRow + x * 4
+        pixel[0] = rgb[2]
+        pixel[1] = rgb[1]
+        pixel[2] = rgb[0]
+        pixel[3] = 255
+      }
+    }
+    CVPixelBufferUnlockBaseAddress(buffer, [])
+
+    let consumer = CapturingEncodedFrameConsumer()
+    let frameDelivered = expectation(description: "JPEG delivered")
+    consumer.onEncodedFrame = { _ in frameDelivered.fulfill() }
+    let pusher = makeMJPEGPusher(consumer: consumer)
+    try pusher.setup(with: buffer, edgeInsets: FBVideoStreamEdgeInsets(top: 0, bottom: 0, left: 0, right: 0))
+    defer { try? pusher.tearDown() }
+    try pusher.writeEncodedFrame(buffer, frameNumber: 0, timeAtFirstFrame: CFAbsoluteTimeGetCurrent(), frameUptime: ProcessInfo.processInfo.systemUptime, frameDuration: 0, forceKeyFrame: false)
+    wait(for: [frameDelivered], timeout: 5)
+
+    let jpeg = try XCTUnwrap(consumer.encodedFrames.first)
+    let source = try XCTUnwrap(CGImageSourceCreateWithData(jpeg as CFData, nil))
+    let image = try XCTUnwrap(CGImageSourceCreateImageAtIndex(source, 0, nil))
+    var decoded = [UInt8](repeating: 0, count: 4)
+    let colorSpace = try XCTUnwrap(CGColorSpace(name: CGColorSpace.sRGB))
+    try decoded.withUnsafeMutableBytes { bytes in
+      let context = try XCTUnwrap(
+        CGContext(
+          data: bytes.baseAddress, width: 1, height: 1, bitsPerComponent: 8, bytesPerRow: 4, space: colorSpace,
+          bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue))
+      let centre = try XCTUnwrap(image.cropping(to: CGRect(x: image.width / 2, y: image.height / 2, width: 1, height: 1)))
+      context.draw(centre, in: CGRect(x: 0, y: 0, width: 1, height: 1))
+    }
+    return Array(decoded.prefix(3))
   }
 }
 
