@@ -72574,154 +72574,154 @@
     {
       "filePath": "\/tmp\/idb-perf\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "IntegerLiteral",
-      "offset": 38073,
+      "offset": 38854,
       "length": 1,
       "value": "0"
     },
     {
       "filePath": "\/tmp\/idb-perf\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "IntegerLiteral",
-      "offset": 38114,
+      "offset": 38895,
       "length": 1,
       "value": "0"
     },
     {
       "filePath": "\/tmp\/idb-perf\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "IntegerLiteral",
-      "offset": 38289,
+      "offset": 39070,
       "length": 1,
       "value": "0"
     },
     {
       "filePath": "\/tmp\/idb-perf\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "IntegerLiteral",
-      "offset": 38317,
+      "offset": 39098,
       "length": 1,
       "value": "0"
     },
     {
       "filePath": "\/tmp\/idb-perf\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "IntegerLiteral",
-      "offset": 38917,
+      "offset": 39698,
       "length": 1,
       "value": "0"
     },
     {
       "filePath": "\/tmp\/idb-perf\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "IntegerLiteral",
-      "offset": 38949,
+      "offset": 39730,
       "length": 1,
       "value": "0"
     },
     {
       "filePath": "\/tmp\/idb-perf\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "IntegerLiteral",
-      "offset": 41131,
+      "offset": 41912,
       "length": 1,
       "value": "0"
     },
     {
       "filePath": "\/tmp\/idb-perf\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "IntegerLiteral",
-      "offset": 41142,
+      "offset": 41923,
       "length": 1,
       "value": "0"
     },
     {
       "filePath": "\/tmp\/idb-perf\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "IntegerLiteral",
-      "offset": 41151,
+      "offset": 41932,
       "length": 1,
       "value": "0"
     },
     {
       "filePath": "\/tmp\/idb-perf\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "IntegerLiteral",
-      "offset": 41161,
+      "offset": 41942,
       "length": 1,
       "value": "0"
     },
     {
       "filePath": "\/tmp\/idb-perf\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "IntegerLiteral",
-      "offset": 41778,
+      "offset": 42559,
       "length": 1,
       "value": "0"
     },
     {
       "filePath": "\/tmp\/idb-perf\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "IntegerLiteral",
-      "offset": 41789,
+      "offset": 42570,
       "length": 1,
       "value": "0"
     },
     {
       "filePath": "\/tmp\/idb-perf\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "IntegerLiteral",
-      "offset": 41798,
+      "offset": 42579,
       "length": 1,
       "value": "0"
     },
     {
       "filePath": "\/tmp\/idb-perf\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "IntegerLiteral",
-      "offset": 41808,
+      "offset": 42589,
       "length": 1,
       "value": "0"
     },
     {
       "filePath": "\/tmp\/idb-perf\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "BooleanLiteral",
-      "offset": 77269,
+      "offset": 78050,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/tmp\/idb-perf\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "FloatLiteral",
-      "offset": 80673,
+      "offset": 81454,
       "length": 3,
       "value": "1.0"
     },
     {
       "filePath": "\/tmp\/idb-perf\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "BooleanLiteral",
-      "offset": 82552,
+      "offset": 83333,
       "length": 4,
       "value": "true"
     },
     {
       "filePath": "\/tmp\/idb-perf\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "IntegerLiteral",
-      "offset": 84919,
+      "offset": 85700,
       "length": 1,
       "value": "0"
     },
     {
       "filePath": "\/tmp\/idb-perf\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "IntegerLiteral",
-      "offset": 84958,
+      "offset": 85739,
       "length": 1,
       "value": "0"
     },
     {
       "filePath": "\/tmp\/idb-perf\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "IntegerLiteral",
-      "offset": 84996,
+      "offset": 85777,
       "length": 1,
       "value": "0"
     },
     {
       "filePath": "\/tmp\/idb-perf\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "FloatLiteral",
-      "offset": 85023,
+      "offset": 85804,
       "length": 3,
       "value": "0.0"
     },
     {
       "filePath": "\/tmp\/idb-perf\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "FloatLiteral",
-      "offset": 85082,
+      "offset": 85863,
       "length": 3,
       "value": "0.0"
     },
