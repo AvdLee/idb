@@ -13,6 +13,122 @@ import Foundation
 import Synchronization
 import XPC
 
+/// The reply-driven waits used by reliable DTUHID delivery.
+enum FBSimulatorDTUHIDTiming {
+  static let drain = Duration.milliseconds(80)
+  static let replyTail = Duration.milliseconds(200)
+  static let replyTimeout = DispatchTimeInterval.seconds(2)
+  static let fallbackDrain = Duration.seconds(1)
+  static let livenessTimeout = DispatchTimeInterval.seconds(4)
+  static let livenessRetryBackoff = Duration.seconds(4)
+  static let livenessAttempts = 5
+}
+
+private struct FBSimulatorDTUHIDXPCReply: Sendable {
+  let errorDescription: String?
+}
+
+private func awaitFBSimulatorDTUHIDXPCReply(
+  _ connection: xpc_connection_t,
+  _ message: xpc_object_t,
+  timeout: DispatchTimeInterval
+) async throws -> FBSimulatorDTUHIDXPCReply {
+  try await withCheckedThrowingContinuation {
+    (continuation: CheckedContinuation<FBSimulatorDTUHIDXPCReply, Error>) in
+    let pending = Mutex(true)
+    xpc_connection_send_message_with_reply(
+      connection,
+      message,
+      DispatchQueue.global(qos: .userInitiated)
+    ) { reply in
+      var errorDescription: String?
+      if xpc_get_type(reply) == XPC_TYPE_ERROR {
+        errorDescription =
+          xpc_dictionary_get_string(reply, XPC_ERROR_KEY_DESCRIPTION)
+          .map { String(cString: $0) } ?? "unknown XPC error"
+      }
+      let shouldResume = pending.withLock { pending in
+        defer { pending = false }
+        return pending
+      }
+      if shouldResume {
+        continuation.resume(
+          returning: FBSimulatorDTUHIDXPCReply(errorDescription: errorDescription))
+      }
+    }
+    DispatchQueue.global(qos: .userInitiated).asyncAfter(deadline: .now() + timeout) {
+      let shouldResume = pending.withLock { pending in
+        defer { pending = false }
+        return pending
+      }
+      if shouldResume {
+        continuation.resume(throwing: FBSimulatorDTUHIDDrainTimeout.expired)
+      }
+    }
+  }
+}
+
+struct FBSimulatorDTUHIDDrainClock: Sendable {
+  let sleep: @Sendable (Duration) async throws -> Void
+  let awaitBarrierReply:
+    @Sendable (xpc_connection_t, xpc_object_t) async throws -> Void
+  let awaitLivenessReply:
+    @Sendable (xpc_connection_t, xpc_object_t) async throws -> Void
+
+  init(
+    sleep: @escaping @Sendable (Duration) async throws -> Void,
+    awaitBarrierReply:
+      @escaping @Sendable (xpc_connection_t, xpc_object_t) async throws -> Void,
+    awaitLivenessReply:
+      @escaping @Sendable (xpc_connection_t, xpc_object_t) async throws -> Void = { _, _ in }
+  ) {
+    self.sleep = sleep
+    self.awaitBarrierReply = awaitBarrierReply
+    self.awaitLivenessReply = awaitLivenessReply
+  }
+
+  static let live = FBSimulatorDTUHIDDrainClock(
+    sleep: { try await Task.sleep(for: $0) },
+    awaitBarrierReply: { connection, message in
+      _ = try await awaitFBSimulatorDTUHIDXPCReply(
+        connection,
+        message,
+        timeout: FBSimulatorDTUHIDTiming.replyTimeout)
+    },
+    awaitLivenessReply: { connection, message in
+      let reply: FBSimulatorDTUHIDXPCReply
+      do {
+        reply = try await awaitFBSimulatorDTUHIDXPCReply(
+          connection,
+          message,
+          timeout: FBSimulatorDTUHIDTiming.livenessTimeout)
+      } catch {
+        throw FBSimulatorDTUHIDLivenessFailure.timedOut
+      }
+      if let errorDescription = reply.errorDescription {
+        throw FBSimulatorDTUHIDLivenessFailure.peerUnavailable(errorDescription)
+      }
+    })
+}
+
+enum FBSimulatorDTUHIDDrainTimeout: Error {
+  case expired
+}
+
+enum FBSimulatorDTUHIDLivenessFailure: Error, CustomStringConvertible {
+  case timedOut
+  case peerUnavailable(String)
+
+  var description: String {
+    switch self {
+    case .timedOut:
+      return "no reply within \(FBSimulatorDTUHIDTiming.livenessTimeout)"
+    case let .peerUnavailable(detail):
+      return detail
+    }
+  }
+}
+
 /// Tracks the per-contact phase so that a stream of Indigo `.down`/`.up` events maps onto the
 /// `dtuhidd` `start` / `position` / `end` model: the first `.down` is a `start`, subsequent `.down`s
 /// (a drag/swipe) are `position`s, and `.up` is the `end`.
@@ -53,6 +169,7 @@ struct DigitizerContactTracker {
  */
 actor FBSimulatorDTUHIDTransport: FBSimulatorHIDTransport {
 
+  static let vendorDefinedServiceName = "com.apple.coredevice.feature.remote.hid.vendordefined"
   static let digitizerServiceName = "com.apple.coredevice.feature.remote.hid.digitizer"
 
   // Private XPC endpoint functions, resolved at runtime (not in the XPC module headers).
@@ -60,7 +177,7 @@ actor FBSimulatorDTUHIDTransport: FBSimulatorHIDTransport {
   private typealias ConnectionFromEndpointFn = @convention(c) (xpc_object_t) -> xpc_connection_t?
   private typealias EnableSim2HostFn = @convention(c) (xpc_connection_t) -> Void
 
-  /// Time `flush()` keeps the connection alive after a gesture's events are sent, so `dtuhidd`
+  /// Time legacy digitizer `flush()` keeps the connection alive after a gesture's events are sent, so `dtuhidd`
   /// consumes them before the connection is torn down. `dtuhidd` resets its virtual services
   /// (dropping any in-flight gesture) the instant the host peer disconnects — which, for a one-shot
   /// gesture from a short-lived host process, is the moment that process exits right after the send.
@@ -73,10 +190,16 @@ actor FBSimulatorDTUHIDTransport: FBSimulatorHIDTransport {
   /// `nonisolated(unsafe)` to be read from the `nonisolated` `disconnect()` as well as the
   /// actor-isolated send path.
   nonisolated(unsafe) private let connection: xpc_connection_t
+  private let serviceName: String
   private let mainScreenSize: CGSize
   private let mainScreenScale: Float
+  private let usesReplyDrivenDelivery: Bool
+  private let clock: FBSimulatorDTUHIDDrainClock
   private var contact = DigitizerContactTracker()
   private var twoFingerContact = DigitizerContactTracker()
+  private var coldDrainState = ColdDrainState.pending
+  private var sendGeneration = 0
+  private var drainedGeneration = 0
 
   // MARK: Initializers
 
@@ -88,7 +211,9 @@ actor FBSimulatorDTUHIDTransport: FBSimulatorHIDTransport {
   /// rather than lingering until the next boot/shutdown notification.
   static func dtuhid(
     for simulator: FBSimulator,
-    onInvalidated: @escaping @Sendable () -> Void = {}
+    serviceName: String = digitizerServiceName,
+    onInvalidated: @escaping @Sendable () -> Void = {},
+    usesReplyDrivenDelivery: Bool = false
   ) throws -> FBSimulatorDTUHIDTransport {
     guard let handle = dlopen(nil, RTLD_NOW) else {
       throw FBSimulatorHIDError.dtuhidXPCSymbolsUnavailable
@@ -102,9 +227,14 @@ actor FBSimulatorDTUHIDTransport: FBSimulatorHIDTransport {
     }
 
     var lookupError: NSError?
-    let servicePort = simulator.device.lookup(digitizerServiceName, error: &lookupError)
+    let servicePort = simulator.device.lookup(serviceName, error: &lookupError)
     if servicePort == 0 {
-      throw FBSimulatorHIDError.dtuhidDigitizerServiceUnavailable(underlying: lookupError)
+      if serviceName == digitizerServiceName {
+        throw FBSimulatorHIDError.dtuhidDigitizerServiceUnavailable(underlying: lookupError)
+      }
+      throw FBSimulatorHIDError.dtuhidServiceUnavailable(
+        name: serviceName,
+        underlying: lookupError)
     }
 
     guard
@@ -122,14 +252,73 @@ actor FBSimulatorDTUHIDTransport: FBSimulatorHIDTransport {
 
     return FBSimulatorDTUHIDTransport(
       connection: connection,
+      serviceName: serviceName,
       mainScreenSize: simulator.device.deviceType.mainScreenSize,
-      mainScreenScale: simulator.device.deviceType.mainScreenScale)
+      mainScreenScale: simulator.device.deviceType.mainScreenScale,
+      usesReplyDrivenDelivery: usesReplyDrivenDelivery)
   }
 
-  init(connection: xpc_connection_t, mainScreenSize: CGSize, mainScreenScale: Float) {
+  /// Connects to a DTUHID service and proves that a live peer has activated before returning.
+  /// Vendor-defined controls require this handshake; otherwise the first event can be silently
+  /// discarded while `dtuhidd` is still demand-launching its virtual service.
+  static func reliableDTUHID(
+    for simulator: FBSimulator,
+    serviceName: String,
+    onInvalidated: @escaping @Sendable () -> Void = {}
+  ) async throws -> FBSimulatorDTUHIDTransport {
+    let logger = FBControlCoreGlobalConfiguration.defaultLogger
+    var lastFailure: Error?
+    for attempt in 1...FBSimulatorDTUHIDTiming.livenessAttempts {
+      do {
+        let transport = try dtuhid(
+          for: simulator,
+          serviceName: serviceName,
+          onInvalidated: onInvalidated,
+          usesReplyDrivenDelivery: true)
+        do {
+          try await transport.confirmLiveness()
+          return transport
+        } catch {
+          transport.disconnect()
+          throw error
+        }
+      } catch let error as FBSimulatorHIDError where !error.isTransientDTUHIDFailure {
+        throw error
+      } catch {
+        lastFailure = error
+        logger.log(
+          "dtuhidd did not answer the liveness probe (attempt \(attempt) of \(FBSimulatorDTUHIDTiming.livenessAttempts)): \(error)")
+        guard attempt < FBSimulatorDTUHIDTiming.livenessAttempts else {
+          break
+        }
+        try await Task.sleep(for: FBSimulatorDTUHIDTiming.livenessRetryBackoff)
+      }
+    }
+    throw FBSimulatorHIDError.dtuhidUnresponsive(
+      attempts: FBSimulatorDTUHIDTiming.livenessAttempts,
+      underlying: lastFailure)
+  }
+
+  init(
+    connection: xpc_connection_t,
+    serviceName: String = digitizerServiceName,
+    mainScreenSize: CGSize,
+    mainScreenScale: Float,
+    usesReplyDrivenDelivery: Bool = false,
+    clock: FBSimulatorDTUHIDDrainClock = .live
+  ) {
     self.connection = connection
+    self.serviceName = serviceName
     self.mainScreenSize = mainScreenSize
     self.mainScreenScale = mainScreenScale
+    self.usesReplyDrivenDelivery = usesReplyDrivenDelivery
+    self.clock = clock
+  }
+
+  func confirmLiveness() async throws {
+    try await clock.awaitLivenessReply(connection, barrierMessage())
+    try await clock.sleep(FBSimulatorDTUHIDTiming.replyTail)
+    coldDrainState = .done
   }
 
   /// Builds the connection's XPC event handler: invokes `onInvalidated` exactly once on the first
@@ -220,26 +409,105 @@ actor FBSimulatorDTUHIDTransport: FBSimulatorHIDTransport {
 
   /// Wraps `payload` in a `DTUHIDMessage` and serializes it to the `xpc_object_t` `dtuhidd` decodes.
   /// Pure and stateless, so the envelope shape is unit-testable without a live daemon connection.
-  nonisolated func encode(messageType: String, payload: some Encodable) throws -> xpc_object_t {
+  nonisolated func encode(
+    messageType: String,
+    payload: some Encodable,
+    isBarrier: Bool = false
+  ) throws -> xpc_object_t {
     let message = DTUHIDMessage(
-      messageType: messageType, featureIdentifier: Self.digitizerServiceName, payload: payload)
+      messageType: messageType,
+      featureIdentifier: serviceName,
+      isBarrier: isBarrier,
+      payload: payload)
     return try XPCEncoder().encode(message)
   }
 
-  /// Encodes `payload` and enqueues it on the connection. The actor serializes calls, so per-gesture
-  /// state stays consistent. Do not wait on `xpc_connection_send_barrier`: callbacks for simulator
-  /// endpoint connections do not fire inside sandboxed clients. `flush()` provides the bounded
-  /// daemon-consumption window once per gesture.
+  /// Encodes and sends `payload`. The established digitizer path retains its sandbox-compatible
+  /// enqueue behavior. Reply-driven services additionally wait for the local XPC send barrier;
+  /// `flush()` then establishes peer activation and guest dispatch before teardown.
   func send(messageType: String, payload: some Encodable) async throws {
     let object = try encode(messageType: messageType, payload: payload)
-    xpc_connection_send_message(connection, object)
+    guard usesReplyDrivenDelivery else {
+      xpc_connection_send_message(connection, object)
+      return
+    }
+    try await deliver(object)
   }
 
-  /// Drains the connection once a gesture's events have all been sent: waits `drainNanos` so
-  /// `dtuhidd` consumes them before the connection is torn down. Run once per gesture (see
-  /// `drainNanos`), not after every primitive.
+  private func deliver(_ object: xpc_object_t) async throws {
+    sendGeneration += 1
+    try await withCheckedThrowingContinuation {
+      (continuation: CheckedContinuation<Void, Error>) in
+      xpc_connection_send_message(connection, object)
+      xpc_connection_send_barrier(connection) {
+        continuation.resume()
+      }
+    }
+  }
+
+  /// Drains sends before teardown. The digitizer retains its existing fixed sandbox wait.
+  /// Reply-driven services use a barrier reply to activate the peer and a generation snapshot so
+  /// sends racing a drain remain outstanding for the next flush.
   func flush() async throws {
-    try? await Task.sleep(nanoseconds: Self.drainNanos)
+    guard usesReplyDrivenDelivery else {
+      try? await Task.sleep(nanoseconds: Self.drainNanos)
+      return
+    }
+
+    let generation = sendGeneration
+    guard generation > drainedGeneration else {
+      return
+    }
+    if case .done = coldDrainState {
+      try await clock.sleep(FBSimulatorDTUHIDTiming.drain)
+    } else {
+      let coldGeneration = try await coldDrain()
+      if generation > coldGeneration {
+        try await clock.sleep(FBSimulatorDTUHIDTiming.drain)
+      }
+    }
+    drainedGeneration = max(drainedGeneration, generation)
+  }
+
+  private enum ColdDrainState {
+    case pending
+    case running(Task<Int, Error>)
+    case done
+  }
+
+  private func coldDrain() async throws -> Int {
+    if case let .running(task) = coldDrainState {
+      return try await task.value
+    }
+    let generation = sendGeneration
+    let task = Task<Int, Error> {
+      do {
+        try await self.performColdDrain()
+      } catch {
+        self.coldDrainState = .pending
+        throw error
+      }
+      self.coldDrainState = .done
+      return generation
+    }
+    coldDrainState = .running(task)
+    return try await task.value
+  }
+
+  private func performColdDrain() async throws {
+    do {
+      try await clock.awaitBarrierReply(connection, barrierMessage())
+    } catch is FBSimulatorDTUHIDDrainTimeout {
+      return try await clock.sleep(FBSimulatorDTUHIDTiming.fallbackDrain)
+    }
+    try await clock.sleep(FBSimulatorDTUHIDTiming.replyTail)
+  }
+
+  private nonisolated func barrierMessage() throws -> xpc_object_t {
+    try encode(
+      messageType: "IndigoKeyboardButtonEvent",
+      payload: IndigoKeyboardButtonEvent(usageCode: 0, state: .up),
+      isBarrier: true)
   }
 
 }

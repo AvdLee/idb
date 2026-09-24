@@ -14,7 +14,7 @@ int main(int argc, const char *argv[])
   @autoreleasepool {
     if (argc < 3) {
       NSLog(@"Usage: %s <service> <action> [args...]", argv[0]);
-      NSLog(@"Services: contacts, photos, notifications, health, proxy");
+      NSLog(@"Services: contacts, dns, photos, notifications, health, proxy, accessibility, repl");
       NSLog(@"Actions: clear, approve, revoke, check, set, list");
       return 1;
     }

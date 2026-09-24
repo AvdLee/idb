@@ -11,6 +11,12 @@ import XCTest
 
 final class FBSimulatorLaunchCtlCommandsTests: XCTestCase {
 
+  func testMissingRuntimeRootThrowsInsteadOfTrapping() {
+    XCTAssertThrowsError(try FBSimulatorLaunchCtlCommands.launchCtlLaunchPath(runtimeRoot: nil)) { error in
+      XCTAssertTrue(String(describing: error).contains("runtime root"), "got: \(String(describing: error))")
+    }
+  }
+
   func testListReturnsStdoutOnZeroExit() throws {
     let output = FBInSimulatorToolOutput(stdout: Data("- 0 com.apple.foo\n".utf8), stderr: Data(), exitCode: 0)
     let result = try FBSimulatorLaunchCtlCommands.stdout(orThrowFrom: output, command: .list, logger: nil)

@@ -112,8 +112,12 @@ typealias FBCompressedFrameWriter =
 /// RocketSim addition: consumers of a BGRA stream that conform to this protocol receive the raw
 /// `CVPixelBuffer` (base address locked for reading) instead of a `Data` copy, avoiding a
 /// per-frame allocation + copy on the 120 FPS recording path.
+///
+/// `frameUptime` is the `ProcessInfo.systemUptime` at which the frame's content was presented: the
+/// latest framebuffer damage since the previous push, or the push itself when nothing changed. It
+/// strictly increases per stream.
 public protocol RSPixelBufferConsumer: AnyObject {
-  func writeEncodedFrame(_ pixelBuffer: CVPixelBuffer, frameNumber: UInt, timeAtFirstFrame: CFTimeInterval) throws
+  func writeEncodedFrame(_ pixelBuffer: CVPixelBuffer, frameNumber: UInt, timeAtFirstFrame: CFTimeInterval, frameUptime: TimeInterval) throws
 }
 
 // MARK: - Frame Pusher Protocol
@@ -129,6 +133,7 @@ protocol FBSimulatorVideoStreamFramePusher: AnyObject {
     _ pixelBuffer: CVPixelBuffer,
     frameNumber: UInt,
     timeAtFirstFrame: CFTimeInterval,
+    frameUptime: TimeInterval,
     frameDuration: CFTimeInterval,
     forceKeyFrame: Bool
   ) throws
@@ -280,6 +285,7 @@ final class FBSimulatorVideoStreamFramePusher_Bitmap: NSObject, FBSimulatorVideo
     _ pixelBuffer: CVPixelBuffer,
     frameNumber: UInt,
     timeAtFirstFrame: CFTimeInterval,
+    frameUptime: TimeInterval,
     frameDuration: CFTimeInterval,
     forceKeyFrame: Bool
   ) throws {
@@ -298,7 +304,7 @@ final class FBSimulatorVideoStreamFramePusher_Bitmap: NSObject, FBSimulatorVideo
     defer { CVPixelBufferUnlockBaseAddress(bufferToWrite, .readOnly) }
 
     if let pixelConsumer = consumer as? RSPixelBufferConsumer {
-      try pixelConsumer.writeEncodedFrame(bufferToWrite, frameNumber: frameNumber, timeAtFirstFrame: timeAtFirstFrame)
+      try pixelConsumer.writeEncodedFrame(bufferToWrite, frameNumber: frameNumber, timeAtFirstFrame: timeAtFirstFrame, frameUptime: frameUptime)
       return
     }
 
@@ -617,6 +623,7 @@ final class FBSimulatorVideoStreamFramePusher_VideoToolbox: NSObject, FBSimulato
     _ pixelBuffer: CVPixelBuffer,
     frameNumber: UInt,
     timeAtFirstFrame: CFTimeInterval,
+    frameUptime: TimeInterval,
     frameDuration: CFTimeInterval,
     forceKeyFrame: Bool
   ) throws {
@@ -733,7 +740,7 @@ final class FBSimulatorVideoStreamFramePusher_VideoToolbox: NSObject, FBSimulato
 // (in the eager cadence) the cadence task without formal Sendable guarantees; the sibling
 // FBFramebuffer is likewise @unchecked Sendable.
 @objc(FBSimulatorVideoStream)
-public class FBSimulatorVideoStream: NSObject, FBFramebufferConsumer, FBVideoStream, @unchecked Sendable {
+public class FBSimulatorVideoStream: NSObject, FBFramebufferPresentationTimeConsumer, FBVideoStream, @unchecked Sendable {
 
   // MARK: - Properties
 
@@ -764,6 +771,9 @@ public class FBSimulatorVideoStream: NSObject, FBFramebufferConsumer, FBVideoStr
   var pixelBuffer: CVPixelBuffer?
   var timeAtFirstFrame: CFTimeInterval = 0
   var timeAtLastPush: CFTimeInterval = 0
+  /// Uptime of the latest framebuffer damage not yet pushed. Confined to `writeQueue`.
+  var pendingPresentationUptime: TimeInterval?
+  var lastFrameUptime: TimeInterval = 0
   var frameNumber: UInt = 0
   var pixelBufferAttributes: [String: Any]?
   var consumer: (any FBDataConsumer)?
@@ -969,6 +979,11 @@ public class FBSimulatorVideoStream: NSObject, FBFramebufferConsumer, FBVideoStr
 
   @objc
   public func didReceiveDamageRect() {
+    didReceiveDamageRect(atUptime: ProcessInfo.processInfo.systemUptime)
+  }
+
+  public func didReceiveDamageRect(atUptime uptime: TimeInterval) {
+    pendingPresentationUptime = uptime
     // In `.lazy` (variable-frame-rate) mode, a damage event is a stimulus for the shared push loop.
     // In `.eager` (constant-frame-rate) mode, the cadence clock drives pushes, so damage is ignored.
     switch cadence {
@@ -1145,6 +1160,12 @@ public class FBSimulatorVideoStream: NSObject, FBFramebufferConsumer, FBVideoStr
     let timeAtFirstFrame = self.timeAtFirstFrame
     let frameDuration = timeAtLastPush > 0 ? (now - timeAtLastPush) : 0
     timeAtLastPush = now
+    let frameUptime = Self.frameUptime(
+      pendingPresentationUptime: pendingPresentationUptime,
+      lastFrameUptime: lastFrameUptime,
+      pushUptime: ProcessInfo.processInfo.systemUptime)
+    pendingPresentationUptime = nil
+    lastFrameUptime = frameUptime
 
     // Composite the overlay buffer over the source frame, or apply edge inset padding.
     // When any edge inset > 0, every frame must be composited to match the output dimensions
@@ -1166,11 +1187,22 @@ public class FBSimulatorVideoStream: NSObject, FBFramebufferConsumer, FBVideoStr
       bufferToEncode,
       frameNumber: frameNumber,
       timeAtFirstFrame: timeAtFirstFrame,
+      frameUptime: frameUptime,
       frameDuration: frameDuration,
       forceKeyFrame: forceKeyFrame)
 
     // Increment frame counter
     self.frameNumber = frameNumber + 1
+  }
+
+  /// A pushed frame shows the content presented at the latest damage, which can be up to a cadence
+  /// tick (or a stalled `writeQueue`) earlier than the push. A damage stamp that doesn't follow the
+  /// previous frame was already captured by it, so the push time keeps timestamps strictly increasing.
+  static func frameUptime(pendingPresentationUptime: TimeInterval?, lastFrameUptime: TimeInterval, pushUptime: TimeInterval) -> TimeInterval {
+    if let pendingPresentationUptime, pendingPresentationUptime > lastFrameUptime, pendingPresentationUptime <= pushUptime {
+      return pendingPresentationUptime
+    }
+    return max(pushUptime, lastFrameUptime.nextUp)
   }
 
   // MARK: - Compression Properties

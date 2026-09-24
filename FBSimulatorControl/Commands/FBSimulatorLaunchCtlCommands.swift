@@ -16,12 +16,18 @@ public final class FBSimulatorLaunchCtlCommands: NSObject, FBiOSTargetCommand {
   // MARK: - Properties
 
   private let simulator: FBSimulator
-  private let launchctlLaunchPath: String
 
   // MARK: - Initializers
 
   private class func launchCtlLaunchPath(for simulator: FBSimulator) throws -> String {
-    let path = (simulator.device.runtime.root as NSString)
+    try launchCtlLaunchPath(runtimeRoot: simulator.device.runtime.root)
+  }
+
+  static func launchCtlLaunchPath(runtimeRoot: String?) throws -> String {
+    guard let runtimeRoot, !runtimeRoot.isEmpty else {
+      throw FBSimulatorError.describe("Could not obtain runtime root for simulator launchctl").build()
+    }
+    let path = (runtimeRoot as NSString)
       .appendingPathComponent("bin")
       .appending("/launchctl")
     let binary = try FBBinaryDescriptor.binary(withPath: path)
@@ -30,13 +36,11 @@ public final class FBSimulatorLaunchCtlCommands: NSObject, FBiOSTargetCommand {
 
   public class func commands(with target: any FBiOSTarget) -> FBSimulatorLaunchCtlCommands {
     let simulator = target as! FBSimulator
-    let launchctlLaunchPath = try! launchCtlLaunchPath(for: simulator)
-    return FBSimulatorLaunchCtlCommands(simulator: simulator, launchctlLaunchPath: launchctlLaunchPath)
+    return FBSimulatorLaunchCtlCommands(simulator: simulator)
   }
 
-  private init(simulator: FBSimulator, launchctlLaunchPath: String) {
+  private init(simulator: FBSimulator) {
     self.simulator = simulator
-    self.launchctlLaunchPath = launchctlLaunchPath
     super.init()
   }
 
@@ -208,6 +212,7 @@ public final class FBSimulatorLaunchCtlCommands: NSObject, FBiOSTargetCommand {
   }
 
   private func run(_ command: Command) async throws -> String {
+    let launchctlLaunchPath = try Self.launchCtlLaunchPath(for: simulator)
     let output = try await simulator.launchProcessConsumingOutput(launchPath: launchctlLaunchPath, arguments: command.arguments)
     return try FBSimulatorLaunchCtlCommands.stdout(orThrowFrom: output, command: command, logger: simulator.logger)
   }

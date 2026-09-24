@@ -55,10 +55,22 @@ build_xcframework() {
     if [ "$framework_name" = "FBSimulatorControl" ]; then
         find "${framework_path}/Modules/${framework_name}.swiftmodule" -name '*.swiftinterface' \
             -exec sed -i '' -e 's/\([^A-Za-z0-9_.]\)FBSimulatorControl\./\1/g' -e 's/^FBSimulatorControl\.//' {} +
+
+        codesign --force --sign - --timestamp=none "${framework_path}"
     fi
 
     # Create xcframework
     xcodebuild -create-xcframework -framework "$framework_path" -output "$xcframework_path"
+
+    if [ "$framework_name" = "FBSimulatorControl" ]; then
+        codesign --force --sign - --timestamp=none \
+            "${xcframework_path}/macos-arm64_x86_64/${framework_name}.framework"
+        local bridge_path="${xcframework_path}/macos-arm64_x86_64/${framework_name}.framework/Versions/A/Resources/SimulatorFrameworkBridge"
+        if [ -e "$bridge_path" ]; then
+            echo "error: SimulatorFrameworkBridge must not be packaged in the macOS framework" >&2
+            exit 1
+        fi
+    fi
 }
 
 # Call the function with different framework names

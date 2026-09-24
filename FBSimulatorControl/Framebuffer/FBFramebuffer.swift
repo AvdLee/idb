@@ -24,6 +24,71 @@ import IOSurface
   func didReceiveDamageRect()
 }
 
+/// Fork addition: consumers that need the moment a frame was presented. The framebuffer stamps
+/// `ProcessInfo.systemUptime` inside its own callback, before the hop onto the consumer queue, so a
+/// busy consumer queue doesn't delay the timestamp.
+public protocol FBFramebufferPresentationTimeConsumer: FBFramebufferConsumer {
+  func didReceiveDamageRect(atUptime uptime: TimeInterval)
+}
+
+/**
+ Fork addition. Identification of a single simulator screen on Xcode 27+ (SimScreen-backed
+ framebuffers). Multi-display devices such as iPhone Duo expose one entry per panel; callers use
+ this to pick a framebuffer per panel via `FBFramebuffer.screenSurface(for:matching:logger:)`.
+
+ `SimScreen` itself is `@_implementationOnly`, so this value type is the public projection of it.
+ Every field is read defensively (`respondsToSelector:`); unavailable members fall back to
+ `nil` / zero.
+ */
+public struct FBFramebufferScreenDescriptor: Sendable, Hashable, CustomStringConvertible {
+  /// CoreSimulator's per-screen ID; matches the `screenID` reported by `simctl io <udid> enumerate`.
+  public let screenID: UInt32
+  /// Stable unique identifier (UUID string, same value `devicectl device info displays` reports), if vended.
+  public let uniqueID: String?
+  /// Human-readable name, if vended (iPhone Duo on Xcode 27.1: "LCD" == outer, "LCD-1" == inner).
+  public let name: String?
+  /// Framebuffer size in pixels (zero if unavailable).
+  public let pixelSize: CGSize
+  /// Whether SimulatorKit flags this as the device's default screen.
+  public let isDefault: Bool
+  /// Raw `SimScreenProperties.powerState`, if vended.
+  public let powerState: Int32?
+  /// Raw `SimScreenProperties.screenType`, if vended (0 == main display class on iOS).
+  public let screenType: UInt64?
+  /// Raw `SimScreenProperties.uiOrientation`, if vended.
+  public let uiOrientation: UInt32?
+  /// Raw `SimScreenProperties.backlight.state`, if vended. On iPhone Duo the folded-away
+  /// (inactive) panel reports its backlight off while the active panel reports it on.
+  public let backlightState: Int32?
+
+  public var description: String {
+    "Screen(id=\(screenID) name=\(name ?? "-") unique=\(uniqueID ?? "-") size=\(Int(pixelSize.width))x\(Int(pixelSize.height)) default=\(isDefault) power=\(powerState.map(String.init) ?? "-") type=\(screenType.map(String.init) ?? "-") orientation=\(uiOrientation.map(String.init) ?? "-") backlight=\(backlightState.map(String.init) ?? "-"))"
+  }
+}
+
+/// A cancellable observation of Xcode 27+ `SimScreenProperties` changes.
+public final class FBScreenPropertiesObservation: @unchecked Sendable {
+  private let lock = NSLock()
+  private var invalidation: (@Sendable () -> Void)?
+
+  fileprivate init(invalidation: @escaping @Sendable () -> Void) {
+    self.invalidation = invalidation
+  }
+
+  /// Stops delivering changes. Safe to call more than once.
+  public func invalidate() {
+    lock.lock()
+    let invalidation = self.invalidation
+    self.invalidation = nil
+    lock.unlock()
+    invalidation?()
+  }
+
+  deinit {
+    invalidate()
+  }
+}
+
 @objc(FBFramebuffer)
 public final class FBFramebuffer: NSObject, @unchecked Sendable {
 
@@ -102,6 +167,161 @@ public final class FBFramebuffer: NSObject, @unchecked Sendable {
     throw FBSimulatorError.describe("Could not find the Main Screen Surface for Clients \(FBCollectionInformation.oneLineDescription(from: ports)) in \(ioClient)").build()
   }
 
+  // MARK: - Fork addition: per-screen framebuffers (Xcode 27+ / multi-display devices)
+
+  /**
+   Fork addition. Returns one framebuffer per screen vended by the simulator's `SimScreenAdapter`
+   IO ports (Xcode 27+). This includes *every* screen CoreSimulator knows about — on iPhone Duo
+   (Xcode 27.1) that is 5: the two panels (`screenType == 0`, "LCD" 1398x2034 outer and "LCD-1"
+   2007x2853 inner) plus TVOut, Wireless and Resizable. Filter on `screenDescriptor` (typically
+   `screenType == 0`) to get the device panels.
+
+   Returns an empty array on the legacy (pre-Xcode 27, `SimDisplayRenderable`-only) path; callers
+   should fall back to `mainScreenSurface(for:logger:)` there. The legacy path is deliberately
+   untouched.
+   */
+  public class func allScreenSurfaces(for simulator: FBSimulator, logger: any FBControlCoreLogger) throws -> [FBFramebuffer] {
+    let ioClient = simulator.device.io!
+    guard let ports: [Any] = ioClient.ioPorts() else {
+      throw FBSimulatorError.describe("No IO ports available on \(ioClient)").build()
+    }
+    var framebuffers: [FBFramebuffer] = []
+    for port in ports {
+      guard let portInterface = port as? SimDeviceIOPortInterface,
+        let adapter = portInterface.descriptor as? SimScreenAdapter
+      else {
+        continue
+      }
+      guard let screens = enumerateScreens(for: adapter, logger: logger) else {
+        continue
+      }
+      for screen in screens {
+        framebuffers.append(FBFramebuffer(backing: backing(forEnumeratedScreen: screen), logger: logger))
+      }
+    }
+    return framebuffers
+  }
+
+  /**
+   Fork addition. Picks the backing for a screen returned by `enumerateScreens`.
+
+   Observed on Xcode 27.1: the enumerated objects are CoreSimulator `ROCKRemoteProxy` instances
+   that conform to `SimScreen` *and* to the legacy `SimDisplayIOSurfaceRenderable` /
+   `SimDisplayRenderable` protocols, but do not respond to `unmaskedSurface` / `maskedSurface`
+   (those live on SimulatorKit's `SimDeviceScreen` wrapper). For such objects the legacy surface
+   + callback registration is the working path, so prefer it whenever available.
+   */
+  private class func backing(forEnumeratedScreen screen: any SimScreen) -> Backing {
+    let object = screen as AnyObject
+    if object.conforms(to: SimDisplayRenderable.self), object.conforms(to: SimDisplayIOSurfaceRenderable.self) {
+      return .legacy(object)
+    }
+    return .screen(screen)
+  }
+
+  /**
+   Fork addition. Returns the framebuffer for the first screen whose descriptor satisfies
+   `matching`. Throws when no SimScreen-backed screen matches (including on the legacy path,
+   which vends no descriptors).
+
+   Example (iPhone Duo): `matching: { $0.pixelSize.width == 2007 }` for the inner panel.
+   */
+  public class func screenSurface(
+    for simulator: FBSimulator,
+    matching: (FBFramebufferScreenDescriptor) -> Bool,
+    logger: any FBControlCoreLogger
+  ) throws -> FBFramebuffer {
+    let all = try allScreenSurfaces(for: simulator, logger: logger)
+    for framebuffer in all {
+      if let descriptor = framebuffer.screenDescriptor, matching(descriptor) {
+        return framebuffer
+      }
+    }
+    throw FBSimulatorError.describe(
+      "No screen matched the predicate. Available screens: \(all.compactMap(\.screenDescriptor).map(\.description).joined(separator: ", "))"
+    ).build()
+  }
+
+  /// Fork addition. Convenience: framebuffer for the screen with the given CoreSimulator `screenID`.
+  public class func screenSurface(for simulator: FBSimulator, screenID: UInt32, logger: any FBControlCoreLogger) throws -> FBFramebuffer {
+    try screenSurface(for: simulator, matching: { $0.screenID == screenID }, logger: logger)
+  }
+
+  /// Fork addition. Convenience: framebuffer for the screen whose pixel size matches `pixelSize` exactly.
+  public class func screenSurface(for simulator: FBSimulator, pixelSize: CGSize, logger: any FBControlCoreLogger) throws -> FBFramebuffer {
+    try screenSurface(for: simulator, matching: { $0.pixelSize == pixelSize }, logger: logger)
+  }
+
+  /**
+   Fork addition. Identification of the screen backing this framebuffer. `nil` when the backing
+   object does not conform to `SimScreen` (pre-Xcode 27). On Xcode 27.1 even the legacy
+   `com.apple.framebuffer.display` port descriptors conform, so `mainScreenSurface` results carry a
+   descriptor too.
+   */
+  public var screenDescriptor: FBFramebufferScreenDescriptor? {
+    let object: AnyObject
+    switch backing {
+    case .screen(let screen):
+      object = screen as AnyObject
+    case .legacy(let legacy):
+      object = legacy
+    }
+    // Only SimScreen-conforming objects (Xcode 27+) carry `screenProperties`; the pre-27
+    // `SimDisplayRenderable` descriptors do not, and yield `nil` here.
+    guard object.conforms(to: SimScreen.self), let screen = object as? any SimScreen else {
+      return nil
+    }
+    return Self.descriptor(for: screen)
+  }
+
+  /// Fork addition. Defensive projection of `SimScreen` + `SimScreenProperties` into a value type.
+  private class func descriptor(for screen: any SimScreen) -> FBFramebufferScreenDescriptor {
+    let isDefault = screen.responds(to: #selector(getter: SimScreen.isDefault)) && screen.isDefault
+    var properties: (any SimScreenProperties)?
+    if screen.responds(to: #selector(getter: SimScreen.screenProperties)) {
+      properties = (try? FBObjCExceptionGuard.guarded { screen.screenProperties }) as? (any SimScreenProperties)
+    }
+    guard let properties else {
+      return FBFramebufferScreenDescriptor(
+        screenID: 0, uniqueID: nil, name: nil, pixelSize: .zero, isDefault: isDefault, powerState: nil, screenType: nil, uiOrientation: nil, backlightState: nil)
+    }
+    return descriptor(for: screen, properties: properties)
+  }
+
+  /// Fork addition. Defensive projection using properties delivered by a screen callback.
+  private class func descriptor(
+    for screen: any SimScreen,
+    properties: any SimScreenProperties
+  ) -> FBFramebufferScreenDescriptor {
+    let isDefault = screen.responds(to: #selector(getter: SimScreen.isDefault)) && screen.isDefault
+    func has(_ selector: Selector) -> Bool { properties.responds(to: selector) }
+    let pixelSize: CGSize
+    if has(#selector(getter: SimScreenProperties.pixelSize)) {
+      pixelSize = properties.pixelSize
+    } else if screen.responds(to: #selector(getter: SimScreen.unmaskedSurface)), let surface = screen.unmaskedSurface {
+      pixelSize = CGSize(width: surface.width, height: surface.height)
+    } else {
+      pixelSize = .zero
+    }
+    var backlightState: Int32?
+    if has(#selector(getter: SimScreenProperties.backlight)),
+      let backlight = (try? FBObjCExceptionGuard.guarded { properties.backlight }) as? (any SimScreenBacklight),
+      backlight.responds(to: #selector(getter: SimScreenBacklight.state))
+    {
+      backlightState = backlight.state
+    }
+    return FBFramebufferScreenDescriptor(
+      screenID: has(#selector(getter: SimScreenProperties.screenID)) ? properties.screenID : 0,
+      uniqueID: has(#selector(getter: SimScreenProperties.uniqueId)) ? properties.uniqueId : nil,
+      name: has(#selector(getter: SimScreenProperties.name)) ? properties.name : nil,
+      pixelSize: pixelSize,
+      isDefault: isDefault,
+      powerState: has(#selector(getter: SimScreenProperties.powerState)) ? properties.powerState : nil,
+      screenType: has(#selector(getter: SimScreenProperties.screenType)) ? properties.screenType : nil,
+      uiOrientation: has(#selector(getter: SimScreenProperties.uiOrientation)) ? properties.uiOrientation : nil,
+      backlightState: backlightState)
+  }
+
   /**
    Fork addition. Synchronously resolves the default `SimScreen` from a `SimScreenAdapter`.
 
@@ -109,6 +329,18 @@ public final class FBFramebuffer: NSObject, @unchecked Sendable {
    enumeration API is asynchronous, so we bridge it with a bounded semaphore wait.
    */
   private class func defaultScreen(for adapter: SimScreenAdapter, logger: any FBControlCoreLogger) -> (any SimScreen)? {
+    guard let screens = enumerateScreens(for: adapter, logger: logger) else {
+      return nil
+    }
+    return screens.first { $0.responds(to: #selector(getter: SimScreen.isDefault)) && $0.isDefault } ?? screens.first
+  }
+
+  /**
+   Fork addition. Synchronously enumerates every `SimScreen` on a `SimScreenAdapter` (bounded
+   semaphore bridge over the asynchronous Xcode 27 API). Returns `nil` when the adapter cannot
+   enumerate or times out.
+   */
+  private class func enumerateScreens(for adapter: SimScreenAdapter, logger: any FBControlCoreLogger) -> [any SimScreen]? {
     guard adapter.responds(to: #selector(SimScreenAdapter.enumerateScreens(completionQueue:completionHandler:))) else {
       logger.log("SimScreenAdapter \(adapter) does not respond to enumerateScreensWithCompletionQueue:completionHandler:")
       return nil
@@ -116,15 +348,14 @@ public final class FBFramebuffer: NSObject, @unchecked Sendable {
 
     let semaphore = DispatchSemaphore(value: 0)
     let queue = DispatchQueue(label: "com.facebook.fbsimulatorcontrol.framebuffer.screenenumeration")
-    nonisolated(unsafe) var resolvedScreen: (any SimScreen)?
+    nonisolated(unsafe) var resolvedScreens: [any SimScreen]?
     nonisolated(unsafe) let loggerRef = logger
 
     adapter.enumerateScreens(completionQueue: queue) { screens, enumerationError in
       if let enumerationError {
         loggerRef.log("Failed to enumerate SimScreens: \(enumerationError)")
       }
-      let screens = screens ?? []
-      resolvedScreen = screens.first { $0.responds(to: #selector(getter: SimScreen.isDefault)) && $0.isDefault } ?? screens.first
+      resolvedScreens = screens ?? []
       semaphore.signal()
     }
 
@@ -132,7 +363,7 @@ public final class FBFramebuffer: NSObject, @unchecked Sendable {
       logger.log("Timed out waiting for SimScreenAdapter \(adapter) to enumerate screens")
       return nil
     }
-    return resolvedScreen
+    return resolvedScreens
   }
 
   private init(backing: Backing, logger: any FBControlCoreLogger) {
@@ -183,6 +414,61 @@ public final class FBFramebuffer: NSObject, @unchecked Sendable {
     return false
   }
 
+  /**
+   Observes screen-property changes for Xcode 27+ `SimScreen` framebuffers.
+
+   The current descriptor is delivered once on `queue`, followed by changed descriptors.
+   Calling `invalidate()` unregisters this observation. True legacy framebuffers (whose backing
+   object does not also conform to `SimScreen`) return a no-op observation because their display
+   API has no equivalent properties callback. Xcode 27 screen proxies can use a legacy surface
+   backing while still supporting the `SimScreen` properties callback.
+   */
+  public func observeScreenProperties(
+    queue: DispatchQueue,
+    handler: @escaping @Sendable (FBFramebufferScreenDescriptor) -> Void
+  ) -> FBScreenPropertiesObservation {
+    let screen: any SimScreen
+    switch backing {
+    case .screen(let screenBacking):
+      screen = screenBacking
+    case .legacy(let legacy) where legacy.conforms(to: SimScreen.self):
+      guard let screenBacking = legacy as? any SimScreen else {
+        return FBScreenPropertiesObservation(invalidation: {})
+      }
+      screen = screenBacking
+    case .legacy:
+      return FBScreenPropertiesObservation(invalidation: {})
+    }
+
+    let currentDescriptor = Self.descriptor(for: screen)
+    queue.async {
+      handler(currentDescriptor)
+    }
+
+    let uuid = UUID()
+    _ = try? FBObjCExceptionGuard.guarded {
+      screen.registerScreenCallbacks(
+        uuid: uuid,
+        callbackQueue: queue,
+        frameCallback: {},
+        surfacesChangedCallback: { _, _ in },
+        propertiesChangedCallback: { properties in
+          handler(Self.descriptor(for: screen, properties: properties))
+        })
+    }
+
+    return FBScreenPropertiesObservation { [weak screen] in
+      guard let screen,
+        screen.responds(to: #selector(SimScreen.unregisterScreenCallbacks(uuid:)))
+      else {
+        return
+      }
+      _ = try? FBObjCExceptionGuard.guarded {
+        screen.unregisterScreenCallbacks(uuid: uuid)
+      }
+    }
+  }
+
   // MARK: - Stats
 
   @objc
@@ -208,7 +494,10 @@ public final class FBFramebuffer: NSObject, @unchecked Sendable {
       return try? FBObjCExceptionGuard.guarded({ renderable.ioSurface }) as? IOSurface
     case .screen(let screen):
       // Prefer the raw (unmasked) surface to mirror the legacy framebufferSurface.
-      return screen.unmaskedSurface ?? screen.maskedSurface
+      // Fork hardening: CoreSimulator proxies may conform to SimScreen without these getters.
+      let unmasked = screen.responds(to: #selector(getter: SimScreen.unmaskedSurface)) ? screen.unmaskedSurface : nil
+      let masked = screen.responds(to: #selector(getter: SimScreen.maskedSurface)) ? screen.maskedSurface : nil
+      return unmasked ?? masked
     }
   }
 
@@ -233,10 +522,11 @@ public final class FBFramebuffer: NSObject, @unchecked Sendable {
         callbackQueue: queue,
         frameCallback: { [weak self] in
           guard let self else { return }
+          let presentationUptime = ProcessInfo.processInfo.systemUptime
           self.stats.damageCallbackCount += 1
           self.logStatsIfNeeded()
           queue.async {
-            consumerRef.didReceiveDamageRect()
+            Self.notifyDamage(consumerRef, atUptime: presentationUptime)
           }
         },
         surfacesChangedCallback: { [weak self] (unmaskedSurface: IOSurface?, maskedSurface: IOSurface?) in
@@ -252,6 +542,14 @@ public final class FBFramebuffer: NSObject, @unchecked Sendable {
           }
         },
         propertiesChangedCallback: { _ in })
+    }
+  }
+
+  private static func notifyDamage(_ consumer: any FBFramebufferConsumer, atUptime uptime: TimeInterval) {
+    if let timedConsumer = consumer as? any FBFramebufferPresentationTimeConsumer {
+      timedConsumer.didReceiveDamageRect(atUptime: uptime)
+    } else {
+      consumer.didReceiveDamageRect()
     }
   }
 
@@ -281,6 +579,7 @@ public final class FBFramebuffer: NSObject, @unchecked Sendable {
     let displayRenderable = surface as! SimDisplayRenderable
     let damageCallback: ([Any]?) -> Void = { [weak self] frames in
       guard let self else { return }
+      let presentationUptime = ProcessInfo.processInfo.systemUptime
       let frameArray = frames ?? []
       self.stats.damageCallbackCount += 1
       self.stats.damageRectCount += UInt(frameArray.count)
@@ -289,7 +588,7 @@ public final class FBFramebuffer: NSObject, @unchecked Sendable {
       }
       self.logStatsIfNeeded()
       queue.async {
-        consumerRef.didReceiveDamageRect()
+        Self.notifyDamage(consumerRef, atUptime: presentationUptime)
       }
     }
     _ = try? FBObjCExceptionGuard.guarded {

@@ -474,23 +474,21 @@ public final class FBSimulatorSettingsCommands: NSObject, FBiOSTargetCommand {
     guard let simulator = self.simulator else {
       throw FBSimulatorError.describe("Simulator deallocated").build()
     }
-    let bundle = Bundle.main
-    let bundleURL = bundle.bundleURL.standardizedFileURL
-    let helperPath: String?
-    if bundleURL.pathExtension == "app", let resourceURL = bundle.resourceURL {
-      helperPath = resourceURL.appendingPathComponent("SimulatorFrameworkBridge").path
-    } else if let executablePath = bundle.executablePath {
-      let resolvedExecutablePath = (executablePath as NSString).resolvingSymlinksInPath
-      let parentDirectory = (resolvedExecutablePath as NSString).deletingLastPathComponent
-      helperPath = (parentDirectory as NSString).appendingPathComponent("Resources/SimulatorFrameworkBridge")
-    } else {
-      helperPath = nil
-    }
+    let resourceDirectories = [
+      Bundle(identifier: "com.facebook.FBSimulatorControl")?.resourceURL,
+      Bundle.main.privateFrameworksURL?
+        .appendingPathComponent("FBSimulatorControl.framework")
+        .appendingPathComponent("Resources"),
+      Bundle.main.resourceURL,
+    ].compactMap { $0 }
+    let helperPath = resourceDirectories
+      .map { $0.appendingPathComponent("SimulatorFrameworkBridge").path }
+      .first { FileManager.default.isExecutableFile(atPath: $0) }
     guard let helperPath else {
-      throw FBSimulatorError.describe("SimulatorFrameworkBridge path not found.").build()
-    }
-    if !FileManager.default.fileExists(atPath: helperPath) {
-      throw FBSimulatorError.describe("SimulatorFrameworkBridge binary not found at path: \(helperPath)").build()
+      let searchedPaths = resourceDirectories.map(\.path).joined(separator: ", ")
+      throw FBSimulatorError.describe(
+        "SimulatorFrameworkBridge binary not found in: \(searchedPaths)"
+      ).build()
     }
 
     // Spawn the bridge helper inside the simulator via CoreSimulator (the same
@@ -797,6 +795,15 @@ extension FBSimulator: SettingsCommands {
 
   public func clearPhotos() async throws {
     try await settingsCommands().runSimulatorFrameworkBridgeAsync(withService: "photos", action: "clear")
+  }
+
+  public func runAccessibilityBridge(action: String, arguments: [String]) async throws -> Data {
+    let output = try await settingsCommands().runSimulatorFrameworkBridgeAsync(
+      withService: "accessibility",
+      action: action,
+      arguments: arguments
+    )
+    return Data(output.utf8)
   }
 
   public func currentAppearance() async throws -> FBSimulatorAppearance {

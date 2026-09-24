@@ -19,6 +19,26 @@ struct FBSimulatorAccessibilityBootstrapPolicyTests {
   }
 
   @Test
+  func testSandboxedIOS27RuntimeSkipsBootstrapAttempt() {
+    let version = OperatingSystemVersion(majorVersion: 27, minorVersion: 0, patchVersion: 0)
+
+    #expect(!FBSimulatorAccessibilityCommands.shouldAttemptAccessibilityBootstrap(
+      for: version,
+      isAppSandboxed: true
+    ))
+  }
+
+  @Test
+  func testUnsandboxedIOS27RuntimeAttemptsBootstrap() {
+    let version = OperatingSystemVersion(majorVersion: 27, minorVersion: 0, patchVersion: 0)
+
+    #expect(FBSimulatorAccessibilityCommands.shouldAttemptAccessibilityBootstrap(
+      for: version,
+      isAppSandboxed: false
+    ))
+  }
+
+  @Test
   func testFutureRuntimeRequiresBootstrap() {
     let version = OperatingSystemVersion(majorVersion: 28, minorVersion: 0, patchVersion: 0)
 
