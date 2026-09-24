@@ -1490,18 +1490,18 @@ public class FBSimulatorVideoStream: NSObject, FBFramebufferPresentationTimeCons
   /// and `deinit` cancels as a backstop.
   private func runFramePushLoop<Stimulus: AsyncSequence>(stimulus: Stimulus, stats: CadenceStats?) async
   where Stimulus.Element == FrameTrigger {
-    var stats = stats
     do {
       // A generic `AsyncSequence` has a throwing `next()`; `FrameCadence` and `AsyncStream` are both
       // non-throwing, so the catch is unreachable in practice and exists only to satisfy `for try await`.
       for try await trigger in stimulus {
         guard stoppedFuture.state == .running else { break }
         let pushDurationMach = await pushOnWriteQueue(forceKeyFrame: trigger.forceKeyFrame)
-        stats?.record(pushDurationMach: pushDurationMach, overran: trigger.overran)
+        stats?.record(pushDurationMach: pushDurationMach, overran: trigger.overran, budgetOverrunNanos: trigger.budgetOverrunNanos)
       }
     } catch {
       logger.log("Frame push loop stimulus failed: \(error)")
     }
+    stats?.logSessionSummary()
   }
 
   /// Dispatch a single frame push onto the serial `writeQueue` and await its completion, returning the
@@ -1530,6 +1530,8 @@ struct FrameTrigger {
   let forceKeyFrame: Bool
   /// True when the previous push overshot its deadline (eager cadence only — always false for VFR).
   let overran: Bool
+  /// How far past the frame deadline the clock was when this tick fired (eager only).
+  let budgetOverrunNanos: UInt64
 }
 
 /// The `.lazy` (VFR) stimulus for the frame push loop: an `AsyncSequence` of `FrameTrigger`s poked by
@@ -1602,7 +1604,7 @@ final class LazyFrameTriggers: AsyncSequence, @unchecked Sendable {
 
     mutating func next() async -> FrameTrigger? {
       guard await base.next() != nil else { return nil }
-      return FrameTrigger(forceKeyFrame: source.takePendingKeyFrame(), overran: false)
+      return FrameTrigger(forceKeyFrame: source.takePendingKeyFrame(), overran: false, budgetOverrunNanos: 0)
     }
   }
 }
@@ -1655,11 +1657,12 @@ struct FrameCadence: AsyncSequence {
       // The first tick fires immediately: the original loop pushes once before its first sleep.
       if firstTickPending {
         firstTickPending = false
-        return FrameTrigger(forceKeyFrame: false, overran: false)
+        return FrameTrigger(forceKeyFrame: false, overran: false, budgetOverrunNanos: 0)
       }
 
       let now = mach_absolute_time()
       var overran = false
+      var budgetOverrunNanos: UInt64 = 0
       if now < nextTargetTime {
         // Sleep until the drift-corrected deadline. Only the remaining gap is converted to nanos.
         let remainingNanos = (nextTargetTime - now) * machNumer / machDenom
@@ -1671,11 +1674,10 @@ struct FrameCadence: AsyncSequence {
       } else {
         // Already past the deadline — the previous push overshot the frame budget.
         overran = true
-        let overrunNanos = (now - nextTargetTime) * machNumer / machDenom
-        logger.log(String(format: "Frame push exceeded budget by %.1f ms (budget: %.1f ms)", Double(overrunNanos) / 1e6, Double(frameIntervalNanos) / 1e6))
+        budgetOverrunNanos = (now - nextTargetTime) * machNumer / machDenom
       }
       nextTargetTime += frameIntervalMach
-      return FrameTrigger(forceKeyFrame: false, overran: overran)
+      return FrameTrigger(forceKeyFrame: false, overran: overran, budgetOverrunNanos: budgetOverrunNanos)
     }
   }
 }
@@ -1685,11 +1687,12 @@ struct FrameCadence: AsyncSequence {
 /// Accumulates eager-cadence push statistics — Welford online mean/variance of push duration plus an
 /// overrun count — and logs a summary every 5 seconds. Kept out of the push loop so the loop reads
 /// as just "push each tick"; `record` is called once per push.
-struct CadenceStats {
+final class CadenceStats {
   private let frameIntervalNanos: UInt64
   private let machToMs: Double
   private let statsIntervalMach: UInt64
   private let logger: any FBControlCoreLogger
+  private let severeOverrunIntervalMach: UInt64
 
   private var statsStartTime: UInt64
   private var pushCount: UInt64 = 0
@@ -1698,21 +1701,39 @@ struct CadenceStats {
   private var pushMean = 0.0 // Welford mean (in Mach ticks)
   private var pushM2 = 0.0 // Welford M2 (sum of squared deviations)
 
+  private var sessionPushCount: UInt64 = 0
+  private var sessionOverrunCount: UInt64 = 0
+  private var lastSevereOverrunWarningMach: UInt64 = 0
+
   init(frameIntervalNanos: UInt64, logger: any FBControlCoreLogger) {
     var timebase = mach_timebase_info_data_t()
     mach_timebase_info(&timebase)
     self.machToMs = Double(timebase.numer) / Double(timebase.denom) / 1e6
     let statsIntervalSeconds = 5.0
     self.statsIntervalMach = UInt64(statsIntervalSeconds * 1e9) * UInt64(timebase.denom) / UInt64(timebase.numer)
+    self.severeOverrunIntervalMach = UInt64(1e9) * UInt64(timebase.denom) / UInt64(timebase.numer)
     self.frameIntervalNanos = frameIntervalNanos
     self.logger = logger
     self.statsStartTime = mach_absolute_time()
   }
 
-  mutating func record(pushDurationMach: UInt64, overran: Bool) {
+  func record(pushDurationMach: UInt64, overran: Bool, budgetOverrunNanos: UInt64 = 0) {
     pushCount += 1
+    sessionPushCount += 1
     if overran {
       overrunCount += 1
+      sessionOverrunCount += 1
+      if budgetOverrunNanos > frameIntervalNanos {
+        let now = mach_absolute_time()
+        if now - lastSevereOverrunWarningMach >= severeOverrunIntervalMach {
+          lastSevereOverrunWarningMach = now
+          logger.log(
+            String(
+              format: "Frame push exceeded budget by %.1f ms (budget: %.1f ms)",
+              Double(budgetOverrunNanos) / 1e6,
+              Double(frameIntervalNanos) / 1e6))
+        }
+      }
     }
     if pushDurationMach > maxPushMach {
       maxPushMach = pushDurationMach
@@ -1725,21 +1746,33 @@ struct CadenceStats {
     guard now - statsStartTime >= statsIntervalMach else {
       return
     }
-    let avgMs = pushMean * machToMs
-    let maxMs = Double(maxPushMach) * machToMs
-    let stddevMs = pushCount > 1 ? sqrt(pushM2 / Double(pushCount - 1)) * machToMs : 0
-    let intervalSeconds = Double(now - statsStartTime) * machToMs / 1e3
-    logger.info().log(
-      String(
-        format: "Cadence stats (%.1fs): %llu pushes, %llu overruns, push duration avg %.1f ms / max %.1f ms, jitter stddev %.1f ms (budget: %.1f ms)",
-        intervalSeconds, pushCount, overrunCount, avgMs, maxMs, stddevMs, Double(frameIntervalNanos) / 1e6))
-
-    // Reset for next interval.
+    logIntervalSummary(intervalMach: now - statsStartTime)
     statsStartTime = now
     pushCount = 0
     overrunCount = 0
     maxPushMach = 0
     pushMean = 0
     pushM2 = 0
+  }
+
+  func logSessionSummary() {
+    guard sessionPushCount > 0 else { return }
+    logger.info().log(
+      String(
+        format: "Cadence session summary: %llu pushes, %llu budget overruns (budget: %.1f ms)",
+        sessionPushCount,
+        sessionOverrunCount,
+        Double(frameIntervalNanos) / 1e6))
+  }
+
+  private func logIntervalSummary(intervalMach: UInt64) {
+    let avgMs = pushMean * machToMs
+    let maxMs = Double(maxPushMach) * machToMs
+    let stddevMs = pushCount > 1 ? sqrt(pushM2 / Double(pushCount - 1)) * machToMs : 0
+    let intervalSeconds = Double(intervalMach) * machToMs / 1e3
+    logger.info().log(
+      String(
+        format: "Cadence stats (%.1fs): %llu pushes, %llu overruns, push duration avg %.1f ms / max %.1f ms, jitter stddev %.1f ms (budget: %.1f ms)",
+        intervalSeconds, pushCount, overrunCount, avgMs, maxMs, stddevMs, Double(frameIntervalNanos) / 1e6))
   }
 }
