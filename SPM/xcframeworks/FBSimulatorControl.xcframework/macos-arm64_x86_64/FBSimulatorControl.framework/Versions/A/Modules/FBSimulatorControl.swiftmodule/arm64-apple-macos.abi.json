@@ -13387,6 +13387,34 @@
             ]
           },
           {
+            "kind": "Constructor",
+            "name": "init",
+            "printedName": "init(unbackedForTestingWithLogger:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "FBFramebuffer",
+                "printedName": "FBSimulatorControl.FBFramebuffer",
+                "usr": "c:@M@FBSimulatorControl@objc(cs)FBFramebuffer"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "FBControlCoreLogger",
+                "printedName": "any FBControlCore.FBControlCoreLogger",
+                "usr": "c:@M@FBControlCore@objc(pl)FBControlCoreLogger"
+              }
+            ],
+            "declKind": "Constructor",
+            "usr": "s:18FBSimulatorControl13FBFramebufferC28unbackedForTestingWithLoggerAC13FBControlCore0ijH0_p_tcfc",
+            "mangledName": "$s18FBSimulatorControl13FBFramebufferC28unbackedForTestingWithLoggerAC13FBControlCore0ijH0_p_tcfc",
+            "moduleName": "FBSimulatorControl",
+            "declAttributes": [
+              "Convenience",
+              "RawDocComment"
+            ],
+            "init_kind": "Convenience"
+          },
+          {
             "kind": "Function",
             "name": "attach",
             "printedName": "attach(_:on:)",
@@ -53954,6 +53982,28 @@
           },
           {
             "kind": "Function",
+            "name": "makeLazyTriggers",
+            "printedName": "makeLazyTriggers()",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "LazyFrameTriggers",
+                "printedName": "FBSimulatorControl.LazyFrameTriggers",
+                "usr": "s:18FBSimulatorControl17LazyFrameTriggersC"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:18FBSimulatorControl0A11VideoStreamC16makeLazyTriggersAA0f5FrameG0CyF",
+            "mangledName": "$s18FBSimulatorControl0A11VideoStreamC16makeLazyTriggersAA0f5FrameG0CyF",
+            "moduleName": "FBSimulatorControl",
+            "isOpen": true,
+            "declAttributes": [
+              "RawDocComment"
+            ],
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
             "name": "requestKeyFrame",
             "printedName": "requestKeyFrame()",
             "children": [
@@ -54704,18 +54754,41 @@
               }
             ],
             "declKind": "Var",
-            "usr": "s:18FBSimulatorControl17LazyFrameTriggersC16frameRateLimiter33_78E0E20C0B035A84E6F147AF5F85744FLLAA0dgH0Cvp",
-            "mangledName": "$s18FBSimulatorControl17LazyFrameTriggersC16frameRateLimiter33_78E0E20C0B035A84E6F147AF5F85744FLLAA0dgH0Cvp",
+            "usr": "s:18FBSimulatorControl17LazyFrameTriggersC16frameRateLimiterAA0dgH0Cvp",
+            "mangledName": "$s18FBSimulatorControl17LazyFrameTriggersC16frameRateLimiterAA0dgH0Cvp",
             "moduleName": "FBSimulatorControl",
-            "isInternal": true,
             "declAttributes": [
               "Final",
-              "HasStorage",
-              "AccessControl"
+              "HasStorage"
             ],
             "fixedbinaryorder": 2,
             "isLet": true,
-            "hasStorage": true
+            "hasStorage": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "FrameRateLimiter",
+                    "printedName": "FBSimulatorControl.FrameRateLimiter",
+                    "usr": "s:18FBSimulatorControl16FrameRateLimiterC"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:18FBSimulatorControl17LazyFrameTriggersC16frameRateLimiterAA0dgH0Cvg",
+                "mangledName": "$s18FBSimulatorControl17LazyFrameTriggersC16frameRateLimiterAA0dgH0Cvg",
+                "moduleName": "FBSimulatorControl",
+                "implicit": true,
+                "declAttributes": [
+                  "Transparent",
+                  "Final"
+                ],
+                "accessorKind": "get"
+              }
+            ]
           },
           {
             "kind": "Var",
@@ -73039,203 +73112,203 @@
     {
       "filePath": "\/tmp\/idb-perf\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "IntegerLiteral",
-      "offset": 15783,
+      "offset": 16044,
       "length": 1,
       "value": "0"
     },
     {
       "filePath": "\/tmp\/idb-perf\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "BooleanLiteral",
-      "offset": 15808,
+      "offset": 16069,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/tmp\/idb-perf\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "BooleanLiteral",
-      "offset": 15846,
+      "offset": 16107,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/tmp\/idb-perf\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "FloatLiteral",
-      "offset": 15980,
+      "offset": 16241,
       "length": 3,
       "value": "5.0"
     },
     {
       "filePath": "\/tmp\/idb-perf\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "IntegerLiteral",
-      "offset": 38854,
+      "offset": 39115,
       "length": 1,
       "value": "0"
     },
     {
       "filePath": "\/tmp\/idb-perf\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "IntegerLiteral",
-      "offset": 38895,
+      "offset": 39156,
       "length": 1,
       "value": "0"
     },
     {
       "filePath": "\/tmp\/idb-perf\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "IntegerLiteral",
-      "offset": 39070,
+      "offset": 39331,
       "length": 1,
       "value": "0"
     },
     {
       "filePath": "\/tmp\/idb-perf\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "IntegerLiteral",
-      "offset": 39098,
+      "offset": 39359,
       "length": 1,
       "value": "0"
     },
     {
       "filePath": "\/tmp\/idb-perf\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "IntegerLiteral",
-      "offset": 39698,
+      "offset": 39959,
       "length": 1,
       "value": "0"
     },
     {
       "filePath": "\/tmp\/idb-perf\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "IntegerLiteral",
-      "offset": 39730,
+      "offset": 39991,
       "length": 1,
       "value": "0"
     },
     {
       "filePath": "\/tmp\/idb-perf\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "IntegerLiteral",
-      "offset": 41912,
+      "offset": 42173,
       "length": 1,
       "value": "0"
     },
     {
       "filePath": "\/tmp\/idb-perf\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "IntegerLiteral",
-      "offset": 41923,
+      "offset": 42184,
       "length": 1,
       "value": "0"
     },
     {
       "filePath": "\/tmp\/idb-perf\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "IntegerLiteral",
-      "offset": 41932,
+      "offset": 42193,
       "length": 1,
       "value": "0"
     },
     {
       "filePath": "\/tmp\/idb-perf\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "IntegerLiteral",
-      "offset": 41942,
+      "offset": 42203,
       "length": 1,
       "value": "0"
     },
     {
       "filePath": "\/tmp\/idb-perf\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "IntegerLiteral",
-      "offset": 42559,
+      "offset": 42820,
       "length": 1,
       "value": "0"
     },
     {
       "filePath": "\/tmp\/idb-perf\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "IntegerLiteral",
-      "offset": 42570,
+      "offset": 42831,
       "length": 1,
       "value": "0"
     },
     {
       "filePath": "\/tmp\/idb-perf\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "IntegerLiteral",
-      "offset": 42579,
+      "offset": 42840,
       "length": 1,
       "value": "0"
     },
     {
       "filePath": "\/tmp\/idb-perf\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "IntegerLiteral",
-      "offset": 42589,
+      "offset": 42850,
       "length": 1,
       "value": "0"
     },
     {
       "filePath": "\/tmp\/idb-perf\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "IntegerLiteral",
-      "offset": 76322,
+      "offset": 76748,
       "length": 1,
       "value": "0"
     },
     {
       "filePath": "\/tmp\/idb-perf\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "BooleanLiteral",
-      "offset": 78993,
+      "offset": 79411,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/tmp\/idb-perf\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "FloatLiteral",
-      "offset": 83692,
+      "offset": 84165,
       "length": 3,
       "value": "1.0"
     },
     {
       "filePath": "\/tmp\/idb-perf\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "BooleanLiteral",
-      "offset": 86002,
+      "offset": 86475,
       "length": 4,
       "value": "true"
     },
     {
       "filePath": "\/tmp\/idb-perf\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "IntegerLiteral",
-      "offset": 89243,
+      "offset": 89771,
       "length": 1,
       "value": "0"
     },
     {
       "filePath": "\/tmp\/idb-perf\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "IntegerLiteral",
-      "offset": 89282,
+      "offset": 89810,
       "length": 1,
       "value": "0"
     },
     {
       "filePath": "\/tmp\/idb-perf\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "IntegerLiteral",
-      "offset": 89325,
+      "offset": 89853,
       "length": 1,
       "value": "0"
     },
     {
       "filePath": "\/tmp\/idb-perf\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "IntegerLiteral",
-      "offset": 89363,
+      "offset": 89891,
       "length": 1,
       "value": "0"
     },
     {
       "filePath": "\/tmp\/idb-perf\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "FloatLiteral",
-      "offset": 89390,
+      "offset": 89918,
       "length": 3,
       "value": "0.0"
     },
     {
       "filePath": "\/tmp\/idb-perf\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "FloatLiteral",
-      "offset": 89449,
+      "offset": 89977,
       "length": 3,
       "value": "0.0"
     },
     {
       "filePath": "\/tmp\/idb-perf\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "IntegerLiteral",
-      "offset": 90083,
+      "offset": 90611,
       "length": 1,
       "value": "0"
     },

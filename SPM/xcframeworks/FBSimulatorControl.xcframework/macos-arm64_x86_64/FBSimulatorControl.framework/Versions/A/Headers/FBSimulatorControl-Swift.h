@@ -867,6 +867,9 @@ SWIFT_CLASS_NAMED("FBSurfaceImageGenerator")
 /// as exactly one contiguous <code>Data</code> via <code>consumeEncodedFrame(_:)</code>, instead of the block buffer’s
 /// segments being written piecemeal through <code>consumeData(_:)</code>. This lets a consumer forward whole
 /// frames (e.g. one WebSocket message per JPEG) without reassembling them.
+/// <code>consumeEncodedFrame(_:)</code> is called from the VideoToolbox compression output handler, not on the
+/// stream’s write queue, so conformers must be thread-safe. The stream deliberately doesn’t
+/// re-dispatch, which would add latency and a copy per frame.
 SWIFT_PROTOCOL("_TtP18FBSimulatorControl22RSEncodedFrameConsumer_")
 @protocol RSEncodedFrameConsumer <FBDataConsumer>
 - (void)consumeEncodedFrame:(NSData * _Nonnull)data;
@@ -1749,6 +1752,9 @@ SWIFT_CLASS_NAMED("FBSurfaceImageGenerator")
 /// as exactly one contiguous <code>Data</code> via <code>consumeEncodedFrame(_:)</code>, instead of the block buffer’s
 /// segments being written piecemeal through <code>consumeData(_:)</code>. This lets a consumer forward whole
 /// frames (e.g. one WebSocket message per JPEG) without reassembling them.
+/// <code>consumeEncodedFrame(_:)</code> is called from the VideoToolbox compression output handler, not on the
+/// stream’s write queue, so conformers must be thread-safe. The stream deliberately doesn’t
+/// re-dispatch, which would add latency and a copy per frame.
 SWIFT_PROTOCOL("_TtP18FBSimulatorControl22RSEncodedFrameConsumer_")
 @protocol RSEncodedFrameConsumer <FBDataConsumer>
 - (void)consumeEncodedFrame:(NSData * _Nonnull)data;
