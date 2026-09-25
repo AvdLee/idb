@@ -54719,6 +54719,83 @@
           },
           {
             "kind": "Var",
+            "name": "now",
+            "printedName": "now",
+            "children": [
+              {
+                "kind": "TypeFunc",
+                "name": "Function",
+                "printedName": "() -> _Concurrency.ContinuousClock.Instant",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Instant",
+                    "printedName": "_Concurrency.ContinuousClock.Instant",
+                    "usr": "s:12_Concurrency15ContinuousClockV7InstantV"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  }
+                ]
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:18FBSimulatorControl17LazyFrameTriggersC3now33_78E0E20C0B035A84E6F147AF5F85744FLL12_Concurrency15ContinuousClockV7InstantVycvp",
+            "mangledName": "$s18FBSimulatorControl17LazyFrameTriggersC3now33_78E0E20C0B035A84E6F147AF5F85744FLLs15ContinuousClockV7InstantVycvp",
+            "moduleName": "FBSimulatorControl",
+            "isInternal": true,
+            "declAttributes": [
+              "Final",
+              "HasStorage",
+              "AccessControl"
+            ],
+            "fixedbinaryorder": 3,
+            "isLet": true,
+            "hasStorage": true
+          },
+          {
+            "kind": "Var",
+            "name": "sleepUntil",
+            "printedName": "sleepUntil",
+            "children": [
+              {
+                "kind": "TypeFunc",
+                "name": "Function",
+                "printedName": "(_Concurrency.ContinuousClock.Instant) async throws -> ()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Instant",
+                    "printedName": "_Concurrency.ContinuousClock.Instant",
+                    "usr": "s:12_Concurrency15ContinuousClockV7InstantV"
+                  }
+                ]
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:18FBSimulatorControl17LazyFrameTriggersC10sleepUntil33_78E0E20C0B035A84E6F147AF5F85744FLLyy12_Concurrency15ContinuousClockV7InstantVYaKcvp",
+            "mangledName": "$s18FBSimulatorControl17LazyFrameTriggersC10sleepUntil33_78E0E20C0B035A84E6F147AF5F85744FLLyys15ContinuousClockV7InstantVYaKcvp",
+            "moduleName": "FBSimulatorControl",
+            "isInternal": true,
+            "declAttributes": [
+              "Final",
+              "HasStorage",
+              "AccessControl",
+              "RawDocComment"
+            ],
+            "fixedbinaryorder": 4,
+            "isLet": true,
+            "hasStorage": true
+          },
+          {
+            "kind": "Var",
             "name": "lock",
             "printedName": "lock",
             "children": [
@@ -54740,7 +54817,7 @@
               "HasStorage",
               "AccessControl"
             ],
-            "fixedbinaryorder": 3,
+            "fixedbinaryorder": 5,
             "isLet": true,
             "hasStorage": true
           },
@@ -54768,13 +54845,13 @@
               "AccessControl",
               "RawDocComment"
             ],
-            "fixedbinaryorder": 4,
+            "fixedbinaryorder": 6,
             "hasStorage": true
           },
           {
             "kind": "Constructor",
             "name": "init",
-            "printedName": "init(frameRateLimiter:)",
+            "printedName": "init(frameRateLimiter:now:sleepUntil:)",
             "children": [
               {
                 "kind": "TypeNominal",
@@ -54788,11 +54865,49 @@
                 "printedName": "FBSimulatorControl.FrameRateLimiter",
                 "hasDefaultArg": true,
                 "usr": "s:18FBSimulatorControl16FrameRateLimiterC"
+              },
+              {
+                "kind": "TypeFunc",
+                "name": "Function",
+                "printedName": "() -> _Concurrency.ContinuousClock.Instant",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Instant",
+                    "printedName": "_Concurrency.ContinuousClock.Instant",
+                    "usr": "s:12_Concurrency15ContinuousClockV7InstantV"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  }
+                ],
+                "hasDefaultArg": true
+              },
+              {
+                "kind": "TypeFunc",
+                "name": "Function",
+                "printedName": "(_Concurrency.ContinuousClock.Instant) async throws -> ()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Instant",
+                    "printedName": "_Concurrency.ContinuousClock.Instant",
+                    "usr": "s:12_Concurrency15ContinuousClockV7InstantV"
+                  }
+                ],
+                "hasDefaultArg": true
               }
             ],
             "declKind": "Constructor",
-            "usr": "s:18FBSimulatorControl17LazyFrameTriggersC16frameRateLimiterAcA0dgH0C_tcfc",
-            "mangledName": "$s18FBSimulatorControl17LazyFrameTriggersC16frameRateLimiterAcA0dgH0C_tcfc",
+            "usr": "s:18FBSimulatorControl17LazyFrameTriggersC16frameRateLimiter3now10sleepUntilAcA0dgH0C_12_Concurrency15ContinuousClockV7InstantVycyAMYaKctcfc",
+            "mangledName": "$s18FBSimulatorControl17LazyFrameTriggersC16frameRateLimiter3now10sleepUntilAcA0dgH0C_s15ContinuousClockV7InstantVycyALYaKctcfc",
             "moduleName": "FBSimulatorControl",
             "init_kind": "Designated"
           },
@@ -54857,6 +54972,35 @@
               "Final",
               "RawDocComment"
             ],
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "sleepUntil",
+            "printedName": "sleepUntil(_:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Instant",
+                "printedName": "_Concurrency.ContinuousClock.Instant",
+                "usr": "s:12_Concurrency15ContinuousClockV7InstantV"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:18FBSimulatorControl17LazyFrameTriggersC10sleepUntilyy12_Concurrency15ContinuousClockV7InstantVYaKFZ",
+            "mangledName": "$s18FBSimulatorControl17LazyFrameTriggersC10sleepUntilyys15ContinuousClockV7InstantVYaKFZ",
+            "moduleName": "FBSimulatorControl",
+            "static": true,
+            "declAttributes": [
+              "Final",
+              "RawDocComment"
+            ],
+            "throwing": true,
             "funcSelfKind": "NonMutating"
           },
           {
@@ -55090,6 +55234,105 @@
                     "accessorKind": "get"
                   }
                 ]
+              },
+              {
+                "kind": "Var",
+                "name": "lastTriggerDeadline",
+                "printedName": "lastTriggerDeadline",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Optional",
+                    "printedName": "_Concurrency.ContinuousClock.Instant?",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Instant",
+                        "printedName": "_Concurrency.ContinuousClock.Instant",
+                        "usr": "s:12_Concurrency15ContinuousClockV7InstantV"
+                      }
+                    ],
+                    "usr": "s:Sq"
+                  }
+                ],
+                "declKind": "Var",
+                "usr": "s:18FBSimulatorControl17LazyFrameTriggersC13AsyncIteratorV19lastTriggerDeadline12_Concurrency15ContinuousClockV7InstantVSgvp",
+                "mangledName": "$s18FBSimulatorControl17LazyFrameTriggersC13AsyncIteratorV19lastTriggerDeadlines15ContinuousClockV7InstantVSgvp",
+                "moduleName": "FBSimulatorControl",
+                "declAttributes": [
+                  "HasInitialValue",
+                  "HasStorage",
+                  "SetterAccess",
+                  "RawDocComment"
+                ],
+                "fixedbinaryorder": 3,
+                "hasStorage": true,
+                "accessors": [
+                  {
+                    "kind": "Accessor",
+                    "name": "Get",
+                    "printedName": "Get()",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Optional",
+                        "printedName": "_Concurrency.ContinuousClock.Instant?",
+                        "children": [
+                          {
+                            "kind": "TypeNominal",
+                            "name": "Instant",
+                            "printedName": "_Concurrency.ContinuousClock.Instant",
+                            "usr": "s:12_Concurrency15ContinuousClockV7InstantV"
+                          }
+                        ],
+                        "usr": "s:Sq"
+                      }
+                    ],
+                    "declKind": "Accessor",
+                    "usr": "s:18FBSimulatorControl17LazyFrameTriggersC13AsyncIteratorV19lastTriggerDeadline12_Concurrency15ContinuousClockV7InstantVSgvg",
+                    "mangledName": "$s18FBSimulatorControl17LazyFrameTriggersC13AsyncIteratorV19lastTriggerDeadlines15ContinuousClockV7InstantVSgvg",
+                    "moduleName": "FBSimulatorControl",
+                    "implicit": true,
+                    "declAttributes": [
+                      "Transparent"
+                    ],
+                    "accessorKind": "get"
+                  }
+                ]
+              },
+              {
+                "kind": "Var",
+                "name": "scheduleAnchor",
+                "printedName": "scheduleAnchor",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Optional",
+                    "printedName": "_Concurrency.ContinuousClock.Instant?",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Instant",
+                        "printedName": "_Concurrency.ContinuousClock.Instant",
+                        "usr": "s:12_Concurrency15ContinuousClockV7InstantV"
+                      }
+                    ],
+                    "usr": "s:Sq"
+                  }
+                ],
+                "declKind": "Var",
+                "usr": "s:18FBSimulatorControl17LazyFrameTriggersC13AsyncIteratorV14scheduleAnchor33_78E0E20C0B035A84E6F147AF5F85744FLL12_Concurrency15ContinuousClockV7InstantVSgvp",
+                "mangledName": "$s18FBSimulatorControl17LazyFrameTriggersC13AsyncIteratorV14scheduleAnchor33_78E0E20C0B035A84E6F147AF5F85744FLLs15ContinuousClockV7InstantVSgvp",
+                "moduleName": "FBSimulatorControl",
+                "isInternal": true,
+                "declAttributes": [
+                  "HasInitialValue",
+                  "HasStorage",
+                  "AccessControl",
+                  "RawDocComment"
+                ],
+                "fixedbinaryorder": 4,
+                "hasStorage": true
               },
               {
                 "kind": "Constructor",
@@ -72929,70 +73172,70 @@
     {
       "filePath": "\/tmp\/idb-perf\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "BooleanLiteral",
-      "offset": 78436,
+      "offset": 78993,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/tmp\/idb-perf\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "FloatLiteral",
-      "offset": 81840,
+      "offset": 83692,
       "length": 3,
       "value": "1.0"
     },
     {
       "filePath": "\/tmp\/idb-perf\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "BooleanLiteral",
-      "offset": 84150,
+      "offset": 86002,
       "length": 4,
       "value": "true"
     },
     {
       "filePath": "\/tmp\/idb-perf\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "IntegerLiteral",
-      "offset": 87391,
+      "offset": 89243,
       "length": 1,
       "value": "0"
     },
     {
       "filePath": "\/tmp\/idb-perf\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "IntegerLiteral",
-      "offset": 87430,
+      "offset": 89282,
       "length": 1,
       "value": "0"
     },
     {
       "filePath": "\/tmp\/idb-perf\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "IntegerLiteral",
-      "offset": 87473,
+      "offset": 89325,
       "length": 1,
       "value": "0"
     },
     {
       "filePath": "\/tmp\/idb-perf\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "IntegerLiteral",
-      "offset": 87511,
+      "offset": 89363,
       "length": 1,
       "value": "0"
     },
     {
       "filePath": "\/tmp\/idb-perf\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "FloatLiteral",
-      "offset": 87538,
+      "offset": 89390,
       "length": 3,
       "value": "0.0"
     },
     {
       "filePath": "\/tmp\/idb-perf\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "FloatLiteral",
-      "offset": 87597,
+      "offset": 89449,
       "length": 3,
       "value": "0.0"
     },
     {
       "filePath": "\/tmp\/idb-perf\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "IntegerLiteral",
-      "offset": 88231,
+      "offset": 90083,
       "length": 1,
       "value": "0"
     },
