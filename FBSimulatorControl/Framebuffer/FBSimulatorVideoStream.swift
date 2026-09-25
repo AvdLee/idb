@@ -126,6 +126,10 @@ public protocol RSPixelBufferConsumer: AnyObject {
 /// as exactly one contiguous `Data` via `consumeEncodedFrame(_:)`, instead of the block buffer's
 /// segments being written piecemeal through `consumeData(_:)`. This lets a consumer forward whole
 /// frames (e.g. one WebSocket message per JPEG) without reassembling them.
+///
+/// `consumeEncodedFrame(_:)` is called from the VideoToolbox compression output handler, not on the
+/// stream's write queue, so conformers must be thread-safe. The stream deliberately doesn't
+/// re-dispatch, which would add latency and a copy per frame.
 @objc public protocol RSEncodedFrameConsumer: FBDataConsumer {
   func consumeEncodedFrame(_ data: Data)
 }
@@ -1189,7 +1193,7 @@ public class FBSimulatorVideoStream: NSObject, FBFramebufferPresentationTimeCons
         await runFramePushLoop(stimulus: FrameCadence(framesPerSecond: framesPerSecond, logger: logger), stats: stats)
       }
     case .lazy:
-      let triggers = LazyFrameTriggers(frameRateLimiter: frameRateLimiter)
+      let triggers = makeLazyTriggers()
       lazyTriggers = triggers
       framePusherTask = Task { [self] in
         await runFramePushLoop(stimulus: triggers, stats: nil)
@@ -1480,6 +1484,11 @@ public class FBSimulatorVideoStream: NSObject, FBFramebufferPresentationTimeCons
   /// The current `.lazy` push-rate cap, or nil when uncapped.
   public var maximumFrameRate: Double? { frameRateLimiter.maximumFramesPerSecond }
 
+  /// The `.lazy` push loop's trigger source, reading this stream's `frameRateLimiter`.
+  func makeLazyTriggers() -> LazyFrameTriggers {
+    LazyFrameTriggers(frameRateLimiter: frameRateLimiter)
+  }
+
   // MARK: - Keyframe Requests
 
   /// Request that the next encoded frame be a keyframe (IDR).
@@ -1672,7 +1681,7 @@ final class LazyFrameTriggers: AsyncSequence, @unchecked Sendable {
 
   private let stream: AsyncStream<Void>
   private let continuation: AsyncStream<Void>.Continuation
-  private let frameRateLimiter: FrameRateLimiter
+  let frameRateLimiter: FrameRateLimiter
   private let now: () -> ContinuousClock.Instant
   /// Suspends until the given instant; throws when cancelled.
   private let sleepUntil: (ContinuousClock.Instant) async throws -> Void
@@ -1752,6 +1761,9 @@ final class LazyFrameTriggers: AsyncSequence, @unchecked Sendable {
     }
 
     mutating func next() async -> FrameTrigger? {
+      if Task.isCancelled {
+        return nil
+      }
       var deadline: ContinuousClock.Instant?
       if let scheduleAnchor, let minimumFrameInterval = source.frameRateLimiter.minimumFrameInterval {
         let scheduled = scheduleAnchor + minimumFrameInterval
@@ -1887,11 +1899,13 @@ struct FrameCadence: AsyncSequence {
       }
 
       let now = self.now()
-      if now < nextTargetTime {
-        do {
-          try await sleepUntil(nextTargetTime)
-        } catch {
-          return nil // cancelled while sleeping
+      if now <= nextTargetTime {
+        if now < nextTargetTime {
+          do {
+            try await sleepUntil(nextTargetTime)
+          } catch {
+            return nil // cancelled while sleeping
+          }
         }
         nextTargetTime += frameIntervalMach
         return FrameTrigger(forceKeyFrame: false, overran: false)

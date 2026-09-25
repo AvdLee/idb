@@ -366,6 +366,12 @@ public final class FBFramebuffer: NSObject, @unchecked Sendable {
     return resolvedScreens
   }
 
+  /// A framebuffer with no display behind it, for unit tests that construct a stream without a simulator.
+  /// Attaching a consumer to it is unsupported.
+  convenience init(unbackedForTestingWithLogger logger: any FBControlCoreLogger) {
+    self.init(backing: .legacy(NSObject()), logger: logger)
+  }
+
   private init(backing: Backing, logger: any FBControlCoreLogger) {
     self.consumers = NSMapTable(keyOptions: .weakMemory, valueOptions: .copyIn)
     self.logger = logger

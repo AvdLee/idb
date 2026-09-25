@@ -307,20 +307,21 @@ final class FBSimulatorVideoStreamFrameRateCapTests: XCTestCase {
   }
 
   func testCappedTriggersAreSpacedByTheIntervalAndDeliverTheTrailingFrame() async throws {
-    let triggers = LazyFrameTriggers(frameRateLimiter: FrameRateLimiter(maximumFramesPerSecond: 20))
+    let clock = FakeClock()
+    let triggers = makeTriggers(limiter: FrameRateLimiter(maximumFramesPerSecond: 20), clock: clock)
     let interval = Duration.milliseconds(50)
     var iterator = triggers.makeAsyncIterator()
     var pushInstants: [ContinuousClock.Instant] = []
     var deadlines: [ContinuousClock.Instant?] = []
-    var lastDamageInstant = ContinuousClock.now
+    var lastDamageInstant = clock.now
 
     triggers.signalDamage()
     while await iterator.next() != nil {
       pushInstants.append(try XCTUnwrap(iterator.lastTriggerInstant))
       deadlines.append(iterator.lastTriggerDeadline)
       guard pushInstants.count < 5 else { continue }
-      // A burst of damage right after each push lands during the following wait and coalesces.
-      lastDamageInstant = .now
+      // A burst of damage before each wait coalesces into the next push.
+      lastDamageInstant = clock.now
       for _ in 0..<10 {
         triggers.signalDamage()
       }
@@ -331,15 +332,13 @@ final class FBSimulatorVideoStreamFrameRateCapTests: XCTestCase {
     }
 
     XCTAssertEqual(pushInstants.count, 5, "Each burst should coalesce into exactly one push, including the trailing one")
+    XCTAssertNil(deadlines[0], "The first push is not rate limited")
     let scheduled = deadlines.dropFirst().compactMap { $0 }
-    XCTAssertEqual(scheduled.count, 4, "Every push after the first waits for a deadline")
-    for (previous, next) in zip(scheduled, scheduled.dropFirst()) {
-      XCTAssertGreaterThanOrEqual(next - previous, interval, "Deadlines must be at least the minimum frame interval apart")
-    }
-    for (push, deadline) in zip(pushInstants.dropFirst(), scheduled) {
-      XCTAssertGreaterThanOrEqual(push, deadline, "A push must never precede its deadline")
-    }
-    XCTAssertGreaterThanOrEqual(try XCTUnwrap(pushInstants.last), lastDamageInstant, "The final push must follow the trailing damage")
+    XCTAssertEqual(scheduled, (1...4).map { pushInstants[0] + interval * $0 }, "Every later push waits for a deadline one interval after the previous one")
+    // The last wait precedes pulling the end of the finished stream.
+    XCTAssertEqual(Array(clock.sleepDeadlines.prefix(4)), scheduled)
+    XCTAssertEqual(Array(pushInstants.dropFirst()), scheduled, "Each push happens at its deadline, never before")
+    XCTAssertGreaterThan(try XCTUnwrap(pushInstants.last), lastDamageInstant, "The final push must follow the trailing damage")
   }
 
   func testRuntimeCapChangeAppliesFromTheNextWait() async throws {
@@ -435,13 +434,16 @@ final class FBSimulatorVideoStreamFrameRateCapTests: XCTestCase {
   }
 
   func testUncappedTriggersDoNotWait() async throws {
-    let triggers = LazyFrameTriggers()
+    let clock = FakeClock()
+    let triggers = makeTriggers(limiter: FrameRateLimiter(), clock: clock)
+    let start = clock.now
     var iterator = triggers.makeAsyncIterator()
     var pushInstants: [ContinuousClock.Instant] = []
 
     triggers.signalDamage()
     while await iterator.next() != nil {
       pushInstants.append(try XCTUnwrap(iterator.lastTriggerInstant))
+      XCTAssertNil(iterator.lastTriggerDeadline)
       if pushInstants.count == 3 {
         triggers.finish()
       } else {
@@ -449,8 +451,51 @@ final class FBSimulatorVideoStreamFrameRateCapTests: XCTestCase {
       }
     }
 
-    XCTAssertEqual(pushInstants.count, 3)
-    XCTAssertLessThan(try XCTUnwrap(pushInstants.last) - pushInstants[0], .milliseconds(100), "No cap means no wait between pushes")
+    XCTAssertEqual(pushInstants, [start, start, start], "No cap means no wait between pushes")
+    XCTAssertTrue(clock.sleepDeadlines.isEmpty)
+  }
+
+  func testCancelledTaskEndsTheTriggers() async {
+    let clock = FakeClock()
+    let triggers = makeTriggers(limiter: FrameRateLimiter(maximumFramesPerSecond: 30), clock: clock)
+    triggers.signalDamage()
+
+    let task = Task {
+      var iterator = triggers.makeAsyncIterator()
+      withUnsafeCurrentTask { $0?.cancel() }
+      return await iterator.next()
+    }
+
+    let result = await task.value
+    XCTAssertNil(result, "A cancelled push loop must end even though the triggers were never finished")
+    XCTAssertTrue(clock.sleepDeadlines.isEmpty)
+  }
+
+  func testStreamFrameRateCapReachesTheLazyTriggers() throws {
+    let logger = FBCapturingLogger()
+    let configuration = FBVideoStreamConfiguration(
+      format: .compressedVideo(withCodec: .h264, transport: .annexB),
+      framesPerSecond: nil,
+      rateControl: nil,
+      scaleFactor: nil,
+      keyFrameRate: 10.0)
+    let stream = FBSimulatorVideoStream.make(
+      framebuffer: FBFramebuffer(unbackedForTestingWithLogger: logger),
+      configuration: configuration,
+      logger: logger)
+    let triggers = stream.makeLazyTriggers()
+
+    XCTAssertTrue(triggers.frameRateLimiter === stream.frameRateLimiter, "The lazy push loop must read the stream's limiter")
+    XCTAssertNil(stream.maximumFrameRate)
+    XCTAssertNil(triggers.frameRateLimiter.minimumFrameInterval)
+
+    stream.setMaximumFrameRate(24)
+    XCTAssertEqual(stream.maximumFrameRate, 24)
+    XCTAssertEqual(triggers.frameRateLimiter.minimumFrameInterval, .seconds(1.0 / 24.0))
+
+    stream.setMaximumFrameRate(nil)
+    XCTAssertNil(stream.maximumFrameRate)
+    XCTAssertNil(triggers.frameRateLimiter.minimumFrameInterval)
   }
 
   func testFrameRateLimiterNormalizesTheCap() {
@@ -552,6 +597,28 @@ final class FBSimulatorVideoStreamFrameCadenceTests: XCTestCase {
     let overrunLogs = logger.messages.compactMap { $0 as? String }.filter { $0.hasPrefix("Frame push exceeded budget") }
     XCTAssertEqual(overrunLogs.count, 1, "One overrun line per stall, not one per missed tick")
     XCTAssertTrue(overrunLogs.first?.hasSuffix("dropped 5 ticks") ?? false, "\(overrunLogs)")
+  }
+
+  func testTickExactlyAtTheDeadlineIsOnTime() async throws {
+    let clock = FakeClock()
+    let logger = FBCapturingLogger()
+    let start = clock.now
+    var iterator = makeIterator(clock: clock, logger: logger)
+    let interval = iterator.frameIntervalMach
+
+    _ = await iterator.next()
+    clock.now = start + interval
+
+    let onTimeResult = await iterator.next()
+
+    let onTime = try XCTUnwrap(onTimeResult)
+    XCTAssertFalse(onTime.overran, "Reaching the deadline exactly is not an overrun")
+    XCTAssertEqual(onTime.droppedTicks, 0)
+    XCTAssertTrue(clock.sleepDeadlines.isEmpty, "Nothing to wait for at the deadline")
+    XCTAssertTrue(logger.messages.compactMap { $0 as? String }.filter { $0.hasPrefix("Frame push exceeded budget") }.isEmpty)
+
+    _ = await iterator.next()
+    XCTAssertEqual(clock.sleepDeadlines, [start + 2 * interval], "The schedule advances by one interval")
   }
 
   func testOverrunWithinOneIntervalDropsNothing() async throws {
