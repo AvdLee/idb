@@ -286,19 +286,38 @@ final class FBSimulatorVideoStreamCallbackTests: XCTestCase {
 
 /// Tests for the `.lazy` cadence frame-rate cap (`FrameRateLimiter` + `LazyFrameTriggers`).
 /// The push loop awaits each push before pulling the next trigger, so iterating the triggers directly
-/// and stamping each yield (`lastTriggerInstant`) models the push start times exactly.
+/// and stamping each yield (`lastTriggerInstant`) models the push start times exactly. Most tests use a
+/// fake clock whose sleep jumps to the deadline plus a configurable wake lateness, so nothing really sleeps.
 final class FBSimulatorVideoStreamFrameRateCapTests: XCTestCase {
+
+  private final class FakeClock: @unchecked Sendable {
+    var now = ContinuousClock.now
+    var wakeLateness = Duration.zero
+    var sleepDeadlines: [ContinuousClock.Instant] = []
+  }
+
+  private func makeTriggers(limiter: FrameRateLimiter, clock: FakeClock) -> LazyFrameTriggers {
+    LazyFrameTriggers(
+      frameRateLimiter: limiter,
+      now: { clock.now },
+      sleepUntil: { deadline in
+        clock.sleepDeadlines.append(deadline)
+        clock.now = deadline + clock.wakeLateness
+      })
+  }
 
   func testCappedTriggersAreSpacedByTheIntervalAndDeliverTheTrailingFrame() async throws {
     let triggers = LazyFrameTriggers(frameRateLimiter: FrameRateLimiter(maximumFramesPerSecond: 20))
     let interval = Duration.milliseconds(50)
     var iterator = triggers.makeAsyncIterator()
     var pushInstants: [ContinuousClock.Instant] = []
+    var deadlines: [ContinuousClock.Instant?] = []
     var lastDamageInstant = ContinuousClock.now
 
     triggers.signalDamage()
     while await iterator.next() != nil {
       pushInstants.append(try XCTUnwrap(iterator.lastTriggerInstant))
+      deadlines.append(iterator.lastTriggerDeadline)
       guard pushInstants.count < 5 else { continue }
       // A burst of damage right after each push lands during the following wait and coalesces.
       lastDamageInstant = .now
@@ -312,15 +331,20 @@ final class FBSimulatorVideoStreamFrameRateCapTests: XCTestCase {
     }
 
     XCTAssertEqual(pushInstants.count, 5, "Each burst should coalesce into exactly one push, including the trailing one")
-    for (previous, next) in zip(pushInstants, pushInstants.dropFirst()) {
-      XCTAssertGreaterThanOrEqual(next - previous, interval, "Pushes must be spaced by at least the minimum frame interval")
+    let scheduled = deadlines.dropFirst().compactMap { $0 }
+    XCTAssertEqual(scheduled.count, 4, "Every push after the first waits for a deadline")
+    for (previous, next) in zip(scheduled, scheduled.dropFirst()) {
+      XCTAssertGreaterThanOrEqual(next - previous, interval, "Deadlines must be at least the minimum frame interval apart")
+    }
+    for (push, deadline) in zip(pushInstants.dropFirst(), scheduled) {
+      XCTAssertGreaterThanOrEqual(push, deadline, "A push must never precede its deadline")
     }
     XCTAssertGreaterThanOrEqual(try XCTUnwrap(pushInstants.last), lastDamageInstant, "The final push must follow the trailing damage")
   }
 
   func testRuntimeCapChangeAppliesFromTheNextWait() async throws {
     let limiter = FrameRateLimiter(maximumFramesPerSecond: 20)
-    let triggers = LazyFrameTriggers(frameRateLimiter: limiter)
+    let triggers = makeTriggers(limiter: limiter, clock: FakeClock())
     var iterator = triggers.makeAsyncIterator()
     var pushInstants: [ContinuousClock.Instant] = []
 
@@ -346,6 +370,68 @@ final class FBSimulatorVideoStreamFrameRateCapTests: XCTestCase {
     XCTAssertGreaterThanOrEqual(pushInstants[2] - pushInstants[1], .milliseconds(100), "Lowering to 10 fps applies from the next wait")
     XCTAssertGreaterThanOrEqual(pushInstants[3] - pushInstants[2], .milliseconds(100))
     XCTAssertLessThan(pushInstants[4] - pushInstants[3], .milliseconds(100), "Removing the cap stops waiting")
+  }
+
+  func testWakeLatenessDoesNotAccumulate() async throws {
+    let clock = FakeClock()
+    clock.wakeLateness = .milliseconds(4)
+    let triggers = makeTriggers(limiter: FrameRateLimiter(maximumFramesPerSecond: 30), clock: clock)
+    var iterator = triggers.makeAsyncIterator()
+    var pushInstants: [ContinuousClock.Instant] = []
+
+    triggers.signalDamage()
+    while pushInstants.count < 31, await iterator.next() != nil {
+      pushInstants.append(try XCTUnwrap(iterator.lastTriggerInstant))
+      triggers.signalDamage()
+    }
+
+    let elapsed = try XCTUnwrap(pushInstants.last) - pushInstants[0]
+    XCTAssertGreaterThanOrEqual(elapsed, .seconds(1), "30 intervals at 30 fps must never run faster than the cap")
+    XCTAssertLessThanOrEqual(elapsed, .milliseconds(1010), "Wake lateness must not compound: the rate stays within 1% of the cap")
+    for (previous, next) in zip(pushInstants, pushInstants.dropFirst()) {
+      XCTAssertGreaterThanOrEqual(next - previous, .seconds(1.0 / 30.0) - .milliseconds(4), "Spacing shrinks by at most the previous lateness")
+    }
+  }
+
+  func testIdleGapRestartsTheScheduleWithoutBursting() async throws {
+    let clock = FakeClock()
+    let triggers = makeTriggers(limiter: FrameRateLimiter(maximumFramesPerSecond: 30), clock: clock)
+    let interval = Duration.seconds(1.0 / 30.0)
+    var iterator = triggers.makeAsyncIterator()
+
+    triggers.signalDamage()
+    _ = await iterator.next()
+    clock.now += interval * 3
+    let resumeInstant = clock.now
+
+    triggers.signalDamage()
+    _ = await iterator.next()
+    XCTAssertEqual(iterator.lastTriggerInstant, resumeInstant, "The first trigger after an idle gap yields immediately")
+    XCTAssertTrue(clock.sleepDeadlines.isEmpty)
+
+    triggers.signalDamage()
+    _ = await iterator.next()
+    XCTAssertEqual(clock.sleepDeadlines, [resumeInstant + interval], "The next trigger waits a full interval, not a catch-up burst")
+  }
+
+  func testRemovingTheCapYieldsImmediately() async throws {
+    let clock = FakeClock()
+    let limiter = FrameRateLimiter(maximumFramesPerSecond: 30)
+    let triggers = makeTriggers(limiter: limiter, clock: clock)
+    var iterator = triggers.makeAsyncIterator()
+
+    triggers.signalDamage()
+    _ = await iterator.next()
+    triggers.signalDamage()
+    _ = await iterator.next()
+    XCTAssertEqual(clock.sleepDeadlines.count, 1)
+    let afterCappedPush = clock.now
+
+    limiter.setMaximumFramesPerSecond(nil)
+    triggers.signalDamage()
+    _ = await iterator.next()
+    XCTAssertEqual(clock.sleepDeadlines.count, 1, "Uncapped triggers must not wait")
+    XCTAssertEqual(iterator.lastTriggerInstant, afterCappedPush)
   }
 
   func testUncappedTriggersDoNotWait() async throws {

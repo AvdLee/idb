@@ -1657,10 +1657,14 @@ struct FrameTrigger {
 /// must survive that coalescing, so it is not carried on a (droppable) trigger but held as a sticky
 /// flag that `signalKeyFrame()` sets and the iterator reads-and-clears as it pulls each trigger.
 ///
-/// When `frameRateLimiter` has a cap, the iterator waits until the minimum frame interval has elapsed
-/// since it yielded the previous trigger before pulling the next one. Because the loop awaits each push
-/// before calling `next()`, that spaces pushes by at least the interval; triggers signalled during the
-/// wait coalesce into the single buffered one, so a trailing damage event still yields a final push.
+/// When `frameRateLimiter` has a cap, the iterator waits for a deadline before pulling the next trigger;
+/// triggers signalled during the wait coalesce into the single buffered one, so a trailing damage event
+/// still yields a final push. Deadlines are phase-locked: if a trigger yields within one interval of its
+/// deadline (late from timer slack or from waiting for damage), the next deadline is that deadline plus
+/// the interval, so lateness doesn't accumulate and the long-run rate matches the cap. After an idle gap
+/// the next deadline restarts from the yield. Deadlines are therefore always at least one interval apart
+/// (never above the cap, never a catch-up burst), and consecutive pushes are spaced less than an interval
+/// only by the previous trigger's lateness.
 // @unchecked Sendable: `pendingKeyFrame` is mutable across threads but guarded by `lock`; the stream
 // and its continuation are Sendable, and `FrameRateLimiter` is internally locked.
 final class LazyFrameTriggers: AsyncSequence, @unchecked Sendable {
@@ -1669,13 +1673,22 @@ final class LazyFrameTriggers: AsyncSequence, @unchecked Sendable {
   private let stream: AsyncStream<Void>
   private let continuation: AsyncStream<Void>.Continuation
   private let frameRateLimiter: FrameRateLimiter
+  private let now: () -> ContinuousClock.Instant
+  /// Suspends until the given instant; throws when cancelled.
+  private let sleepUntil: (ContinuousClock.Instant) async throws -> Void
   private let lock = NSLock()
   /// Whether the next pushed frame must be a keyframe. Guarded by `lock`; set by `signalKeyFrame`,
   /// read-and-cleared by the iterator, so coalescing never drops a pending keyframe.
   private var pendingKeyFrame = false
 
-  init(frameRateLimiter: FrameRateLimiter = FrameRateLimiter()) {
+  init(
+    frameRateLimiter: FrameRateLimiter = FrameRateLimiter(),
+    now: @escaping () -> ContinuousClock.Instant = { .now },
+    sleepUntil: @escaping (ContinuousClock.Instant) async throws -> Void = LazyFrameTriggers.sleepUntil
+  ) {
     self.frameRateLimiter = frameRateLimiter
+    self.now = now
+    self.sleepUntil = sleepUntil
     // The `AsyncStream` builder hands back the continuation synchronously during init, so the IUO is
     // always assigned before use. This is the pre-`makeStream` idiom (`makeStream` needs a newer
     // deployment target than our macOS 12 floor).
@@ -1704,6 +1717,12 @@ final class LazyFrameTriggers: AsyncSequence, @unchecked Sendable {
     continuation.finish()
   }
 
+  /// Production sleep. The write queue runs at utility QoS, where the default timer slack wakes every wait
+  /// several milliseconds late; an explicit tolerance keeps deadlines close to the cap.
+  static func sleepUntil(_ deadline: ContinuousClock.Instant) async throws {
+    try await Task.sleep(until: deadline, tolerance: .milliseconds(1), clock: .continuous)
+  }
+
   /// Atomically read and clear the sticky keyframe flag.
   private func takePendingKeyFrame() -> Bool {
     lock.lock()
@@ -1722,6 +1741,10 @@ final class LazyFrameTriggers: AsyncSequence, @unchecked Sendable {
     let source: LazyFrameTriggers
     /// When the previous trigger was yielded (i.e. when its push started); nil before the first.
     private(set) var lastTriggerInstant: ContinuousClock.Instant?
+    /// The deadline the previous trigger waited for, or nil when it wasn't rate limited.
+    private(set) var lastTriggerDeadline: ContinuousClock.Instant?
+    /// The next deadline is this plus the current minimum frame interval; nil before the first trigger.
+    private var scheduleAnchor: ContinuousClock.Instant?
 
     init(base: AsyncStream<Void>.Iterator, source: LazyFrameTriggers) {
       self.base = base
@@ -1729,18 +1752,27 @@ final class LazyFrameTriggers: AsyncSequence, @unchecked Sendable {
     }
 
     mutating func next() async -> FrameTrigger? {
-      if let lastTriggerInstant, let minimumFrameInterval = source.frameRateLimiter.minimumFrameInterval {
-        let deadline = lastTriggerInstant + minimumFrameInterval
-        if deadline > .now {
+      var deadline: ContinuousClock.Instant?
+      if let scheduleAnchor, let minimumFrameInterval = source.frameRateLimiter.minimumFrameInterval {
+        let scheduled = scheduleAnchor + minimumFrameInterval
+        deadline = scheduled
+        if scheduled > source.now() {
           do {
-            try await Task.sleep(until: deadline, clock: .continuous)
+            try await source.sleepUntil(scheduled)
           } catch {
             return nil // cancelled while waiting
           }
         }
       }
       guard await base.next() != nil else { return nil }
-      lastTriggerInstant = .now
+      let yieldInstant = source.now()
+      if let deadline, let minimumFrameInterval = source.frameRateLimiter.minimumFrameInterval, yieldInstant - deadline < minimumFrameInterval {
+        scheduleAnchor = deadline
+      } else {
+        scheduleAnchor = yieldInstant
+      }
+      lastTriggerInstant = yieldInstant
+      lastTriggerDeadline = deadline
       return FrameTrigger(forceKeyFrame: source.takePendingKeyFrame(), overran: false)
     }
   }
