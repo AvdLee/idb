@@ -863,6 +863,18 @@ SWIFT_CLASS_NAMED("FBSurfaceImageGenerator")
 + (nonnull instancetype)new SWIFT_UNAVAILABLE_MSG("-init is unavailable");
 @end
 
+/// RocketSim addition: consumers of an MJPEG stream that conform to this protocol receive each JPEG
+/// as exactly one contiguous <code>Data</code> via <code>consumeEncodedFrame(_:)</code>, instead of the block buffer’s
+/// segments being written piecemeal through <code>consumeData(_:)</code>. This lets a consumer forward whole
+/// frames (e.g. one WebSocket message per JPEG) without reassembling them.
+/// <code>consumeEncodedFrame(_:)</code> is called from the VideoToolbox compression output handler, not on the
+/// stream’s write queue, so conformers must be thread-safe. The stream deliberately doesn’t
+/// re-dispatch, which would add latency and a copy per frame.
+SWIFT_PROTOCOL("_TtP18FBSimulatorControl22RSEncodedFrameConsumer_")
+@protocol RSEncodedFrameConsumer <FBDataConsumer>
+- (void)consumeEncodedFrame:(NSData * _Nonnull)data;
+@end
+
 #endif // defined(__OBJC__)
 #if __has_attribute(external_source_symbol)
 # pragma clang attribute pop
@@ -1734,6 +1746,18 @@ SWIFT_CLASS_NAMED("FBSurfaceImageGenerator")
 - (void)didReceiveDamageRect;
 - (nonnull instancetype)init SWIFT_UNAVAILABLE;
 + (nonnull instancetype)new SWIFT_UNAVAILABLE_MSG("-init is unavailable");
+@end
+
+/// RocketSim addition: consumers of an MJPEG stream that conform to this protocol receive each JPEG
+/// as exactly one contiguous <code>Data</code> via <code>consumeEncodedFrame(_:)</code>, instead of the block buffer’s
+/// segments being written piecemeal through <code>consumeData(_:)</code>. This lets a consumer forward whole
+/// frames (e.g. one WebSocket message per JPEG) without reassembling them.
+/// <code>consumeEncodedFrame(_:)</code> is called from the VideoToolbox compression output handler, not on the
+/// stream’s write queue, so conformers must be thread-safe. The stream deliberately doesn’t
+/// re-dispatch, which would add latency and a copy per frame.
+SWIFT_PROTOCOL("_TtP18FBSimulatorControl22RSEncodedFrameConsumer_")
+@protocol RSEncodedFrameConsumer <FBDataConsumer>
+- (void)consumeEncodedFrame:(NSData * _Nonnull)data;
 @end
 
 #endif // defined(__OBJC__)

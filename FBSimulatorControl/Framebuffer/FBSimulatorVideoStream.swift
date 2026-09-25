@@ -120,6 +120,36 @@ public protocol RSPixelBufferConsumer: AnyObject {
   func writeEncodedFrame(_ pixelBuffer: CVPixelBuffer, frameNumber: UInt, timeAtFirstFrame: CFTimeInterval, frameUptime: TimeInterval) throws
 }
 
+// MARK: - Encoded Frame Consumer (RocketSim addition)
+
+/// RocketSim addition: consumers of an MJPEG stream that conform to this protocol receive each JPEG
+/// as exactly one contiguous `Data` via `consumeEncodedFrame(_:)`, instead of the block buffer's
+/// segments being written piecemeal through `consumeData(_:)`. This lets a consumer forward whole
+/// frames (e.g. one WebSocket message per JPEG) without reassembling them.
+///
+/// `consumeEncodedFrame(_:)` is called from the VideoToolbox compression output handler, not on the
+/// stream's write queue, so conformers must be thread-safe. The stream deliberately doesn't
+/// re-dispatch, which would add latency and a copy per frame.
+@objc public protocol RSEncodedFrameConsumer: FBDataConsumer {
+  func consumeEncodedFrame(_ data: Data)
+}
+
+/// Copy the full contents of `blockBuffer` into a single contiguous `Data`, regardless of how many
+/// memory blocks back it.
+func contiguousData(from blockBuffer: CMBlockBuffer) throws -> Data {
+  let dataLength = CMBlockBufferGetDataLength(blockBuffer)
+  guard dataLength > 0 else { return Data() }
+  var data = Data(count: dataLength)
+  let status = data.withUnsafeMutableBytes { bytes -> OSStatus in
+    guard let baseAddress = bytes.baseAddress else { return kCMBlockBufferBadPointerParameterErr }
+    return CMBlockBufferCopyDataBytes(blockBuffer, atOffset: 0, dataLength: dataLength, destination: baseAddress)
+  }
+  if status != kCMBlockBufferNoErr {
+    throw FBControlCoreError.describe("Failed to copy block buffer data: \(status)").build()
+  }
+  return data
+}
+
 // MARK: - Frame Pusher Protocol
 
 /// Frame pusher abstraction. Concrete pushers convert + write frames to the consumer.
@@ -489,10 +519,19 @@ final class FBSimulatorVideoStreamFramePusher_VideoToolbox: NSObject, FBSimulato
     }
   }
 
-  /// MJPEG output: write the encoded sample's JPEG block buffer straight to the MJPEG stream.
+  /// MJPEG output: write the encoded sample's JPEG block buffer straight to the MJPEG stream, or, for an
+  /// `RSEncodedFrameConsumer`, deliver it as one contiguous `Data` per JPEG.
   /// Ignores encode status/flags, matching the former `MJPEGCompressorCallback`.
-  private func handleMJPEGSampleBuffer(_ sampleBuffer: CMSampleBuffer?) {
+  func handleMJPEGSampleBuffer(_ sampleBuffer: CMSampleBuffer?) {
     guard let sampleBuffer, let blockBuffer = CMSampleBufferGetDataBuffer(sampleBuffer) else { return }
+    if let encodedFrameConsumer = consumer as? RSEncodedFrameConsumer {
+      do {
+        encodedFrameConsumer.consumeEncodedFrame(try contiguousData(from: blockBuffer))
+      } catch {
+        logger.log("Failed to write MJPEG frame: \(error)")
+      }
+      return
+    }
     var error: NSError?
     if !WriteJPEGDataToMJPEGStream(blockBuffer, consumer, logger, &error) {
       logger.log("Failed to write MJPEG frame: \(String(describing: error))")
@@ -521,17 +560,38 @@ final class FBSimulatorVideoStreamFramePusher_VideoToolbox: NSObject, FBSimulato
     }
   }
 
-  func setup(with pixelBuffer: CVPixelBuffer, edgeInsets: FBVideoStreamEdgeInsets) throws {
-    var encoderSpecification: [String: Any] = [
-      kVTVideoEncoderSpecification_EnableHardwareAcceleratedVideoEncoder as String: true
-    ]
-    if #available(macOS 12.1, *) {
-      encoderSpecification = [
-        kVTVideoEncoderSpecification_RequireHardwareAcceleratedVideoEncoder as String: true,
-        kVTVideoEncoderSpecification_EnableLowLatencyRateControl as String: true,
+  /// Encoder specifications to try, in order, with a description for logging.
+  ///
+  /// H.264/HEVC: a single attempt. On macOS 12.1+ it requires the hardware encoder with low-latency
+  /// rate control. JPEG: low-latency rate control only applies to H.264/HEVC, and VideoToolbox rejects
+  /// it for JPEG with `kVTParameterErr` (-12902). So JPEG requires the hardware encoder first, then
+  /// falls back to preferring it without the requirement.
+  static func encoderSpecifications(for videoCodec: CMVideoCodecType) -> [(description: String, specification: [String: Any])] {
+    let enableHardware: (description: String, specification: [String: Any]) = (
+      "hardware encoder preferred",
+      [kVTVideoEncoderSpecification_EnableHardwareAcceleratedVideoEncoder as String: true]
+    )
+    guard #available(macOS 12.1, *) else {
+      return [enableHardware]
+    }
+    if videoCodec == kCMVideoCodecType_JPEG {
+      return [
+        ("hardware encoder required", [kVTVideoEncoderSpecification_RequireHardwareAcceleratedVideoEncoder as String: true]),
+        enableHardware,
       ]
     }
+    return [
+      (
+        "hardware encoder required, low-latency rate control",
+        [
+          kVTVideoEncoderSpecification_RequireHardwareAcceleratedVideoEncoder as String: true,
+          kVTVideoEncoderSpecification_EnableLowLatencyRateControl as String: true,
+        ]
+      )
+    ]
+  }
 
+  func setup(with pixelBuffer: CVPixelBuffer, edgeInsets: FBVideoStreamEdgeInsets) throws {
     let sourceWidth = CVPixelBufferGetWidth(pixelBuffer)
     let sourceHeight = CVPixelBufferGetHeight(pixelBuffer)
     var destinationWidth = sourceWidth
@@ -559,6 +619,14 @@ final class FBSimulatorVideoStreamFramePusher_VideoToolbox: NSObject, FBSimulato
       throw FBSimulatorError.describe("Failed to create VTPixelTransferSession: \(transferStatus)").build()
     }
     self.pixelTransferSession = transferSession
+    // JPEG decoders (JFIF) assume BT.601 YCbCr; VT's default BT.709 conversion shifts saturated colours.
+    // H.264/HEVC stay BT.709, which recordings and players expect.
+    if videoCodec == kCMVideoCodecType_JPEG, let transferSession {
+      let matrixStatus = VTSessionSetProperty(transferSession, key: kVTPixelTransferPropertyKey_DestinationYCbCrMatrix, value: kCVImageBufferYCbCrMatrix_ITU_R_601_4)
+      if matrixStatus != noErr {
+        throw FBSimulatorError.describe("Failed to set the JPEG YCbCr matrix on VTPixelTransferSession: \(matrixStatus)").build()
+      }
+    }
     self.nv12PixelBufferPool = createNV12PixelBufferPool(width: destinationWidth, height: destinationHeight)
     logger.info().log("Created BGRA→NV12 conversion pipeline at w=\(destinationWidth)/h=\(destinationHeight) (GPU via VTPixelTransferSession)")
 
@@ -574,18 +642,30 @@ final class FBSimulatorVideoStreamFramePusher_VideoToolbox: NSObject, FBSimulato
     // `VTCompressionSessionEncodeFrame(...outputHandler:)` overload (see `writeEncodedFrame`),
     // so the session needs neither an `outputCallback` nor a `refcon`.
     var compressionSession: VTCompressionSession?
-    let status = VTCompressionSessionCreate(
-      allocator: nil,
-      width: Int32(destinationWidth),
-      height: Int32(destinationHeight),
-      codecType: videoCodec,
-      encoderSpecification: encoderSpecification as CFDictionary,
-      imageBufferAttributes: sourceImageBufferAttributes as CFDictionary,
-      compressedDataAllocator: nil,
-      outputCallback: nil,
-      refcon: nil,
-      compressionSessionOut: &compressionSession
-    )
+    var status: OSStatus = noErr
+    let candidates = Self.encoderSpecifications(for: videoCodec)
+    for (index, candidate) in candidates.enumerated() {
+      compressionSession = nil
+      status = VTCompressionSessionCreate(
+        allocator: nil,
+        width: Int32(destinationWidth),
+        height: Int32(destinationHeight),
+        codecType: videoCodec,
+        encoderSpecification: candidate.specification as CFDictionary,
+        imageBufferAttributes: sourceImageBufferAttributes as CFDictionary,
+        compressedDataAllocator: nil,
+        outputCallback: nil,
+        refcon: nil,
+        compressionSessionOut: &compressionSession
+      )
+      if status == noErr {
+        logger.info().log("Created \(fourCharCodeString(videoCodec)) compression session (\(candidate.description))")
+        break
+      }
+      if index < candidates.count - 1 {
+        logger.log("Failed to create \(fourCharCodeString(videoCodec)) compression session (\(candidate.description)): \(status), retrying with \(candidates[index + 1].description)")
+      }
+    }
     if status != noErr {
       throw FBSimulatorError.describe("Failed to start Compression Session \(status)").build()
     }
@@ -646,6 +726,9 @@ final class FBSimulatorVideoStreamFramePusher_VideoToolbox: NSObject, FBSimulato
       if returnStatus == kCVReturnSuccess, let nv12Buffer {
         let transferStatus = VTPixelTransferSessionTransferImage(pixelTransferSession, from: pixelBuffer, to: nv12Buffer)
         if transferStatus == noErr {
+          if videoCodec == kCMVideoCodecType_JPEG {
+            CVBufferSetAttachment(nv12Buffer, kCVImageBufferYCbCrMatrixKey, kCVImageBufferYCbCrMatrix_ITU_R_601_4, .shouldPropagate)
+          }
           bufferToWrite = nv12Buffer
         } else {
           logger.log("VTPixelTransferSession BGRA→NV12 failed: \(transferStatus) — falling back to BGRA input")
@@ -767,6 +850,9 @@ public class FBSimulatorVideoStream: NSObject, FBFramebufferPresentationTimeCons
   /// finished in `cadenceTeardown`. Nil in `.eager` mode (the cadence clock drives pushes there).
   private var lazyTriggers: LazyFrameTriggers?
 
+  /// Caps the `.lazy` push rate (see `setMaximumFrameRate(_:)`). Uncapped by default.
+  let frameRateLimiter = FrameRateLimiter()
+
   /// CVPixelBuffer is ARC-managed; held strong and released automatically.
   var pixelBuffer: CVPixelBuffer?
   var timeAtFirstFrame: CFTimeInterval = 0
@@ -792,27 +878,29 @@ public class FBSimulatorVideoStream: NSObject, FBFramebufferPresentationTimeCons
 
   // MARK: - Initializers
 
-  class func makeWriteQueue() -> DispatchQueue {
-    DispatchQueue(label: "com.facebook.FBSimulatorControl.BitmapStream")
+  /// `qos` defaults to `.unspecified`, the QoS of a queue created without one.
+  class func makeWriteQueue(qos: DispatchQoS = .unspecified) -> DispatchQueue {
+    DispatchQueue(label: "com.facebook.FBSimulatorControl.BitmapStream", qos: qos)
   }
 
   /// Constructs a Bitmap Stream.
   /// Bitmaps will only be written when there is a new bitmap available.
+  /// `writeQueueQoS` sets the QoS of the queue that serializes framebuffer callbacks and frame pushes.
   ///
   /// Static factories (rather than initializers) since they must derive the cadence strategy.
-  public class func make(framebuffer: FBFramebuffer, configuration: FBVideoStreamConfiguration, logger: any FBControlCoreLogger) -> FBSimulatorVideoStream {
-    make(framebuffer: framebuffer, configuration: configuration, edgeInsets: FBVideoStreamEdgeInsets(top: 0, bottom: 0, left: 0, right: 0), logger: logger)
+  public class func make(framebuffer: FBFramebuffer, configuration: FBVideoStreamConfiguration, writeQueueQoS: DispatchQoS = .unspecified, logger: any FBControlCoreLogger) -> FBSimulatorVideoStream {
+    make(framebuffer: framebuffer, configuration: configuration, edgeInsets: FBVideoStreamEdgeInsets(top: 0, bottom: 0, left: 0, right: 0), writeQueueQoS: writeQueueQoS, logger: logger)
   }
 
   /// Constructs a Bitmap Stream with edge insets for overlay content.
   /// Insets extend the output frame dimensions, pushing video content inward.
-  public class func make(framebuffer: FBFramebuffer, configuration: FBVideoStreamConfiguration, edgeInsets: FBVideoStreamEdgeInsets, logger: any FBControlCoreLogger) -> FBSimulatorVideoStream {
+  public class func make(framebuffer: FBFramebuffer, configuration: FBVideoStreamConfiguration, edgeInsets: FBVideoStreamEdgeInsets, writeQueueQoS: DispatchQoS = .unspecified, logger: any FBControlCoreLogger) -> FBSimulatorVideoStream {
     FBSimulatorVideoStream(
       framebuffer: framebuffer,
       configuration: configuration,
       edgeInsets: edgeInsets,
       cadence: cadence(for: configuration),
-      writeQueue: makeWriteQueue(),
+      writeQueue: makeWriteQueue(qos: writeQueueQoS),
       logger: logger)
   }
 
@@ -832,8 +920,8 @@ public class FBSimulatorVideoStream: NSObject, FBFramebufferPresentationTimeCons
   }
 
   /// Starts a Bitmap Stream to `consumer` and returns the running handle.
-  public class func start(framebuffer: FBFramebuffer, configuration: FBVideoStreamConfiguration, edgeInsets: FBVideoStreamEdgeInsets = FBVideoStreamEdgeInsets(top: 0, bottom: 0, left: 0, right: 0), to consumer: any FBDataConsumer, logger: any FBControlCoreLogger) async throws -> FBSimulatorVideoStream {
-    let stream = make(framebuffer: framebuffer, configuration: configuration, edgeInsets: edgeInsets, logger: logger)
+  public class func start(framebuffer: FBFramebuffer, configuration: FBVideoStreamConfiguration, edgeInsets: FBVideoStreamEdgeInsets = FBVideoStreamEdgeInsets(top: 0, bottom: 0, left: 0, right: 0), writeQueueQoS: DispatchQoS = .unspecified, to consumer: any FBDataConsumer, logger: any FBControlCoreLogger) async throws -> FBSimulatorVideoStream {
+    let stream = make(framebuffer: framebuffer, configuration: configuration, edgeInsets: edgeInsets, writeQueueQoS: writeQueueQoS, logger: logger)
     try await bridgeFBFutureVoid(stream.startStreaming(consumer))
     return stream
   }
@@ -973,7 +1061,11 @@ public class FBSimulatorVideoStream: NSObject, FBFramebufferPresentationTimeCons
   @objc(didChangeIOSurface:)
   public func didChange(_ surface: IOSurface?) {
     guard let surface else { return }
-    try? mountSurface(surface)
+    do {
+      try mountSurface(surface)
+    } catch {
+      logger.log("Failed to mount surface: \(error)")
+    }
     pushFrame(forceKeyFrame: false)
   }
 
@@ -1101,7 +1193,7 @@ public class FBSimulatorVideoStream: NSObject, FBFramebufferPresentationTimeCons
         await runFramePushLoop(stimulus: FrameCadence(framesPerSecond: framesPerSecond, logger: logger), stats: stats)
       }
     case .lazy:
-      let triggers = LazyFrameTriggers()
+      let triggers = makeLazyTriggers()
       lazyTriggers = triggers
       framePusherTask = Task { [self] in
         await runFramePushLoop(stimulus: triggers, stats: nil)
@@ -1375,6 +1467,28 @@ public class FBSimulatorVideoStream: NSObject, FBFramebufferPresentationTimeCons
     }
   }
 
+  // MARK: - Frame Rate Cap
+
+  /// Cap the `.lazy` (VFR) push rate at `framesPerSecond`; nil (or a non-positive value) removes the cap.
+  /// After each push the loop waits until `1 / framesPerSecond` has elapsed since that push before
+  /// taking the next damage trigger. Damage that arrives during the wait is coalesced, so the final
+  /// frame of an animation is still pushed once the interval elapses.
+  ///
+  /// Safe to call from any thread, before or after `startStreaming`; a change applies from the next
+  /// wait. Ignored in `.eager` mode, where `configuration.framesPerSecond` sets the rate. Explicit
+  /// pushes (`requestKeyFrame()`, surface changes) are not capped.
+  public func setMaximumFrameRate(_ framesPerSecond: Double?) {
+    frameRateLimiter.setMaximumFramesPerSecond(framesPerSecond)
+  }
+
+  /// The current `.lazy` push-rate cap, or nil when uncapped.
+  public var maximumFrameRate: Double? { frameRateLimiter.maximumFramesPerSecond }
+
+  /// The `.lazy` push loop's trigger source, reading this stream's `frameRateLimiter`.
+  func makeLazyTriggers() -> LazyFrameTriggers {
+    LazyFrameTriggers(frameRateLimiter: frameRateLimiter)
+  }
+
   // MARK: - Keyframe Requests
 
   /// Request that the next encoded frame be a keyframe (IDR).
@@ -1497,7 +1611,7 @@ public class FBSimulatorVideoStream: NSObject, FBFramebufferPresentationTimeCons
       for try await trigger in stimulus {
         guard stoppedFuture.state == .running else { break }
         let pushDurationMach = await pushOnWriteQueue(forceKeyFrame: trigger.forceKeyFrame)
-        stats?.record(pushDurationMach: pushDurationMach, overran: trigger.overran)
+        stats?.record(pushDurationMach: pushDurationMach, overran: trigger.overran, droppedTicks: trigger.droppedTicks)
       }
     } catch {
       logger.log("Frame push loop stimulus failed: \(error)")
@@ -1530,6 +1644,15 @@ struct FrameTrigger {
   let forceKeyFrame: Bool
   /// True when the previous push overshot its deadline (eager cadence only — always false for VFR).
   let overran: Bool
+  /// Cadence deadlines skipped because they had already passed when this overrun was detected
+  /// (eager cadence only — always 0 for VFR).
+  let droppedTicks: UInt64
+
+  init(forceKeyFrame: Bool, overran: Bool, droppedTicks: UInt64 = 0) {
+    self.forceKeyFrame = forceKeyFrame
+    self.overran = overran
+    self.droppedTicks = droppedTicks
+  }
 }
 
 /// The `.lazy` (VFR) stimulus for the frame push loop: an `AsyncSequence` of `FrameTrigger`s poked by
@@ -1542,19 +1665,39 @@ struct FrameTrigger {
 /// are dropped and only the latest screen state is pushed — the correct semantics for VFR. A keyframe
 /// must survive that coalescing, so it is not carried on a (droppable) trigger but held as a sticky
 /// flag that `signalKeyFrame()` sets and the iterator reads-and-clears as it pulls each trigger.
+///
+/// When `frameRateLimiter` has a cap, the iterator waits for a deadline before pulling the next trigger;
+/// triggers signalled during the wait coalesce into the single buffered one, so a trailing damage event
+/// still yields a final push. Deadlines are phase-locked: if a trigger yields within one interval of its
+/// deadline (late from timer slack or from waiting for damage), the next deadline is that deadline plus
+/// the interval, so lateness doesn't accumulate and the long-run rate matches the cap. After an idle gap
+/// the next deadline restarts from the yield. Deadlines are therefore always at least one interval apart
+/// (never above the cap, never a catch-up burst), and consecutive pushes are spaced less than an interval
+/// only by the previous trigger's lateness.
 // @unchecked Sendable: `pendingKeyFrame` is mutable across threads but guarded by `lock`; the stream
-// and its continuation are Sendable.
+// and its continuation are Sendable, and `FrameRateLimiter` is internally locked.
 final class LazyFrameTriggers: AsyncSequence, @unchecked Sendable {
   typealias Element = FrameTrigger
 
   private let stream: AsyncStream<Void>
   private let continuation: AsyncStream<Void>.Continuation
+  let frameRateLimiter: FrameRateLimiter
+  private let now: () -> ContinuousClock.Instant
+  /// Suspends until the given instant; throws when cancelled.
+  private let sleepUntil: (ContinuousClock.Instant) async throws -> Void
   private let lock = NSLock()
   /// Whether the next pushed frame must be a keyframe. Guarded by `lock`; set by `signalKeyFrame`,
   /// read-and-cleared by the iterator, so coalescing never drops a pending keyframe.
   private var pendingKeyFrame = false
 
-  init() {
+  init(
+    frameRateLimiter: FrameRateLimiter = FrameRateLimiter(),
+    now: @escaping () -> ContinuousClock.Instant = { .now },
+    sleepUntil: @escaping (ContinuousClock.Instant) async throws -> Void = LazyFrameTriggers.sleepUntil
+  ) {
+    self.frameRateLimiter = frameRateLimiter
+    self.now = now
+    self.sleepUntil = sleepUntil
     // The `AsyncStream` builder hands back the continuation synchronously during init, so the IUO is
     // always assigned before use. This is the pre-`makeStream` idiom (`makeStream` needs a newer
     // deployment target than our macOS 12 floor).
@@ -1583,6 +1726,12 @@ final class LazyFrameTriggers: AsyncSequence, @unchecked Sendable {
     continuation.finish()
   }
 
+  /// Production sleep. The write queue runs at utility QoS, where the default timer slack wakes every wait
+  /// several milliseconds late; an explicit tolerance keeps deadlines close to the cap.
+  static func sleepUntil(_ deadline: ContinuousClock.Instant) async throws {
+    try await Task.sleep(until: deadline, tolerance: .milliseconds(1), clock: .continuous)
+  }
+
   /// Atomically read and clear the sticky keyframe flag.
   private func takePendingKeyFrame() -> Bool {
     lock.lock()
@@ -1599,24 +1748,95 @@ final class LazyFrameTriggers: AsyncSequence, @unchecked Sendable {
   struct AsyncIterator: AsyncIteratorProtocol {
     var base: AsyncStream<Void>.Iterator
     let source: LazyFrameTriggers
+    /// When the previous trigger was yielded (i.e. when its push started); nil before the first.
+    private(set) var lastTriggerInstant: ContinuousClock.Instant?
+    /// The deadline the previous trigger waited for, or nil when it wasn't rate limited.
+    private(set) var lastTriggerDeadline: ContinuousClock.Instant?
+    /// The next deadline is this plus the current minimum frame interval; nil before the first trigger.
+    private var scheduleAnchor: ContinuousClock.Instant?
+
+    init(base: AsyncStream<Void>.Iterator, source: LazyFrameTriggers) {
+      self.base = base
+      self.source = source
+    }
 
     mutating func next() async -> FrameTrigger? {
+      if Task.isCancelled {
+        return nil
+      }
+      var deadline: ContinuousClock.Instant?
+      if let scheduleAnchor, let minimumFrameInterval = source.frameRateLimiter.minimumFrameInterval {
+        let scheduled = scheduleAnchor + minimumFrameInterval
+        deadline = scheduled
+        if scheduled > source.now() {
+          do {
+            try await source.sleepUntil(scheduled)
+          } catch {
+            return nil // cancelled while waiting
+          }
+        }
+      }
       guard await base.next() != nil else { return nil }
+      let yieldInstant = source.now()
+      if let deadline, let minimumFrameInterval = source.frameRateLimiter.minimumFrameInterval, yieldInstant - deadline < minimumFrameInterval {
+        scheduleAnchor = deadline
+      } else {
+        scheduleAnchor = yieldInstant
+      }
+      lastTriggerInstant = yieldInstant
+      lastTriggerDeadline = deadline
       return FrameTrigger(forceKeyFrame: source.takePendingKeyFrame(), overran: false)
     }
   }
 }
 
+/// A thread-safe cap on the `.lazy` push rate, shared between `FBSimulatorVideoStream` (which updates it
+/// from any thread via `setMaximumFrameRate(_:)`) and `LazyFrameTriggers` (which reads it before each
+/// wait, so a change applies from the next wait).
+// @unchecked Sendable: `framesPerSecond` is guarded by `lock`.
+final class FrameRateLimiter: @unchecked Sendable {
+  private let lock = NSLock()
+  private var framesPerSecond: Double?
+
+  init(maximumFramesPerSecond: Double? = nil) {
+    self.framesPerSecond = Self.normalized(maximumFramesPerSecond)
+  }
+
+  /// The cap in frames per second, or nil when uncapped.
+  var maximumFramesPerSecond: Double? {
+    lock.withLock { framesPerSecond }
+  }
+
+  /// The minimum spacing between pushes, or nil when uncapped.
+  var minimumFrameInterval: Duration? {
+    maximumFramesPerSecond.map { .seconds(1.0 / $0) }
+  }
+
+  /// Set the cap; nil, non-positive, and non-finite values remove it.
+  func setMaximumFramesPerSecond(_ maximumFramesPerSecond: Double?) {
+    let normalized = Self.normalized(maximumFramesPerSecond)
+    lock.withLock { framesPerSecond = normalized }
+  }
+
+  private static func normalized(_ framesPerSecond: Double?) -> Double? {
+    guard let framesPerSecond, framesPerSecond.isFinite, framesPerSecond > 0 else { return nil }
+    return framesPerSecond
+  }
+}
+
 /// A drift-corrected frame clock for `.eager` mode. Iterating it (`for await trigger in …`) suspends
 /// until the next frame deadline and yields a `FrameTrigger`, so the push loop can read as just
-/// "push each tick". The iterator owns all the timing — Mach-tick deadlines, the `Task.sleep` wait,
-/// drift correction, and the per-deadline overrun log — and ends (returns `nil`) when the
-/// surrounding `Task` is cancelled.
+/// "push each tick". The iterator owns all the timing — Mach-tick deadlines, the sleep, drift
+/// correction, and the overrun log — and ends (returns `nil`) when the surrounding `Task` is cancelled.
+///
+/// Missed ticks are dropped, not caught up: after a stall spanning several intervals, the late tick
+/// fires once (`overran`, with `droppedTicks` counting the deadlines skipped) and the next deadline is
+/// the first phase-aligned one after now. Catching up would burst back-to-back pushes of the same
+/// framebuffer while the machine is already contended.
 ///
 /// Note: an overrun (a push that overshoots its deadline) is detected on the *following* `next()`,
-/// when the clock finds it is already past the deadline. The immediate "exceeded budget" log fires
-/// at the same moment and with the same content as before; only the attribution of the overrun
-/// *count* to a 5s stats window can shift by one push at a window boundary, which is immaterial.
+/// when the clock finds it is already past the deadline, so the attribution of the overrun *count*
+/// to a 5s stats window can shift by one push at a window boundary, which is immaterial.
 struct FrameCadence: AsyncSequence {
   typealias Element = FrameTrigger
 
@@ -1628,15 +1848,24 @@ struct FrameCadence: AsyncSequence {
   }
 
   struct Iterator: AsyncIteratorProtocol {
-    private let frameIntervalMach: UInt64
+    let frameIntervalMach: UInt64
     private let frameIntervalNanos: UInt64
     private let machNumer: UInt64
     private let machDenom: UInt64
     private let logger: any FBControlCoreLogger
+    /// The current Mach absolute time.
+    private let now: () -> UInt64
+    /// Suspends until the given Mach absolute time; throws when cancelled.
+    private let sleepUntil: (UInt64) async throws -> Void
     private var nextTargetTime: UInt64
     private var firstTickPending = true
 
-    init(framesPerSecond: UInt, logger: any FBControlCoreLogger) {
+    init(
+      framesPerSecond: UInt,
+      logger: any FBControlCoreLogger,
+      now: @escaping () -> UInt64 = mach_absolute_time,
+      sleepUntil: @escaping (UInt64) async throws -> Void = Iterator.sleepUntilMachTime
+    ) {
       let frameIntervalNanos = NSEC_PER_SEC / UInt64(framesPerSecond)
       var timebase = mach_timebase_info_data_t()
       mach_timebase_info(&timebase)
@@ -1645,7 +1874,18 @@ struct FrameCadence: AsyncSequence {
       self.frameIntervalNanos = frameIntervalNanos
       self.frameIntervalMach = frameIntervalNanos * UInt64(timebase.denom) / UInt64(timebase.numer)
       self.logger = logger
-      self.nextTargetTime = mach_absolute_time() + self.frameIntervalMach
+      self.now = now
+      self.sleepUntil = sleepUntil
+      self.nextTargetTime = now() + self.frameIntervalMach
+    }
+
+    /// Production sleep: `Task.sleep` for the remaining gap. Only the gap is converted to nanos.
+    static func sleepUntilMachTime(_ deadline: UInt64) async throws {
+      let now = mach_absolute_time()
+      guard deadline > now else { return }
+      var timebase = mach_timebase_info_data_t()
+      mach_timebase_info(&timebase)
+      try await Task.sleep(nanoseconds: (deadline - now) * UInt64(timebase.numer) / UInt64(timebase.denom))
     }
 
     mutating func next() async -> FrameTrigger? {
@@ -1658,32 +1898,39 @@ struct FrameCadence: AsyncSequence {
         return FrameTrigger(forceKeyFrame: false, overran: false)
       }
 
-      let now = mach_absolute_time()
-      var overran = false
-      if now < nextTargetTime {
-        // Sleep until the drift-corrected deadline. Only the remaining gap is converted to nanos.
-        let remainingNanos = (nextTargetTime - now) * machNumer / machDenom
-        do {
-          try await Task.sleep(nanoseconds: remainingNanos)
-        } catch {
-          return nil // cancelled while sleeping
+      let now = self.now()
+      if now <= nextTargetTime {
+        if now < nextTargetTime {
+          do {
+            try await sleepUntil(nextTargetTime)
+          } catch {
+            return nil // cancelled while sleeping
+          }
         }
-      } else {
-        // Already past the deadline — the previous push overshot the frame budget.
-        overran = true
-        let overrunNanos = (now - nextTargetTime) * machNumer / machDenom
-        logger.log(String(format: "Frame push exceeded budget by %.1f ms (budget: %.1f ms)", Double(overrunNanos) / 1e6, Double(frameIntervalNanos) / 1e6))
+        nextTargetTime += frameIntervalMach
+        return FrameTrigger(forceKeyFrame: false, overran: false)
       }
-      nextTargetTime += frameIntervalMach
-      return FrameTrigger(forceKeyFrame: false, overran: overran)
+
+      // Already past the deadline — the previous push overshot the frame budget. Fire this tick now
+      // and skip every later deadline that has also passed.
+      let overrunMach = now - nextTargetTime
+      let droppedTicks = overrunMach / frameIntervalMach
+      nextTargetTime += frameIntervalMach * (1 + droppedTicks)
+      let overrunNanos = overrunMach * machNumer / machDenom
+      var message = String(format: "Frame push exceeded budget by %.1f ms (budget: %.1f ms)", Double(overrunNanos) / 1e6, Double(frameIntervalNanos) / 1e6)
+      if droppedTicks > 0 {
+        message += ", dropped \(droppedTicks) tick\(droppedTicks == 1 ? "" : "s")"
+      }
+      logger.log(message)
+      return FrameTrigger(forceKeyFrame: false, overran: true, droppedTicks: droppedTicks)
     }
   }
 }
 
 // MARK: - CadenceStats
 
-/// Accumulates eager-cadence push statistics — Welford online mean/variance of push duration plus an
-/// overrun count — and logs a summary every 5 seconds. Kept out of the push loop so the loop reads
+/// Accumulates eager-cadence push statistics — Welford online mean/variance of push duration plus
+/// overrun and dropped-tick counts — and logs a summary every 5 seconds. Kept out of the push loop so the loop reads
 /// as just "push each tick"; `record` is called once per push.
 struct CadenceStats {
   private let frameIntervalNanos: UInt64
@@ -1694,6 +1941,7 @@ struct CadenceStats {
   private var statsStartTime: UInt64
   private var pushCount: UInt64 = 0
   private var overrunCount: UInt64 = 0
+  private var droppedTickCount: UInt64 = 0
   private var maxPushMach: UInt64 = 0
   private var pushMean = 0.0 // Welford mean (in Mach ticks)
   private var pushM2 = 0.0 // Welford M2 (sum of squared deviations)
@@ -1709,11 +1957,12 @@ struct CadenceStats {
     self.statsStartTime = mach_absolute_time()
   }
 
-  mutating func record(pushDurationMach: UInt64, overran: Bool) {
+  mutating func record(pushDurationMach: UInt64, overran: Bool, droppedTicks: UInt64 = 0) {
     pushCount += 1
     if overran {
       overrunCount += 1
     }
+    droppedTickCount += droppedTicks
     if pushDurationMach > maxPushMach {
       maxPushMach = pushDurationMach
     }
@@ -1731,13 +1980,14 @@ struct CadenceStats {
     let intervalSeconds = Double(now - statsStartTime) * machToMs / 1e3
     logger.info().log(
       String(
-        format: "Cadence stats (%.1fs): %llu pushes, %llu overruns, push duration avg %.1f ms / max %.1f ms, jitter stddev %.1f ms (budget: %.1f ms)",
-        intervalSeconds, pushCount, overrunCount, avgMs, maxMs, stddevMs, Double(frameIntervalNanos) / 1e6))
+        format: "Cadence stats (%.1fs): %llu pushes, %llu overruns, %llu dropped ticks, push duration avg %.1f ms / max %.1f ms, jitter stddev %.1f ms (budget: %.1f ms)",
+        intervalSeconds, pushCount, overrunCount, droppedTickCount, avgMs, maxMs, stddevMs, Double(frameIntervalNanos) / 1e6))
 
     // Reset for next interval.
     statsStartTime = now
     pushCount = 0
     overrunCount = 0
+    droppedTickCount = 0
     maxPushMach = 0
     pushMean = 0
     pushM2 = 0

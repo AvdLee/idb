@@ -943,10 +943,13 @@ public struct FBVideoEncoderStats {
 public protocol RSPixelBufferConsumer : AnyObject {
   func writeEncodedFrame(_ pixelBuffer: CoreVideo::CVPixelBuffer, frameNumber: Swift::UInt, timeAtFirstFrame: CoreFoundation::CFTimeInterval, frameUptime: Foundation::TimeInterval) throws
 }
+@objc public protocol RSEncodedFrameConsumer : FBControlCore::FBDataConsumer {
+  @objc func consumeEncodedFrame(_ data: Foundation::Data)
+}
 @_hasMissingDesignatedInitializers @objc(FBSimulatorVideoStream) public class FBSimulatorVideoStream : ObjectiveC::NSObject, FBSimulatorControl::FBFramebufferPresentationTimeConsumer, FBControlCore::FBVideoStream, @unchecked Swift::Sendable {
-  public class func make(framebuffer: FBSimulatorControl::FBFramebuffer, configuration: FBControlCore::FBVideoStreamConfiguration, logger: any FBControlCore::FBControlCoreLogger) -> FBSimulatorControl::FBSimulatorVideoStream
-  public class func make(framebuffer: FBSimulatorControl::FBFramebuffer, configuration: FBControlCore::FBVideoStreamConfiguration, edgeInsets: FBSimulatorControl::FBVideoStreamEdgeInsets, logger: any FBControlCore::FBControlCoreLogger) -> FBSimulatorControl::FBSimulatorVideoStream
-  public class func start(framebuffer: FBSimulatorControl::FBFramebuffer, configuration: FBControlCore::FBVideoStreamConfiguration, edgeInsets: FBSimulatorControl::FBVideoStreamEdgeInsets = FBVideoStreamEdgeInsets(top: 0, bottom: 0, left: 0, right: 0), to consumer: any FBControlCore::FBDataConsumer, logger: any FBControlCore::FBControlCoreLogger) async throws -> FBSimulatorControl::FBSimulatorVideoStream
+  public class func make(framebuffer: FBSimulatorControl::FBFramebuffer, configuration: FBControlCore::FBVideoStreamConfiguration, writeQueueQoS: Dispatch::DispatchQoS = .unspecified, logger: any FBControlCore::FBControlCoreLogger) -> FBSimulatorControl::FBSimulatorVideoStream
+  public class func make(framebuffer: FBSimulatorControl::FBFramebuffer, configuration: FBControlCore::FBVideoStreamConfiguration, edgeInsets: FBSimulatorControl::FBVideoStreamEdgeInsets, writeQueueQoS: Dispatch::DispatchQoS = .unspecified, logger: any FBControlCore::FBControlCoreLogger) -> FBSimulatorControl::FBSimulatorVideoStream
+  public class func start(framebuffer: FBSimulatorControl::FBFramebuffer, configuration: FBControlCore::FBVideoStreamConfiguration, edgeInsets: FBSimulatorControl::FBVideoStreamEdgeInsets = FBVideoStreamEdgeInsets(top: 0, bottom: 0, left: 0, right: 0), writeQueueQoS: Dispatch::DispatchQoS = .unspecified, to consumer: any FBControlCore::FBDataConsumer, logger: any FBControlCore::FBControlCoreLogger) async throws -> FBSimulatorControl::FBSimulatorVideoStream
   @objc deinit
   @objc public func startStreaming(_ consumer: any FBControlCore::FBDataConsumer) -> FBControlCore::FBFuture<Foundation::NSNull>
   @objc public func stopStreaming() -> FBControlCore::FBFuture<Foundation::NSNull>
@@ -956,6 +959,10 @@ public protocol RSPixelBufferConsumer : AnyObject {
   public class func compressionSessionProperties(for configuration: FBControlCore::FBVideoStreamConfiguration, callerProperties: [Swift::String : Any]) -> [Swift::String : Any]
   public func writeTimedMetadata(_ text: Swift::String)
   public func updateOverlayBuffer(_ overlayBuffer: CoreVideo::CVPixelBuffer?)
+  public func setMaximumFrameRate(_ framesPerSecond: Swift::Double?)
+  public var maximumFrameRate: Swift::Double? {
+    get
+  }
   public func requestKeyFrame()
   public func captureCompositedScreenshot() throws -> Foundation::Data
   public func currentEncoderStats() -> FBSimulatorControl::FBVideoEncoderStats
