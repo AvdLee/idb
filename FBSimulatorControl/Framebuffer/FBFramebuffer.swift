@@ -94,6 +94,22 @@ public final class FBFramebuffer: NSObject, @unchecked Sendable {
 
   // MARK: - Properties
 
+  /// Fork addition: weak handle to a registered consumer, captured by the callbacks handed to
+  /// CoreSimulator's remote display proxies.
+  ///
+  /// Those proxies can keep a registered callback block alive after `unregister...Callback` returns.
+  /// A strong capture of the consumer would then pin it — for a video stream, that includes the last
+  /// pixel buffer and every `CGImage` it delivered (~10-20 MB per screenshot) — for the lifetime of
+  /// the process. Capturing it weakly bounds a leaked block to a few bytes. Consumers are always owned
+  /// by whoever attached them, and the framebuffer's `consumers` table is weak-keyed as well.
+  private final class WeakConsumer: @unchecked Sendable {
+    weak var consumer: (any FBFramebufferConsumer)?
+
+    init(_ consumer: any FBFramebufferConsumer) {
+      self.consumer = consumer
+    }
+  }
+
   // Fork addition: on Xcode 27+ displays are vended as SimScreens instead of the
   // legacy SimDisplayRenderable surfaces, so the framebuffer is backed by one of two
   // display representations.
@@ -520,7 +536,7 @@ public final class FBFramebuffer: NSObject, @unchecked Sendable {
   /// The per-frame callback maps onto `didReceiveDamageRect()` so deferred (damage-driven)
   /// video streaming keeps working on Xcode 27, where rect-level damage callbacks no longer exist.
   private func registerScreenConsumer(_ consumer: any FBFramebufferConsumer, screen: any SimScreen, uuid: NSUUID, queue: DispatchQueue) {
-    nonisolated(unsafe) let consumerRef = consumer
+    let consumerRef = WeakConsumer(consumer)
 
     _ = try? FBObjCExceptionGuard.guarded {
       screen.registerScreenCallbacks(
@@ -532,7 +548,8 @@ public final class FBFramebuffer: NSObject, @unchecked Sendable {
           self.stats.damageCallbackCount += 1
           self.logStatsIfNeeded()
           queue.async {
-            Self.notifyDamage(consumerRef, atUptime: presentationUptime)
+            guard let consumer = consumerRef.consumer else { return }
+            Self.notifyDamage(consumer, atUptime: presentationUptime)
           }
         },
         surfacesChangedCallback: { [weak self] (unmaskedSurface: IOSurface?, maskedSurface: IOSurface?) in
@@ -544,7 +561,7 @@ public final class FBFramebuffer: NSObject, @unchecked Sendable {
             self.logger.info().log("First SimScreen surface change callback, surface=\(String(describing: surfaceRef))")
           }
           queue.async {
-            consumerRef.didChange(surfaceRef)
+            consumerRef.consumer?.didChange(surfaceRef)
           }
         },
         propertiesChangedCallback: { _ in })
@@ -561,7 +578,7 @@ public final class FBFramebuffer: NSObject, @unchecked Sendable {
 
   private func registerLegacyConsumer(_ consumer: any FBFramebufferConsumer, surface: AnyObject, uuid: NSUUID, queue: DispatchQueue) {
     let renderable = surface as! SimDisplayIOSurfaceRenderable
-    nonisolated(unsafe) let consumerRef = consumer
+    let consumerRef = WeakConsumer(consumer)
 
     let ioSurfaceChanged: (Any?) -> Void = { [weak self] surfaceArg in
       guard let self else { return }
@@ -571,7 +588,7 @@ public final class FBFramebuffer: NSObject, @unchecked Sendable {
       }
       nonisolated(unsafe) let surfaceRef = surfaceArg
       queue.async {
-        consumerRef.didChange(surfaceRef as? IOSurface)
+        consumerRef.consumer?.didChange(surfaceRef as? IOSurface)
       }
     }
 
@@ -594,7 +611,8 @@ public final class FBFramebuffer: NSObject, @unchecked Sendable {
       }
       self.logStatsIfNeeded()
       queue.async {
-        Self.notifyDamage(consumerRef, atUptime: presentationUptime)
+        guard let consumer = consumerRef.consumer else { return }
+        Self.notifyDamage(consumer, atUptime: presentationUptime)
       }
     }
     _ = try? FBObjCExceptionGuard.guarded {

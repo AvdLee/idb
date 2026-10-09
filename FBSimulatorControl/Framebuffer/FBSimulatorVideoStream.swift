@@ -1015,6 +1015,13 @@ public class FBSimulatorVideoStream: NSObject, FBFramebufferPresentationTimeCons
         // Clean up overlay compositing resources (ARC-managed; dropping references releases them).
         self.overlayBuffer = nil
         self.compositedBufferPool = nil
+        // Drop everything that pins frame memory. A stopped stream must not keep the last
+        // IOSurface-backed pixel buffer, the pusher's pools, or the Metal compositor alive even if
+        // something else (e.g. an Apple-side callback registry) still references the stream object.
+        self.pixelBuffer = nil
+        self.pixelBufferAttributes = nil
+        self.framePusher = nil
+        self.compositorCIContext = nil
         // Tear down the cadence machinery (in `.eager` mode this cancels the cadence task).
         // Resolving `stoppedFuture` below also ends the eager cadence loop, which polls
         // `stoppedFuture.state`; cancelling additionally wakes it if it is suspended in a sleep.
