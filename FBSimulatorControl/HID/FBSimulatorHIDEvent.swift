@@ -31,6 +31,8 @@ public indirect enum FBSimulatorHIDEvent: Equatable, Hashable {
   case toggleInCallStatusBar
   case lockDevice
   case composite([FBSimulatorHIDEvent])
+  /// Delivers the wrapped event's touches to `display` (see `FBSimulatorHIDDisplay`).
+  case onDisplay(FBSimulatorHIDDisplay, FBSimulatorHIDEvent)
 
   /// For a `.composite` event, its ordered sub-events; otherwise `nil`.
   public var subEvents: [FBSimulatorHIDEvent]? {
@@ -48,15 +50,20 @@ public extension FBSimulatorHIDEvent {
   /// Sends the event on the provided HID, completing when delivery is acknowledged.
   /// A `.composite` sends its sub-events in order; `.delay` suspends the task.
   func sendAsync(on hid: FBSimulatorHID) async throws {
+    try await sendAsync(on: hid, display: .main)
+  }
+
+  /// Sends the event with touches routed to `display`; a nested `.onDisplay` overrides it.
+  func sendAsync(on hid: FBSimulatorHID, display: FBSimulatorHIDDisplay) async throws {
     switch self {
     case let .touch(direction, x, y):
-      try await hid.sendTouch(direction: direction, x: x, y: y)
+      try await hid.sendTouch(direction: direction, x: x, y: y, display: display)
     case let .button(direction, button):
       try await hid.sendButton(direction: direction, button: button)
     case let .keyboard(direction, keyCode):
       try await hid.sendKeyboard(direction: direction, keyCode: keyCode)
     case let .twoFingerTouch(direction, finger1, finger2):
-      try await hid.sendTwoFingerTouch(direction: direction, finger1: finger1, finger2: finger2)
+      try await hid.sendTwoFingerTouch(direction: direction, finger1: finger1, finger2: finger2, display: display)
     case let .trackpad(phase, point):
       try await hid.sendTrackpad(point: point, phase: phase)
     case let .delay(duration):
@@ -71,9 +78,16 @@ public extension FBSimulatorHIDEvent {
       try hid.sendPurpleEvent(hid.purple.lockDeviceEvent())
     case let .composite(events):
       for event in events {
-        try await event.sendAsync(on: hid)
+        try await event.sendAsync(on: hid, display: display)
       }
+    case let .onDisplay(target, event):
+      try await event.sendAsync(on: hid, display: target)
     }
+  }
+
+  /// This event with its touches routed to `display`.
+  func onDisplay(_ display: FBSimulatorHIDDisplay) -> FBSimulatorHIDEvent {
+    .onDisplay(display, self)
   }
 }
 
@@ -87,14 +101,20 @@ public extension FBSimulatorHID {
   /// gesture intact before the connection is torn down while avoiding a per-primitive stall (e.g.
   /// slow typing on the DTUHID transport).
   func send(event: FBSimulatorHIDEvent, logger: FBControlCoreLogger) async throws {
-    for subEvent in event.subEvents ?? [event] {
+    var display = FBSimulatorHIDDisplay.main
+    var topLevel = event
+    while case let .onDisplay(target, inner) = topLevel {
+      display = target
+      topLevel = inner
+    }
+    for subEvent in topLevel.subEvents ?? [topLevel] {
       switch subEvent {
       case let .delay(duration):
         logger.log("Delay \(duration)s")
         try await Task.sleep(nanoseconds: UInt64(max(0, duration) * 1_000_000_000))
       default:
         logger.log("Sending \(subEvent)")
-        try await subEvent.sendAsync(on: self)
+        try await subEvent.sendAsync(on: self, display: display)
       }
     }
     try await flush()
@@ -296,6 +316,8 @@ extension FBSimulatorHIDEvent: CustomStringConvertible {
       return "Lock Device"
     case let .composite(events):
       return "Composite [\(events.map { $0.description }.joined(separator: ", "))]"
+    case let .onDisplay(display, event):
+      return "OnDisplay(target=\(display.target)) \(event)"
     }
   }
 }

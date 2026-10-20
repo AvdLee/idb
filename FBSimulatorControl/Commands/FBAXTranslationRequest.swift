@@ -36,6 +36,10 @@ final class FBAXTranslationRequest {
   private static let defaultRequestTimeoutSeconds: TimeInterval = 5.0
 
   let kind: Kind
+  /// The CoreSimulator screen ID the request resolves against (`FBFramebufferScreenDescriptor.screenID`).
+  /// `0` is the device's main display; a multi-display device such as iPhone Duo needs the ID of the
+  /// panel that shows the interface, or point lookups hit the other (dark) panel.
+  let displayID: UInt32
   let token: String
   var device: SimDevice?
   var collector: FBAccessibilityProfilingCollector?
@@ -47,8 +51,9 @@ final class FBAXTranslationRequest {
   /// no "wait forever" mode — a stalled XPC service never hangs the caller.
   var requestTimeoutSeconds: TimeInterval
 
-  init(kind: Kind) {
+  init(kind: Kind, displayID: UInt32 = 0) {
     self.kind = kind
+    self.displayID = displayID
     self.token = UUID().uuidString
     self.requestTimeoutSeconds = Self.defaultRequestTimeoutSeconds
   }
@@ -56,16 +61,16 @@ final class FBAXTranslationRequest {
   /// A fresh request of the same kind with a new token, used to retry after
   /// SpringBoard remediation.
   func cloneWithNewToken() -> FBAXTranslationRequest {
-    FBAXTranslationRequest(kind: kind)
+    FBAXTranslationRequest(kind: kind, displayID: displayID)
   }
 
   /// Resolves the root translation object for this request's kind.
   func perform(withTranslator translator: NSObject) -> NSObject? {
     switch kind {
     case .frontmostApplication:
-      return FBAXRuntimeBridge.frontmostApplication(usingTranslator: translator, displayID: 0, token: token)
+      return FBAXRuntimeBridge.frontmostApplication(usingTranslator: translator, displayID: displayID, token: token)
     case .point(let point):
-      return FBAXRuntimeBridge.object(at: point, usingTranslator: translator, displayID: 0, token: token)
+      return FBAXRuntimeBridge.object(at: point, usingTranslator: translator, displayID: displayID, token: token)
     }
   }
 
@@ -197,7 +202,7 @@ final class FBAXTranslationRequest {
 
         pointCount += 1
 
-        guard let hitTranslation = FBAXRuntimeBridge.object(at: point, usingTranslator: translator, displayID: 0, token: token) else {
+        guard let hitTranslation = FBAXRuntimeBridge.object(at: point, usingTranslator: translator, displayID: displayID, token: token) else {
           x += stepSize
           continue
         }

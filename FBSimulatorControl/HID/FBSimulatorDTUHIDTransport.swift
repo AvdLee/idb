@@ -359,22 +359,25 @@ actor FBSimulatorDTUHIDTransport: FBSimulatorHIDTransport {
     xpc_connection_cancel(connection)
   }
 
-  func sendTouch(direction: FBSimulatorHIDDirection, x: Double, y: Double) async throws {
+  func sendTouch(direction: FBSimulatorHIDDirection, x: Double, y: Double, display: FBSimulatorHIDDisplay) async throws {
     let ratio = FBSimulatorIndigoHID.screenRatio(
-      from: CGPoint(x: x, y: y), screenSize: mainScreenSize, screenScale: mainScreenScale)
+      from: CGPoint(x: x, y: y), screenSize: display.pixelSize ?? mainScreenSize, screenScale: mainScreenScale)
     let event = IndigoDigitizerEvent(
       pointOne: DigitizerPoint(x: Double(ratio.x), y: Double(ratio.y)),
-      eventType: contact.eventType(for: direction))
+      eventType: contact.eventType(for: direction),
+      target: display.target)
     try await send(messageType: "IndigoDigitizerEvent", payload: event)
   }
 
-  func sendTwoFingerTouch(direction: FBSimulatorHIDDirection, finger1: CGPoint, finger2: CGPoint) async throws {
-    let r1 = FBSimulatorIndigoHID.screenRatio(from: finger1, screenSize: mainScreenSize, screenScale: mainScreenScale)
-    let r2 = FBSimulatorIndigoHID.screenRatio(from: finger2, screenSize: mainScreenSize, screenScale: mainScreenScale)
+  func sendTwoFingerTouch(direction: FBSimulatorHIDDirection, finger1: CGPoint, finger2: CGPoint, display: FBSimulatorHIDDisplay) async throws {
+    let screenSize = display.pixelSize ?? mainScreenSize
+    let r1 = FBSimulatorIndigoHID.screenRatio(from: finger1, screenSize: screenSize, screenScale: mainScreenScale)
+    let r2 = FBSimulatorIndigoHID.screenRatio(from: finger2, screenSize: screenSize, screenScale: mainScreenScale)
     let event = IndigoDigitizerEvent(
       pointOne: DigitizerPoint(x: Double(r1.x), y: Double(r1.y)),
       pointTwo: DigitizerPoint(x: Double(r2.x), y: Double(r2.y)),
-      eventType: twoFingerContact.eventType(for: direction))
+      eventType: twoFingerContact.eventType(for: direction),
+      target: display.target)
     try await send(messageType: "IndigoDigitizerEvent", payload: event)
   }
 

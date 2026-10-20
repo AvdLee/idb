@@ -55,6 +55,25 @@ final class FBSimulatorDTUHIDTransportTests: XCTestCase {
     XCTAssertEqual(xpc_dictionary_get_uint64(payload, "target"), 0)
   }
 
+  func testDigitizerEventCarriesDisplayTarget() throws {
+    let event = try encodeDigitizer(
+      IndigoDigitizerEvent(pointOne: DigitizerPoint(x: 0.1, y: 0.2), eventType: .start, target: 3))
+    let payload = xpc_dictionary_get_dictionary(event, "payload")!
+    XCTAssertEqual(xpc_get_type(xpc_dictionary_get_value(payload, "target")!), XPC_TYPE_UINT64)
+    XCTAssertEqual(xpc_dictionary_get_uint64(payload, "target"), 3)
+  }
+
+  func testScreenRatioNormalizesAgainstTheDisplayPixelSize() {
+    // A point in the middle of iPhone Duo's inner panel (669x951 pt at 3x) is the centre of its
+    // 2007x2853 px framebuffer, but off-centre against the 1398x2034 px outer panel.
+    let point = CGPoint(x: 334.5, y: 475.5)
+    let inner = FBSimulatorIndigoHID.screenRatio(from: point, screenSize: CGSize(width: 2007, height: 2853), screenScale: 3)
+    XCTAssertEqual(inner.x, 0.5, accuracy: 1e-9)
+    XCTAssertEqual(inner.y, 0.5, accuracy: 1e-9)
+    let outer = FBSimulatorIndigoHID.screenRatio(from: point, screenSize: CGSize(width: 1398, height: 2034), screenScale: 3)
+    XCTAssertGreaterThan(outer.x, 0.7)
+  }
+
   // MARK: Contact-state machine
 
   func testContactTrackerMapsDownUpToStartPositionEnd() {

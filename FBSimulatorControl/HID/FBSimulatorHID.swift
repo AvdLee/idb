@@ -96,13 +96,19 @@ public final class FBSimulatorHID: CustomStringConvertible, @unchecked Sendable 
   // MARK: Indigo Event Send Primitives
 
   /// Sends a single-finger touch at the given point (in points).
-  func sendTouch(direction: FBSimulatorHIDDirection, x: Double, y: Double) async throws {
-    try await transport.sendTouch(direction: direction, x: x, y: y)
+  func sendTouch(
+    direction: FBSimulatorHIDDirection, x: Double, y: Double, display: FBSimulatorHIDDisplay = .main
+  ) async throws {
+    try await transport.sendTouch(direction: direction, x: x, y: y, display: display)
   }
 
   /// Sends a two-finger touch (for multi-touch gestures) at the given points (in points).
-  func sendTwoFingerTouch(direction: FBSimulatorHIDDirection, finger1: CGPoint, finger2: CGPoint) async throws {
-    try await transport.sendTwoFingerTouch(direction: direction, finger1: finger1, finger2: finger2)
+  func sendTwoFingerTouch(
+    direction: FBSimulatorHIDDirection, finger1: CGPoint, finger2: CGPoint,
+    display: FBSimulatorHIDDisplay = .main
+  ) async throws {
+    try await transport.sendTwoFingerTouch(
+      direction: direction, finger1: finger1, finger2: finger2, display: display)
   }
 
   /// Sends a hardware button event.
