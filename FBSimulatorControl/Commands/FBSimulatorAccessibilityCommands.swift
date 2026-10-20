@@ -144,21 +144,21 @@ public final class FBSimulatorAccessibilityCommands: AccessibilityOperations {
 
   // MARK: AccessibilityOperations
 
-  public func accessibilityElement(at point: CGPoint) async throws -> FBAccessibilityElement {
+  public func accessibilityElement(at point: CGPoint, displayID: UInt32 = 0) async throws -> FBAccessibilityElement {
     try validateAccessibility()
-    let request = FBAXTranslationRequest(kind: .point(point))
+    let request = FBAXTranslationRequest(kind: .point(point), displayID: displayID)
     return try await accessibilityElement(request: request, remediationPermitted: false)
   }
 
-  public func accessibilityElementForFrontmostApplication() async throws -> FBAccessibilityElement {
+  public func accessibilityElementForFrontmostApplication(displayID: UInt32 = 0) async throws -> FBAccessibilityElement {
     try validateAccessibility()
-    let request = FBAXTranslationRequest(kind: .frontmostApplication)
+    let request = FBAXTranslationRequest(kind: .frontmostApplication, displayID: displayID)
     return try await accessibilityElement(request: request, remediationPermitted: true)
   }
 
-  public func accessibilityElementMatching(value: String, forKey key: FBAXSearchableKey, depth: UInt) async throws -> FBAccessibilityElement {
+  public func accessibilityElementMatching(value: String, forKey key: FBAXSearchableKey, depth: UInt, displayID: UInt32 = 0) async throws -> FBAccessibilityElement {
     try validateAccessibility()
-    let request = FBAXTranslationRequest(kind: .frontmostApplication)
+    let request = FBAXTranslationRequest(kind: .frontmostApplication, displayID: displayID)
     let root = try await accessibilityElement(request: request, remediationPermitted: true)
     return try root.findElement(withValue: value, forKey: key, depth: depth)
   }
@@ -281,19 +281,20 @@ public final class FBSimulatorAccessibilityCommands: AccessibilityOperations {
 
 extension FBSimulator: AccessibilityCommands {
 
-  public func accessibilityElement(at point: CGPoint) async throws -> FBAccessibilityElement {
-    try await accessibilityCommands().accessibilityElement(at: point)
+  public func accessibilityElement(at point: CGPoint, displayID: UInt32 = 0) async throws -> FBAccessibilityElement {
+    try await accessibilityCommands().accessibilityElement(at: point, displayID: displayID)
   }
 
-  public func accessibilityElementForFrontmostApplication() async throws -> FBAccessibilityElement {
-    try await accessibilityCommands().accessibilityElementForFrontmostApplication()
+  public func accessibilityElementForFrontmostApplication(displayID: UInt32 = 0) async throws -> FBAccessibilityElement {
+    try await accessibilityCommands().accessibilityElementForFrontmostApplication(displayID: displayID)
   }
 
   public func accessibilityElementMatching(
     value: String,
     forKey key: FBAXSearchableKey,
-    depth: UInt
+    depth: UInt,
+    displayID: UInt32 = 0
   ) async throws -> FBAccessibilityElement {
-    try await accessibilityCommands().accessibilityElementMatching(value: value, forKey: key, depth: depth)
+    try await accessibilityCommands().accessibilityElementMatching(value: value, forKey: key, depth: depth, displayID: displayID)
   }
 }

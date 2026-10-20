@@ -5,10 +5,35 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+import CoreGraphics
+
 /// The core, transport-agnostic HID value types. Every transport (Indigo, DTUHID) and the
 /// `FBSimulatorHIDEvent` dispatch share these; they are intentionally independent of any one
 /// transport's wire format. Each carries a single canonical `name` — the source of truth for the
 /// string forms used in event descriptions and (upper-cased) in CLI arguments.
+
+/// The display a touch is delivered to.
+///
+/// Single-display devices only ever use `.main`. A multi-display device such as iPhone Duo has one
+/// digitizer per panel: the `dtuhidd` `IndigoDigitizerEvent.target` selects the panel, and touch
+/// points are normalized against that panel's size rather than the device type's main screen.
+/// Only the DTUHID transport can route to another display; the legacy Indigo transport always
+/// touches the main display.
+public struct FBSimulatorHIDDisplay: Equatable, Hashable, Sendable {
+  /// The raw `dtuhidd` `DigitizerTarget` (`0` is the main screen).
+  public let target: UInt64
+  /// The display's framebuffer size in pixels, used to normalize touch points. `nil` uses the
+  /// device type's main screen size.
+  public let pixelSize: CGSize?
+
+  public init(target: UInt64, pixelSize: CGSize? = nil) {
+    self.target = target
+    self.pixelSize = pixelSize
+  }
+
+  /// The device's main screen (digitizer target `0`).
+  public static let main = FBSimulatorHIDDisplay(target: 0)
+}
 
 /// The direction of a HID event.
 public enum FBSimulatorHIDDirection: Int32, Sendable, CaseIterable {
