@@ -186,6 +186,30 @@ final class FBSimulatorControlTransientTests: XCTestCase {
     XCTAssertNotEqual(FBSimulatorHIDEvent.tapAt(x: 100, y: 200), .tapAt(x: 300, y: 400))
   }
 
+  // MARK: FBSimulatorHIDEvent - Display routing
+
+  func testMainDisplayIsTargetZeroWithoutPixelSize() {
+    XCTAssertEqual(FBSimulatorHIDDisplay.main.target, 0)
+    XCTAssertNil(FBSimulatorHIDDisplay.main.pixelSize)
+  }
+
+  func testDisplayFromScreenUsesScreenIDAndPixelSize() {
+    let screen = FBFramebufferScreenDescriptor(
+      screenID: 3, uniqueID: nil, name: "LCD-1", pixelSize: CGSize(width: 2007, height: 2853), isDefault: false,
+      powerState: nil, screenType: 0, uiOrientation: nil, backlightState: nil)
+    let display = FBSimulatorHIDDisplay(screen: screen)
+    XCTAssertEqual(display.target, 3)
+    XCTAssertEqual(display.pixelSize, CGSize(width: 2007, height: 2853))
+  }
+
+  func testOnDisplayWrapsEventAndKeepsEquality() {
+    let display = FBSimulatorHIDDisplay(target: 3, pixelSize: CGSize(width: 2007, height: 2853))
+    let wrapped = FBSimulatorHIDEvent.tapAt(x: 10, y: 20).onDisplay(display)
+    XCTAssertEqual(wrapped, .onDisplay(display, .tapAt(x: 10, y: 20)))
+    XCTAssertNotEqual(wrapped, .tapAt(x: 10, y: 20))
+    XCTAssertNotEqual(wrapped, FBSimulatorHIDEvent.tapAt(x: 10, y: 20).onDisplay(.main))
+  }
+
   // MARK: FBSimulatorHIDEvent - Touch Events
 
   func testTouchDownEquality() {

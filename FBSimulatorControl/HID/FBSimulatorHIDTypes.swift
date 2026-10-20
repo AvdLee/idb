@@ -33,6 +33,13 @@ public struct FBSimulatorHIDDisplay: Equatable, Hashable, Sendable {
 
   /// The device's main screen (digitizer target `0`).
   public static let main = FBSimulatorHIDDisplay(target: 0)
+
+  /// The display of a CoreSimulator screen. The `dtuhidd` digitizer target is the screen's
+  /// `screenID` (verified on iPhone Duo: `LCD` is screen 1 and the inner `LCD-1` is screen 3), and
+  /// touches are normalized against the screen's own framebuffer size.
+  public init(screen: FBFramebufferScreenDescriptor) {
+    self.init(target: UInt64(screen.screenID), pixelSize: screen.pixelSize)
+  }
 }
 
 /// The direction of a HID event.
