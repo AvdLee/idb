@@ -52,13 +52,16 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nullable, nonatomic, readonly) id maskedFramebufferSurface;
 
+// CoreSimulator invokes these callbacks with nil when the surface goes away (for example when the
+// Simulator shuts down). The parameter must be nullable: a non-null `id` makes Swift bridge the
+// block as `(Any) -> Void`, and the thunk crashes in swift_getObjectType on the nil.
 // Added in Xcode 9 as -[SimDeviceIOClient attachConsumer:] methods have been removed.
 - (void)unregisterIOSurfaceChangeCallbackWithUUID:(NSUUID *)arg1;
-- (void)registerCallbackWithUUID:(NSUUID *)arg1 ioSurfaceChangeCallback:(void (^)(id))arg2;
+- (void)registerCallbackWithUUID:(NSUUID *)arg1 ioSurfaceChangeCallback:(void (^)(id _Nullable))arg2;
 
 // Callbacks was slightly renamed in Xcode 13.2 to address two surfaces instead of one.
 - (void)unregisterIOSurfacesChangeCallbackWithUUID:(NSUUID *)arg1;
-- (void)registerCallbackWithUUID:(NSUUID *)arg1 ioSurfacesChangeCallback:(void (^)(id))arg2;
+- (void)registerCallbackWithUUID:(NSUUID *)arg1 ioSurfacesChangeCallback:(void (^)(id _Nullable))arg2;
 
 @end
 
