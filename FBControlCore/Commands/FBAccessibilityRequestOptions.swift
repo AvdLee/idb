@@ -63,6 +63,13 @@ public struct FBAccessibilityRequestOptions: Sendable {
   /// the top-level match use this to skip the expensive merged-children fan-out.
   public var maxDepth: UInt
 
+  /// RocketSim addition: when `true`, serialization stops at the on-screen keyboard's host element and
+  /// does not read its key elements. The host element itself (role, identifier, frame) is still
+  /// serialized, so callers can still detect the keyboard and its frame. A keyboard has roughly 35
+  /// keys that each cost several attribute reads, so skipping them removes about a quarter of the
+  /// read time while the keyboard is visible. Default: `false`.
+  public var skipsKeyboardDescendants: Bool
+
   public init(
     nestedFormat: Bool = false,
     keys: Set<FBAXKeys>? = FBAXKeys.defaultSet,
@@ -70,7 +77,8 @@ public struct FBAccessibilityRequestOptions: Sendable {
     enableProfiling: Bool = false,
     collectFrameCoverage: Bool = false,
     remoteContentOptions: FBAccessibilityRemoteContentOptions? = nil,
-    maxDepth: UInt = 0
+    maxDepth: UInt = 0,
+    skipsKeyboardDescendants: Bool = false
   ) {
     self.nestedFormat = nestedFormat
     self.keys = keys
@@ -79,11 +87,12 @@ public struct FBAccessibilityRequestOptions: Sendable {
     self.collectFrameCoverage = collectFrameCoverage
     self.remoteContentOptions = remoteContentOptions
     self.maxDepth = maxDepth
+    self.skipsKeyboardDescendants = skipsKeyboardDescendants
   }
 }
 
 extension FBAccessibilityRequestOptions: CustomStringConvertible {
   public var description: String {
-    "<FBAccessibilityRequestOptions: nested=\(nestedFormat), keys=\(String(describing: keys)), logging=\(enableLogging), profiling=\(enableProfiling), collectFrameCoverage=\(collectFrameCoverage), remote=\(String(describing: remoteContentOptions))>"
+    "<FBAccessibilityRequestOptions: nested=\(nestedFormat), keys=\(String(describing: keys)), logging=\(enableLogging), profiling=\(enableProfiling), collectFrameCoverage=\(collectFrameCoverage), remote=\(String(describing: remoteContentOptions)), skipsKeyboardDescendants=\(skipsKeyboardDescendants)>"
   }
 }
