@@ -14751,7 +14751,7 @@
           {
             "kind": "Function",
             "name": "recursiveDescription",
-            "printedName": "recursiveDescription(fromElement:token:nestedFormat:keys:collector:coverageGrid:seenPids:maxDepth:)",
+            "printedName": "recursiveDescription(fromElement:token:nestedFormat:keys:collector:coverageGrid:seenPids:maxDepth:skipsKeyboardDescendants:)",
             "children": [
               {
                 "kind": "TypeNominal",
@@ -14860,11 +14860,18 @@
                 "printedName": "Swift.UInt",
                 "hasDefaultArg": true,
                 "usr": "s:Su"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Bool",
+                "printedName": "Swift.Bool",
+                "hasDefaultArg": true,
+                "usr": "s:Sb"
               }
             ],
             "declKind": "Func",
-            "usr": "s:18FBSimulatorControl0A23AccessibilitySerializerO20recursiveDescription11fromElement5token12nestedFormat4keys9collector12coverageGrid8seenPids8maxDepthSaySDySSypGGAA012FBAXPlatformH0_p_SSSbShy13FBControlCore8FBAXKeysOGAA33FBAccessibilityProfilingCollectorCSgAA0x8CoverageO0CSgAA8SeenPIDsCSgSutFZ",
-            "mangledName": "$s18FBSimulatorControl0A23AccessibilitySerializerO20recursiveDescription11fromElement5token12nestedFormat4keys9collector12coverageGrid8seenPids8maxDepthSaySDySSypGGAA012FBAXPlatformH0_p_SSSbShy13FBControlCore8FBAXKeysOGAA33FBAccessibilityProfilingCollectorCSgAA0x8CoverageO0CSgAA8SeenPIDsCSgSutFZ",
+            "usr": "s:18FBSimulatorControl0A23AccessibilitySerializerO20recursiveDescription11fromElement5token12nestedFormat4keys9collector12coverageGrid8seenPids8maxDepth24skipsKeyboardDescendantsSaySDySSypGGAA012FBAXPlatformH0_p_SSSbShy13FBControlCore8FBAXKeysOGAA33FBAccessibilityProfilingCollectorCSgAA023FBAccessibilityCoverageO0CSgAA8SeenPIDsCSgSuSbtFZ",
+            "mangledName": "$s18FBSimulatorControl0A23AccessibilitySerializerO20recursiveDescription11fromElement5token12nestedFormat4keys9collector12coverageGrid8seenPids8maxDepth24skipsKeyboardDescendantsSaySDySSypGGAA012FBAXPlatformH0_p_SSSbShy13FBControlCore8FBAXKeysOGAA33FBAccessibilityProfilingCollectorCSgAA023FBAccessibilityCoverageO0CSgAA8SeenPIDsCSgSuSbtFZ",
             "moduleName": "FBSimulatorControl",
             "static": true,
             "declAttributes": [
@@ -14875,7 +14882,7 @@
           {
             "kind": "Function",
             "name": "formattedDescription",
-            "printedName": "formattedDescription(ofElement:token:nestedFormat:keys:collector:coverageGrid:maxDepth:)",
+            "printedName": "formattedDescription(ofElement:token:nestedFormat:keys:collector:coverageGrid:maxDepth:skipsKeyboardDescendants:)",
             "children": [
               {
                 "kind": "TypeNominal",
@@ -14962,13 +14969,61 @@
                 "printedName": "Swift.UInt",
                 "hasDefaultArg": true,
                 "usr": "s:Su"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Bool",
+                "printedName": "Swift.Bool",
+                "hasDefaultArg": true,
+                "usr": "s:Sb"
               }
             ],
             "declKind": "Func",
-            "usr": "s:18FBSimulatorControl0A23AccessibilitySerializerO20formattedDescription9ofElement5token12nestedFormat4keys9collector12coverageGrid8maxDepthSDySSypGAA012FBAXPlatformH0_p_SSSbShy13FBControlCore8FBAXKeysOGAA33FBAccessibilityProfilingCollectorCSgAA0v8CoverageO0CSgSutFZ",
-            "mangledName": "$s18FBSimulatorControl0A23AccessibilitySerializerO20formattedDescription9ofElement5token12nestedFormat4keys9collector12coverageGrid8maxDepthSDySSypGAA012FBAXPlatformH0_p_SSSbShy13FBControlCore8FBAXKeysOGAA33FBAccessibilityProfilingCollectorCSgAA0v8CoverageO0CSgSutFZ",
+            "usr": "s:18FBSimulatorControl0A23AccessibilitySerializerO20formattedDescription9ofElement5token12nestedFormat4keys9collector12coverageGrid8maxDepth24skipsKeyboardDescendantsSDySSypGAA012FBAXPlatformH0_p_SSSbShy13FBControlCore8FBAXKeysOGAA33FBAccessibilityProfilingCollectorCSgAA0y8CoverageO0CSgSuSbtFZ",
+            "mangledName": "$s18FBSimulatorControl0A23AccessibilitySerializerO20formattedDescription9ofElement5token12nestedFormat4keys9collector12coverageGrid8maxDepth24skipsKeyboardDescendantsSDySSypGAA012FBAXPlatformH0_p_SSSbShy13FBControlCore8FBAXKeysOGAA33FBAccessibilityProfilingCollectorCSgAA0y8CoverageO0CSgSuSbtFZ",
             "moduleName": "FBSimulatorControl",
             "static": true,
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "isKeyboardHost",
+            "printedName": "isKeyboardHost(values:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Bool",
+                "printedName": "Swift.Bool",
+                "usr": "s:Sb"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Dictionary",
+                "printedName": "[Swift.String : Any]",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "String",
+                    "printedName": "Swift.String",
+                    "usr": "s:SS"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "ProtocolComposition",
+                    "printedName": "Any"
+                  }
+                ],
+                "usr": "s:SD"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:18FBSimulatorControl0A23AccessibilitySerializerO14isKeyboardHost6valuesSbSDySSypG_tFZ",
+            "mangledName": "$s18FBSimulatorControl0A23AccessibilitySerializerO14isKeyboardHost6valuesSbSDySSypG_tFZ",
+            "moduleName": "FBSimulatorControl",
+            "static": true,
+            "declAttributes": [
+              "RawDocComment"
+            ],
             "funcSelfKind": "NonMutating"
           },
           {
@@ -72521,1736 +72576,1771 @@
   },
   "ConstValues": [
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Commands\/AXRoleVocabulary.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Commands\/AXRoleVocabulary.swift",
       "kind": "StringLiteral",
       "offset": 466,
       "length": 4,
       "value": "\"AX\""
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Commands\/AXRoleVocabulary.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Commands\/AXRoleVocabulary.swift",
       "kind": "StringLiteral",
       "offset": 798,
       "length": 5,
       "value": "\"Any\""
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Commands\/AXRoleVocabulary.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Commands\/AXRoleVocabulary.swift",
       "kind": "Array",
       "offset": 2780,
       "length": 266,
       "value": "[\"Button\", \"Cell\", \"TextField\", \"SecureTextField\", \"SearchField\", \"Switch\", \"Toggle\", \"Link\", \"MenuItem\", \"Slider\", \"CheckBox\", \"RadioButton\", \"SegmentedControl\", \"Stepper\", \"PopUpButton\", \"Picker\", \"PickerWheel\", \"Tab\", \"Key\", \"DisclosureTriangle\"]"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Commands\/AXRoleVocabulary.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Commands\/AXRoleVocabulary.swift",
       "kind": "Dictionary",
       "offset": 4113,
       "length": 350,
       "value": "[(1, \"Application\"), (2, \"Button\"), (3, \"CheckBox\"), (4, \"GenericElement\"), (5, \"Group\"), (6, \"Heading\"), (7, \"Image\"), (8, \"Link\"), (9, \"RadioButton\"), (10, \"ScrollArea\"), (11, \"ScrollBar\"), (12, \"TabGroup\"), (13, \"Slider\"), (14, \"StaticText\"), (15, \"TextField\"), (16, \"WebArea\"), (17, \"TextArea\"), (18, \"Splitter\"), (19, \"PopUpButton\"), (20, \"Sheet\"), (21, \"Grid\")]"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Commands\/AXRoleVocabulary.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Commands\/AXRoleVocabulary.swift",
       "kind": "Dictionary",
       "offset": 5885,
       "length": 110,
       "value": "[(1, \"SearchField\"), (2, \"TabButton\"), (3, \"Switch\"), (4, \"MapArea\"), (5, \"SecureTextField\"), (6, \"MapItem\")]"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Commands\/AXRoleVocabulary.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Commands\/AXRoleVocabulary.swift",
       "kind": "Dictionary",
       "offset": 6153,
       "length": 1444,
       "value": "[(0, \"Any\"), (1, \"Other\"), (2, \"Application\"), (3, \"Group\"), (4, \"Window\"), (5, \"Sheet\"), (6, \"Drawer\"), (7, \"Alert\"), (8, \"Dialog\"), (9, \"Button\"), (10, \"RadioButton\"), (11, \"RadioGroup\"), (12, \"CheckBox\"), (13, \"DisclosureTriangle\"), (14, \"PopUpButton\"), (15, \"ComboBox\"), (16, \"MenuButton\"), (17, \"ToolbarButton\"), (18, \"Popover\"), (19, \"Keyboard\"), (20, \"Key\"), (21, \"NavigationBar\"), (22, \"TabBar\"), (23, \"TabGroup\"), (24, \"Toolbar\"), (25, \"StatusBar\"), (26, \"Table\"), (27, \"TableRow\"), (28, \"TableColumn\"), (29, \"Outline\"), (30, \"OutlineRow\"), (31, \"Browser\"), (32, \"CollectionView\"), (33, \"Slider\"), (34, \"PageIndicator\"), (35, \"ProgressIndicator\"), (36, \"ActivityIndicator\"), (37, \"SegmentedControl\"), (38, \"Picker\"), (39, \"PickerWheel\"), (40, \"Switch\"), (41, \"Toggle\"), (42, \"Link\"), (43, \"Image\"), (44, \"Icon\"), (45, \"SearchField\"), (46, \"ScrollView\"), (47, \"ScrollBar\"), (48, \"StaticText\"), (49, \"TextField\"), (50, \"SecureTextField\"), (51, \"DatePicker\"), (52, \"TextView\"), (53, \"Menu\"), (54, \"MenuItem\"), (55, \"MenuBar\"), (56, \"MenuBarItem\"), (57, \"Map\"), (58, \"WebView\"), (59, \"IncrementArrow\"), (60, \"DecrementArrow\"), (61, \"Timeline\"), (62, \"RatingIndicator\"), (63, \"ValueIndicator\"), (64, \"SplitGroup\"), (65, \"Splitter\"), (66, \"RelevanceIndicator\"), (67, \"ColorWell\"), (68, \"HelpTag\"), (69, \"Matte\"), (70, \"DockItem\"), (71, \"Ruler\"), (72, \"RulerMarker\"), (73, \"Grid\"), (74, \"LevelIndicator\"), (75, \"Cell\"), (76, \"LayoutArea\"), (77, \"LayoutItem\"), (78, \"Handle\"), (79, \"Stepper\"), (80, \"Tab\"), (81, \"TouchBar\"), (82, \"StatusItem\")]"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Commands\/AXWire.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Commands\/AXWire.swift",
       "kind": "StringLiteral",
       "offset": 59,
       "length": 30,
       "value": "\"XC_kAXXCAttributeElementType\""
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Commands\/AXWire.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Commands\/AXWire.swift",
       "kind": "StringLiteral",
       "offset": 107,
       "length": 24,
       "value": "\"XC_kAXXCAttributeLabel\""
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Commands\/AXWire.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Commands\/AXWire.swift",
       "kind": "StringLiteral",
       "offset": 149,
       "length": 24,
       "value": "\"XC_kAXXCAttributeValue\""
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Commands\/AXWire.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Commands\/AXWire.swift",
       "kind": "StringLiteral",
       "offset": 196,
       "length": 29,
       "value": "\"XC_kAXXCAttributeIdentifier\""
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Commands\/AXWire.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Commands\/AXWire.swift",
       "kind": "StringLiteral",
       "offset": 243,
       "length": 24,
       "value": "\"XC_kAXXCAttributeFrame\""
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Commands\/AXWire.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Commands\/AXWire.swift",
       "kind": "StringLiteral",
       "offset": 294,
       "length": 33,
       "value": "\"XC_kAXXCAttributeAutomationType\""
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Commands\/AXWire.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Commands\/AXWire.swift",
       "kind": "StringLiteral",
       "offset": 348,
       "length": 27,
       "value": "\"XC_kAXXCAttributeChildren\""
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Commands\/AXWire.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Commands\/AXWire.swift",
       "kind": "StringLiteral",
       "offset": 397,
       "length": 28,
       "value": "\"XC_kAXXCAttributeIsVisible\""
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Commands\/AXWire.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Commands\/AXWire.swift",
       "kind": "StringLiteral",
       "offset": 450,
       "length": 31,
       "value": "\"XC_kAXXCAttributeVisiblePoint\""
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Commands\/AXWire.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Commands\/AXWire.swift",
       "kind": "StringLiteral",
       "offset": 505,
       "length": 30,
       "value": "\"XC_kAXXCAttributeCenterPoint\""
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Commands\/AXWire.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Commands\/AXWire.swift",
       "kind": "StringLiteral",
       "offset": 570,
       "length": 43,
       "value": "\"XC_kAXXCAttributeIsUserInteractionEnabled\""
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Commands\/AXWire.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Commands\/AXWire.swift",
       "kind": "StringLiteral",
       "offset": 637,
       "length": 15,
       "value": "\"FBExplainedBy\""
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Commands\/AXWire.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Commands\/AXWire.swift",
       "kind": "StringLiteral",
       "offset": 674,
       "length": 13,
       "value": "\"FBIsEnabled\""
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Commands\/AXWire.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Commands\/AXWire.swift",
       "kind": "StringLiteral",
       "offset": 714,
       "length": 18,
       "value": "\"FBTranslatorRole\""
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Commands\/AXWire.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Commands\/AXWire.swift",
       "kind": "StringLiteral",
       "offset": 762,
       "length": 21,
       "value": "\"FBTranslatorSubrole\""
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/HID\/DTUHIDModels.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/HID\/DTUHIDModels.swift",
       "kind": "BooleanLiteral",
       "offset": 1000,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/HID\/DTUHIDModels.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/HID\/DTUHIDModels.swift",
       "kind": "IntegerLiteral",
       "offset": 1567,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/HID\/DTUHIDModels.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/HID\/DTUHIDModels.swift",
       "kind": "IntegerLiteral",
       "offset": 1587,
       "length": 1,
       "value": "1"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/HID\/DTUHIDModels.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/HID\/DTUHIDModels.swift",
       "kind": "IntegerLiteral",
       "offset": 1602,
       "length": 1,
       "value": "2"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/HID\/DTUHIDModels.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/HID\/DTUHIDModels.swift",
       "kind": "IntegerLiteral",
       "offset": 2299,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/HID\/DTUHIDModels.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/HID\/DTUHIDModels.swift",
       "kind": "IntegerLiteral",
       "offset": 2323,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/HID\/DTUHIDModels.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/HID\/DTUHIDModels.swift",
       "kind": "IntegerLiteral",
       "offset": 2808,
       "length": 1,
       "value": "1"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/HID\/DTUHIDModels.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/HID\/DTUHIDModels.swift",
       "kind": "IntegerLiteral",
       "offset": 2822,
       "length": 1,
       "value": "2"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Commands\/FBAXTranslationDispatcher.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Commands\/FBAXTranslationDispatcher.swift",
       "kind": "IntegerLiteral",
       "offset": 1334,
       "length": 1,
       "value": "2"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Commands\/FBAXTranslationDispatcher.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Commands\/FBAXTranslationDispatcher.swift",
       "kind": "Dictionary",
       "offset": 1559,
       "length": 3,
       "value": "[]"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Commands\/FBAXTranslationRequest.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Commands\/FBAXTranslationRequest.swift",
       "kind": "FloatLiteral",
       "offset": 1558,
       "length": 3,
       "value": "5.0"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Commands\/FBAXTranslationRequest.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Commands\/FBAXTranslationRequest.swift",
       "kind": "IntegerLiteral",
       "offset": 2378,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Commands\/FBAccessibilityCoverageGrid.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Commands\/FBAccessibilityCoverageGrid.swift",
       "kind": "FloatLiteral",
       "offset": 885,
       "length": 4,
       "value": "10.0"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Commands\/FBAccessibilityElement.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Commands\/FBAccessibilityElement.swift",
       "kind": "BooleanLiteral",
       "offset": 1067,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Commands\/FBAccessibilityProfilingCollector.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Commands\/FBAccessibilityProfilingCollector.swift",
       "kind": "IntegerLiteral",
       "offset": 949,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Commands\/FBAccessibilityProfilingCollector.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Commands\/FBAccessibilityProfilingCollector.swift",
       "kind": "IntegerLiteral",
       "offset": 1008,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Commands\/FBAccessibilityProfilingCollector.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Commands\/FBAccessibilityProfilingCollector.swift",
       "kind": "IntegerLiteral",
       "offset": 1063,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Commands\/FBAccessibilityProfilingCollector.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Commands\/FBAccessibilityProfilingCollector.swift",
       "kind": "IntegerLiteral",
       "offset": 1133,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Commands\/FBAccessibilityProfilingCollector.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Commands\/FBAccessibilityProfilingCollector.swift",
       "kind": "IntegerLiteral",
       "offset": 1179,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Commands\/FBAccessibilityProfilingCollector.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Commands\/FBAccessibilityProfilingCollector.swift",
       "kind": "IntegerLiteral",
       "offset": 1218,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Commands\/FBAccessibilityProfilingCollector.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Commands\/FBAccessibilityProfilingCollector.swift",
       "kind": "IntegerLiteral",
       "offset": 1270,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Strategies\/FBDefaultsModificationStrategy.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Strategies\/FBDefaultsModificationStrategy.swift",
       "kind": "StringLiteral",
       "offset": 7043,
       "length": 21,
       "value": "\"Apple Global Domain\""
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Commands\/FBSimulator+RuntimeTools.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Commands\/FBSimulator+RuntimeTools.swift",
       "kind": "Array",
       "offset": 1968,
       "length": 2,
       "value": "[]"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Commands\/FBSimulator+RuntimeTools.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Commands\/FBSimulator+RuntimeTools.swift",
       "kind": "Dictionary",
       "offset": 2008,
       "length": 3,
       "value": "[]"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Commands\/FBSimulator+RuntimeTools.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Commands\/FBSimulator+RuntimeTools.swift",
       "kind": "Array",
       "offset": 3101,
       "length": 2,
       "value": "[]"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Commands\/FBSimulator+RuntimeTools.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Commands\/FBSimulator+RuntimeTools.swift",
       "kind": "Dictionary",
       "offset": 3141,
       "length": 3,
       "value": "[]"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Commands\/FBSimulatorAccessibilityCommands.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Commands\/FBSimulatorAccessibilityCommands.swift",
       "kind": "StringLiteral",
       "offset": 1852,
       "length": 54,
       "value": "\"The accessibility translation runtime is unavailable\""
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Commands\/FBSimulatorAccessibilityCommands.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Commands\/FBSimulatorAccessibilityCommands.swift",
       "kind": "StringLiteral",
       "offset": 2768,
       "length": 32,
       "value": "\"com.apple.CoreSimulator.bridge\""
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Commands\/FBSimulatorAccessibilityCommands.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Commands\/FBSimulatorAccessibilityCommands.swift",
       "kind": "StringLiteral",
       "offset": 2847,
       "length": 23,
       "value": "\"com.apple.SpringBoard\""
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Commands\/FBSimulatorAccessibilityCommands.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Commands\/FBSimulatorAccessibilityCommands.swift",
       "kind": "IntegerLiteral",
       "offset": 5874,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Commands\/FBSimulatorAccessibilityCommands.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Commands\/FBSimulatorAccessibilityCommands.swift",
       "kind": "IntegerLiteral",
       "offset": 6206,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Commands\/FBSimulatorAccessibilityCommands.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Commands\/FBSimulatorAccessibilityCommands.swift",
       "kind": "IntegerLiteral",
       "offset": 6589,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Commands\/FBSimulatorAccessibilityCommands.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Commands\/FBSimulatorAccessibilityCommands.swift",
       "kind": "IntegerLiteral",
       "offset": 12921,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Commands\/FBSimulatorAccessibilityCommands.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Commands\/FBSimulatorAccessibilityCommands.swift",
       "kind": "IntegerLiteral",
       "offset": 13140,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Commands\/FBSimulatorAccessibilityCommands.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Commands\/FBSimulatorAccessibilityCommands.swift",
       "kind": "IntegerLiteral",
       "offset": 13432,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Commands\/FBSimulatorAccessibilitySerializer.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Commands\/FBSimulatorAccessibilitySerializer.swift",
       "kind": "Array",
       "offset": 520,
       "length": 2,
       "value": "[]"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Commands\/FBSimulatorAccessibilitySerializer.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Commands\/FBSimulatorAccessibilitySerializer.swift",
       "kind": "StringLiteral",
       "offset": 1082,
       "length": 4,
       "value": "\"AX\""
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Commands\/FBSimulatorAccessibilitySerializer.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Commands\/FBSimulatorAccessibilitySerializer.swift",
       "kind": "StringLiteral",
       "offset": 1135,
       "length": 11,
       "value": "\"recursive\""
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Commands\/FBSimulatorAccessibilitySerializer.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Commands\/FBSimulatorAccessibilitySerializer.swift",
       "kind": "StringLiteral",
       "offset": 1195,
       "length": 12,
       "value": "\"point_grid\""
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Commands\/FBSimulatorAccessibilitySerializer.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Commands\/FBSimulatorAccessibilitySerializer.swift",
       "kind": "IntegerLiteral",
       "offset": 2193,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Commands\/FBSimulatorAccessibilitySerializer.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Commands\/FBSimulatorAccessibilitySerializer.swift",
+      "kind": "BooleanLiteral",
+      "offset": 2233,
+      "length": 5,
+      "value": "false"
+    },
+    {
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Commands\/FBSimulatorAccessibilitySerializer.swift",
       "kind": "IntegerLiteral",
-      "offset": 2939,
+      "offset": 3087,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Commands\/FBSimulatorAccessibilitySerializer.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Commands\/FBSimulatorAccessibilitySerializer.swift",
+      "kind": "BooleanLiteral",
+      "offset": 3127,
+      "length": 5,
+      "value": "false"
+    },
+    {
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Commands\/FBSimulatorAccessibilitySerializer.swift",
+      "kind": "Array",
+      "offset": 3988,
+      "length": 70,
+      "value": "[\"uikeyboard\", \"uikbkeyplane\", \"rtiinputsystem\", \"rtiremoteuihosting\"]"
+    },
+    {
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Commands\/FBSimulatorAccessibilitySerializer.swift",
       "kind": "IntegerLiteral",
-      "offset": 8321,
+      "offset": 9729,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Commands\/FBSimulatorAccessibilitySerializer.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Commands\/FBSimulatorAccessibilitySerializer.swift",
       "kind": "IntegerLiteral",
-      "offset": 8345,
+      "offset": 9753,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Commands\/FBSimulatorAccessibilitySerializer.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Commands\/FBSimulatorAccessibilitySerializer.swift",
+      "kind": "BooleanLiteral",
+      "offset": 9793,
+      "length": 5,
+      "value": "false"
+    },
+    {
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Commands\/FBSimulatorAccessibilitySerializer.swift",
       "kind": "IntegerLiteral",
-      "offset": 9306,
+      "offset": 10886,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Commands\/FBSimulatorAccessibilitySerializer.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Commands\/FBSimulatorAccessibilitySerializer.swift",
       "kind": "IntegerLiteral",
-      "offset": 9330,
+      "offset": 10910,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Commands\/FBSimulatorApplicationCommands.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Commands\/FBSimulatorAccessibilitySerializer.swift",
+      "kind": "BooleanLiteral",
+      "offset": 10950,
+      "length": 5,
+      "value": "false"
+    },
+    {
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Commands\/FBSimulatorApplicationCommands.swift",
       "kind": "StringLiteral",
       "offset": 6804,
       "length": 19,
       "value": "\"UIKitApplication:\""
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Commands\/FBSimulatorApplicationCommands.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Commands\/FBSimulatorApplicationCommands.swift",
       "kind": "Array",
       "offset": 6834,
       "length": 2,
       "value": "[]"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Commands\/FBSimulatorApplicationCommands.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Commands\/FBSimulatorApplicationCommands.swift",
       "kind": "StringLiteral",
       "offset": 11113,
       "length": 15,
       "value": "\"DataContainer\""
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Configuration\/FBSimulatorBootConfiguration.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Configuration\/FBSimulatorBootConfiguration.swift",
       "kind": "Dictionary",
       "offset": 623,
       "length": 3,
       "value": "[]"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Configuration\/FBSimulatorBootConfiguration.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Configuration\/FBSimulatorBootConfiguration.swift",
       "kind": "StringLiteral",
       "offset": 1356,
       "length": 34,
       "value": "\"Boot Environment %@ | Options %@\""
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Configuration\/FBSimulatorBootConfiguration.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Configuration\/FBSimulatorBootConfiguration.swift",
       "kind": "StringLiteral",
       "offset": 1665,
       "length": 15,
       "value": "\"Direct Launch\""
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Strategies\/FBSimulatorBootVerificationStrategy.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Strategies\/FBSimulatorBootVerificationStrategy.swift",
       "kind": "FloatLiteral",
       "offset": 640,
       "length": 3,
       "value": "0.5"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Strategies\/FBSimulatorBootVerificationStrategy.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Strategies\/FBSimulatorBootVerificationStrategy.swift",
       "kind": "FloatLiteral",
       "offset": 720,
       "length": 3,
       "value": "1.5"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Configuration\/FBSimulatorConfiguration.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Configuration\/FBSimulatorConfiguration.swift",
       "kind": "StringLiteral",
       "offset": 2835,
       "length": 10,
       "value": "\"iPhone 6\""
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Configuration\/FBSimulatorConfiguration.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Configuration\/FBSimulatorConfiguration.swift",
       "kind": "StringLiteral",
       "offset": 6223,
       "length": 70,
       "value": "\"Device '\""
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Configuration\/FBSimulatorConfiguration.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Configuration\/FBSimulatorConfiguration.swift",
       "kind": "StringLiteral",
       "offset": 6256,
       "length": 16,
       "value": "\"' | OS Version '\""
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Configuration\/FBSimulatorConfiguration.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Configuration\/FBSimulatorConfiguration.swift",
       "kind": "StringLiteral",
       "offset": 6291,
       "length": 2,
       "value": "\"'\""
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Configuration\/FBSimulatorControlConfiguration.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Configuration\/FBSimulatorControlConfiguration.swift",
       "kind": "IntegerLiteral",
       "offset": 1605,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Configuration\/FBSimulatorControlConfiguration.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Configuration\/FBSimulatorControlConfiguration.swift",
       "kind": "StringLiteral",
       "offset": 1867,
       "length": 53,
       "value": "\"Pool Config | Set Path \""
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Configuration\/FBSimulatorControlConfiguration.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Configuration\/FBSimulatorControlConfiguration.swift",
       "kind": "StringLiteral",
       "offset": 1910,
       "length": 8,
       "value": "\"(null)\""
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Configuration\/FBSimulatorControlConfiguration.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Configuration\/FBSimulatorControlConfiguration.swift",
       "kind": "StringLiteral",
       "offset": 1919,
       "length": 1,
       "value": "\"\""
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Configuration\/FBSimulatorControlConfiguration.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Configuration\/FBSimulatorControlConfiguration.swift",
       "kind": "StringLiteral",
       "offset": 2104,
       "length": 14,
       "value": "\"SimDeviceSet\""
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Configuration\/FBSimulatorControlConfiguration.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Configuration\/FBSimulatorControlConfiguration.swift",
       "kind": "StringLiteral",
       "offset": 2154,
       "length": 36,
       "value": "\"Expected SimDeviceSet to be loaded\""
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Configuration\/FBSimulatorControlConfiguration.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Configuration\/FBSimulatorControlConfiguration.swift",
       "kind": "StringLiteral",
       "offset": 2284,
       "length": 16,
       "value": "\"defaultSetPath\""
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Configuration\/FBSimulatorControlConfiguration.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Configuration\/FBSimulatorControlConfiguration.swift",
       "kind": "StringLiteral",
       "offset": 2460,
       "length": 12,
       "value": "\"defaultSet\""
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Configuration\/FBSimulatorControlConfiguration.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Configuration\/FBSimulatorControlConfiguration.swift",
       "kind": "StringLiteral",
       "offset": 2516,
       "length": 9,
       "value": "\"setPath\""
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/CoreDevice\/FBSimulatorCoreDevice.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/CoreDevice\/FBSimulatorCoreDevice.swift",
       "kind": "StringLiteral",
       "offset": 589,
       "length": 48,
       "value": "\"CoreDevice.XPCMessageKey.cancellationRequested\""
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/CoreDevice\/FBSimulatorCoreDeviceTransport.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/CoreDevice\/FBSimulatorCoreDeviceTransport.swift",
       "kind": "BooleanLiteral",
       "offset": 789,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Commands\/FBSimulatorCrashLogCommands.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Commands\/FBSimulatorCrashLogCommands.swift",
       "kind": "BooleanLiteral",
       "offset": 506,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/HID\/FBSimulatorDTUHIDTransport.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/HID\/FBSimulatorDTUHIDTransport.swift",
       "kind": "IntegerLiteral",
       "offset": 492,
       "length": 2,
       "value": "80"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/HID\/FBSimulatorDTUHIDTransport.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/HID\/FBSimulatorDTUHIDTransport.swift",
       "kind": "IntegerLiteral",
       "offset": 543,
       "length": 3,
       "value": "200"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/HID\/FBSimulatorDTUHIDTransport.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/HID\/FBSimulatorDTUHIDTransport.swift",
       "kind": "IntegerLiteral",
       "offset": 605,
       "length": 1,
       "value": "2"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/HID\/FBSimulatorDTUHIDTransport.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/HID\/FBSimulatorDTUHIDTransport.swift",
       "kind": "IntegerLiteral",
       "offset": 654,
       "length": 1,
       "value": "1"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/HID\/FBSimulatorDTUHIDTransport.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/HID\/FBSimulatorDTUHIDTransport.swift",
       "kind": "IntegerLiteral",
       "offset": 717,
       "length": 1,
       "value": "4"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/HID\/FBSimulatorDTUHIDTransport.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/HID\/FBSimulatorDTUHIDTransport.swift",
       "kind": "IntegerLiteral",
       "offset": 773,
       "length": 1,
       "value": "4"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/HID\/FBSimulatorDTUHIDTransport.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/HID\/FBSimulatorDTUHIDTransport.swift",
       "kind": "IntegerLiteral",
       "offset": 808,
       "length": 1,
       "value": "5"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/HID\/FBSimulatorDTUHIDTransport.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/HID\/FBSimulatorDTUHIDTransport.swift",
       "kind": "BooleanLiteral",
       "offset": 4445,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/HID\/FBSimulatorDTUHIDTransport.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/HID\/FBSimulatorDTUHIDTransport.swift",
       "kind": "StringLiteral",
       "offset": 5906,
       "length": 55,
       "value": "\"com.apple.coredevice.feature.remote.hid.vendordefined\""
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/HID\/FBSimulatorDTUHIDTransport.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/HID\/FBSimulatorDTUHIDTransport.swift",
       "kind": "StringLiteral",
       "offset": 5998,
       "length": 51,
       "value": "\"com.apple.coredevice.feature.remote.hid.digitizer\""
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/HID\/FBSimulatorDTUHIDTransport.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/HID\/FBSimulatorDTUHIDTransport.swift",
       "kind": "IntegerLiteral",
       "offset": 7175,
       "length": 11,
       "value": "200000000"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/HID\/FBSimulatorDTUHIDTransport.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/HID\/FBSimulatorDTUHIDTransport.swift",
       "kind": "IntegerLiteral",
       "offset": 7880,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/HID\/FBSimulatorDTUHIDTransport.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/HID\/FBSimulatorDTUHIDTransport.swift",
       "kind": "IntegerLiteral",
       "offset": 7916,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/HID\/FBSimulatorDTUHIDTransport.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/HID\/FBSimulatorDTUHIDTransport.swift",
       "kind": "BooleanLiteral",
       "offset": 8601,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/HID\/FBSimulatorDTUHIDTransport.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/HID\/FBSimulatorDTUHIDTransport.swift",
       "kind": "BooleanLiteral",
       "offset": 12190,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/HID\/FBSimulatorDTUHIDTransport.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/HID\/FBSimulatorDTUHIDTransport.swift",
       "kind": "BooleanLiteral",
       "offset": 17361,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Utility\/FBSimulatorError.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Utility\/FBSimulatorError.swift",
       "kind": "StringLiteral",
       "offset": 253,
       "length": 33,
       "value": "\"com.facebook.FBSimulatorControl\""
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/HID\/FBSimulatorHID.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/HID\/FBSimulatorHID.swift",
       "kind": "IntegerLiteral",
       "offset": 1555,
       "length": 4,
       "value": "2000"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/HID\/FBSimulatorHIDEvent.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/HID\/FBSimulatorHIDEvent.swift",
       "kind": "FloatLiteral",
       "offset": 292,
       "length": 4,
       "value": "10.0"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/HID\/FBSimulatorHIDEvent.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/HID\/FBSimulatorHIDEvent.swift",
       "kind": "StringLiteral",
       "offset": 336,
       "length": 32,
       "value": "\"com.apple.UIKit.SimulatorShake\""
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/HID\/FBSimulatorHIDEvent.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/HID\/FBSimulatorHIDEvent.swift",
       "kind": "StringLiteral",
       "offset": 411,
       "length": 49,
       "value": "\"com.apple.iphonesimulator.toggleincallstatusbar\""
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/HID\/FBSimulatorHIDSessionCache.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/HID\/FBSimulatorHIDSessionCache.swift",
       "kind": "IntegerLiteral",
       "offset": 351,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
       "kind": "IntegerLiteral",
       "offset": 1603,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
       "kind": "IntegerLiteral",
       "offset": 2126,
       "length": 1,
       "value": "1"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
       "kind": "IntegerLiteral",
       "offset": 2140,
       "length": 1,
       "value": "2"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
       "kind": "IntegerLiteral",
       "offset": 2433,
       "length": 1,
       "value": "1"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
       "kind": "IntegerLiteral",
       "offset": 2455,
       "length": 1,
       "value": "2"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
       "kind": "IntegerLiteral",
       "offset": 2471,
       "length": 1,
       "value": "3"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
       "kind": "IntegerLiteral",
       "offset": 2493,
       "length": 1,
       "value": "4"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
       "kind": "IntegerLiteral",
       "offset": 2509,
       "length": 1,
       "value": "5"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
       "kind": "IntegerLiteral",
       "offset": 2530,
       "length": 1,
       "value": "6"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
       "kind": "IntegerLiteral",
       "offset": 3213,
       "length": 1,
       "value": "1"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
       "kind": "IntegerLiteral",
       "offset": 3229,
       "length": 1,
       "value": "2"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
       "kind": "IntegerLiteral",
       "offset": 3245,
       "length": 1,
       "value": "3"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
       "kind": "IntegerLiteral",
       "offset": 3262,
       "length": 1,
       "value": "4"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
       "kind": "IntegerLiteral",
       "offset": 3280,
       "length": 1,
       "value": "5"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
       "kind": "IntegerLiteral",
       "offset": 3296,
       "length": 1,
       "value": "6"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
       "kind": "IntegerLiteral",
       "offset": 4423,
       "length": 1,
       "value": "1"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
       "kind": "IntegerLiteral",
       "offset": 4453,
       "length": 1,
       "value": "2"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
       "kind": "IntegerLiteral",
       "offset": 4479,
       "length": 1,
       "value": "3"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/HID\/FBSimulatorHIDTypes.swift",
       "kind": "IntegerLiteral",
       "offset": 4504,
       "length": 1,
       "value": "4"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Commands\/FBSimulatorHingeProtocol.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Commands\/FBSimulatorHingeProtocol.swift",
       "kind": "StringLiteral",
       "offset": 864,
       "length": 44,
       "value": "\"com.apple.coredevice.feature.monitormotion\""
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Commands\/FBSimulatorHingeReadSession.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Commands\/FBSimulatorHingeReadSession.swift",
       "kind": "IntegerLiteral",
       "offset": 837,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Commands\/FBSimulatorHingeReadSession.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Commands\/FBSimulatorHingeReadSession.swift",
       "kind": "IntegerLiteral",
       "offset": 970,
       "length": 1,
       "value": "5"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Commands\/FBSimulatorHingeSession.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Commands\/FBSimulatorHingeSession.swift",
       "kind": "BooleanLiteral",
       "offset": 1364,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/HID\/FBSimulatorIndigoHID.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/HID\/FBSimulatorIndigoHID.swift",
       "kind": "IntegerLiteral",
       "offset": 4450,
       "length": 4,
       "value": "0x16"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/HID\/FBSimulatorIndigoHID.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/HID\/FBSimulatorIndigoHID.swift",
       "kind": "IntegerLiteral",
       "offset": 4817,
       "length": 4,
       "value": "0xC0"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/HID\/FBSimulatorIndigoHID.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/HID\/FBSimulatorIndigoHID.swift",
       "kind": "IntegerLiteral",
       "offset": 5049,
       "length": 4,
       "value": "0xA0"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/HID\/FBSimulatorIndigoHIDClient.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/HID\/FBSimulatorIndigoHIDClient.swift",
       "kind": "StringLiteral",
       "offset": 2097,
       "length": 39,
       "value": "\"SimulatorKit.SimDeviceLegacyHIDClient\""
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/HID\/FBSimulatorIndigoHIDClient.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/HID\/FBSimulatorIndigoHIDClient.swift",
       "kind": "IntegerLiteral",
       "offset": 2481,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/HID\/FBSimulatorIndigoHIDClient.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/HID\/FBSimulatorIndigoHIDClient.swift",
       "kind": "BooleanLiteral",
       "offset": 2519,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/HID\/FBSimulatorIndigoHIDClient.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/HID\/FBSimulatorIndigoHIDClient.swift",
       "kind": "BooleanLiteral",
       "offset": 2562,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Commands\/FBSimulatorLaunchCtlCommands.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Commands\/FBSimulatorLaunchCtlCommands.swift",
       "kind": "StringLiteral",
       "offset": 5290,
       "length": 30,
       "value": "\"UIKitApplication:([^\\[]*).*\""
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Utility\/FBSimulatorLaunchedApplication.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Utility\/FBSimulatorLaunchedApplication.swift",
       "kind": "StringLiteral",
       "offset": 4247,
       "length": 112,
       "value": "\"Application Operation \""
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Utility\/FBSimulatorLaunchedApplication.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Utility\/FBSimulatorLaunchedApplication.swift",
       "kind": "StringLiteral",
       "offset": 4298,
       "length": 1,
       "value": "\" | pid \""
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Utility\/FBSimulatorLaunchedApplication.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Utility\/FBSimulatorLaunchedApplication.swift",
       "kind": "StringLiteral",
       "offset": 4325,
       "length": 1,
       "value": "\" | State \""
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Utility\/FBSimulatorLaunchedApplication.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Utility\/FBSimulatorLaunchedApplication.swift",
       "kind": "StringLiteral",
       "offset": 4358,
       "length": 1,
       "value": "\"\""
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Commands\/FBSimulatorLifecycleCommands.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Commands\/FBSimulatorLifecycleCommands.swift",
       "kind": "IntegerLiteral",
       "offset": 398,
       "length": 1,
       "value": "2"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Commands\/FBSimulatorProcessSpawnCommands.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Commands\/FBSimulatorProcessSpawnCommands.swift",
       "kind": "IntegerLiteral",
       "offset": 4224,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/HID\/FBSimulatorPurpleHID.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/HID\/FBSimulatorPurpleHID.swift",
       "kind": "IntegerLiteral",
       "offset": 993,
       "length": 2,
       "value": "50"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/HID\/FBSimulatorPurpleHID.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/HID\/FBSimulatorPurpleHID.swift",
       "kind": "IntegerLiteral",
       "offset": 1049,
       "length": 4,
       "value": "1014"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/HID\/FBSimulatorPurpleHID.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/HID\/FBSimulatorPurpleHID.swift",
       "kind": "IntegerLiteral",
       "offset": 1101,
       "length": 8,
       "value": "0x20000"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/HID\/FBSimulatorPurpleHID.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/HID\/FBSimulatorPurpleHID.swift",
       "kind": "IntegerLiteral",
       "offset": 1162,
       "length": 4,
       "value": "0x7B"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Management\/FBSimulatorServiceContext.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Management\/FBSimulatorServiceContext.swift",
       "kind": "Dictionary",
       "offset": 892,
       "length": 3,
       "value": "[]"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
       "kind": "IntegerLiteral",
       "offset": 655,
       "length": 14,
       "value": "1"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
       "kind": "IntegerLiteral",
       "offset": 677,
       "length": 16,
       "value": "2"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
       "kind": "IntegerLiteral",
       "offset": 887,
       "length": 1,
       "value": "1"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
       "kind": "IntegerLiteral",
       "offset": 932,
       "length": 1,
       "value": "2"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
       "kind": "IntegerLiteral",
       "offset": 1181,
       "length": 1,
       "value": "1"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
       "kind": "IntegerLiteral",
       "offset": 1198,
       "length": 1,
       "value": "2"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
       "kind": "IntegerLiteral",
       "offset": 1216,
       "length": 1,
       "value": "3"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
       "kind": "IntegerLiteral",
       "offset": 1233,
       "length": 1,
       "value": "4"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
       "kind": "IntegerLiteral",
       "offset": 1255,
       "length": 1,
       "value": "5"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
       "kind": "IntegerLiteral",
       "offset": 1282,
       "length": 1,
       "value": "6"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
       "kind": "IntegerLiteral",
       "offset": 1314,
       "length": 1,
       "value": "7"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
       "kind": "IntegerLiteral",
       "offset": 1345,
       "length": 1,
       "value": "8"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
       "kind": "IntegerLiteral",
       "offset": 1375,
       "length": 1,
       "value": "9"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
       "kind": "IntegerLiteral",
       "offset": 1410,
       "length": 2,
       "value": "10"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
       "kind": "IntegerLiteral",
       "offset": 1451,
       "length": 2,
       "value": "11"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
       "kind": "IntegerLiteral",
       "offset": 1497,
       "length": 2,
       "value": "12"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
       "kind": "StringLiteral",
       "offset": 1544,
       "length": 51,
       "value": "\"com.apple.UIKit.SimulatorSlowMotionAnimationState\""
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
       "kind": "Array",
       "offset": 20942,
       "length": 2,
       "value": "[]"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
       "kind": "StringLiteral",
       "offset": 26791,
       "length": 24,
       "value": "\"kTCCServiceAddressBook\""
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
       "kind": "StringLiteral",
       "offset": 26853,
       "length": 19,
       "value": "\"kTCCServicePhotos\""
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
       "kind": "StringLiteral",
       "offset": 26910,
       "length": 19,
       "value": "\"kTCCServiceCamera\""
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
       "kind": "StringLiteral",
       "offset": 26971,
       "length": 23,
       "value": "\"kTCCServiceMicrophone\""
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
       "kind": "StringLiteral",
       "offset": 27135,
       "length": 25,
       "value": "\"kTCCServiceContactsFull\""
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
       "kind": "StringLiteral",
       "offset": 27198,
       "length": 19,
       "value": "\"kTCCServicePhotos\""
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
       "kind": "StringLiteral",
       "offset": 27255,
       "length": 8,
       "value": "\"camera\""
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
       "kind": "StringLiteral",
       "offset": 27303,
       "length": 22,
       "value": "\"__CoreLocationAlways\""
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
       "kind": "StringLiteral",
       "offset": 27367,
       "length": 23,
       "value": "\"kTCCServiceMicrophone\""
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
       "kind": "StringLiteral",
       "offset": 27532,
       "length": 22,
       "value": "\"__CoreLocationAlways\""
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Commands\/FBSimulatorSettingsCommands.swift",
       "kind": "Array",
       "offset": 27630,
       "length": 207,
       "value": "[\"AddressBook.sqlitedb\", \"AddressBook.sqlitedb-shm\", \"AddressBook.sqlitedb-wal\", \"AddressBookImages.sqlitedb\", \"AddressBookImages.sqlitedb-shm\", \"AddressBookImages.sqlitedb-wal\"]"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Strategies\/FBSimulatorShutdownStrategy.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Strategies\/FBSimulatorShutdownStrategy.swift",
       "kind": "IntegerLiteral",
       "offset": 1937,
       "length": 3,
       "value": "164"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideo.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideo.swift",
       "kind": "BooleanLiteral",
       "offset": 1400,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideo.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideo.swift",
       "kind": "IntegerLiteral",
       "offset": 1632,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideo.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideo.swift",
       "kind": "IntegerLiteral",
       "offset": 1643,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideo.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideo.swift",
       "kind": "IntegerLiteral",
       "offset": 1652,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideo.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideo.swift",
       "kind": "IntegerLiteral",
       "offset": 1662,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideo.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideo.swift",
       "kind": "BooleanLiteral",
       "offset": 1690,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "IntegerLiteral",
       "offset": 16044,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "BooleanLiteral",
       "offset": 16069,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "BooleanLiteral",
       "offset": 16107,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "FloatLiteral",
       "offset": 16241,
       "length": 3,
       "value": "5.0"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "IntegerLiteral",
       "offset": 39115,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "IntegerLiteral",
       "offset": 39156,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "IntegerLiteral",
       "offset": 39331,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "IntegerLiteral",
       "offset": 39359,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "IntegerLiteral",
       "offset": 39959,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "IntegerLiteral",
       "offset": 39991,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "IntegerLiteral",
       "offset": 42173,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "IntegerLiteral",
       "offset": 42184,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "IntegerLiteral",
       "offset": 42193,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "IntegerLiteral",
       "offset": 42203,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "IntegerLiteral",
       "offset": 42820,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "IntegerLiteral",
       "offset": 42831,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "IntegerLiteral",
       "offset": 42840,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "IntegerLiteral",
       "offset": 42850,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "IntegerLiteral",
       "offset": 77182,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "BooleanLiteral",
       "offset": 79845,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "FloatLiteral",
       "offset": 84599,
       "length": 3,
       "value": "1.0"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "BooleanLiteral",
       "offset": 86909,
       "length": 4,
       "value": "true"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "IntegerLiteral",
       "offset": 90205,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "IntegerLiteral",
       "offset": 90244,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "IntegerLiteral",
       "offset": 90287,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "IntegerLiteral",
       "offset": 90325,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "FloatLiteral",
       "offset": 90352,
       "length": 3,
       "value": "0.0"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "FloatLiteral",
       "offset": 90411,
       "length": 3,
       "value": "0.0"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Framebuffer\/FBSimulatorVideoStream.swift",
       "kind": "IntegerLiteral",
       "offset": 91045,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Commands\/FBSimulatorXCTestCommands.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Commands\/FBSimulatorXCTestCommands.swift",
       "kind": "IntegerLiteral",
       "offset": 422,
       "length": 1,
       "value": "5"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Commands\/FBSimulatorXCTestCommands.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Commands\/FBSimulatorXCTestCommands.swift",
       "kind": "StringLiteral",
       "offset": 452,
       "length": 23,
       "value": "\"TESTMANAGERD_SIM_SOCK\""
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Commands\/FBSimulatorXCTestCommands.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Commands\/FBSimulatorXCTestCommands.swift",
       "kind": "BooleanLiteral",
       "offset": 674,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Commands\/FBSimulatorXCTestCommands.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Commands\/FBSimulatorXCTestCommands.swift",
       "kind": "StringLiteral",
       "offset": 4231,
       "length": 74,
       "value": "\"Platforms\/iPhoneSimulator.platform\/Developer\/Library\/Xcode\/Agents\/xctest\""
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Framebuffer\/FBSurfaceImageGenerator.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Framebuffer\/FBSurfaceImageGenerator.swift",
       "kind": "IntegerLiteral",
       "offset": 559,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Framebuffer\/FBVideoFileWriter.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Framebuffer\/FBVideoFileWriter.swift",
       "kind": "BooleanLiteral",
       "offset": 2651,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Framebuffer\/FBVideoFileWriter.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Framebuffer\/FBVideoFileWriter.swift",
       "kind": "Array",
       "offset": 2942,
       "length": 2,
       "value": "[]"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Framebuffer\/FBVideoFileWriter.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Framebuffer\/FBVideoFileWriter.swift",
       "kind": "BooleanLiteral",
       "offset": 3133,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayCoordinateTransform.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayCoordinateTransform.swift",
       "kind": "IntegerLiteral",
       "offset": 5608,
       "length": 2,
       "value": "24"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
       "kind": "Array",
       "offset": 2991,
       "length": 2,
       "value": "[]"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
       "kind": "StringLiteral",
       "offset": 3091,
       "length": 37,
       "value": "\"com.facebook.sime2e.overlay-effects\""
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
       "kind": "Dictionary",
       "offset": 3912,
       "length": 3,
       "value": "[]"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
       "kind": "Dictionary",
       "offset": 4148,
       "length": 3,
       "value": "[]"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
       "kind": "Dictionary",
       "offset": 4462,
       "length": 3,
       "value": "[]"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
       "kind": "Dictionary",
       "offset": 4868,
       "length": 3,
       "value": "[]"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
       "kind": "FloatLiteral",
       "offset": 5031,
       "length": 3,
       "value": "1.0"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
       "kind": "IntegerLiteral",
       "offset": 19193,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
       "kind": "IntegerLiteral",
       "offset": 19202,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
       "kind": "FloatLiteral",
       "offset": 19207,
       "length": 5,
       "value": "255.0"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
       "kind": "IntegerLiteral",
       "offset": 19215,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
       "kind": "IntegerLiteral",
       "offset": 19291,
       "length": 1,
       "value": "1"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
       "kind": "IntegerLiteral",
       "offset": 19300,
       "length": 1,
       "value": "1"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
       "kind": "FloatLiteral",
       "offset": 19305,
       "length": 5,
       "value": "255.0"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
       "kind": "IntegerLiteral",
       "offset": 19313,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
       "kind": "IntegerLiteral",
       "offset": 19388,
       "length": 1,
       "value": "2"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
       "kind": "IntegerLiteral",
       "offset": 19397,
       "length": 1,
       "value": "2"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
       "kind": "FloatLiteral",
       "offset": 19402,
       "length": 5,
       "value": "255.0"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/Framebuffer\/Overlay\/OverlayRenderer.swift",
       "kind": "IntegerLiteral",
       "offset": 19410,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBSimulatorControl\/HID\/XPCEncoder.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBSimulatorControl\/HID\/XPCEncoder.swift",
       "kind": "Array",
       "offset": 1803,
       "length": 2,
