@@ -194,7 +194,8 @@ public struct FBAccessibilityRequestOptions : Swift::Sendable {
   public var collectFrameCoverage: Swift::Bool
   public var remoteContentOptions: FBControlCore::FBAccessibilityRemoteContentOptions?
   public var maxDepth: Swift::UInt
-  public init(nestedFormat: Swift::Bool = false, keys: Swift::Set<FBControlCore::FBAXKeys>? = FBAXKeys.defaultSet, enableLogging: Swift::Bool = false, enableProfiling: Swift::Bool = false, collectFrameCoverage: Swift::Bool = false, remoteContentOptions: FBControlCore::FBAccessibilityRemoteContentOptions? = nil, maxDepth: Swift::UInt = 0)
+  public var skipsKeyboardDescendants: Swift::Bool
+  public init(nestedFormat: Swift::Bool = false, keys: Swift::Set<FBControlCore::FBAXKeys>? = FBAXKeys.defaultSet, enableLogging: Swift::Bool = false, enableProfiling: Swift::Bool = false, collectFrameCoverage: Swift::Bool = false, remoteContentOptions: FBControlCore::FBAccessibilityRemoteContentOptions? = nil, maxDepth: Swift::UInt = 0, skipsKeyboardDescendants: Swift::Bool = false)
 }
 extension FBControlCore::FBAccessibilityRequestOptions : Swift::CustomStringConvertible {
   public var description: Swift::String {

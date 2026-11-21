@@ -97,7 +97,8 @@ final class FBAXTranslationRequest {
       keys: Self.serializerKeys(options),
       collector: collector,
       coverageGrid: nil,
-      maxDepth: options.maxDepth
+      maxDepth: options.maxDepth,
+      skipsKeyboardDescendants: options.skipsKeyboardDescendants
     )
     return buildResponse(elements: elements, serializationStart: serializationStart, frameCoverage: nil, additionalFrameCoverage: nil)
   }
@@ -126,7 +127,8 @@ final class FBAXTranslationRequest {
       collector: collector,
       coverageGrid: grid,
       seenPids: seenPids,
-      maxDepth: options.maxDepth
+      maxDepth: options.maxDepth,
+      skipsKeyboardDescendants: options.skipsKeyboardDescendants
     )
 
     // Base coverage after the main traversal.

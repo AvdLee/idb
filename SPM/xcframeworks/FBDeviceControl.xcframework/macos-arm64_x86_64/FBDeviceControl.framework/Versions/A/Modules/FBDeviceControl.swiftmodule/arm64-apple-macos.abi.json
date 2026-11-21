@@ -17291,378 +17291,378 @@
   },
   "ConstValues": [
     {
-      "filePath": "\/tmp\/idb-fork\/FBDeviceControl\/Management\/FBAMDeviceServiceManager.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBDeviceControl\/Management\/FBAMDeviceServiceManager.swift",
       "kind": "StringLiteral",
       "offset": 2172,
       "length": 26,
       "value": "\"house_arrest_\""
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBDeviceControl\/Management\/FBAMDeviceServiceManager.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBDeviceControl\/Management\/FBAMDeviceServiceManager.swift",
       "kind": "StringLiteral",
       "offset": 2197,
       "length": 1,
       "value": "\"\""
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBDeviceControl\/Management\/FBAMDeviceServiceManager.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBDeviceControl\/Management\/FBAMDeviceServiceManager.swift",
       "kind": "BooleanLiteral",
       "offset": 2240,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBDeviceControl\/Management\/FBAMDeviceServiceManager.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBDeviceControl\/Management\/FBAMDeviceServiceManager.swift",
       "kind": "Dictionary",
       "offset": 2501,
       "length": 3,
       "value": "[]"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBDeviceControl\/Management\/FBAMDeviceServiceManager.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBDeviceControl\/Management\/FBAMDeviceServiceManager.swift",
       "kind": "Dictionary",
       "offset": 2590,
       "length": 3,
       "value": "[]"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBDeviceControl\/Commands\/FBDeviceActivationCommands.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBDeviceControl\/Commands\/FBDeviceActivationCommands.swift",
       "kind": "StringLiteral",
       "offset": 334,
       "length": 54,
       "value": "\"https:\/\/albert.apple.com\/deviceservices\/drmHandshake\""
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBDeviceControl\/Commands\/FBDeviceActivationCommands.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBDeviceControl\/Commands\/FBDeviceActivationCommands.swift",
       "kind": "StringLiteral",
       "offset": 430,
       "length": 58,
       "value": "\"https:\/\/albert.apple.com\/deviceservices\/deviceActivation\""
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBDeviceControl\/Utility\/FBDeviceControlError.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBDeviceControl\/Utility\/FBDeviceControlError.swift",
       "kind": "StringLiteral",
       "offset": 250,
       "length": 30,
       "value": "\"com.facebook.FBDeviceControl\""
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBDeviceControl\/Commands\/FBDeviceCrashLogCommands.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBDeviceControl\/Commands\/FBDeviceCrashLogCommands.swift",
       "kind": "StringLiteral",
       "offset": 318,
       "length": 28,
       "value": "\"com.apple.crashreportmover\""
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBDeviceControl\/Commands\/FBDeviceCrashLogCommands.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBDeviceControl\/Commands\/FBDeviceCrashLogCommands.swift",
       "kind": "StringLiteral",
       "offset": 384,
       "length": 33,
       "value": "\"com.apple.crashreportcopymobile\""
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBDeviceControl\/Commands\/FBDeviceCrashLogCommands.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBDeviceControl\/Commands\/FBDeviceCrashLogCommands.swift",
       "kind": "StringLiteral",
       "offset": 444,
       "length": 6,
       "value": "\"ping\""
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBDeviceControl\/Commands\/FBDeviceCrashLogCommands.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBDeviceControl\/Commands\/FBDeviceCrashLogCommands.swift",
       "kind": "BooleanLiteral",
       "offset": 647,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBDeviceControl\/Management\/FBDeviceDebugServer.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBDeviceControl\/Management\/FBDeviceDebugServer.swift",
       "kind": "IntegerLiteral",
       "offset": 293,
       "length": 4,
       "value": "1024"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBDeviceControl\/Commands\/FBDeviceDeveloperDiskImageCommands.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBDeviceControl\/Commands\/FBDeviceDeveloperDiskImageCommands.swift",
       "kind": "StringLiteral",
       "offset": 324,
       "length": 11,
       "value": "\"MountPath\""
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBDeviceControl\/Commands\/FBDeviceDeveloperDiskImageCommands.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBDeviceControl\/Commands\/FBDeviceDeveloperDiskImageCommands.swift",
       "kind": "StringLiteral",
       "offset": 363,
       "length": 11,
       "value": "\"ImageType\""
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBDeviceControl\/Commands\/FBDeviceDeveloperDiskImageCommands.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBDeviceControl\/Commands\/FBDeviceDeveloperDiskImageCommands.swift",
       "kind": "StringLiteral",
       "offset": 407,
       "length": 16,
       "value": "\"ImageSignature\""
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBDeviceControl\/Commands\/FBDeviceDeveloperDiskImageCommands.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBDeviceControl\/Commands\/FBDeviceDeveloperDiskImageCommands.swift",
       "kind": "StringLiteral",
       "offset": 449,
       "length": 9,
       "value": "\"Command\""
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBDeviceControl\/Commands\/FBDeviceDeveloperDiskImageCommands.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBDeviceControl\/Commands\/FBDeviceDeveloperDiskImageCommands.swift",
       "kind": "StringLiteral",
       "offset": 497,
       "length": 11,
       "value": "\"Developer\""
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBDeviceControl\/Commands\/FBDeviceDeveloperDiskImageCommands.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBDeviceControl\/Commands\/FBDeviceDeveloperDiskImageCommands.swift",
       "kind": "StringLiteral",
       "offset": 543,
       "length": 39,
       "value": "\"com.apple.mobile.mobile_image_mounter\""
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBDeviceControl\/Commands\/FBDeviceDeveloperDiskImageCommands.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBDeviceControl\/Commands\/FBDeviceDeveloperDiskImageCommands.swift",
       "kind": "IntegerLiteral",
       "offset": 628,
       "length": 10,
       "value": "-402653066"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBDeviceControl\/Commands\/FBDeviceDiagnosticInformationCommands.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBDeviceControl\/Commands\/FBDeviceDiagnosticInformationCommands.swift",
       "kind": "StringLiteral",
       "offset": 269,
       "length": 36,
       "value": "\"com.apple.mobile.diagnostics_relay\""
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBDeviceControl\/Commands\/FBDeviceEraseCommands.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBDeviceControl\/Commands\/FBDeviceEraseCommands.swift",
       "kind": "IntegerLiteral",
       "offset": 291,
       "length": 3,
       "value": "-10"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBDeviceControl\/Commands\/FBDeviceEraseCommands.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBDeviceControl\/Commands\/FBDeviceEraseCommands.swift",
       "kind": "IntegerLiteral",
       "offset": 337,
       "length": 2,
       "value": "10"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBDeviceControl\/Commands\/FBDeviceEraseCommands.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBDeviceControl\/Commands\/FBDeviceEraseCommands.swift",
       "kind": "IntegerLiteral",
       "offset": 387,
       "length": 2,
       "value": "15"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBDeviceControl\/Commands\/FBDeviceEraseCommands.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBDeviceControl\/Commands\/FBDeviceEraseCommands.swift",
       "kind": "IntegerLiteral",
       "offset": 433,
       "length": 2,
       "value": "20"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBDeviceControl\/Commands\/FBDeviceEraseCommands.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBDeviceControl\/Commands\/FBDeviceEraseCommands.swift",
       "kind": "IntegerLiteral",
       "offset": 478,
       "length": 3,
       "value": "300"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBDeviceControl\/Commands\/FBDeviceFileCommands.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBDeviceControl\/Commands\/FBDeviceFileCommands.swift",
       "kind": "StringLiteral",
       "offset": 275,
       "length": 9,
       "value": "\"mounted\""
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBDeviceControl\/Commands\/FBDeviceFileCommands.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBDeviceControl\/Commands\/FBDeviceFileCommands.swift",
       "kind": "StringLiteral",
       "offset": 325,
       "length": 9,
       "value": "\"Symbols\""
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBDeviceControl\/Utility\/FBDeviceLinkClient.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBDeviceControl\/Utility\/FBDeviceLinkClient.swift",
       "kind": "StringLiteral",
       "offset": 276,
       "length": 25,
       "value": "\"DLMessageProcessMessage\""
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBDeviceControl\/Utility\/FBDeviceLinkClient.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBDeviceControl\/Utility\/FBDeviceLinkClient.swift",
       "kind": "StringLiteral",
       "offset": 328,
       "length": 22,
       "value": "\"DLMessageDeviceReady\""
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBDeviceControl\/Commands\/FBDeviceLocationCommands.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBDeviceControl\/Commands\/FBDeviceLocationCommands.swift",
       "kind": "IntegerLiteral",
       "offset": 321,
       "length": 10,
       "value": "0x00000000"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBDeviceControl\/Commands\/FBDeviceScreenshotCommands.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBDeviceControl\/Commands\/FBDeviceScreenshotCommands.swift",
       "kind": "StringLiteral",
       "offset": 263,
       "length": 16,
       "value": "\"ScreenShotData\""
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBDeviceControl\/Management\/FBDeviceSet.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBDeviceControl\/Management\/FBDeviceSet.swift",
       "kind": "StringLiteral",
       "offset": 2253,
       "length": 78,
       "value": "\"FBDeviceSet: \""
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBDeviceControl\/Management\/FBDeviceSet.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBDeviceControl\/Management\/FBDeviceSet.swift",
       "kind": "StringLiteral",
       "offset": 2330,
       "length": 1,
       "value": "\"\""
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBDeviceControl\/Management\/FBDeviceStorage.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBDeviceControl\/Management\/FBDeviceStorage.swift",
       "kind": "Dictionary",
       "offset": 466,
       "length": 3,
       "value": "[]"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBDeviceControl\/Video\/FBDeviceVideoStream.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBDeviceControl\/Video\/FBDeviceVideoStream.swift",
       "kind": "BooleanLiteral",
       "offset": 9561,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBDeviceControl\/Commands\/FBDeviceXCTestCommands.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBDeviceControl\/Commands\/FBDeviceXCTestCommands.swift",
       "kind": "BooleanLiteral",
       "offset": 544,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBDeviceControl\/Management\/FBManagedConfigClient.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBDeviceControl\/Management\/FBManagedConfigClient.swift",
       "kind": "StringLiteral",
       "offset": 291,
       "length": 28,
       "value": "\"com.apple.mobile.MCInstall\""
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBDeviceControl\/Management\/FBManagedConfigClient.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBDeviceControl\/Management\/FBManagedConfigClient.swift",
       "kind": "StringLiteral",
       "offset": 354,
       "length": 20,
       "value": "\"OrderedIdentifiers\""
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBDeviceControl\/Management\/FBManagedConfigClient.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBDeviceControl\/Management\/FBManagedConfigClient.swift",
       "kind": "StringLiteral",
       "offset": 405,
       "length": 17,
       "value": "\"ProfileMetadata\""
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBDeviceControl\/Management\/FBManagedConfigClient.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBDeviceControl\/Management\/FBManagedConfigClient.swift",
       "kind": "StringLiteral",
       "offset": 449,
       "length": 13,
       "value": "\"PayloadUUID\""
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBDeviceControl\/Management\/FBManagedConfigClient.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBDeviceControl\/Management\/FBManagedConfigClient.swift",
       "kind": "StringLiteral",
       "offset": 492,
       "length": 16,
       "value": "\"PayloadVersion\""
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBDeviceControl\/Management\/FBManagedConfigClient.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBDeviceControl\/Management\/FBManagedConfigClient.swift",
       "kind": "StringLiteral",
       "offset": 1438,
       "length": 28,
       "value": "\"com.apple.mobile.MCInstall\""
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBDeviceControl\/Management\/FBManagedConfigClient.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBDeviceControl\/Management\/FBManagedConfigClient.swift",
       "kind": "IntegerLiteral",
       "offset": 1576,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBDeviceControl\/Management\/FBManagedConfigClient.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBDeviceControl\/Management\/FBManagedConfigClient.swift",
       "kind": "IntegerLiteral",
       "offset": 1620,
       "length": 1,
       "value": "1"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBDeviceControl\/Management\/FBSpringboardServicesClient.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBDeviceControl\/Management\/FBSpringboardServicesClient.swift",
       "kind": "StringLiteral",
       "offset": 509,
       "length": 12,
       "value": "\"homescreen\""
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBDeviceControl\/Management\/FBSpringboardServicesClient.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBDeviceControl\/Management\/FBSpringboardServicesClient.swift",
       "kind": "StringLiteral",
       "offset": 582,
       "length": 12,
       "value": "\"lockscreen\""
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBDeviceControl\/Management\/FBSpringboardServicesClient.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBDeviceControl\/Management\/FBSpringboardServicesClient.swift",
       "kind": "StringLiteral",
       "offset": 645,
       "length": 31,
       "value": "\"com.apple.springboardservices\""
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBDeviceControl\/Management\/FBSpringboardServicesClient.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBDeviceControl\/Management\/FBSpringboardServicesClient.swift",
       "kind": "StringLiteral",
       "offset": 706,
       "length": 13,
       "value": "\"icons.plist\""
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBDeviceControl\/Management\/FBSpringboardServicesClient.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBDeviceControl\/Management\/FBSpringboardServicesClient.swift",
       "kind": "StringLiteral",
       "offset": 747,
       "length": 12,
       "value": "\"icons.json\""
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBDeviceControl\/Management\/FBSpringboardServicesClient.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBDeviceControl\/Management\/FBSpringboardServicesClient.swift",
       "kind": "IntegerLiteral",
       "offset": 795,
       "length": 1,
       "value": "4"
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBDeviceControl\/Management\/FBSpringboardServicesClient.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBDeviceControl\/Management\/FBSpringboardServicesClient.swift",
       "kind": "StringLiteral",
       "offset": 2704,
       "length": 12,
       "value": "\"homescreen\""
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBDeviceControl\/Management\/FBSpringboardServicesClient.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBDeviceControl\/Management\/FBSpringboardServicesClient.swift",
       "kind": "StringLiteral",
       "offset": 2777,
       "length": 12,
       "value": "\"lockscreen\""
     },
     {
-      "filePath": "\/tmp\/idb-fork\/FBDeviceControl\/Management\/FBSpringboardServicesClient.swift",
+      "filePath": "\/Users\/avanderlee\/Developer\/GIT-Projects\/Forks\/idb-worktrees\/skip-keyboard-descendants\/FBDeviceControl\/Management\/FBSpringboardServicesClient.swift",
       "kind": "StringLiteral",
       "offset": 2838,
       "length": 31,

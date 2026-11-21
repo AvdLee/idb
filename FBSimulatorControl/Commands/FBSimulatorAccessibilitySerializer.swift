@@ -66,13 +66,14 @@ enum FBSimulatorAccessibilitySerializer {
     collector: FBAccessibilityProfilingCollector?,
     coverageGrid: FBAccessibilityCoverageGrid?,
     seenPids: SeenPIDs?,
-    maxDepth: UInt = 0
+    maxDepth: UInt = 0,
+    skipsKeyboardDescendants: Bool = false
   ) -> [[String: Any]] {
     element.axSetBridgeDelegateToken(token)
     if nestedFormat {
-      return [nestedRecursiveDescription(fromElement: element, token: token, keys: keys, collector: collector, coverageGrid: coverageGrid, seenPids: seenPids, depth: 0, maxDepth: maxDepth)]
+      return [nestedRecursiveDescription(fromElement: element, token: token, keys: keys, collector: collector, coverageGrid: coverageGrid, seenPids: seenPids, depth: 0, maxDepth: maxDepth, skipsKeyboardDescendants: skipsKeyboardDescendants)]
     }
-    return flatRecursiveDescription(fromElement: element, token: token, keys: keys, collector: collector, coverageGrid: coverageGrid, seenPids: seenPids, depth: 0, maxDepth: maxDepth)
+    return flatRecursiveDescription(fromElement: element, token: token, keys: keys, collector: collector, coverageGrid: coverageGrid, seenPids: seenPids, depth: 0, maxDepth: maxDepth, skipsKeyboardDescendants: skipsKeyboardDescendants)
   }
 
   static func formattedDescription(
@@ -82,11 +83,12 @@ enum FBSimulatorAccessibilitySerializer {
     keys: Set<FBAXKeys>,
     collector: FBAccessibilityProfilingCollector?,
     coverageGrid: FBAccessibilityCoverageGrid?,
-    maxDepth: UInt = 0
+    maxDepth: UInt = 0,
+    skipsKeyboardDescendants: Bool = false
   ) -> [String: Any] {
     element.axSetBridgeDelegateToken(token)
     if nestedFormat {
-      return nestedRecursiveDescription(fromElement: element, token: token, keys: keys, collector: collector, coverageGrid: coverageGrid, seenPids: nil, depth: 0, maxDepth: maxDepth)
+      return nestedRecursiveDescription(fromElement: element, token: token, keys: keys, collector: collector, coverageGrid: coverageGrid, seenPids: nil, depth: 0, maxDepth: maxDepth, skipsKeyboardDescendants: skipsKeyboardDescendants)
     }
     return accessibilityDictionary(forElement: element, token: token, keys: keys, collector: collector, coverageGrid: coverageGrid, seenPids: nil, discoveryMethod: discoveryMethodRecursive)
   }
@@ -95,6 +97,28 @@ enum FBSimulatorAccessibilitySerializer {
   /// A `maxDepth` of 0 is unlimited; 1 serializes only the root element.
   private static func mayDescend(from depth: UInt, maxDepth: UInt) -> Bool {
     maxDepth == 0 || depth + 1 < maxDepth
+  }
+
+  private static let keyboardHostTokens = ["uikeyboard", "uikbkeyplane", "rtiinputsystem", "rtiremoteuihosting"]
+
+  /// RocketSim addition: whether serialized `values` describe the on-screen keyboard's host element.
+  /// Mirrors the host detection RocketSim applies to the decoded tree: the `AXKeyboard` role, or a
+  /// UIKit keyboard class token in the role, type, or identifier. A host with an empty frame is
+  /// ignored so recursion continues to a descendant that carries the real geometry.
+  static func isKeyboardHost(values: [String: Any]) -> Bool {
+    guard let frameString = values[FBAXKeys.frame.rawValue] as? String else {
+      return false
+    }
+    let frame = NSRectFromString(frameString)
+    guard frame.width > 0, frame.height > 0 else {
+      return false
+    }
+    if let role = (values[FBAXKeys.role.rawValue] as? String)?.lowercased(), role == "axkeyboard" || role == "keyboard" {
+      return true
+    }
+    return [FBAXKeys.role.rawValue, FBAXKeys.type.rawValue, FBAXKeys.uniqueID.rawValue]
+      .compactMap { (values[$0] as? String)?.lowercased() }
+      .contains { field in keyboardHostTokens.contains { field.contains($0) } }
   }
 
   // The values here mirror the old SimulatorBridge implementation for downstream
@@ -226,16 +250,18 @@ enum FBSimulatorAccessibilitySerializer {
     coverageGrid: FBAccessibilityCoverageGrid?,
     seenPids: SeenPIDs?,
     depth: UInt = 0,
-    maxDepth: UInt = 0
+    maxDepth: UInt = 0,
+    skipsKeyboardDescendants: Bool = false
   ) -> [[String: Any]] {
     var values: [[String: Any]] = []
     values.append(accessibilityDictionary(forElement: element, token: token, keys: keys, collector: collector, coverageGrid: coverageGrid, seenPids: seenPids, discoveryMethod: discoveryMethodRecursive))
-    guard mayDescend(from: depth, maxDepth: maxDepth) else {
+    guard mayDescend(from: depth, maxDepth: maxDepth),
+          !(skipsKeyboardDescendants && isKeyboardHost(values: values[0])) else {
       return values
     }
     for child in element.axChildren() {
       child.axSetBridgeDelegateToken(token)
-      values.append(contentsOf: flatRecursiveDescription(fromElement: child, token: token, keys: keys, collector: collector, coverageGrid: coverageGrid, seenPids: seenPids, depth: depth + 1, maxDepth: maxDepth))
+      values.append(contentsOf: flatRecursiveDescription(fromElement: child, token: token, keys: keys, collector: collector, coverageGrid: coverageGrid, seenPids: seenPids, depth: depth + 1, maxDepth: maxDepth, skipsKeyboardDescendants: skipsKeyboardDescendants))
     }
     return values
   }
@@ -248,14 +274,15 @@ enum FBSimulatorAccessibilitySerializer {
     coverageGrid: FBAccessibilityCoverageGrid?,
     seenPids: SeenPIDs?,
     depth: UInt = 0,
-    maxDepth: UInt = 0
+    maxDepth: UInt = 0,
+    skipsKeyboardDescendants: Bool = false
   ) -> [String: Any] {
     var values = accessibilityDictionary(forElement: element, token: token, keys: keys, collector: collector, coverageGrid: coverageGrid, seenPids: seenPids, discoveryMethod: discoveryMethodRecursive)
     var childrenValues: [[String: Any]] = []
-    if mayDescend(from: depth, maxDepth: maxDepth) {
+    if mayDescend(from: depth, maxDepth: maxDepth), !(skipsKeyboardDescendants && isKeyboardHost(values: values)) {
       for child in element.axChildren() {
         child.axSetBridgeDelegateToken(token)
-        childrenValues.append(nestedRecursiveDescription(fromElement: child, token: token, keys: keys, collector: collector, coverageGrid: coverageGrid, seenPids: seenPids, depth: depth + 1, maxDepth: maxDepth))
+        childrenValues.append(nestedRecursiveDescription(fromElement: child, token: token, keys: keys, collector: collector, coverageGrid: coverageGrid, seenPids: seenPids, depth: depth + 1, maxDepth: maxDepth, skipsKeyboardDescendants: skipsKeyboardDescendants))
       }
     }
     values["children"] = childrenValues
