@@ -161,6 +161,34 @@ final class FBSimulatorHingeTests: XCTestCase {
     XCTAssertEqual(decoded["value"] as? Double, degrees)
   }
 
+  func testOrientationVendorPayloadUsesDeviceHubOrientationPicker() throws {
+    let expected: [FBSimulatorHIDDeviceOrientation: String] = [
+      .portrait: "portrait",
+      .portraitUpsideDown: "pud",
+      .landscapeLeft: "landscape-left",
+      .landscapeRight: "landscape-right",
+    ]
+    XCTAssertEqual(Set(expected.keys), Set(FBSimulatorHIDDeviceOrientation.allCases))
+    for (orientation, value) in expected {
+      let event = try orientation.vendorEvent()
+      XCTAssertEqual(event.usagePage, 0xff61)
+      XCTAssertEqual(event.usage, 0x5b)
+      let decoded = try XCTUnwrap(
+        event.data.withUnsafeBytes { buffer -> [String: Any]? in
+          IOCFUnserializeWithSize(
+            buffer.baseAddress!.assumingMemoryBound(to: CChar.self),
+            buffer.count,
+            nil,
+            0,
+            nil) as? [String: Any]
+        })
+      XCTAssertEqual(decoded["provider"] as? String, "com.apple.Virtualization.VirtualMachines")
+      XCTAssertEqual(decoded["source"] as? String, "orientation-picker-control")
+      XCTAssertEqual(decoded["type"] as? String, "enum")
+      XCTAssertEqual(decoded["value"] as? String, value)
+    }
+  }
+
   func testPersistentWriteSessionUsesOneTransportAndOneDrain() async throws {
     let transport = FBSimulatorHingeWriteTransportStub()
     let session = FBSimulatorHingeSession(transport: transport)
