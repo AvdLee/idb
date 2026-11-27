@@ -608,6 +608,7 @@ public struct FBSimulatorHingeAngle : Swift::Equatable, Swift::Hashable, Swift::
 extension FBSimulatorControl::FBSimulator {
   public func makeHingeSession() async throws -> FBSimulatorControl::FBSimulatorHingeSession
   public func setHingeAngle(_ angle: FBSimulatorControl::FBSimulatorHingeAngle) async throws
+  public func setDeviceOrientation(_ orientation: FBSimulatorControl::FBSimulatorHIDDeviceOrientation) async throws
   public func hingeAngle() async throws -> FBSimulatorControl::FBSimulatorHingeAngle
 }
 @_hasMissingDesignatedInitializers public actor FBSimulatorHingeSession {
