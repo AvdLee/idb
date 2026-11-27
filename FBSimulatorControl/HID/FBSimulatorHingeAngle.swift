@@ -26,20 +26,24 @@ public struct FBSimulatorHingeAngle: Equatable, Hashable, Sendable {
   }
 
   func vendorEvent() throws -> FBSimulatorIndigoVendorDefinedEvent {
-    let payload: [String: Any] = [
-      "provider": "com.apple.Virtualization.VirtualMachines",
-      "source": "hinge-slider-control",
-      "type": "range",
-      "value": degrees,
-    ]
-    guard let serialized = IOCFSerialize(payload as CFDictionary, 1) else {
-      throw FBSimulatorHingeError.serializationFailed
+    try .virtualMachineControl(source: "hinge-slider-control", type: "range", value: degrees)
+  }
+}
+
+extension FBSimulatorHIDDeviceOrientation {
+  /// The event Device Hub's orientation picker sends. The runtime applies it as a physical device
+  /// orientation, in the convention `devicectl device orientation get` reports (landscape left is
+  /// the device turned left), which is how an iPhone Duo is rotated: its CoreDevice
+  /// orientation requests are accepted and then ignored.
+  func vendorEvent() throws -> FBSimulatorIndigoVendorDefinedEvent {
+    let value: String
+    switch self {
+    case .portrait: value = "portrait"
+    case .portraitUpsideDown: value = "pud"
+    case .landscapeLeft: value = "landscape-left"
+    case .landscapeRight: value = "landscape-right"
     }
-    return FBSimulatorIndigoVendorDefinedEvent(
-      usagePage: 0xff61,
-      usage: 0x5b,
-      version: 0,
-      data: serialized as Data)
+    return try .virtualMachineControl(source: "orientation-picker-control", type: "enum", value: value)
   }
 }
 
@@ -65,4 +69,21 @@ struct FBSimulatorIndigoVendorDefinedEvent: Encodable {
   let usage: UInt16
   let version: UInt32
   let data: Data
+}
+
+extension FBSimulatorIndigoVendorDefinedEvent {
+  /// A device-state control message, the vendor-defined HID event Device Hub's hinge slider and
+  /// orientation picker send to the simulated device.
+  static func virtualMachineControl(source: String, type: String, value: Any) throws -> Self {
+    let payload: [String: Any] = [
+      "provider": "com.apple.Virtualization.VirtualMachines",
+      "source": source,
+      "type": type,
+      "value": value,
+    ]
+    guard let serialized = IOCFSerialize(payload as CFDictionary, 1) else {
+      throw FBSimulatorHingeError.serializationFailed
+    }
+    return Self(usagePage: 0xff61, usage: 0x5b, version: 0, data: serialized as Data)
+  }
 }

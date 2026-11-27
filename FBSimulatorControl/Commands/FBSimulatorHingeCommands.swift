@@ -24,6 +24,20 @@ public extension FBSimulator {
     try await session.finish()
   }
 
+  /// Sets the physical device orientation of an iPhone Duo simulator, as Device Hub's orientation
+  /// picker does. `devicectl device orientation set` reports success on an iPhone Duo and changes
+  /// nothing. The orientation uses the convention `devicectl device orientation get` reports.
+  func setDeviceOrientation(_ orientation: FBSimulatorHIDDeviceOrientation) async throws {
+    try FBSimulatorHingeAngle.requireSupportedModel(device.deviceType.modelIdentifier)
+    let event = try orientation.vendorEvent()
+    let transport = try await FBSimulatorDTUHIDTransport.reliableDTUHID(
+      for: self,
+      serviceName: FBSimulatorDTUHIDTransport.vendorDefinedServiceName)
+    defer { transport.disconnect() }
+    try await transport.send(messageType: "IndigoVendorDefinedEvent", payload: event)
+    try await transport.flush()
+  }
+
   /// Reads a fresh measured hinge angle through CoreDevice's motion stream.
   func hingeAngle() async throws -> FBSimulatorHingeAngle {
     try FBSimulatorHingeAngle.requireSupportedModel(device.deviceType.modelIdentifier)
